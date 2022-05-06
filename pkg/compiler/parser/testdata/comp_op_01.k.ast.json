@@ -1,0 +1,132 @@
+{
+    "_ast_type": "Module",
+    "body": [
+        {
+            "_ast_type": "IfStmt",
+            "body": [
+                {
+                    "_ast_type": "AssignStmt",
+                    "column": 5,
+                    "end_column": 12,
+                    "end_line": 3,
+                    "filename": "testdata/comp_op_01.k",
+                    "line": 3,
+                    "relative_filename": null,
+                    "targets": [
+                        {
+                            "_ast_type": "Identifier",
+                            "column": 5,
+                            "ctx": "STORE",
+                            "end_column": 8,
+                            "end_line": 3,
+                            "filename": "testdata/comp_op_01.k",
+                            "line": 3,
+                            "name_nodes": [
+                                {
+                                    "_ast_type": "Name",
+                                    "column": 5,
+                                    "end_column": 8,
+                                    "end_line": 3,
+                                    "filename": "testdata/comp_op_01.k",
+                                    "line": 3,
+                                    "relative_filename": null,
+                                    "value": "bbb"
+                                }
+                            ],
+                            "names": [
+                                "bbb"
+                            ],
+                            "pkgpath": "",
+                            "relative_filename": null
+                        }
+                    ],
+                    "type_annotation": null,
+                    "type_annotation_node": null,
+                    "value": {
+                        "_ast_type": "NumberLit",
+                        "binary_suffix": null,
+                        "column": 11,
+                        "end_column": 12,
+                        "end_line": 3,
+                        "filename": "testdata/comp_op_01.k",
+                        "line": 3,
+                        "relative_filename": null,
+                        "value": 2
+                    }
+                }
+            ],
+            "column": 1,
+            "cond": {
+                "_ast_type": "Compare",
+                "column": 4,
+                "comparators": [
+                    {
+                        "_ast_type": "NumberLit",
+                        "binary_suffix": null,
+                        "column": 11,
+                        "end_column": 12,
+                        "end_line": 2,
+                        "filename": "testdata/comp_op_01.k",
+                        "line": 2,
+                        "relative_filename": null,
+                        "value": 1
+                    }
+                ],
+                "end_column": 12,
+                "end_line": 2,
+                "filename": "testdata/comp_op_01.k",
+                "left": {
+                    "_ast_type": "Identifier",
+                    "column": 4,
+                    "ctx": "LOAD",
+                    "end_column": 7,
+                    "end_line": 2,
+                    "filename": "testdata/comp_op_01.k",
+                    "line": 2,
+                    "name_nodes": [
+                        {
+                            "_ast_type": "Name",
+                            "column": 4,
+                            "end_column": 7,
+                            "end_line": 2,
+                            "filename": "testdata/comp_op_01.k",
+                            "line": 2,
+                            "relative_filename": null,
+                            "value": "aaa"
+                        }
+                    ],
+                    "names": [
+                        "aaa"
+                    ],
+                    "pkgpath": "",
+                    "relative_filename": null
+                },
+                "line": 2,
+                "ops": [
+                    "EQUAL_TO"
+                ],
+                "relative_filename": null
+            },
+            "elif_body": [],
+            "elif_cond": [],
+            "else_body": [],
+            "end_column": 12,
+            "end_line": 3,
+            "filename": "testdata/comp_op_01.k",
+            "line": 2,
+            "relative_filename": null
+        }
+    ],
+    "column": 1,
+    "comments": [],
+    "doc": "",
+    "end_column": 12,
+    "end_line": 3,
+    "filename": "testdata/comp_op_01.k",
+    "global_names": [],
+    "line": 1,
+    "local_names": {},
+    "name": "",
+    "pkg": "",
+    "relative_filename": null
+}

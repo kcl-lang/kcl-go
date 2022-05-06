@@ -1,0 +1,874 @@
+{
+    "_ast_type": "Module",
+    "body": [
+        {
+            "_ast_type": "ImportStmt",
+            "as_name_node": {
+                "_ast_type": "Name",
+                "column": 20,
+                "end_column": 27,
+                "end_line": 3,
+                "filename": "testdata/a.k",
+                "line": 3,
+                "relative_filename": null,
+                "value": "pkgName"
+            },
+            "asname": "pkgName",
+            "column": 1,
+            "end_column": 27,
+            "end_line": 3,
+            "filename": "testdata/a.k",
+            "line": 3,
+            "name": "pkg",
+            "path": "some.pkg",
+            "path_nodes": [
+                {
+                    "_ast_type": "Name",
+                    "column": 8,
+                    "end_column": 12,
+                    "end_line": 3,
+                    "filename": "testdata/a.k",
+                    "line": 3,
+                    "relative_filename": null,
+                    "value": "some"
+                },
+                {
+                    "_ast_type": "Name",
+                    "column": 13,
+                    "end_column": 16,
+                    "end_line": 3,
+                    "filename": "testdata/a.k",
+                    "line": 3,
+                    "relative_filename": null,
+                    "value": "pkg"
+                }
+            ],
+            "rawpath": null,
+            "relative_filename": null
+        },
+        {
+            "_ast_type": "SchemaStmt",
+            "args": null,
+            "body": [
+                {
+                    "_ast_type": "SchemaAttr",
+                    "column": 5,
+                    "decorators": [],
+                    "doc": "",
+                    "end_column": 14,
+                    "end_line": 7,
+                    "filename": "testdata/a.k",
+                    "is_final": false,
+                    "is_optional": false,
+                    "line": 7,
+                    "name": "name",
+                    "name_node": {
+                        "_ast_type": "Name",
+                        "column": 5,
+                        "end_column": 9,
+                        "end_line": 7,
+                        "filename": "testdata/a.k",
+                        "line": 7,
+                        "relative_filename": null,
+                        "value": "name"
+                    },
+                    "op": null,
+                    "relative_filename": null,
+                    "type_node": {
+                        "_ast_type": "Type",
+                        "column": 11,
+                        "end_column": 14,
+                        "end_line": 7,
+                        "filename": "testdata/a.k",
+                        "line": 7,
+                        "plain_type_str": "str",
+                        "relative_filename": null,
+                        "type_elements": [
+                            {
+                                "_ast_type": "BasicType",
+                                "column": 11,
+                                "end_column": 14,
+                                "end_line": 7,
+                                "filename": "testdata/a.k",
+                                "line": 7,
+                                "relative_filename": null,
+                                "type_name": "str"
+                            }
+                        ]
+                    },
+                    "type_str": "str",
+                    "value": null
+                },
+                {
+                    "_ast_type": "SchemaAttr",
+                    "column": 5,
+                    "decorators": [],
+                    "doc": "",
+                    "end_column": 13,
+                    "end_line": 8,
+                    "filename": "testdata/a.k",
+                    "is_final": false,
+                    "is_optional": false,
+                    "line": 8,
+                    "name": "age",
+                    "name_node": {
+                        "_ast_type": "Name",
+                        "column": 5,
+                        "end_column": 8,
+                        "end_line": 8,
+                        "filename": "testdata/a.k",
+                        "line": 8,
+                        "relative_filename": null,
+                        "value": "age"
+                    },
+                    "op": null,
+                    "relative_filename": null,
+                    "type_node": {
+                        "_ast_type": "Type",
+                        "column": 10,
+                        "end_column": 13,
+                        "end_line": 8,
+                        "filename": "testdata/a.k",
+                        "line": 8,
+                        "plain_type_str": "int",
+                        "relative_filename": null,
+                        "type_elements": [
+                            {
+                                "_ast_type": "BasicType",
+                                "column": 10,
+                                "end_column": 13,
+                                "end_line": 8,
+                                "filename": "testdata/a.k",
+                                "line": 8,
+                                "relative_filename": null,
+                                "type_name": "int"
+                            }
+                        ]
+                    },
+                    "type_str": "int",
+                    "value": null
+                }
+            ],
+            "checks": [],
+            "column": 1,
+            "decorators": [],
+            "doc": "",
+            "end_column": 13,
+            "end_line": 8,
+            "filename": "testdata/a.k",
+            "for_host_name": null,
+            "index_signature": null,
+            "is_mixin": false,
+            "is_protocol": true,
+            "is_relaxed": false,
+            "line": 6,
+            "mixins": [],
+            "name": "PersonProtocol",
+            "name_node": {
+                "_ast_type": "Name",
+                "column": 8,
+                "end_column": 22,
+                "end_line": 6,
+                "filename": "testdata/a.k",
+                "line": 6,
+                "relative_filename": null,
+                "value": "PersonProtocol"
+            },
+            "parent_name": null,
+            "relative_filename": null
+        },
+        {
+            "_ast_type": "SchemaStmt",
+            "args": null,
+            "body": [
+                {
+                    "_ast_type": "AssignStmt",
+                    "column": 5,
+                    "end_column": 17,
+                    "end_line": 11,
+                    "filename": "testdata/a.k",
+                    "line": 11,
+                    "relative_filename": null,
+                    "targets": [
+                        {
+                            "_ast_type": "Identifier",
+                            "column": 5,
+                            "ctx": "STORE",
+                            "end_column": 9,
+                            "end_line": 11,
+                            "filename": "testdata/a.k",
+                            "line": 11,
+                            "name_nodes": [
+                                {
+                                    "_ast_type": "Name",
+                                    "column": 5,
+                                    "end_column": 9,
+                                    "end_line": 11,
+                                    "filename": "testdata/a.k",
+                                    "line": 11,
+                                    "relative_filename": null,
+                                    "value": "name"
+                                }
+                            ],
+                            "names": [
+                                "name"
+                            ],
+                            "pkgpath": "",
+                            "relative_filename": null
+                        }
+                    ],
+                    "type_annotation": null,
+                    "type_annotation_node": null,
+                    "value": {
+                        "_ast_type": "StringLit",
+                        "column": 12,
+                        "end_column": 17,
+                        "end_line": 11,
+                        "filename": "testdata/a.k",
+                        "is_long_string": false,
+                        "line": 11,
+                        "raw_value": "'kcl'",
+                        "relative_filename": null,
+                        "value": "kcl"
+                    }
+                },
+                {
+                    "_ast_type": "AssignStmt",
+                    "column": 5,
+                    "end_column": 12,
+                    "end_line": 12,
+                    "filename": "testdata/a.k",
+                    "line": 12,
+                    "relative_filename": null,
+                    "targets": [
+                        {
+                            "_ast_type": "Identifier",
+                            "column": 5,
+                            "ctx": "STORE",
+                            "end_column": 8,
+                            "end_line": 12,
+                            "filename": "testdata/a.k",
+                            "line": 12,
+                            "name_nodes": [
+                                {
+                                    "_ast_type": "Name",
+                                    "column": 5,
+                                    "end_column": 8,
+                                    "end_line": 12,
+                                    "filename": "testdata/a.k",
+                                    "line": 12,
+                                    "relative_filename": null,
+                                    "value": "age"
+                                }
+                            ],
+                            "names": [
+                                "age"
+                            ],
+                            "pkgpath": "",
+                            "relative_filename": null
+                        }
+                    ],
+                    "type_annotation": null,
+                    "type_annotation_node": null,
+                    "value": {
+                        "_ast_type": "NumberLit",
+                        "binary_suffix": null,
+                        "column": 11,
+                        "end_column": 12,
+                        "end_line": 12,
+                        "filename": "testdata/a.k",
+                        "line": 12,
+                        "relative_filename": null,
+                        "value": 1
+                    }
+                }
+            ],
+            "checks": [],
+            "column": 1,
+            "decorators": [],
+            "doc": "",
+            "end_column": 12,
+            "end_line": 12,
+            "filename": "testdata/a.k",
+            "for_host_name": {
+                "_ast_type": "Identifier",
+                "column": 23,
+                "ctx": "LOAD",
+                "end_column": 37,
+                "end_line": 10,
+                "filename": "testdata/a.k",
+                "line": 10,
+                "name_nodes": [
+                    {
+                        "_ast_type": "Name",
+                        "column": 23,
+                        "end_column": 37,
+                        "end_line": 10,
+                        "filename": "testdata/a.k",
+                        "line": 10,
+                        "relative_filename": null,
+                        "value": "PersonProtocol"
+                    }
+                ],
+                "names": [
+                    "PersonProtocol"
+                ],
+                "pkgpath": "",
+                "relative_filename": null
+            },
+            "index_signature": null,
+            "is_mixin": true,
+            "is_protocol": false,
+            "is_relaxed": false,
+            "line": 10,
+            "mixins": [],
+            "name": "PersonMixin",
+            "name_node": {
+                "_ast_type": "Name",
+                "column": 7,
+                "end_column": 18,
+                "end_line": 10,
+                "filename": "testdata/a.k",
+                "line": 10,
+                "relative_filename": null,
+                "value": "PersonMixin"
+            },
+            "parent_name": null,
+            "relative_filename": null
+        },
+        {
+            "_ast_type": "SchemaStmt",
+            "args": {
+                "_ast_type": "Arguments",
+                "args": [
+                    {
+                        "_ast_type": "Identifier",
+                        "column": 15,
+                        "ctx": "STORE",
+                        "end_column": 17,
+                        "end_line": 14,
+                        "filename": "testdata/a.k",
+                        "line": 14,
+                        "name_nodes": [
+                            {
+                                "_ast_type": "Name",
+                                "column": 15,
+                                "end_column": 17,
+                                "end_line": 14,
+                                "filename": "testdata/a.k",
+                                "line": 14,
+                                "relative_filename": null,
+                                "value": "id"
+                            }
+                        ],
+                        "names": [
+                            "id"
+                        ],
+                        "pkgpath": "",
+                        "relative_filename": null
+                    }
+                ],
+                "column": 15,
+                "defaults": [
+                    {
+                        "_ast_type": "StringLit",
+                        "column": 22,
+                        "end_column": 34,
+                        "end_line": 14,
+                        "filename": "testdata/a.k",
+                        "is_long_string": false,
+                        "line": 14,
+                        "raw_value": "\"id-default\"",
+                        "relative_filename": null,
+                        "value": "id-default"
+                    }
+                ],
+                "end_column": 34,
+                "end_line": 14,
+                "filename": "testdata/a.k",
+                "line": 14,
+                "relative_filename": null,
+                "type_annotation_list": [
+                    "str"
+                ],
+                "type_annotation_node_list": [
+                    {
+                        "_ast_type": "Type",
+                        "column": 18,
+                        "end_column": 21,
+                        "end_line": 14,
+                        "filename": "testdata/a.k",
+                        "line": 14,
+                        "plain_type_str": "str",
+                        "relative_filename": null,
+                        "type_elements": [
+                            {
+                                "_ast_type": "BasicType",
+                                "column": 18,
+                                "end_column": 21,
+                                "end_line": 14,
+                                "filename": "testdata/a.k",
+                                "line": 14,
+                                "relative_filename": null,
+                                "type_name": "str"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "body": [
+                {
+                    "_ast_type": "SchemaAttr",
+                    "column": 5,
+                    "decorators": [],
+                    "doc": "",
+                    "end_column": 14,
+                    "end_line": 16,
+                    "filename": "testdata/a.k",
+                    "is_final": false,
+                    "is_optional": false,
+                    "line": 16,
+                    "name": "name",
+                    "name_node": {
+                        "_ast_type": "Name",
+                        "column": 5,
+                        "end_column": 9,
+                        "end_line": 16,
+                        "filename": "testdata/a.k",
+                        "line": 16,
+                        "relative_filename": null,
+                        "value": "name"
+                    },
+                    "op": null,
+                    "relative_filename": null,
+                    "type_node": {
+                        "_ast_type": "Type",
+                        "column": 11,
+                        "end_column": 14,
+                        "end_line": 16,
+                        "filename": "testdata/a.k",
+                        "line": 16,
+                        "plain_type_str": "str",
+                        "relative_filename": null,
+                        "type_elements": [
+                            {
+                                "_ast_type": "BasicType",
+                                "column": 11,
+                                "end_column": 14,
+                                "end_line": 16,
+                                "filename": "testdata/a.k",
+                                "line": 16,
+                                "relative_filename": null,
+                                "type_name": "str"
+                            }
+                        ]
+                    },
+                    "type_str": "str",
+                    "value": null
+                },
+                {
+                    "_ast_type": "SchemaAttr",
+                    "column": 5,
+                    "decorators": [],
+                    "doc": "",
+                    "end_column": 13,
+                    "end_line": 17,
+                    "filename": "testdata/a.k",
+                    "is_final": false,
+                    "is_optional": false,
+                    "line": 17,
+                    "name": "age",
+                    "name_node": {
+                        "_ast_type": "Name",
+                        "column": 5,
+                        "end_column": 8,
+                        "end_line": 17,
+                        "filename": "testdata/a.k",
+                        "line": 17,
+                        "relative_filename": null,
+                        "value": "age"
+                    },
+                    "op": null,
+                    "relative_filename": null,
+                    "type_node": {
+                        "_ast_type": "Type",
+                        "column": 10,
+                        "end_column": 13,
+                        "end_line": 17,
+                        "filename": "testdata/a.k",
+                        "line": 17,
+                        "plain_type_str": "int",
+                        "relative_filename": null,
+                        "type_elements": [
+                            {
+                                "_ast_type": "BasicType",
+                                "column": 10,
+                                "end_column": 13,
+                                "end_line": 17,
+                                "filename": "testdata/a.k",
+                                "line": 17,
+                                "relative_filename": null,
+                                "type_name": "int"
+                            }
+                        ]
+                    },
+                    "type_str": "int",
+                    "value": null
+                }
+            ],
+            "checks": [],
+            "column": 1,
+            "decorators": [],
+            "doc": "",
+            "end_column": 13,
+            "end_line": 17,
+            "filename": "testdata/a.k",
+            "for_host_name": null,
+            "index_signature": null,
+            "is_mixin": false,
+            "is_protocol": false,
+            "is_relaxed": false,
+            "line": 14,
+            "mixins": [
+                {
+                    "_ast_type": "Identifier",
+                    "column": 12,
+                    "ctx": "LOAD",
+                    "end_column": 23,
+                    "end_line": 15,
+                    "filename": "testdata/a.k",
+                    "line": 15,
+                    "name_nodes": [
+                        {
+                            "_ast_type": "Name",
+                            "column": 12,
+                            "end_column": 23,
+                            "end_line": 15,
+                            "filename": "testdata/a.k",
+                            "line": 15,
+                            "relative_filename": null,
+                            "value": "PersonMixin"
+                        }
+                    ],
+                    "names": [
+                        "PersonMixin"
+                    ],
+                    "pkgpath": "",
+                    "relative_filename": null
+                }
+            ],
+            "name": "Person",
+            "name_node": {
+                "_ast_type": "Name",
+                "column": 8,
+                "end_column": 14,
+                "end_line": 14,
+                "filename": "testdata/a.k",
+                "line": 14,
+                "relative_filename": null,
+                "value": "Person"
+            },
+            "parent_name": null,
+            "relative_filename": null
+        },
+        {
+            "_ast_type": "AssignStmt",
+            "column": 1,
+            "end_column": 2,
+            "end_line": 21,
+            "filename": "testdata/a.k",
+            "line": 19,
+            "relative_filename": null,
+            "targets": [
+                {
+                    "_ast_type": "Identifier",
+                    "column": 1,
+                    "ctx": "STORE",
+                    "end_column": 3,
+                    "end_line": 19,
+                    "filename": "testdata/a.k",
+                    "line": 19,
+                    "name_nodes": [
+                        {
+                            "_ast_type": "Name",
+                            "column": 1,
+                            "end_column": 3,
+                            "end_line": 19,
+                            "filename": "testdata/a.k",
+                            "line": 19,
+                            "relative_filename": null,
+                            "value": "go"
+                        }
+                    ],
+                    "names": [
+                        "go"
+                    ],
+                    "pkgpath": "",
+                    "relative_filename": null
+                }
+            ],
+            "type_annotation": null,
+            "type_annotation_node": null,
+            "value": {
+                "_ast_type": "SchemaExpr",
+                "args": [
+                    {
+                        "_ast_type": "StringLit",
+                        "column": 13,
+                        "end_column": 21,
+                        "end_line": 19,
+                        "filename": "testdata/a.k",
+                        "is_long_string": false,
+                        "line": 19,
+                        "raw_value": "\"id-001\"",
+                        "relative_filename": null,
+                        "value": "id-001"
+                    }
+                ],
+                "column": 6,
+                "config": {
+                    "_ast_type": "ConfigExpr",
+                    "column": 23,
+                    "end_column": 2,
+                    "end_line": 21,
+                    "filename": "testdata/a.k",
+                    "items": [
+                        {
+                            "_ast_type": "ConfigEntry",
+                            "column": 5,
+                            "end_column": 19,
+                            "end_line": 20,
+                            "filename": "testdata/a.k",
+                            "insert_index": -1,
+                            "key": {
+                                "_ast_type": "Identifier",
+                                "column": 5,
+                                "ctx": "LOAD",
+                                "end_column": 9,
+                                "end_line": 20,
+                                "filename": "testdata/a.k",
+                                "line": 20,
+                                "name_nodes": [
+                                    {
+                                        "_ast_type": "Name",
+                                        "column": 5,
+                                        "end_column": 9,
+                                        "end_line": 20,
+                                        "filename": "testdata/a.k",
+                                        "line": 20,
+                                        "relative_filename": null,
+                                        "value": "name"
+                                    }
+                                ],
+                                "names": [
+                                    "name"
+                                ],
+                                "pkgpath": "",
+                                "relative_filename": null
+                            },
+                            "line": 20,
+                            "operation": 0,
+                            "relative_filename": null,
+                            "value": {
+                                "_ast_type": "StringLit",
+                                "column": 11,
+                                "end_column": 19,
+                                "end_line": 20,
+                                "filename": "testdata/a.k",
+                                "is_long_string": false,
+                                "line": 20,
+                                "raw_value": "'golang'",
+                                "relative_filename": null,
+                                "value": "golang"
+                            }
+                        }
+                    ],
+                    "line": 19,
+                    "relative_filename": null
+                },
+                "end_column": 2,
+                "end_line": 21,
+                "filename": "testdata/a.k",
+                "kwargs": [],
+                "line": 19,
+                "name": {
+                    "_ast_type": "Identifier",
+                    "column": 6,
+                    "ctx": "LOAD",
+                    "end_column": 12,
+                    "end_line": 19,
+                    "filename": "testdata/a.k",
+                    "line": 19,
+                    "name_nodes": [
+                        {
+                            "_ast_type": "Name",
+                            "column": 6,
+                            "end_column": 12,
+                            "end_line": 19,
+                            "filename": "testdata/a.k",
+                            "line": 19,
+                            "relative_filename": null,
+                            "value": "Person"
+                        }
+                    ],
+                    "names": [
+                        "Person"
+                    ],
+                    "pkgpath": "",
+                    "relative_filename": null
+                },
+                "relative_filename": null
+            }
+        },
+        {
+            "_ast_type": "IfStmt",
+            "body": [
+                {
+                    "_ast_type": "ExprStmt",
+                    "column": 5,
+                    "end_column": 23,
+                    "end_line": 24,
+                    "exprs": [
+                        {
+                            "_ast_type": "CallExpr",
+                            "args": [
+                                {
+                                    "_ast_type": "StringLit",
+                                    "column": 11,
+                                    "end_column": 22,
+                                    "end_line": 24,
+                                    "filename": "testdata/a.k",
+                                    "is_long_string": false,
+                                    "line": 24,
+                                    "raw_value": "\"hello KCL\"",
+                                    "relative_filename": null,
+                                    "value": "hello KCL"
+                                }
+                            ],
+                            "column": 5,
+                            "end_column": 23,
+                            "end_line": 24,
+                            "filename": "testdata/a.k",
+                            "func": {
+                                "_ast_type": "Identifier",
+                                "column": 5,
+                                "ctx": "LOAD",
+                                "end_column": 10,
+                                "end_line": 24,
+                                "filename": "testdata/a.k",
+                                "line": 24,
+                                "name_nodes": [
+                                    {
+                                        "_ast_type": "Name",
+                                        "column": 5,
+                                        "end_column": 10,
+                                        "end_line": 24,
+                                        "filename": "testdata/a.k",
+                                        "line": 24,
+                                        "relative_filename": null,
+                                        "value": "print"
+                                    }
+                                ],
+                                "names": [
+                                    "print"
+                                ],
+                                "pkgpath": "",
+                                "relative_filename": null
+                            },
+                            "keywords": [],
+                            "line": 24,
+                            "relative_filename": null
+                        }
+                    ],
+                    "filename": "testdata/a.k",
+                    "line": 24,
+                    "relative_filename": null
+                }
+            ],
+            "column": 1,
+            "cond": {
+                "_ast_type": "Compare",
+                "column": 4,
+                "comparators": [
+                    {
+                        "_ast_type": "StringLit",
+                        "column": 15,
+                        "end_column": 23,
+                        "end_line": 23,
+                        "filename": "testdata/a.k",
+                        "is_long_string": false,
+                        "line": 23,
+                        "raw_value": "'golang'",
+                        "relative_filename": null,
+                        "value": "golang"
+                    }
+                ],
+                "end_column": 23,
+                "end_line": 23,
+                "filename": "testdata/a.k",
+                "left": {
+                    "_ast_type": "Identifier",
+                    "column": 4,
+                    "ctx": "LOAD",
+                    "end_column": 11,
+                    "end_line": 23,
+                    "filename": "testdata/a.k",
+                    "line": 23,
+                    "name_nodes": [
+                        {
+                            "_ast_type": "Name",
+                            "column": 4,
+                            "end_column": 6,
+                            "end_line": 23,
+                            "filename": "testdata/a.k",
+                            "line": 23,
+                            "relative_filename": null,
+                            "value": "go"
+                        },
+                        {
+                            "_ast_type": "Name",
+                            "column": 7,
+                            "end_column": 11,
+                            "end_line": 23,
+                            "filename": "testdata/a.k",
+                            "line": 23,
+                            "relative_filename": null,
+                            "value": "name"
+                        }
+                    ],
+                    "names": [
+                        "go",
+                        "name"
+                    ],
+                    "pkgpath": "",
+                    "relative_filename": null
+                },
+                "line": 23,
+                "ops": [
+                    "EQUAL_TO"
+                ],
+                "relative_filename": null
+            },
+            "elif_body": [],
+            "elif_cond": [],
+            "else_body": [],
+            "end_column": 23,
+            "end_line": 24,
+            "filename": "testdata/a.k",
+            "line": 23,
+            "relative_filename": null
+        }
+    ],
+    "column": 1,
+    "comments": [],
+    "doc": "",
+    "end_column": 23,
+    "end_line": 24,
+    "filename": "testdata/a.k",
+    "global_names": [],
+    "line": 1,
+    "local_names": {},
+    "name": "",
+    "pkg": "",
+    "relative_filename": null
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "range": {
+      "start": {
+        "line": 2,
+        "character": 8
+      },
+      "end": {
+        "line": 2,
+        "character": 14
+      }
+    }
+  }
+]

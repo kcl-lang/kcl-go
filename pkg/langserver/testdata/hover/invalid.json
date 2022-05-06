@@ -1,0 +1,16 @@
+{
+  "contents": {
+    "kind": "plaintext",
+    "value": "b"
+  },
+  "range": {
+    "start": {
+      "line": 0,
+      "character": 4
+    },
+    "end": {
+      "line": 0,
+      "character": 5
+    }
+  }
+}

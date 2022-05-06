@@ -1,0 +1,28 @@
+kcl_cli_configs:
+  file:
+    - ../../../../../base/pkg/kusion_models/app_configuration/xapp/xapp_app_configuration.k
+    - ../../../../../base/pkg/kusion_models/app_configuration/xapp/xapp_app_configuration_render.k
+    - ../../../../../base/pkg/kusion_models/app_configuration/deploy_topology_render.k
+    - ../main.k
+    - ../../../../../base/pkg/kusion_models/app_configuration/xapp/xapp_app_configuration_backend.k
+  disable_none: true
+kcl_options:
+  - key: global-tenant
+    value: MAIN_SITE
+  - key: app-name
+    value: xappinfo
+  - key: global-app-name
+    value: xappinfo
+  - key: env-type
+    value: prod
+  - key: xappinfo-env-type
+    value: prod
+  - key: image
+    value: image-url
+  - key: deploy-topology
+    value: [
+      { "idc": "x10", "zone": "R000C", "replicas": 4 },
+      { "idc": "x10", "zone": "R000A", "replicas": 4 },
+      { "idc": "x10", "zone": "R000B", "replicas": 4 },
+    ]
+
