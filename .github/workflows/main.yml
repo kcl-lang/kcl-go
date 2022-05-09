@@ -1,7 +1,7 @@
 name: build-and-test
 on: push
 jobs:
-  deploy:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
