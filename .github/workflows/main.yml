@@ -1,0 +1,17 @@
+name: build-and-test
+on: push
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - run: go build ./cmds/kcl-go
+      
+      # TODO: test
