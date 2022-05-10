@@ -17,6 +17,8 @@ import (
 
 const KclvmDownloadUrlBase = "https://github.com/KusionStack/KCLVM/releases/download/"
 
+var DefaultKclvmTriple = getKclvmTriple()
+
 var KclvmDownloadUrlBase_mirrors = []string{
 	// test: python3 -m http.server => http://127.0.0.1:8000/
 
@@ -56,7 +58,7 @@ func InstallKclvm(kclvmRoot string) (err error) {
 		return nil
 	}
 
-	var triple = GetKclvmTriple()
+	var triple = DefaultKclvmTriple
 	var localFilename = "zz_download-" + GetKclvmFilename(triple)
 	defer func() {
 		if err == nil {
@@ -96,7 +98,7 @@ func InstallKclvm(kclvmRoot string) (err error) {
 	return nil
 }
 
-func GetKclvmTriple() string {
+func getKclvmTriple() string {
 	switch runtime.GOOS {
 	case "darwin":
 		switch runtime.GOARCH {
@@ -128,7 +130,7 @@ func GetKclvmMd5um(triple string) string {
 
 func DownloadKclvm(triple, localFilename string) error {
 	if triple == "" {
-		triple = GetKclvmTriple()
+		triple = DefaultKclvmTriple
 	}
 	if triple == "" {
 		return fmt.Errorf("triple missing")
@@ -186,7 +188,7 @@ func DownloadKclvm(triple, localFilename string) error {
 		}
 
 		if got := MD5File(localFilename); got != md5sum {
-			return fmt.Errorf("md4 mismatch: expect=%v, got=%v", md5sum, got)
+			return fmt.Errorf("md5 mismatch: expect=%v, got=%v, local=%s", md5sum, got, localFilename)
 		}
 
 		return nil
