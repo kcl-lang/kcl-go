@@ -6,7 +6,15 @@ import (
 	"kusionstack.io/kclvm-go/scripts"
 )
 
-func Example() {
+func Example_all() {
+	// scripts.KclvmDownloadUrlBase_mirrors = []string{ ... }
+
+	if err := scripts.SetupKclvmAll("./_build"); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func Example_setupKclvm() {
 	// scripts.KclvmDownloadUrlBase_mirrors = []string{ ... }
 
 	scripts.DefaultKclvmTriple = "kclvm-centos"

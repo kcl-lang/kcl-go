@@ -12,6 +12,10 @@ import (
 )
 
 var cmdSetupKclvmFlags = []cli.Flag{
+	&cli.BoolFlag{
+		Name:  "all",
+		Usage: "setup kclvm for all platform",
+	},
 	&cli.StringFlag{
 		Name:  "triple",
 		Usage: "set kclvm triple",
@@ -20,7 +24,7 @@ var cmdSetupKclvmFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:  "outdir",
 		Usage: "set kclvm output dir",
-		Value: "_" + scripts.DefaultKclvmTriple + "-root_",
+		Value: "_build",
 	},
 	&cli.StringSliceFlag{
 		Name:  "mirrors",
@@ -37,9 +41,28 @@ func NewSetpupKclvmCmd() *cli.Command {
 		Action: func(c *cli.Context) error {
 			// go run ./cmds/kcl-go/ setup-kclvm --triple=kclvm-ubuntu
 
+			if c.Args().Len() > 0 {
+				fmt.Println("ERR: invalid arguments:", c.Args().Slice())
+				cli.ShowCommandHelpAndExit(c, "setup-kclvm", 0)
+			}
+
+			all := c.Bool("all")
 			triple := c.String("triple")
 			outdir := c.String("outdir")
 			mirrors := c.StringSlice("mirrors")
+
+			if len(mirrors) != 0 {
+				scripts.KclvmDownloadUrlBase_mirrors = append(scripts.KclvmDownloadUrlBase_mirrors, mirrors...)
+			}
+
+			if all {
+				err := scripts.SetupKclvmAll(outdir)
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+				return nil
+			}
 
 			if triple == "" || outdir == "" {
 				cli.ShowCommandHelpAndExit(c, "setup-kclvm", 0)
@@ -52,9 +75,6 @@ func NewSetpupKclvmCmd() *cli.Command {
 			}
 
 			scripts.DefaultKclvmTriple = triple
-			if len(mirrors) != 0 {
-				scripts.KclvmDownloadUrlBase_mirrors = append(scripts.KclvmDownloadUrlBase_mirrors, mirrors...)
-			}
 
 			err := scripts.SetupKclvm(outdir)
 			if err != nil {

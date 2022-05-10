@@ -39,6 +39,30 @@ var KclvmMd5sum = map[string]string{
 	"kclvm-ubuntu-0.4.1-alpha.4.tar.gz":       "809f8a2f5b7721bee773457a03abfe90",
 }
 
+var KclvmTripleList = []string{
+	"kclvm-centos",
+	"kclvm-Darwin",
+	"kclvm-Darwin-arm64",
+	"kclvm-ubuntu",
+}
+
+func SetupKclvmAll(outdir string) error {
+	defaultBackup := DefaultKclvmTriple
+	defer func() {
+		DefaultKclvmTriple = defaultBackup
+	}()
+
+	for _, triple := range KclvmTripleList {
+		DefaultKclvmTriple = triple
+		err := SetupKclvm(filepath.Join(outdir, triple))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func SetupKclvm(kclvmRoot string) error {
 	if err := InstallKclvm(kclvmRoot); err != nil {
 		return err
@@ -168,12 +192,19 @@ func DownloadKclvm(triple, localFilename string) error {
 		go func(id int, url, localFilename string) {
 			defer wg.Done()
 			tmpname := fmt.Sprintf("%s.%d", localFilename, id)
-			if err := HttpGetFile(ctx, url, tmpname); err != nil {
+			err := HttpGetFile(ctx, url, tmpname)
+			if err != nil {
 				errs <- err
-			} else {
-				okfiles <- tmpname
-				cancel()
+				return
 			}
+			if got := MD5File(tmpname); got != md5sum {
+				errs <- fmt.Errorf("md5 mismatch: expect=%v, got=%v, local=%s", md5sum, got, localFilename)
+				return
+			}
+
+			// OK
+			okfiles <- tmpname
+			cancel()
 		}(i, s, localFilename)
 	}
 	wg.Wait()
