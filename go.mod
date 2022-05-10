@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/boltdb/bolt v1.3.1
 	github.com/chai2010/jsonv v1.1.3
-	github.com/chai2010/protorpc v1.1.3
+	github.com/chai2010/protorpc v1.1.4
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-cmp v0.5.7
