@@ -22,6 +22,10 @@ var cmdSetupKclvmFlags = []cli.Flag{
 		Usage: "set kclvm output dir",
 		Value: "_" + scripts.DefaultKclvmTriple + "-root_",
 	},
+	&cli.StringSliceFlag{
+		Name:  "mirrors",
+		Usage: "set mirror list",
+	},
 }
 
 func NewSetpupKclvmCmd() *cli.Command {
@@ -35,6 +39,7 @@ func NewSetpupKclvmCmd() *cli.Command {
 
 			triple := c.String("triple")
 			outdir := c.String("outdir")
+			mirrors := c.StringSlice("mirrors")
 
 			if triple == "" || outdir == "" {
 				cli.ShowCommandHelpAndExit(c, "setup-kclvm", 0)
@@ -47,6 +52,9 @@ func NewSetpupKclvmCmd() *cli.Command {
 			}
 
 			scripts.DefaultKclvmTriple = triple
+			if len(mirrors) != 0 {
+				scripts.KclvmDownloadUrlBase_mirrors = append(scripts.KclvmDownloadUrlBase_mirrors, mirrors...)
+			}
 
 			err := scripts.SetupKclvm(outdir)
 			if err != nil {
