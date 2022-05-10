@@ -54,10 +54,14 @@ func SetupKclvmAll(outdir string) error {
 
 	for _, triple := range KclvmTripleList {
 		DefaultKclvmTriple = triple
-		err := SetupKclvm(filepath.Join(outdir, triple))
+		root := filepath.Join(outdir, triple)
+
+		err := SetupKclvm(root)
 		if err != nil {
 			return err
 		}
+
+		fmt.Println(root, "ok")
 	}
 
 	return nil
@@ -176,11 +180,13 @@ func DownloadKclvm(triple, localFilename string) error {
 	var urls = []string{KclvmDownloadUrlBase + kclvmFilename}
 
 	for _, s := range KclvmDownloadUrlBase_mirrors {
-		mirrorBase := s
-		if !strings.HasSuffix(mirrorBase, "/") {
-			mirrorBase += "/"
+		mirrorBase := strings.TrimSpace(s)
+		if mirrorBase != "" {
+			if !strings.HasSuffix(mirrorBase, "/") {
+				mirrorBase += "/"
+			}
+			urls = append(urls, mirrorBase+kclvmFilename)
 		}
-		urls = append(urls, mirrorBase+kclvmFilename)
 	}
 
 	var errs = make(chan error, len(urls))

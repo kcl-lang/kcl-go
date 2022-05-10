@@ -5,6 +5,8 @@ package command
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/urfave/cli/v2"
 
@@ -16,6 +18,7 @@ var cmdSetupKclvmFlags = []cli.Flag{
 		Name:  "all",
 		Usage: "setup kclvm for all platform",
 	},
+
 	&cli.StringFlag{
 		Name:  "triple",
 		Usage: "set kclvm triple",
@@ -24,8 +27,9 @@ var cmdSetupKclvmFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:  "outdir",
 		Usage: "set kclvm output dir",
-		Value: "_build",
+		Value: "_build", // _build/${triple}
 	},
+
 	&cli.StringSliceFlag{
 		Name:  "mirrors",
 		Usage: "set mirror list",
@@ -49,7 +53,14 @@ func NewSetpupKclvmCmd() *cli.Command {
 			all := c.Bool("all")
 			triple := c.String("triple")
 			outdir := c.String("outdir")
-			mirrors := c.StringSlice("mirrors")
+
+			var mirrors []string
+			for _, s := range c.StringSlice("mirrors") {
+				s := strings.TrimSpace(s)
+				if s != "" {
+					mirrors = append(mirrors, s)
+				}
+			}
 
 			if len(mirrors) != 0 {
 				scripts.KclvmDownloadUrlBase_mirrors = append(scripts.KclvmDownloadUrlBase_mirrors, mirrors...)
@@ -68,15 +79,9 @@ func NewSetpupKclvmCmd() *cli.Command {
 				cli.ShowCommandHelpAndExit(c, "setup-kclvm", 0)
 			}
 
-			if triple != scripts.DefaultKclvmTriple {
-				if outdir == "" || outdir == "_"+scripts.DefaultKclvmTriple+"-root_" {
-					outdir = "_" + triple + "-root_"
-				}
-			}
-
 			scripts.DefaultKclvmTriple = triple
 
-			err := scripts.SetupKclvm(outdir)
+			err := scripts.SetupKclvm(filepath.Join(outdir, triple))
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
