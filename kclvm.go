@@ -49,6 +49,11 @@ type (
 	KclType = kcl.KclType
 )
 
+// InitKclvmPath init kclvm path.
+func InitKclvmPath(kclvmRoot string) {
+	kclvm_runtime.InitKclvmPath(kclvmRoot)
+}
+
 // InitKclvmRuntime init kclvm process.
 func InitKclvmRuntime(n int) {
 	kclvm_runtime.InitRuntime(n)

@@ -21,6 +21,14 @@ var kclvmPath = findKclvm_exePath()
 
 var ErrKclvmNotFound = errors.New("kclvm not found")
 
+func InitKclvmPath(kclvmRoot string) {
+	if runtime.GOOS == "windows" {
+		kclvmPath = filepath.Join(kclvmRoot, "kclvm.exe")
+	} else {
+		kclvmPath = filepath.Join(kclvmRoot, "bin", "kclvm")
+	}
+}
+
 func GetKclvmPath() (string, error) {
 	if kclvmPath == "" {
 		return "", ErrKclvmNotFound

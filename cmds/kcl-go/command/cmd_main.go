@@ -51,6 +51,8 @@ func Main() {
 	}
 
 	app.Commands = []*cli.Command{
+		NewSetpupKclvmCmd(),
+
 		NewKclCmd(), // go run main.go kcl -D aa=11 -D bb=22 main.k other.k
 
 		NewRunCmd(),
