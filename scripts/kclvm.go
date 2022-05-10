@@ -5,6 +5,7 @@ package scripts
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -14,10 +15,13 @@ import (
 	kcl_plugin "kusionstack.io/kcl-plugin"
 )
 
-const (
-	KclvmDownloadUrlBase        = "https://github.com/KusionStack/KCLVM/releases/download/"
-	KclvmDownloadUrlBase_mirror = ""
-)
+const KclvmDownloadUrlBase = "https://github.com/KusionStack/KCLVM/releases/download/"
+
+var KclvmDownloadUrlBase_mirrors = []string{
+	// test: python3 -m http.server => http://127.0.0.1:8000/
+
+	// "http://127.0.0.1:8000/downloads",
+}
 
 const KclvmVersion = "0.4.1-alpha.4"
 
@@ -46,32 +50,50 @@ func SetupKclvm(kclvmRoot string) error {
 	return nil
 }
 
-func InstallKclvm(kclvmRoot string) error {
-	if runtime.GOOS == "windows" {
-		kclvmExe := JoinedPath(kclvmRoot, "kclvm.exe")
-		if FileExists(kclvmExe) {
-			return nil
-		}
-	} else {
-		kclvmExe := JoinedPath(kclvmRoot, "bin", "kclvm")
-		if FileExists(kclvmExe) {
-			return nil
-		}
+func InstallKclvm(kclvmRoot string) (err error) {
+	md5sumFile := JoinedPath(kclvmRoot, "md5sum.txt")
+	if FileExists(md5sumFile) {
+		return nil
 	}
 
 	var triple = GetKclvmTriple()
-	var localFilename = "zz_kclvm.download.dat"
+	var localFilename = "zz_download-" + GetKclvmFilename(triple)
+	defer func() {
+		if err == nil {
+			os.Remove(localFilename)
+		}
+	}()
 
-	defer os.Remove(localFilename)
 	if err := DownloadKclvm(triple, localFilename); err != nil {
 		return err
 	}
 
-	if strings.Contains(triple, "windows") {
-		return Unzip(localFilename, kclvmRoot)
+	if strings.HasSuffix(localFilename, ".zip") {
+		if err := Unzip(localFilename, kclvmRoot); err != nil {
+			return err
+		}
 	} else {
-		return UnTarGz(localFilename, kclvmRoot)
+		if err := UnTarGz(localFilename, "kclvm", kclvmRoot); err != nil {
+			return err
+		}
 	}
+
+	// write md5sum
+	if s := filepath.Join(kclvmRoot, "md5sum.txt"); !FileExists(s) {
+		txt := fmt.Sprintf("%s *%s\n", GetKclvmMd5um(triple), GetKclvmFilename(triple))
+		if err := ioutil.WriteFile(s, []byte(txt), 0666); err != nil {
+			return err
+		}
+	}
+
+	// write VERSION
+	if s := filepath.Join(kclvmRoot, "VERSION"); !FileExists(s) {
+		if err := ioutil.WriteFile(s, []byte(KclvmVersion), 0666); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func GetKclvmTriple() string {
@@ -91,6 +113,19 @@ func GetKclvmTriple() string {
 	return ""
 }
 
+func GetKclvmFilename(triple string) string {
+	ext := "tar.gz"
+	if strings.Contains(strings.ToLower(triple), "windows") {
+		ext = "zip"
+	}
+	return fmt.Sprintf("%s-%s.%s", triple, KclvmVersion, ext)
+}
+
+func GetKclvmMd5um(triple string) string {
+	kclvmFilename := GetKclvmFilename(triple)
+	return KclvmMd5sum[kclvmFilename]
+}
+
 func DownloadKclvm(triple, localFilename string) error {
 	if triple == "" {
 		triple = GetKclvmTriple()
@@ -99,12 +134,7 @@ func DownloadKclvm(triple, localFilename string) error {
 		return fmt.Errorf("triple missing")
 	}
 
-	ext := "tar.gz"
-	if strings.Contains(strings.ToLower(triple), "windows") {
-		ext = "zip"
-	}
-
-	kclvmFilename := fmt.Sprintf("%s-%s.%s", triple, KclvmVersion, ext)
+	kclvmFilename := GetKclvmFilename(triple)
 	md5sum := KclvmMd5sum[kclvmFilename]
 
 	if md5sum == "" {
@@ -118,8 +148,13 @@ func DownloadKclvm(triple, localFilename string) error {
 	defer cancel() // cancel when we are finished consuming integers
 
 	var urls = []string{KclvmDownloadUrlBase + kclvmFilename}
-	if KclvmDownloadUrlBase_mirror != "" {
-		urls = append(urls, KclvmDownloadUrlBase_mirror+kclvmFilename)
+
+	for _, s := range KclvmDownloadUrlBase_mirrors {
+		mirrorBase := s
+		if !strings.HasSuffix(mirrorBase, "/") {
+			mirrorBase += "/"
+		}
+		urls = append(urls, mirrorBase+kclvmFilename)
 	}
 
 	var errs = make(chan error, len(urls))

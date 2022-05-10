@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
-func UnTarGz(tarGzFile, outputDir string) error {
-	os.MkdirAll(outputDir, 0666)
+func UnTarGz(tarGzFile, trimPrefix, outputDir string) error {
+	os.MkdirAll(outputDir, 0777)
 
 	gzipStream, err := os.Open(tarGzFile)
 	if err != nil {
@@ -33,11 +35,13 @@ func UnTarGz(tarGzFile, outputDir string) error {
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := os.Mkdir(header.Name, 0755); err != nil {
-				return fmt.Errorf("UnTarGz: Mkdir() failed: %w", err)
+			path := filepath.Join(outputDir, strings.TrimPrefix(header.Name, trimPrefix))
+			if err := os.MkdirAll(path, 0777); err != nil {
+				return fmt.Errorf("UnTarGz: MkdirAll() failed: %w", err)
 			}
 		case tar.TypeReg:
-			outFile, err := os.Create(header.Name)
+			path := filepath.Join(outputDir, strings.TrimPrefix(header.Name, trimPrefix))
+			outFile, err := os.Create(path)
 			if err != nil {
 				return fmt.Errorf("UnTarGz: Create() failed: %w", err)
 			}

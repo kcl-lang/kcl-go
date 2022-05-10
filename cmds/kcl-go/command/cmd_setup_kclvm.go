@@ -3,6 +3,9 @@
 package command
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/urfave/cli/v2"
 
 	"kusionstack.io/kclvm-go/scripts"
@@ -19,12 +22,13 @@ func NewSetpupKclvmCmd() *cli.Command {
 		Flags:     cmdSetupKclvmFlags,
 		Action: func(c *cli.Context) error {
 			if c.NArg() == 0 {
-				cli.ShowAppHelpAndExit(c, 0)
+				cli.ShowCommandHelpAndExit(c, "setup-kclvm", 0)
 			}
 
 			err := scripts.SetupKclvm(c.Args().First())
 			if err != nil {
-				return err
+				fmt.Println(err)
+				os.Exit(1)
 			}
 
 			return nil
