@@ -1,7 +1,7 @@
 # https://github.com/princjef/gomarkdoc
 # go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest
 
-KCLVM_URL_MIRRORS:= #http://127.0.0.1:8000/downloads
+KCLVM_URL_MIRRORS:=http://antsys-kusion-dev.cn-hangzhou-alipay-b.oss-cdn.aliyun-inc.com/KCLVM
 
 default:
 	which kclvm
