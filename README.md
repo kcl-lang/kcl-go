@@ -68,14 +68,6 @@ x1:
     name: kcl
 ```
 
-## Playgrdound
-
-```
-$ go run ./cmds/kcl-go play
-```
-
-![](./docs/images/play.jpg)
-
 ## Develop Guide
 
 - [docs/readme.md](docs/readme.md)

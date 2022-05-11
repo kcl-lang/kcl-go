@@ -21,3 +21,4 @@
 - `/pkg/spec`: Protobuf 生成的文件, 请参考 https://github.com/KusionStack/kclvm-go/tree/master/pkg/spec
 - `/pkg/tools`: 命令行子命令实现
 - `/pkg/utils`: 内部辅助函数
+- `/scripts`: 用于构建和打包的辅助函数
