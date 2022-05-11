@@ -43,7 +43,7 @@ var (
 		// 0.4.1-alpha.5
 		"kclvm-Darwin-0.4.1-alpha.5.tar.gz":       "ba2ee5413a30446fa36fc327f41b0ff0",
 		"kclvm-Darwin-arm64-0.4.1-alpha.5.tar.gz": "ba2ee5413a30446fa36fc327f41b0ff0",
-		"kclvm-centos-0.4.1-alpha.5.tar.gz":       "bf64be47394efa7f533dd3c50b2300af",
+		"kclvm-centos-0.4.1-alpha.5.tar.gz":       "297aacced98eee148f67b882db874851",
 		"kclvm-ubuntu-0.4.1-alpha.5.tar.gz":       "3f83bc70e3f44afbab8bb0913673680f",
 
 		// 0.4.1-alpha.4
