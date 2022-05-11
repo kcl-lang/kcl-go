@@ -34,7 +34,9 @@ var (
 	KclvmVersionList = []string{
 		"0.4.1-alpha.4",
 		"0.4.1-alpha.5",
+
 		"latest", // todo
+		"dev",    // todo
 	}
 
 	KclvmMd5sum = map[string]string{
