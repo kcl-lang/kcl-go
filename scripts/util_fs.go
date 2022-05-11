@@ -2,12 +2,7 @@ package scripts
 
 import (
 	"os"
-	"path/filepath"
 )
-
-func JoinedPath(elem ...string) string {
-	return filepath.Join(elem...)
-}
 
 func FileExists(path string) bool {
 	fi, err := os.Lstat(path)

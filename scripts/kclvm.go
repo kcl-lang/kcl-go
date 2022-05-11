@@ -15,36 +15,34 @@ import (
 	kcl_plugin "kusionstack.io/kcl-plugin"
 )
 
-const KclvmDownloadUrlBase = "https://github.com/KusionStack/KCLVM/releases/download/"
+const KclvmAbiVersion = "0.4.1"
 
-var DefaultKclvmTriple = getKclvmTriple()
+var (
+	DefaultKclvmTriple = getKclvmTriple()
 
-var KclvmDownloadUrlBase_mirrors = []string{
-	// test: python3 -m http.server => http://127.0.0.1:8000/
+	KclvmVersion                 = "0.4.1-alpha.4"
+	KclvmDownloadUrlBase         = "https://github.com/KusionStack/KCLVM/releases/download/"
+	KclvmDownloadUrlBase_mirrors = []string{}
 
-	// "http://127.0.0.1:8000/downloads",
-}
+	KclvmTripleList = []string{
+		"kclvm-centos",
+		"kclvm-Darwin",
+		"kclvm-Darwin-arm64",
+		"kclvm-ubuntu",
+	}
 
-const KclvmVersion = "0.4.1-alpha.4"
+	KclvmVersionList = []string{
+		"0.4.1-alpha.4",
+	}
 
-var KclvmVersionList = []string{
-	"0.4.1-alpha.4",
-}
-
-var KclvmMd5sum = map[string]string{
-	// 0.4.1-alpha.4
-	"kclvm-centos-0.4.1-alpha.4.tar.gz":       "5329374c2cb336f34cacc4e088b88496",
-	"kclvm-Darwin-0.4.1-alpha.4.tar.gz":       "409da9310cbcf5a7ef38c1895112f3ae",
-	"kclvm-Darwin-arm64-0.4.1-alpha.4.tar.gz": "7dc7f293ec45870a75d49e5f5d6fd2d5",
-	"kclvm-ubuntu-0.4.1-alpha.4.tar.gz":       "809f8a2f5b7721bee773457a03abfe90",
-}
-
-var KclvmTripleList = []string{
-	"kclvm-centos",
-	"kclvm-Darwin",
-	"kclvm-Darwin-arm64",
-	"kclvm-ubuntu",
-}
+	KclvmMd5sum = map[string]string{
+		// 0.4.1-alpha.4
+		"kclvm-centos-0.4.1-alpha.4.tar.gz":       "5329374c2cb336f34cacc4e088b88496",
+		"kclvm-Darwin-0.4.1-alpha.4.tar.gz":       "409da9310cbcf5a7ef38c1895112f3ae",
+		"kclvm-Darwin-arm64-0.4.1-alpha.4.tar.gz": "7dc7f293ec45870a75d49e5f5d6fd2d5",
+		"kclvm-ubuntu-0.4.1-alpha.4.tar.gz":       "809f8a2f5b7721bee773457a03abfe90",
+	}
+)
 
 func SetupKclvmAll(outdir string) error {
 	defaultBackup := DefaultKclvmTriple
@@ -81,7 +79,7 @@ func SetupKclvm(kclvmRoot string) error {
 }
 
 func InstallKclvm(kclvmRoot string) (err error) {
-	md5sumFile := JoinedPath(kclvmRoot, "md5sum.txt")
+	md5sumFile := filepath.Join(kclvmRoot, "md5sum.txt")
 	if FileExists(md5sumFile) {
 		return nil
 	}

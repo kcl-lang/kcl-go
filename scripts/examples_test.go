@@ -15,6 +15,7 @@ func Example_all() {
 }
 
 func Example_setupKclvm() {
+	// scripts.KclvmVersion = "...dev-version..."
 	// scripts.KclvmDownloadUrlBase_mirrors = []string{ ... }
 
 	scripts.DefaultKclvmTriple = "kclvm-centos"
