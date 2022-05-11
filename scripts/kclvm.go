@@ -18,9 +18,9 @@ import (
 const KclvmAbiVersion = "0.4.1"
 
 var (
-	DefaultKclvmTriple = getKclvmTriple()
+	DefaultKclvmVersion = "0.4.1-alpha.5"
+	DefaultKclvmTriple  = getKclvmTriple()
 
-	KclvmVersion                 = "0.4.1-alpha.4"
 	KclvmDownloadUrlBase         = "https://github.com/KusionStack/KCLVM/releases/download/"
 	KclvmDownloadUrlBase_mirrors = []string{}
 
@@ -33,9 +33,17 @@ var (
 
 	KclvmVersionList = []string{
 		"0.4.1-alpha.4",
+		"0.4.1-alpha.5",
+		"latest", // todo
 	}
 
 	KclvmMd5sum = map[string]string{
+		// 0.4.1-alpha.5
+		"kclvm-Darwin-0.4.1-alpha.5.tar.gz":       "ba2ee5413a30446fa36fc327f41b0ff0",
+		"kclvm-Darwin-arm64-0.4.1-alpha.5.tar.gz": "ba2ee5413a30446fa36fc327f41b0ff0",
+		"kclvm-centos-0.4.1-alpha.5.tar.gz":       "bf64be47394efa7f533dd3c50b2300af",
+		"kclvm-ubuntu-0.4.1-alpha.5.tar.gz":       "3f83bc70e3f44afbab8bb0913673680f",
+
 		// 0.4.1-alpha.4
 		"kclvm-centos-0.4.1-alpha.4.tar.gz":       "5329374c2cb336f34cacc4e088b88496",
 		"kclvm-Darwin-0.4.1-alpha.4.tar.gz":       "409da9310cbcf5a7ef38c1895112f3ae",
@@ -116,7 +124,7 @@ func InstallKclvm(kclvmRoot string) (err error) {
 
 	// write VERSION
 	if s := filepath.Join(kclvmRoot, "VERSION"); !FileExists(s) {
-		if err := ioutil.WriteFile(s, []byte(KclvmVersion), 0666); err != nil {
+		if err := ioutil.WriteFile(s, []byte(DefaultKclvmVersion), 0666); err != nil {
 			return err
 		}
 	}
@@ -146,7 +154,7 @@ func GetKclvmFilename(triple string) string {
 	if strings.Contains(strings.ToLower(triple), "windows") {
 		ext = "zip"
 	}
-	return fmt.Sprintf("%s-%s.%s", triple, KclvmVersion, ext)
+	return fmt.Sprintf("%s-%s.%s", triple, DefaultKclvmVersion, ext)
 }
 
 func GetKclvmMd5um(triple string) string {
