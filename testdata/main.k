@@ -1,5 +1,4 @@
 import kcl_plugin.hello
-import kcl_plugin.cmdb
 
 name = "kcl-go"
 age = 2

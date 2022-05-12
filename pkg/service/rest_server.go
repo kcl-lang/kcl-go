@@ -244,6 +244,20 @@ func (p *restServer) handle_ListDepFiles(w http.ResponseWriter, r *http.Request,
 	})
 }
 
+func (p *restServer) handle_ListUpStreamFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.ListUpStreamFiles_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.ListUpStreamFiles(args)
+	})
+}
+
+func (p *restServer) handle_ListDownStreamFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.ListDownStreamFiles_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.ListDownStreamFiles(args)
+	})
+}
+
 func (p *restServer) handle_LoadSettingsFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	args := new(gpyrpc.LoadSettingsFiles_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {

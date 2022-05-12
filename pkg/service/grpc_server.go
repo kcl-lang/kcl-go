@@ -97,6 +97,12 @@ func (p *_KclvmServiceImpl) Hover(ctx context.Context, args *gpyrpc.Hover_Args) 
 func (p *_KclvmServiceImpl) ListDepFiles(ctx context.Context, args *gpyrpc.ListDepFiles_Args) (*gpyrpc.ListDepFiles_Result, error) {
 	return p.c.ListDepFiles(args)
 }
+func (p *_KclvmServiceImpl) ListUpStreamFiles(ctx context.Context, args *gpyrpc.ListUpStreamFiles_Args) (*gpyrpc.ListUpStreamFiles_Result, error) {
+	return p.c.ListUpStreamFiles(args)
+}
+func (p *_KclvmServiceImpl) ListDownStreamFiles(ctx context.Context, args *gpyrpc.ListDownStreamFiles_Args) (*gpyrpc.ListDownStreamFiles_Result, error) {
+	return p.c.ListDownStreamFiles(args)
+}
 func (p *_KclvmServiceImpl) LoadSettingsFiles(ctx context.Context, args *gpyrpc.LoadSettingsFiles_Args) (*gpyrpc.LoadSettingsFiles_Result, error) {
 	return p.c.LoadSettingsFiles(args)
 }

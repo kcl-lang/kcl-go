@@ -4,7 +4,11 @@ package kcl
 
 import (
 	"fmt"
+	"reflect"
+	"sort"
 	"testing"
+
+	"kusionstack.io/kclvm-go/pkg/tools/list"
 )
 
 var _ = fmt.Sprint
@@ -83,4 +87,29 @@ func TestGetSchemaType(t *testing.T) {
 	result, err := GetSchemaType("main.k", k_code, "")
 	tAssert(t, err == nil)
 	_ = result
+}
+
+func TestListUpstreamFiles(t *testing.T) {
+	deps, err := list.ListUpStreamFiles("./testdata/complicate", &list.DepOption{Files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expect := []string{
+		"appops/projectA/base/base.k",
+		"appops/projectA/dev/main.k",
+		"base/render/server/server_render.k",
+		"base/frontend/server/server.k",
+		"base/frontend/container/container.k",
+		"base/frontend/container/container_port.k",
+		"base/frontend/server",
+		"base/frontend/container",
+	}
+
+	sort.Strings(deps)
+	sort.Strings(expect)
+
+	if !reflect.DeepEqual(deps, expect) {
+		t.Fatalf("\nexpect = %v\ngot    = %v", expect, deps)
+	}
 }

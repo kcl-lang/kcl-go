@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// FindPkgInfo find the pkg information(1. the pkg root 2. the pkg path of current workdir)
 func FindPkgInfo(workDir string) (pkgroot, pkgpath string, err error) {
 	// fix ${env}
 	if idxEnvStart := strings.Index(workDir, "${"); idxEnvStart >= 0 {

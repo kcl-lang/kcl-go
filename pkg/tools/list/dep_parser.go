@@ -527,75 +527,6 @@ func loadKFileList(vfs fs.FS, path string, opt Option) []string {
 	return k_files
 }
 
-func parseImport(code string) []string {
-	var m = make(map[string]string)
-	var longStrPrefix string
-	for _, line := range strings.Split(code, "\n") {
-		lineCode := strings.TrimSpace(line)
-		if idx := strings.Index(lineCode, "#"); idx >= 0 {
-			lineCode = strings.TrimSpace(lineCode[:idx])
-		}
-		if lineCode == "" {
-			continue
-		}
-
-		// skip long string
-		if longStrPrefix != "" {
-			if strings.HasSuffix(lineCode, longStrPrefix) {
-				longStrPrefix = "" // long string end
-			}
-			continue // skip
-		} else {
-			if strings.HasPrefix(lineCode, `"""`) {
-				longStrPrefix = `"""`
-				if strings.HasSuffix(lineCode[len(`"""`):], longStrPrefix) {
-					longStrPrefix = "" // long string end
-				}
-				continue
-			}
-			if strings.HasPrefix(lineCode, `'''`) {
-				longStrPrefix = `'''`
-				if strings.HasSuffix(lineCode[len(`'''`):], longStrPrefix) {
-					longStrPrefix = "" // long string end
-				}
-				continue
-			}
-
-			// skip short string
-			if strings.HasPrefix(lineCode, `"`) {
-				continue
-			}
-			if strings.HasPrefix(lineCode, `'`) {
-				continue
-			}
-		}
-
-		ss := strings.Fields(lineCode)
-		if len(ss) == 0 {
-			continue
-		}
-
-		// 'import xx' must at the begin
-		if !strings.HasPrefix(ss[0], "import") {
-			break
-		}
-
-		// import abc
-		// import abc as bcd
-		if len(ss) >= 0 {
-			pkgpath := strings.Trim(ss[1], `'"`)
-			m[pkgpath] = pkgpath
-		}
-	}
-
-	var import_list []string
-	for pkgpath := range m {
-		import_list = append(import_list, pkgpath)
-	}
-	sort.Strings(import_list)
-	return import_list
-}
-
 // kcl_cli_configs:
 //   file:
 //     - ../../../../base/pkg/kusion_models/app_configuration/sofa/sofa_app_configuration_render.k
@@ -607,40 +538,4 @@ func parseImport(code string) []string {
 //   disable_none: true
 func fixKclYamlFilePath(dir, filepath string) string {
 	return pathpkg.Join(dir, filepath)
-}
-
-func fixImportPath(filepath, import_path string) string {
-	if !strings.HasPrefix(import_path, ".") {
-		return strings.Replace(import_path, ".", "/", -1)
-	}
-
-	pkgpath := filepath
-	if strings.HasSuffix(pkgpath, ".k") {
-		pkgpath = pathpkg.Dir(pkgpath)
-	}
-
-	// count leading dot
-	var dotCount = len(import_path)
-	for i, c := range import_path {
-		if c != '.' {
-			dotCount = i
-			break
-		}
-	}
-	import_path = import_path[dotCount:]
-	import_path = strings.Replace(import_path, ".", "/", -1)
-
-	// import .metadata
-	if dotCount == 1 {
-		import_path = pkgpath + "/" + import_path
-		return strings.Replace(import_path, ".", "/", -1)
-	}
-
-	var ss = strings.Split(pkgpath, "/")
-	if (dotCount - 1) > len(ss) {
-		dotCount = len(ss) + 1
-	}
-
-	import_parts := append(ss[:len(ss)-(dotCount-1)], import_path)
-	return strings.Join(import_parts, "/")
 }

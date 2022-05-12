@@ -9,6 +9,8 @@ import (
 	"sort"
 	"testing"
 	"testing/fstest"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFindPkgInfo(t *testing.T) {
@@ -34,6 +36,102 @@ func TestFindPkgInfo_failed(t *testing.T) {
 	}
 }
 
+func TestDepParser_graph(t *testing.T) {
+	for _, testdata := range testDepParser {
+		t.Run(testdata.name, func(t *testing.T) {
+			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files})
+			assert.Nil(t, err, "NewDepParser failed")
+			deps := depParser.ListUpstreamFiles()
+			assert.ElementsMatch(t, testdata.depFiles, deps)
+		})
+	}
+}
+
+func TestDepParser_affected(t *testing.T) {
+	for _, testdata := range testDepParser {
+		t.Run(testdata.name, func(t *testing.T) {
+			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files, ChangedPaths: testdata.changed})
+			assert.Nil(t, err, "NewDepParser failed")
+			affected := depParser.ListDownStreamFiles()
+			assert.ElementsMatch(t, testdata.affected, affected)
+		})
+	}
+}
+
+var testDepParser = []struct {
+	name     string
+	root     string
+	files    []string
+	depFiles []string
+	changed  []string
+	affected []string
+}{
+	{
+		name:  "projectA",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k"},
+		depFiles: []string{
+			"appops/projectA/base/base.k",
+			"appops/projectA/dev/main.k",
+			"base/render/server/server_render.k",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+		},
+		changed: []string{"base/frontend/container/container_port.k"},
+		affected: []string{
+			"base/frontend/container/container_port.k",
+			"base/frontend/container",
+			"base/frontend/server/server.k",
+			"base/frontend/server",
+			"appops/projectA/base",
+			"appops/projectA/base/base.k",
+		},
+	},
+	{
+		name:  "projectB",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectB/base/base.k", "appops/projectB/dev/main.k", "base/render/job/job_render.k"},
+		depFiles: []string{
+			"appops/projectB/base/base.k",
+			"appops/projectB/dev/main.k",
+			"base/render/job/job_render.k",
+			"base/frontend/job",
+			"base/frontend/job/job.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+		},
+		changed: []string{"base/render/job/job_render.k"},
+		affected: []string{
+			"base/render/job/job_render.k",
+			"base/render/job",
+		},
+	},
+	{
+		name:  "projectAB",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k", "appops/projectB/base/base.k", "appops/projectB/dev/main.k", "base/render/job/job_render.k"},
+		depFiles: []string{
+			"appops/projectA/base/base.k",
+			"appops/projectB/base/base.k",
+			"appops/projectA/dev/main.k",
+			"appops/projectB/dev/main.k",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+			"base/frontend/job",
+			"base/frontend/job/job.k",
+			"base/render/server/server_render.k",
+			"base/render/job/job_render.k",
+		},
+	},
+}
+
 func TestDepParser_kclModEnv(t *testing.T) {
 	depParser := NewDepParser("./testdata/kcl_mod_env/")
 	appFiles := depParser.GetPkgFileList(".")
@@ -51,8 +149,7 @@ func TestDepParser_listDepFiles(t *testing.T) {
 
 	depParser := NewDepParser(pkgroot, Option{})
 
-	includeDependFiles := true
-	files := depParser.GetAppFiles(pkgpath, includeDependFiles)
+	files := depParser.GetAppFiles(pkgpath, true)
 
 	expect := []string{
 		"main.k",
@@ -75,8 +172,7 @@ func TestSingleAppDepParser_listDepFiles(t *testing.T) {
 
 	depParser := NewSingleAppDepParser(pkgroot, Option{})
 
-	includeDependFiles := true
-	files := depParser.GetAppFiles(pkgpath, includeDependFiles)
+	files := depParser.GetAppFiles(pkgpath, true)
 
 	expect := []string{
 		"main.k",

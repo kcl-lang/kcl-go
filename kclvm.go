@@ -41,6 +41,7 @@ import (
 
 type (
 	Option             = kcl.Option
+	ListDepsOption     = list.DepOption
 	ListDepFilesOption = list.Option
 	ValidateOptions    = validate.ValidateOptions
 	KCLResult          = kcl.KCLResult
@@ -130,6 +131,16 @@ func FormatPath(path string) (changedPaths []string, err error) {
 // ListDepFiles return the depend files from the given path
 func ListDepFiles(workDir string, opt *ListDepFilesOption) (files []string, err error) {
 	return list.ListDepFiles(workDir, opt)
+}
+
+// ListUpStreamFiles return a list of upstream depend files from the given path list
+func ListUpStreamFiles(workDir string, opt *ListDepsOption) (deps []string, err error) {
+	return list.ListUpStreamFiles(workDir, opt)
+}
+
+// ListDownStreamFiles return a list of downstream depend files from the given changed path list.
+func ListDownStreamFiles(workDir string, opt *ListDepsOption) ([]string, error) {
+	return list.ListDownStreamFiles(workDir, opt)
 }
 
 // LintPath lint files from the given path
