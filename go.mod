@@ -1,6 +1,6 @@
 module kusionstack.io/kclvm-go
 
-go 1.18
+go 1.17
 
 require (
 	github.com/chai2010/jsonv v1.1.3
