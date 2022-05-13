@@ -1,0 +1,5 @@
+KCL Syntax Error[E1001] : Invalid syntax
+---> File ${PWD}/main.k:1:3
+1 |a=
+   3 ^  -> Expected one of ['all', 'any', 'bin_number', 'dec_number', 'False', 'filter', 'float_number', 'hex_number', 'lambda', '{', '[', '(', 'long_string', 'not', 'map', '-', 'name', 'None', '~', 'oct_number', '+', 'string', 'True', 'Undefined']
+Invalid syntax

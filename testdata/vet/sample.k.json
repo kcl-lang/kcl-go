@@ -1,0 +1,20 @@
+{
+    "foo": "TheaaaaFoo",
+    "bar": 8,
+    "fooList": [
+        2,
+        11
+    ],
+    "color": "Red",
+    "id": 100,
+    "customSample": {
+        "foo": "TheaaaaFoo",
+        "bar": 8,
+        "fooList": [
+            2,
+            10
+        ],
+        "color": "Red",
+        "id": 100
+    }
+}

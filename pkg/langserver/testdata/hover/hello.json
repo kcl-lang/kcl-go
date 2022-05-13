@@ -1,0 +1,16 @@
+{
+  "contents": {
+    "kind": "plaintext",
+    "value": "Person\ntype: Person\ndefined in:hello.k"
+  },
+  "range": {
+    "start": {
+      "line": 2,
+      "character": 8
+    },
+    "end": {
+      "line": 2,
+      "character": 14
+    }
+  }
+}

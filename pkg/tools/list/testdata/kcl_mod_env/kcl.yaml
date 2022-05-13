@@ -1,0 +1,4 @@
+kcl_cli_configs:
+  file:
+    - ${KCL_MOD}/main1.k
+    - ${KCL_MOD}/main2.k
