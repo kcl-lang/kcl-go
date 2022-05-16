@@ -22,7 +22,7 @@ var cmdSetupKclvmFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:  "triple",
 		Usage: "set kclvm triple",
-		Value: scripts.DefaultKclvmTriple,
+		Value: string(scripts.DefaultKclvmTriple),
 	},
 	&cli.StringFlag{
 		Name:  "outdir",
@@ -79,7 +79,7 @@ func NewSetpupKclvmCmd() *cli.Command {
 				cli.ShowCommandHelpAndExit(c, "setup-kclvm", 0)
 			}
 
-			scripts.DefaultKclvmTriple = triple
+			scripts.DefaultKclvmTriple = scripts.KclvmTripleType(triple)
 
 			err := scripts.SetupKclvm(filepath.Join(outdir, triple))
 			if err != nil {

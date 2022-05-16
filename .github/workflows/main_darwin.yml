@@ -12,4 +12,13 @@ jobs:
         with:
           go-version: 1.17
 
-      - run: go version
+      - run: go build ./cmds/kcl-go
+      - run: go run ./cmds/kcl-go
+
+      - run: go run ./cmds/kcl-go setup-kclvm -triple=Darwin -outdir=${HOME}/.kclvm-go
+      - run: echo "${HOME}/.kclvm-go/Darwin/bin" >> $GITHUB_PATH
+
+      - run: which kclvm
+      - run: which kcl
+
+      - run: go test ./...
