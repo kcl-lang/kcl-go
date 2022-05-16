@@ -1,7 +1,11 @@
 ## kclvm-go: KCLVM binding for Go
 
+[![GoDoc](https://godoc.org/github.com/KusionStack/kclvm-go?status.svg)](https://godoc.org/github.com/KusionStack/kclvm-go)
+[![Coverage Status](https://coveralls.io/repos/github/KusionStack/kclvm-go/badge.svg)](https://coveralls.io/github/KusionStack/kclvm-go)
+[![license](https://img.shields.io/github/license/KusionStack/kclvm-go.svg)](https://github.com/KusionStack/kclvm-go/blob/master/LICENSE)
+
 - [Install Go 17+](https://go.dev/dl/)
-- [Install kclvm](https://kusionstack.io/docs/user_docs/getting-started/install); or `go run ./cmds/kcl-go/ setup-kclvm` and add `./_build/{kclvm-???}/bin` to `PATH`
+- [Install kclvm](https://kusionstack.io/docs/user_docs/getting-started/install) (or `go run ./cmds/kcl-go/ setup-kclvm` and add `./_build/{Darwin|Darwin-arm64|Linux}/bin` to `PATH`)
 
 ```
 $ go version
