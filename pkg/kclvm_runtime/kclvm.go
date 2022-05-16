@@ -5,7 +5,6 @@ package kclvm_runtime
 import (
 	_ "embed"
 	"errors"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -61,8 +60,6 @@ func findKclvm_exePath() string {
 
 	if path, err := exec.LookPath(kclvmName); err == nil {
 		return path
-	} else {
-		log.Println("look kclvm from path failed:", err)
 	}
 
 	for _, dir := range []string{
@@ -76,7 +73,7 @@ func findKclvm_exePath() string {
 		}
 	}
 
-	return kclvmName
+	return ""
 }
 
 func getExeDir() string {
