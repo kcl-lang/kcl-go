@@ -191,6 +191,22 @@ func (p *KclvmServiceClient) ListDepFiles(args *gpyrpc.ListDepFiles_Args) (resp 
 	return
 }
 
+func (p *KclvmServiceClient) ListUpStreamFiles(args *gpyrpc.ListUpStreamFiles_Args) (resp *gpyrpc.ListUpStreamFiles_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).ListUpStreamFiles(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
+func (p *KclvmServiceClient) ListDownStreamFiles(args *gpyrpc.ListDownStreamFiles_Args) (resp *gpyrpc.ListDownStreamFiles_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).ListDownStreamFiles(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
 func (p *KclvmServiceClient) LoadSettingsFiles(args *gpyrpc.LoadSettingsFiles_Args) (resp *gpyrpc.LoadSettingsFiles_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).LoadSettingsFiles(args)

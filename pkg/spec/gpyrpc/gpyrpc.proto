@@ -107,6 +107,8 @@ service KclvmService {
 	rpc Hover(Hover_Args) returns(Hover_Result);
 
 	rpc ListDepFiles(ListDepFiles_Args) returns(ListDepFiles_Result);
+	rpc ListUpStreamFiles(ListUpStreamFiles_Args) returns(ListUpStreamFiles_Result);
+	rpc ListDownStreamFiles(ListDownStreamFiles_Args) returns(ListDownStreamFiles_Result);
 	rpc LoadSettingsFiles(LoadSettingsFiles_Args) returns(LoadSettingsFiles_Result);
 }
 
@@ -153,7 +155,7 @@ message ExecProgram_Args {
 
 	repeated string k_filename_list = 2;
 	repeated string k_code_list = 3;
-	
+
 	repeated CmdArgSpec args = 4;
 	repeated CmdOverrideSpec overrides = 5;
 
@@ -263,8 +265,8 @@ message ValidateCode_Result {
 }
 
 message CodeSnippet {
-    string schema = 1;
-    string rule = 2;
+	string schema = 1;
+	string rule = 2;
 }
 
 message SpliceCode_Args {
@@ -331,6 +333,25 @@ message ListDepFiles_Result {
 	repeated string files = 3;
 }
 
+message ListUpStreamFiles_Args {
+	string work_dir = 1;
+	repeated string files = 2;
+}
+
+message ListUpStreamFiles_Result {
+	repeated string files = 1;
+}
+
+message ListDownStreamFiles_Args {
+	string work_dir = 1;
+	repeated string files = 2;
+	repeated string changed_paths = 3;
+}
+
+message ListDownStreamFiles_Result {
+	repeated string files = 1;
+}
+
 // ---------------------------------------------------------------------------------
 // LoadSettingsFiles API
 //    Input work dir and setting files and return the merged kcl singleton config.
@@ -347,7 +368,7 @@ message LoadSettingsFiles_Result {
 }
 
 message CliConfig {
-    repeated string files = 1;
+	repeated string files = 1;
 	string output = 2;
 	repeated string overrides = 3;
 	repeated string path_selector = 4;

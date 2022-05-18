@@ -253,6 +253,29 @@ func TestGetSchemaType(t *testing.T) {
 	}, result)
 }
 
+func TestListUpStreamFiles(t *testing.T) {
+	files, err := kclvm.ListUpStreamFiles("./testdata/", &kclvm.ListDepsOption{Files: []string{"main.k", "app0/before/base.k", "app0/main.k"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expect := []string{
+		"main.k",
+		"app0/before/base.k",
+		"app0/main.k",
+		"app0/sub",
+		"app0/sub/sub.k",
+		"kcl_plugin/hello",
+	}
+
+	sort.Strings(files)
+	sort.Strings(expect)
+
+	if !reflect.DeepEqual(files, expect) {
+		t.Fatalf("\nexpect = %v\ngot    = %v", expect, files)
+	}
+}
+
 func TestListDepFiles(t *testing.T) {
 	files, err := kclvm.ListDepFiles("./testdata/app0", nil)
 	if err != nil {

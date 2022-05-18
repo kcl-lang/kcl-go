@@ -231,6 +231,8 @@ type PROTORPC_KclvmService interface {
 	DocumentSymbol(in *DocumentSymbol_Args, out *DocumentSymbol_Result) error
 	Hover(in *Hover_Args, out *Hover_Result) error
 	ListDepFiles(in *ListDepFiles_Args, out *ListDepFiles_Result) error
+	ListUpStreamFiles(in *ListUpStreamFiles_Args, out *ListUpStreamFiles_Result) error
+	ListDownStreamFiles(in *ListDownStreamFiles_Args, out *ListDownStreamFiles_Result) error
 	LoadSettingsFiles(in *LoadSettingsFiles_Args, out *LoadSettingsFiles_Result) error
 }
 
@@ -1087,6 +1089,84 @@ func (c *PROTORPC_KclvmServiceClient) AsyncListDepFiles(in *ListDepFiles_Args, o
 	}
 	return c.Go(
 		"KclvmService.ListDepFiles",
+		in, out,
+		done,
+	)
+}
+
+func (c *PROTORPC_KclvmServiceClient) ListUpStreamFiles(in *ListUpStreamFiles_Args) (out *ListUpStreamFiles_Result, err error) {
+	if in == nil {
+		in = new(ListUpStreamFiles_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(ListUpStreamFiles_Result)
+	if err = c.Call("KclvmService.ListUpStreamFiles", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncListUpStreamFiles(in *ListUpStreamFiles_Args, out *ListUpStreamFiles_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(ListUpStreamFiles_Args)
+	}
+	return c.Go(
+		"KclvmService.ListUpStreamFiles",
+		in, out,
+		done,
+	)
+}
+
+func (c *PROTORPC_KclvmServiceClient) ListDownStreamFiles(in *ListDownStreamFiles_Args) (out *ListDownStreamFiles_Result, err error) {
+	if in == nil {
+		in = new(ListDownStreamFiles_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(ListDownStreamFiles_Result)
+	if err = c.Call("KclvmService.ListDownStreamFiles", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncListDownStreamFiles(in *ListDownStreamFiles_Args, out *ListDownStreamFiles_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(ListDownStreamFiles_Args)
+	}
+	return c.Go(
+		"KclvmService.ListDownStreamFiles",
 		in, out,
 		done,
 	)
