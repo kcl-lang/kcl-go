@@ -23,10 +23,11 @@ const (
 )
 
 const (
-	KclvmAbiVersion KclvmVersionType = "v0.4.2"
+	KclvmAbiVersion         KclvmVersionType = "v0.4.2"
+	KclvmVersionType_latest                  = KclvmVersionType_v0_4_2_alpha_2
 
+	KclvmVersionType_v0_4_2_alpha_2 KclvmVersionType = "v0.4.2-alpha.2"
 	KclvmVersionType_v0_4_2_alpha_1 KclvmVersionType = "v0.4.2-alpha.1"
-	KclvmVersionType_latest                          = KclvmVersionType_v0_4_2_alpha_1
 )
 
 var (
@@ -55,9 +56,14 @@ var (
 	KclvmDownloadUrlBase_mirrors = []string{}
 
 	KclvmMd5sum = map[string]string{
-		"kclvm-v0.4.2-alpha.1-ubuntu.tar.gz": "2aa6fba3f4d3466b660ee8fc4ca65bff",
+		"kclvm-v0.4.2-alpha.2-Darwin.tar.gz":       "b588b1cccd53aae79c92b73bd3c33107",
+		"kclvm-v0.4.2-alpha.2-Darwin-arm64.tar.gz": "7ff626d3383d9dddd2a7f341ad6677c3",
+		"kclvm-v0.4.2-alpha.2-centos.tar.gz":       "8dc2aa00f87ef974921a6094988caa0d",
+		"kclvm-v0.4.2-alpha.2-ubuntu.tar.gz":       "35c12b2605e15b93ad053327f18db702",
+
 		"kclvm-v0.4.2-alpha.1-Darwin.tar.gz": "16015b02d6b490d9091b194e5829f1c4",
 		"kclvm-v0.4.2-alpha.1-centos.tar.gz": "c94f3adc1d4cd9c3aa4df3e55775d7d8",
+		"kclvm-v0.4.2-alpha.1-ubuntu.tar.gz": "2aa6fba3f4d3466b660ee8fc4ca65bff",
 	}
 )
 
