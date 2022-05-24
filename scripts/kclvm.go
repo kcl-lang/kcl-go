@@ -38,8 +38,8 @@ var (
 		KclvmTripleType_darwin,
 		KclvmTripleType_ubuntu,
 		KclvmTripleType_centos,
+		KclvmTripleType_darwin_arm64,
 
-		// KclvmTripleType_darwin_arm64,
 		// KclvmTripleType_windows,
 	}
 
@@ -56,14 +56,15 @@ var (
 	KclvmDownloadUrlBase_mirrors = []string{}
 
 	KclvmMd5sum = map[string]string{
-		"kclvm-v0.4.2-alpha.2-Darwin.tar.gz":       "b588b1cccd53aae79c92b73bd3c33107",
-		"kclvm-v0.4.2-alpha.2-Darwin-arm64.tar.gz": "7ff626d3383d9dddd2a7f341ad6677c3",
+		"kclvm-v0.4.2-alpha.2-Darwin.tar.gz":       "b9c4466c4fdedaade751633d6143bf62",
+		"kclvm-v0.4.2-alpha.2-Darwin-arm64.tar.gz": "bf023bc212f9951532d6c08934f5783b",
 		"kclvm-v0.4.2-alpha.2-centos.tar.gz":       "8dc2aa00f87ef974921a6094988caa0d",
 		"kclvm-v0.4.2-alpha.2-ubuntu.tar.gz":       "35c12b2605e15b93ad053327f18db702",
 
-		"kclvm-v0.4.2-alpha.1-Darwin.tar.gz": "16015b02d6b490d9091b194e5829f1c4",
-		"kclvm-v0.4.2-alpha.1-centos.tar.gz": "c94f3adc1d4cd9c3aa4df3e55775d7d8",
-		"kclvm-v0.4.2-alpha.1-ubuntu.tar.gz": "2aa6fba3f4d3466b660ee8fc4ca65bff",
+		"kclvm-v0.4.2-alpha.1-Darwin.tar.gz":       "16015b02d6b490d9091b194e5829f1c4",
+		"kclvm-v0.4.2-alpha.1-Darwin-arm64.tar.gz": "1e31cd3c1061e5e18da2fbc460f64472",
+		"kclvm-v0.4.2-alpha.1-centos.tar.gz":       "c94f3adc1d4cd9c3aa4df3e55775d7d8",
+		"kclvm-v0.4.2-alpha.1-ubuntu.tar.gz":       "2aa6fba3f4d3466b660ee8fc4ca65bff",
 	}
 )
 
@@ -100,7 +101,7 @@ func getKclvmTripleType(goos, goarch string) KclvmTripleType {
 		case "amd64":
 			return KclvmTripleType_darwin
 		case "arm64":
-			return KclvmTripleType_darwin // todo: KclvmTripleType_darwin_arm64
+			return KclvmTripleType_darwin_arm64
 		}
 	case "linux":
 		return KclvmTripleType_ubuntu
