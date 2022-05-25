@@ -42,7 +42,7 @@ func TestDepParser_graph(t *testing.T) {
 			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files})
 			assert.Nil(t, err, "NewDepParser failed")
 			deps := depParser.ListUpstreamFiles()
-			assert.ElementsMatch(t, testdata.depFiles, deps)
+			assert.ElementsMatch(t, testdata.upStreams, deps)
 		})
 	}
 }
@@ -53,24 +53,24 @@ func TestDepParser_affected(t *testing.T) {
 			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files, ChangedPaths: testdata.changed})
 			assert.Nil(t, err, "NewDepParser failed")
 			affected := depParser.ListDownStreamFiles()
-			assert.ElementsMatch(t, testdata.affected, affected)
+			assert.ElementsMatch(t, testdata.downStreams, affected)
 		})
 	}
 }
 
 var testDepParser = []struct {
-	name     string
-	root     string
-	files    []string
-	depFiles []string
-	changed  []string
-	affected []string
+	name        string
+	root        string
+	files       []string
+	upStreams   []string
+	changed     []string
+	downStreams []string
 }{
 	{
 		name:  "projectA",
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k"},
-		depFiles: []string{
+		upStreams: []string{
 			"appops/projectA/base/base.k",
 			"appops/projectA/dev/main.k",
 			"base/render/server/server_render.k",
@@ -81,7 +81,7 @@ var testDepParser = []struct {
 			"base/frontend/container/container_port.k",
 		},
 		changed: []string{"base/frontend/container/container_port.k"},
-		affected: []string{
+		downStreams: []string{
 			"base/frontend/container/container_port.k",
 			"base/frontend/container",
 			"base/frontend/server/server.k",
@@ -94,7 +94,7 @@ var testDepParser = []struct {
 		name:  "projectB",
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectB/base/base.k", "appops/projectB/dev/main.k", "base/render/job/job_render.k"},
-		depFiles: []string{
+		upStreams: []string{
 			"appops/projectB/base/base.k",
 			"appops/projectB/dev/main.k",
 			"base/render/job/job_render.k",
@@ -105,7 +105,7 @@ var testDepParser = []struct {
 			"base/frontend/container/container_port.k",
 		},
 		changed: []string{"base/render/job/job_render.k"},
-		affected: []string{
+		downStreams: []string{
 			"base/render/job/job_render.k",
 			"base/render/job",
 		},
@@ -114,7 +114,7 @@ var testDepParser = []struct {
 		name:  "projectAB",
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k", "appops/projectB/base/base.k", "appops/projectB/dev/main.k", "base/render/job/job_render.k"},
-		depFiles: []string{
+		upStreams: []string{
 			"appops/projectA/base/base.k",
 			"appops/projectB/base/base.k",
 			"appops/projectA/dev/main.k",
@@ -128,6 +128,83 @@ var testDepParser = []struct {
 			"base/frontend/job/job.k",
 			"base/render/server/server_render.k",
 			"base/render/job/job_render.k",
+		},
+	},
+	{
+		name:  "projectC-delete-unused-file",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectC/dev/main.k", "base/render/server/server_render.k"},
+		upStreams: []string{
+			"appops/projectC/dev/main.k",
+			"base/render/server/server_render.k",
+		},
+		changed: []string{"appops/projectC/base/base.k"},
+		downStreams: []string{
+			"appops/projectC/base/base.k",
+		},
+	},
+	{
+		name:  "projectD-delete-imported",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
+		upStreams: []string{
+			"appops/projectD/base/base.k",
+			"appops/projectD/dev/main.k",
+			"base/frontend/not_exist",
+		},
+		changed: []string{"base/frontend/not_exist/deleted_file.k"},
+		downStreams: []string{
+			"base/frontend/not_exist/deleted_file.k",
+			"base/frontend/not_exist",
+			"appops/projectD/base/base.k",
+			"appops/projectD/base",
+		},
+	},
+	{
+		name:  "projectD-delete-test-file",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
+		upStreams: []string{
+			"appops/projectD/base/base.k",
+			"appops/projectD/dev/main.k",
+			"base/frontend/not_exist",
+		},
+		changed: []string{"base/frontend/not_exist/deleted_test.k"},
+		downStreams: []string{
+			"base/frontend/not_exist/deleted_test.k",
+		},
+	},
+	{
+		name:  "projectD-delete-imported-pkg",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
+		upStreams: []string{
+			"appops/projectD/base/base.k",
+			"appops/projectD/dev/main.k",
+			"base/frontend/not_exist",
+		},
+		changed: []string{"base/frontend/not_exist"},
+		downStreams: []string{
+			"base/frontend/not_exist",
+			"appops/projectD/base/base.k",
+			"appops/projectD/base",
+		},
+	},
+	{
+		name:  "projectD-delete-imported-file",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
+		upStreams: []string{
+			"appops/projectD/base/base.k",
+			"appops/projectD/dev/main.k",
+			"base/frontend/not_exist",
+		},
+		changed: []string{"base/frontend/not_exist.k"},
+		downStreams: []string{
+			"base/frontend/not_exist.k",
+			"base/frontend/not_exist",
+			"appops/projectD/base/base.k",
+			"appops/projectD/base",
 		},
 	},
 }

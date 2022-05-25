@@ -3,6 +3,7 @@
 package list
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -89,17 +90,25 @@ func NewImportDepParserWithFS(vfs fs.FS, opt DepOption) *ImportDepParser {
 // if path is a file, each file in the pkg dir containing the file will be parsed
 // if path is a pkg path, each file in the pkg path will be parsed
 func (p *ImportDepParser) Inspect(path string) {
-	var k_files []string
+	var kFiles []string
 	pkgpath := path
+	isKclFile := false
 	if strings.HasSuffix(path, ".k") {
 		pkgpath = pathpkg.Dir(path)
+		isKclFile = true
 	}
 	pkgV := FileVertex{pkgpath}
 	p.depsGraph.AddVertex(&pkgV)
 	p.parsed[pkgpath] = true
 	p.parsed[path] = true
-	k_files = listKFiles(p.vfs, pkgpath)
-	for _, f := range k_files {
+	if isKclFile {
+		fileV := FileVertex{path}
+		p.depsGraph.AddVertex(&fileV)
+		p.depsGraph.AddEdge(&DepsEdge{fileV, pkgV})
+	}
+	kFiles = listKFiles(p.vfs, pkgpath)
+
+	for _, f := range kFiles {
 		currentFileV := FileVertex{f}
 		p.depsGraph.AddVertex(&currentFileV)
 		p.depsGraph.AddEdge(&DepsEdge{currentFileV, pkgV})
@@ -132,15 +141,32 @@ func (p *ImportDepParser) fixPath(path string) string {
 
 // ListDownStreamFiles return a list of downstream depend files from the given changed path list.
 func (p *ImportDepParser) ListDownStreamFiles() []string {
+	for _, path := range p.opt.ChangedPaths {
+		if strings.HasSuffix(path, ".k") && !strings.HasSuffix(path, "_test.k") {
+			if _, err := fs.Stat(p.vfs, path); errors.Is(err, os.ErrNotExist) {
+				// changed KCL file (not test file) not exists, might be deleted
+				pkgpath := pathpkg.Dir(path)
+				importPath := strings.TrimSuffix(path, ".k")
+				downStreamPaths := []string{pkgpath, importPath}
+				for _, v := range downStreamPaths {
+					if p.depsGraph.vertices.Contains(v) {
+						currentFileV := FileVertex{path}
+						p.depsGraph.AddVertex(&currentFileV)
+						p.depsGraph.AddEdge(&DepsEdge{currentFileV, FileVertex{v}})
+					}
+				}
+			}
+		}
+	}
 	return p.GetRelatives(p.opt.ChangedPaths, true)
 }
 
-// ListUpStreamFiles return a list of upstream depend files from the given path list.
+// ListUpstreamFiles return a list of upstream dependent files from the given path list.
 func (p *ImportDepParser) ListUpstreamFiles() []string {
 	return p.GetRelatives(p.opt.Files, false)
 }
 
-// GetRelatives returns a list of file paths that has import relation(directly or indirectly) with the focus paths.
+// GetRelatives returns a list of file paths that have import relation(directly or indirectly) with the focus paths.
 // If the downStream is set to true, that means only the file paths that depend on the focus paths will be returned.
 // Otherwise, only the file paths that the focus paths depend on will be returned.
 func (p *ImportDepParser) GetRelatives(focusPaths []string, downStream bool) []string {
