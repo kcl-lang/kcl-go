@@ -73,7 +73,16 @@ func populateFieldValueFromPath(msg proto.Message, fieldPath []string, values []
 		if err != nil {
 			return err
 		} else if !f.IsValid() {
-			log.Printf("field not found in %T: %s", msg, strings.Join(fieldPath, "."))
+			msg := strings.TrimSpace(fmt.Sprintf("%T", msg))
+			path := strings.TrimSpace(strings.Join(fieldPath, "."))
+
+			msg = strings.Replace(msg, "\n", "", -1)
+			msg = strings.Replace(msg, "\r", "", -1)
+
+			path = strings.Replace(path, "\n", "", -1)
+			path = strings.Replace(path, "\r", "", -1)
+
+			log.Printf("field not found in %s: %s", msg, path)
 			return nil
 		}
 
@@ -322,7 +331,7 @@ func convertEnum(value string, t reflect.Type, enumValMap map[string]int32) (ref
 		return reflect.Value{}, fmt.Errorf("%s is not a valid %s", value, t)
 	}
 	for _, v := range enumValMap {
-		if v == int32(eVal) {
+		if int(v) == eVal {
 			return reflect.ValueOf(eVal).Convert(t), nil
 		}
 	}

@@ -36,11 +36,17 @@ func UnTarGz(tarGzFile, trimPrefix, outputDir string) error {
 		switch header.Typeflag {
 		case tar.TypeDir:
 			path := filepath.Join(outputDir, strings.TrimPrefix(header.Name, trimPrefix))
+			if strings.Contains(path, "..") {
+				return fmt.Errorf("UnTarGz: MkdirAll() failed: %s", `path contains ".."`)
+			}
 			if err := os.MkdirAll(path, 0777); err != nil {
 				return fmt.Errorf("UnTarGz: MkdirAll() failed: %w", err)
 			}
 		case tar.TypeReg:
 			path := filepath.Join(outputDir, strings.TrimPrefix(header.Name, trimPrefix))
+			if strings.Contains(path, "..") {
+				return fmt.Errorf("UnTarGz: MkdirAll() failed: %s", `path contains ".."`)
+			}
 			outFile, err := os.Create(path)
 			if err != nil {
 				return fmt.Errorf("UnTarGz: Create() failed: %w", err)
