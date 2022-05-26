@@ -10,12 +10,12 @@ import (
 	"os"
 )
 
-func HttpGetData(ctx context.Context, url string) (data []byte, err error) {
+func HttpGetData(ctx context.Context, url string, insecureSkipVerify bool) (data []byte, err error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: insecureSkipVerify},
 	}
 	client := &http.Client{Transport: tr}
 
@@ -38,12 +38,12 @@ func HttpGetData(ctx context.Context, url string) (data []byte, err error) {
 	return buf.Bytes(), nil
 }
 
-func HttpGetFile(ctx context.Context, url, localFilename string) error {
+func HttpGetFile(ctx context.Context, url, localFilename string, insecureSkipVerify bool) error {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: insecureSkipVerify},
 	}
 	client := &http.Client{Transport: tr}
 

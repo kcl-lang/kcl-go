@@ -9,3 +9,6 @@
 a.out*
 zz_*
 /_build
+*.dylib
+*.lock
+.kclvm

@@ -81,7 +81,7 @@ func (p *KclvmAssetHelper) DownloadFile(localFilename string) error {
 		go func(id int, url, localFilename string) {
 			defer wg.Done()
 			tmpname := fmt.Sprintf("%s.%d", localFilename, id)
-			err := HttpGetFile(ctx, url, tmpname)
+			err := HttpGetFile(ctx, url, tmpname, true)
 			if err != nil {
 				errs <- err
 				return
