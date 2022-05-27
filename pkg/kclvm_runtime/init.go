@@ -4,7 +4,10 @@ package kclvm_runtime
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
@@ -31,6 +34,21 @@ func initRuntime(maxProc int) {
 	}
 	if maxProc > runtime.NumCPU()*2 {
 		maxProc = runtime.NumCPU() * 2
+	}
+
+	if g_Python3Path == "" {
+		panic(ErrPython3NotFound)
+	}
+	if g_KclvmRoot == "" {
+		panic(ErrKclvmRootNotFound)
+	}
+
+	if strings.HasSuffix(g_Python3Path, "kclvm") || strings.HasSuffix(g_Python3Path, "kclvm.exe") {
+		os.Setenv("PYTHONHOME", "")
+		os.Setenv("PYTHONPATH", "")
+	} else {
+		os.Setenv("PYTHONHOME", "")
+		os.Setenv("PYTHONPATH", filepath.Join(g_KclvmRoot, "lib", "site-packages"))
 	}
 
 	pyrpcRuntime = NewRuntime(int(maxProc), MustGetKclvmPath(), "-m", "kclvm.program.rpc-server")

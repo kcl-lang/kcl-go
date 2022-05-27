@@ -52,7 +52,7 @@ type (
 
 // InitKclvmPath init kclvm path.
 func InitKclvmPath(kclvmRoot string) {
-	kclvm_runtime.InitKclvmPath(kclvmRoot)
+	kclvm_runtime.InitKclvmRoot(kclvmRoot)
 }
 
 // InitKclvmRuntime init kclvm process.

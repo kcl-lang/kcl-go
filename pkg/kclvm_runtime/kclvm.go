@@ -11,28 +11,40 @@ import (
 	"runtime"
 )
 
-func init() {
-	os.Setenv("PYTHONHOME", "")
-	os.Setenv("PYTHONPATH", "")
-}
+var (
+	g_Python3Path = findPython3Path()
+	g_KclvmRoot   = findKclvmRoot()
+)
 
-var kclvmPath = findKclvm_exePath()
+var (
+	ErrPython3NotFound   = errors.New("python3 not found")
+	ErrKclvmRootNotFound = errors.New("kclvm root not found")
+)
 
-var ErrKclvmNotFound = errors.New("kclvm not found")
-
-func InitKclvmPath(kclvmRoot string) {
+func InitKclvmRoot(kclvmRoot string) {
+	g_KclvmRoot = kclvmRoot
 	if runtime.GOOS == "windows" {
-		kclvmPath = filepath.Join(kclvmRoot, "kclvm.exe")
+		s := filepath.Join(g_KclvmRoot, "kclvm.exe")
+		if fi, _ := os.Lstat(s); fi != nil && !fi.IsDir() {
+			g_Python3Path = s
+		}
 	} else {
-		kclvmPath = filepath.Join(kclvmRoot, "bin", "kclvm")
+		s := filepath.Join(g_KclvmRoot, "bin", "kclvm")
+		if fi, _ := os.Lstat(s); fi != nil && !fi.IsDir() {
+			g_Python3Path = s
+		}
 	}
+
 }
 
 func GetKclvmPath() (string, error) {
-	if kclvmPath == "" {
-		return "", ErrKclvmNotFound
+	if g_Python3Path == "" {
+		return "", ErrPython3NotFound
 	}
-	return kclvmPath, nil
+	if g_KclvmRoot == "" {
+		return "", ErrKclvmRootNotFound
+	}
+	return g_Python3Path, nil
 }
 
 func MustGetKclvmPath() string {
@@ -43,47 +55,30 @@ func MustGetKclvmPath() string {
 	return s
 }
 
-func findKclvm_exePath() string {
-	kclvmName := "kclvm"
-	if runtime.GOOS == "windows" {
-		kclvmName += ".exe"
-	}
-
-	exePath := getExeDir()
-	if exePath == "" {
-		return kclvmName
-	}
-
-	if fi, _ := os.Stat(filepath.Join(exePath, kclvmName)); fi != nil && !fi.IsDir() {
-		return filepath.Join(exePath, kclvmName)
-	}
-
-	if path, err := exec.LookPath(kclvmName); err == nil {
-		return path
-	}
-
-	for _, dir := range []string{
-		"/usr/local/python3.7/bin",
-		"/usr/local/python3.8/bin",
-		"/usr/local/python3.9/bin",
-		"C:/python3.7",
-	} {
-		if fi, _ := os.Stat(filepath.Join(dir, kclvmName)); fi != nil && !fi.IsDir() {
-			return filepath.Join(dir, kclvmName)
+func findPython3Path() string {
+	for _, s := range []string{"kclvm", "python3"} {
+		exeName := s
+		if runtime.GOOS == "windows" {
+			exeName += ".exe"
+		}
+		if path, err := exec.LookPath(exeName); err == nil {
+			return path
 		}
 	}
-
 	return ""
 }
 
-func getExeDir() string {
-	exePath, err := os.Executable()
-	if err != nil {
-		return ""
+func findKclvmRoot() string {
+	kclvm_cli_exe := "kclvm_cli"
+	if runtime.GOOS == "windows" {
+		kclvm_cli_exe += ".exe"
 	}
-	if s, _ := filepath.Abs(exePath); s != "" {
-		exePath = s
+	if path, err := exec.LookPath(kclvm_cli_exe); err == nil {
+		if runtime.GOOS == "windows" {
+			return filepath.Dir(path)
+		} else {
+			return filepath.Dir(filepath.Dir(path))
+		}
 	}
-
-	return filepath.Dir(exePath)
+	return ""
 }

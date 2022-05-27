@@ -22,8 +22,9 @@ jobs:
       - run: go run ./cmds/kcl-go setup-kclvm -triple=ubuntu -outdir=${HOME}/.kclvm-go
       - run: echo "${HOME}/.kclvm-go/ubuntu/bin" >> $GITHUB_PATH
 
-      - run: which kclvm
+      - run: which kclvm || which python3
       - run: which kcl
+      - run: kcl --version || true
 
       - run: go test -v -coverprofile=profile.cov ./...
 
