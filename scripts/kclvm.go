@@ -59,8 +59,8 @@ var (
 
 	KclvmMd5sum = map[string]string{
 		// https://github.com/KusionStack/KCLVM/releases/tag/v0.4.2-alpha.4
-		"kclvm-v0.4.2-alpha.4-Darwin.tar.gz":       "f0fa080cec33ffcfc3477a99ec3c482b",
-		"kclvm-v0.4.2-alpha.4-Darwin-arm64.tar.gz": "c6afced97886ac328abaadbc94ea908c",
+		"kclvm-v0.4.2-alpha.4-Darwin.tar.gz":       "5e713e4275d45da971a9b6aacc156074",
+		"kclvm-v0.4.2-alpha.4-Darwin-arm64.tar.gz": "40ea8f768975d2d59946b2cd38957932",
 		"kclvm-v0.4.2-alpha.4-centos.tar.gz":       "afe52170ccd3b01ffefa48b73ac655d1",
 		"kclvm-v0.4.2-alpha.4-ubuntu.tar.gz":       "a4a7fd7ced93cfb081de3da1207ce641",
 
