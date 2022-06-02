@@ -151,9 +151,10 @@ func (p *KclvmAssetHelper) Install(kclvmRoot string) (err error) {
 			basename += ".exe"
 		}
 		filepath := filepath.Join(kclvmRoot, "bin", basename)
-		err := os.Chmod(filepath, 0777)
-
-		fmt.Println("chmod", filepath, err)
+		if fi, _ := os.Lstat(filepath); fi != nil && !fi.IsDir() {
+			err := os.Chmod(filepath, 0777)
+			fmt.Println("chmod", filepath, err)
+		}
 	}
 
 	// write md5sum
