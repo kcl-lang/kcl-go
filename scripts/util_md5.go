@@ -5,7 +5,18 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
+	"strings"
 )
+
+func IsMd5Text(s string) bool {
+	s = strings.TrimSpace(s)
+	matched, err := regexp.MatchString(`^[a-f0-9]{32}$`, s)
+	if err != nil {
+		panic(err)
+	}
+	return matched
+}
 
 func MD5File(filename string) string {
 	f, err := os.Open(filename)

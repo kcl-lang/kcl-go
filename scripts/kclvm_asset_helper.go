@@ -41,6 +41,29 @@ func (p *KclvmAssetHelper) GetFilename() string {
 
 func (p *KclvmAssetHelper) GetFileMd5um() string {
 	kclvmFilename := p.GetFilename()
+	md5OrUrl := KclvmMd5sum[kclvmFilename]
+	if IsMd5Text(md5OrUrl) {
+		return md5OrUrl
+	}
+	if strings.HasSuffix(md5OrUrl, ".md5.txt") {
+		if !strings.HasPrefix(md5OrUrl, "http") {
+			md5OrUrl = p.GetDownloadMd5Url(KclvmDownloadUrlBase)
+		}
+		if data, err := HttpGetData(nil, md5OrUrl, true); err == nil {
+			if s := strings.TrimSpace(string(data)); IsMd5Text(s) {
+				return s
+			}
+		}
+	}
+	if md5OrUrl == "" {
+		md5OrUrl = p.GetDownloadMd5Url(KclvmDownloadUrlBase)
+		if data, err := HttpGetData(nil, md5OrUrl, true); err == nil {
+			if s := strings.TrimSpace(string(data)); IsMd5Text(s) {
+				return s
+			}
+		}
+	}
+
 	return KclvmMd5sum[kclvmFilename]
 }
 
@@ -48,12 +71,17 @@ func (p *KclvmAssetHelper) GetDownloadUrl(baseUrl string) string {
 	baseUrl = strings.TrimRight(baseUrl, "/")
 	return fmt.Sprintf("%s/%s/%s", baseUrl, p.Version, p.GetFilename())
 }
+func (p *KclvmAssetHelper) GetDownloadMd5Url(baseUrl string) string {
+	baseUrl = strings.TrimRight(baseUrl, "/")
+	return fmt.Sprintf("%s/%s/%s.md5.txt", baseUrl, p.Version, p.GetFilename())
+}
 
 func (p *KclvmAssetHelper) DownloadFile(localFilename string) error {
 	md5sum := p.GetFileMd5um()
 	if md5sum == "" {
 		return fmt.Errorf("%s: not found, md5sum missing", p.GetFilename())
 	}
+
 	if MD5File(localFilename) == md5sum {
 		return nil
 	}
