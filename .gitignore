@@ -8,7 +8,7 @@
 
 a.out*
 zz_*
-/_build
+/_build*
 *.dylib
 *.lock
 .kclvm
