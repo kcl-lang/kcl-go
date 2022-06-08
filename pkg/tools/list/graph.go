@@ -54,15 +54,22 @@ func NewDirectedAcyclicGraph() *DirectedAcyclicGraph {
 }
 
 // Vertex defines the node with in a graph with a unique id for index
-type Vertex interface {
-	ds.Identifier
+type Vertex struct {
+	id string
 }
 
 // Edge defines the directed connection between two nodes in a graph with a unique id for index
-type Edge interface {
-	ds.Identifier
-	Source() Vertex
-	Target() Vertex
+type Edge struct {
+	Source Vertex
+	Target Vertex
+}
+
+func (v *Vertex) Id() string {
+	return v.id
+}
+
+func (e *Edge) Id() string {
+	return fmt.Sprintf("%s->%s", e.Source.Id(), e.Target.Id())
 }
 
 // NewGraph creates an empty graph without any vertices and edges
@@ -85,18 +92,13 @@ func (g *Graph) Draw() string {
 	panic("implement me")
 }
 
-// AddVertex inserts a node to the graph. Nil vertices will not be added.
+// AddVertex inserts a node to the graph.
 func (g *Graph) AddVertex(vertex Vertex) {
-	if vertex != nil {
-		g.vertices.Add(vertex)
-	}
+	g.vertices.Add(&vertex)
 }
 
 // DeleteVertex remove a node from the graph by vertex id. The edges that are related to the node will be removed in the meanwhile
 func (g *Graph) DeleteVertex(vertex Vertex) error {
-	if vertex == nil {
-		return VertexUnknownError{}
-	}
 	if !g.vertices.Contains(vertex.Id()) {
 		return VertexUnknownError{vertex.Id()}
 	}
@@ -125,7 +127,7 @@ func (g *Graph) DeleteVertex(vertex Vertex) error {
 
 	// delete the edge from the edges map
 	for edge := range g.edges {
-		if edge.Source().Id() == id || edge.Target().Id() == id {
+		if edge.Source.Id() == id || edge.Target.Id() == id {
 			delete(g.edges, edge)
 		}
 	}
@@ -134,18 +136,12 @@ func (g *Graph) DeleteVertex(vertex Vertex) error {
 
 // ContainsVertex check if a vertex is contained in the graph by id
 func (g *Graph) ContainsVertex(vertex Vertex) bool {
-	if vertex == nil {
-		return false
-	}
 	return g.vertices.Contains(vertex.Id())
 }
 
 // ContainsEdge checks if the edge is contained in the graph
 // The edge is contained if there's already an edge which has the same source and target vertex with the given edge
 func (g *Graph) ContainsEdge(source, target Vertex) bool {
-	if source == nil || target == nil {
-		return false
-	}
 	if _, ok := g.inboundEdges[target.Id()]; !ok {
 		return false
 	}
@@ -159,43 +155,40 @@ func (g *Graph) ContainsEdge(source, target Vertex) bool {
 		return false
 	}
 	for edge := range g.edges {
-		if edge.Source().Id() == source.Id() && edge.Target().Id() == target.Id() {
+		if edge.Source.Id() == source.Id() && edge.Target.Id() == target.Id() {
 			return true
 		}
 	}
 	return false
 }
 
-// AddEdge adds an edge with the given source and target and records it in the inbound edges and the outbound edges. Nil edges will not be added
+// AddEdge adds an edge with the given source and target and records it in the inbound edges and the outbound edges.
 func (g *Graph) AddEdge(edge Edge) {
-	if edge == nil || g.ContainsEdge(edge.Source(), edge.Target()) {
-		// the edge is nil or the graph already contains an edge which connects the (edge.Source) to the (edge.Target)
+	if g.ContainsEdge(edge.Source, edge.Target) {
+		// the graph already contains an edge which connects the (edge.Source) to the (edge.Target)
 		return
 	}
 	g.edges[edge] = true
 
-	if _, ok := g.outboundEdges[edge.Source().Id()]; !ok {
-		g.outboundEdges[edge.Source().Id()] = &ds.IdentifierSet{Ids: make(map[string]ds.Identifier)}
+	if _, ok := g.outboundEdges[edge.Source.Id()]; !ok {
+		g.outboundEdges[edge.Source.Id()] = &ds.IdentifierSet{Ids: make(map[string]ds.Identifier)}
 	}
-	g.outboundEdges[edge.Source().Id()].Add(edge.Target())
+	g.outboundEdges[edge.Source.Id()].Add(&edge.Target)
 
-	if _, ok := g.inboundEdges[edge.Target().Id()]; !ok {
-		g.inboundEdges[edge.Target().Id()] = &ds.IdentifierSet{Ids: make(map[string]ds.Identifier)}
+	if _, ok := g.inboundEdges[edge.Target.Id()]; !ok {
+		g.inboundEdges[edge.Target.Id()] = &ds.IdentifierSet{Ids: make(map[string]ds.Identifier)}
 	}
-	g.inboundEdges[edge.Target().Id()].Add(edge.Source())
+	g.inboundEdges[edge.Target.Id()].Add(&edge.Source)
 }
 
 // DeleteEdge will delete the edge which connects a source vertex to the target. The related inbound and outbound edges will be deleted in the meanwhile
 func (g *Graph) DeleteEdge(edge Edge) error {
-	if edge == nil {
-		return EdgeUnknownError{}
-	}
-	if !g.ContainsEdge(edge.Source(), edge.Target()) {
-		return EdgeUnknownError{source: edge.Source().Id(), target: edge.Target().Id()}
+	if !g.ContainsEdge(edge.Source, edge.Target) {
+		return EdgeUnknownError{source: edge.Source.Id(), target: edge.Target.Id()}
 	}
 	delete(g.edges, edge)
-	g.inboundEdges[edge.Target().Id()].Remove(edge.Source().Id())
-	g.outboundEdges[edge.Source().Id()].Remove(edge.Target().Id())
+	g.inboundEdges[edge.Target.Id()].Remove(edge.Source.Id())
+	g.outboundEdges[edge.Source.Id()].Remove(edge.Target.Id())
 	return nil
 }
 
@@ -224,7 +217,7 @@ func visit(g *DirectedAcyclicGraph, id string, visited map[string]bool, down boo
 func (g *Graph) Vertices() []Vertex {
 	list := make([]Vertex, 0, g.vertices.Size())
 	for _, elem := range g.vertices.Ids {
-		list = append(list, elem.(Vertex))
+		list = append(list, *elem.(*Vertex))
 	}
 	return list
 }

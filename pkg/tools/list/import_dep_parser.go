@@ -32,35 +32,6 @@ type ImportDepParser struct {
 	parsed    map[string]bool
 }
 
-// FileVertex defines the file path in the dependency graph
-type FileVertex struct {
-	// the relative file path
-	path string
-}
-
-// DepsEdge defines the dependency relation in the dependency graph. The target FileVertex depends on the source FileVertex,
-// Put it another way, the content of the target FileVertex defines an import statement to the source FileVertex
-type DepsEdge struct {
-	source FileVertex
-	target FileVertex
-}
-
-func (v *FileVertex) Id() string {
-	return v.path
-}
-
-func (e *DepsEdge) Id() string {
-	return fmt.Sprintf("%s->%s", e.source.Id(), e.target.Id())
-}
-
-func (e *DepsEdge) Source() Vertex {
-	return &e.source
-}
-
-func (e *DepsEdge) Target() Vertex {
-	return &e.target
-}
-
 // NewImportDepParser initialize an import dependency parser from the given pkg root and the deps option
 func NewImportDepParser(root string, opt DepOption) (*ImportDepParser, error) {
 	root = pathpkg.Clean(root)
@@ -97,21 +68,21 @@ func (p *ImportDepParser) Inspect(path string) {
 		pkgpath = pathpkg.Dir(path)
 		isKclFile = true
 	}
-	pkgV := FileVertex{pkgpath}
-	p.depsGraph.AddVertex(&pkgV)
+	pkgV := Vertex{pkgpath}
+	p.depsGraph.AddVertex(pkgV)
 	p.parsed[pkgpath] = true
 	p.parsed[path] = true
 	if isKclFile {
-		fileV := FileVertex{path}
-		p.depsGraph.AddVertex(&fileV)
-		p.depsGraph.AddEdge(&DepsEdge{fileV, pkgV})
+		fileV := Vertex{path}
+		p.depsGraph.AddVertex(fileV)
+		p.depsGraph.AddEdge(Edge{fileV, pkgV})
 	}
 	kFiles = listKFiles(p.vfs, pkgpath)
 
 	for _, f := range kFiles {
-		currentFileV := FileVertex{f}
-		p.depsGraph.AddVertex(&currentFileV)
-		p.depsGraph.AddEdge(&DepsEdge{currentFileV, pkgV})
+		currentFileV := Vertex{f}
+		p.depsGraph.AddVertex(currentFileV)
+		p.depsGraph.AddEdge(Edge{currentFileV, pkgV})
 		p.parsed[f] = true
 
 		src, err := fs.ReadFile(p.vfs, f)
@@ -120,7 +91,7 @@ func (p *ImportDepParser) Inspect(path string) {
 		}
 		for _, importPath := range parseImport(string(src)) {
 			importPath = p.fixPath(fixImportPath(f, importPath))
-			p.depsGraph.AddEdge(&DepsEdge{source: FileVertex{importPath}, target: currentFileV})
+			p.depsGraph.AddEdge(Edge{Source: Vertex{importPath}, Target: currentFileV})
 			if _, ok := p.parsed[importPath]; ok {
 				continue
 			}
@@ -150,9 +121,9 @@ func (p *ImportDepParser) ListDownStreamFiles() []string {
 				downStreamPaths := []string{pkgpath, importPath}
 				for _, v := range downStreamPaths {
 					if p.depsGraph.vertices.Contains(v) {
-						currentFileV := FileVertex{path}
-						p.depsGraph.AddVertex(&currentFileV)
-						p.depsGraph.AddEdge(&DepsEdge{currentFileV, FileVertex{v}})
+						currentFileV := Vertex{path}
+						p.depsGraph.AddVertex(currentFileV)
+						p.depsGraph.AddEdge(Edge{currentFileV, Vertex{v}})
 					}
 				}
 			}
