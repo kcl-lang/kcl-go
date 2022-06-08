@@ -1,0 +1,2 @@
+*.go @KusionStack/go-reviewer
+*.proto @KusionStack/go-reviewer
