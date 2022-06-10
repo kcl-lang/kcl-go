@@ -62,6 +62,14 @@ func (p *KclvmAssetHelper) GetFileMd5um() string {
 				return s
 			}
 		}
+		for _, baseUrl := range KclvmDownloadUrlBase_mirrors {
+			md5OrUrl = p.GetDownloadMd5Url(baseUrl)
+			if data, err := HttpGetData(nil, md5OrUrl, true); err == nil {
+				if s := strings.TrimSpace(string(data)); IsMd5Text(s) {
+					return s
+				}
+			}
+		}
 	}
 
 	return KclvmMd5sum[kclvmFilename]
