@@ -25,11 +25,12 @@ type DepOption struct {
 
 // ImportDepParser parses the import statements in KCL files within the given work directory
 type ImportDepParser struct {
+	// opt is the list dependency option
 	opt DepOption
+	// vfs is the file system with the KCL program root as root
 	vfs fs.FS
-
-	depsGraph *DirectedAcyclicGraph
-	parsed    map[string]bool
+	// importsGraph is a graph of the file dependent relation according to the import statement
+	importsGraph *importGraph
 }
 
 // NewImportDepParser initialize an import dependency parser from the given pkg root and the deps option
@@ -46,15 +47,68 @@ func NewImportDepParser(root string, opt DepOption) (*ImportDepParser, error) {
 
 func NewImportDepParserWithFS(vfs fs.FS, opt DepOption) *ImportDepParser {
 	p := &ImportDepParser{
-		vfs:       vfs,
-		depsGraph: NewDirectedAcyclicGraph(),
-		opt:       opt,
-		parsed:    make(map[string]bool),
+		vfs:          vfs,
+		importsGraph: newImportGraph(),
+		opt:          opt,
 	}
 	for _, file := range opt.Files {
 		p.Inspect(file)
 	}
 	return p
+}
+
+// importGraph implements an incremental
+type importGraph struct {
+	// the key is the file path and the value is the set of files/pkgs that the key file imports
+	imports map[string]*stringSet
+	// the key is the file/pkg path and the value is a set of files which import the key file/pkg
+	importedBy map[string]*stringSet
+	// pkgMap is the file to package map. the key is a KCL file path and the value is the package path of the file
+	pkgMap map[string]string
+	// pkgFiles is the pkg files map. the key is a KCL package path and the value is a set of file paths within the package
+	pkgFiles map[string]*stringSet
+}
+
+// newImportGraph initiates an import graph
+func newImportGraph() *importGraph {
+	return &importGraph{
+		imports:    make(map[string]*stringSet),
+		importedBy: make(map[string]*stringSet),
+		pkgMap:     make(map[string]string),
+		pkgFiles:   make(map[string]*stringSet),
+	}
+}
+
+// stringSet is a simple string set implementation by map
+type stringSet struct {
+	values map[string]bool
+}
+
+// emptyStringSet returns an empty stringSet
+func emptyStringSet() *stringSet {
+	return &stringSet{
+		values: map[string]bool{},
+	}
+}
+
+// add an item to the stringSet
+func (s *stringSet) add(value string) {
+	s.values[value] = true
+}
+
+// check if the stringSet contains some value
+func (s *stringSet) contains(value string) bool {
+	_, ok := s.values[value]
+	return ok
+}
+
+// toStringSlice returns a string slice of the values in the stringSet
+func (s *stringSet) toStringSlice() []string {
+	var result []string
+	for value := range s.values {
+		result = append(result, value)
+	}
+	return result
 }
 
 // Inspect will inspect current path: read the file content and parse import stmts, record the deps relation between the imported and importing.
@@ -63,36 +117,32 @@ func NewImportDepParserWithFS(vfs fs.FS, opt DepOption) *ImportDepParser {
 func (p *ImportDepParser) Inspect(path string) {
 	var kFiles []string
 	pkgpath := path
-	isKclFile := false
 	if strings.HasSuffix(path, ".k") {
 		pkgpath = pathpkg.Dir(path)
-		isKclFile = true
-	}
-	pkgV := Vertex{pkgpath}
-	p.depsGraph.AddVertex(pkgV)
-	p.parsed[pkgpath] = true
-	p.parsed[path] = true
-	if isKclFile {
-		fileV := Vertex{path}
-		p.depsGraph.AddVertex(fileV)
-		p.depsGraph.AddEdge(Edge{fileV, pkgV})
 	}
 	kFiles = listKFiles(p.vfs, pkgpath)
-
 	for _, f := range kFiles {
-		currentFileV := Vertex{f}
-		p.depsGraph.AddVertex(currentFileV)
-		p.depsGraph.AddEdge(Edge{currentFileV, pkgV})
-		p.parsed[f] = true
-
+		p.importsGraph.pkgMap[f] = pkgpath
+		if _, ok := p.importsGraph.pkgFiles[pkgpath]; !ok {
+			p.importsGraph.pkgFiles[pkgpath] = emptyStringSet()
+		}
+		p.importsGraph.pkgFiles[pkgpath].add(f)
 		src, err := fs.ReadFile(p.vfs, f)
 		if err != nil {
 			panic(err)
 		}
 		for _, importPath := range parseImport(string(src)) {
 			importPath = p.fixPath(fixImportPath(f, importPath))
-			p.depsGraph.AddEdge(Edge{Source: Vertex{importPath}, Target: currentFileV})
-			if _, ok := p.parsed[importPath]; ok {
+			if _, ok := p.importsGraph.imports[f]; !ok {
+				p.importsGraph.imports[f] = emptyStringSet()
+			}
+			if _, ok := p.importsGraph.importedBy[importPath]; !ok {
+				p.importsGraph.importedBy[importPath] = emptyStringSet()
+			}
+			p.importsGraph.imports[f].add(importPath)
+			p.importsGraph.importedBy[importPath].add(f)
+
+			if _, ok := p.importsGraph.imports[importPath]; ok {
 				continue
 			}
 			p.Inspect(importPath)
@@ -100,6 +150,89 @@ func (p *ImportDepParser) Inspect(path string) {
 	}
 }
 
+// ListDownStreamFiles return a list of downstream dependent files from the given changed path list.
+func (p *ImportDepParser) ListDownStreamFiles() []string {
+	for _, f := range p.opt.ChangedPaths {
+		if strings.HasSuffix(f, ".k") && !strings.HasSuffix(f, "_test.k") {
+			if _, err := fs.Stat(p.vfs, f); errors.Is(err, os.ErrNotExist) {
+				// changed KCL file (not test file) not exists, might be deleted
+				pkgpath := pathpkg.Dir(f)
+				p.importsGraph.pkgMap[f] = pkgpath
+				_, ok := p.importsGraph.pkgFiles[pkgpath]
+				if !ok {
+					p.importsGraph.pkgFiles[pkgpath] = emptyStringSet()
+				}
+				p.importsGraph.pkgFiles[pkgpath].add(f)
+				modulePath := strings.TrimSuffix(f, ".k")
+				p.opt.ChangedPaths = append(p.opt.ChangedPaths, modulePath)
+			}
+		}
+	}
+	downFiles := emptyStringSet()
+	for _, f := range p.opt.ChangedPaths {
+		downFiles.add(f)
+	}
+	for _, f := range p.opt.ChangedPaths {
+		p.importsGraph.walkDownstream(f, func(filepath string) {
+			downFiles.add(filepath)
+		})
+	}
+	return downFiles.toStringSlice()
+}
+
+// ListUpstreamFiles return a list of upstream dependent files from the given path list.
+func (p *ImportDepParser) ListUpstreamFiles() []string {
+	upFiles := emptyStringSet()
+	for _, f := range p.opt.Files {
+		upFiles.add(f)
+	}
+	for _, f := range p.opt.Files {
+		p.importsGraph.walkUpstream(f, func(filepath string) {
+			upFiles.add(filepath)
+		})
+	}
+	return upFiles.toStringSlice()
+}
+
+// walkUpstream walks the importGraph from the fromPath and up to the files that the fromPath imports
+func (g *importGraph) walkUpstream(fromPath string, f func(filepath string)) {
+	nexts := g.imports[fromPath]
+	if nexts == nil {
+		return
+	}
+	for next := range nexts.values {
+		f(next)
+		if fileSet, ok := g.pkgFiles[next]; ok {
+			for file := range fileSet.values {
+				f(file)
+				g.walkUpstream(file, f)
+			}
+		} else {
+			g.walkUpstream(next, f)
+		}
+	}
+}
+
+// walkDownstream walks the importGraph from the fromPath and down to the files which import the fromPath
+func (g *importGraph) walkDownstream(fromPath string, f func(filepath string)) {
+	nexts := g.importedBy[fromPath]
+	if nexts == nil {
+		nexts = emptyStringSet()
+	}
+	pkg, ok := g.pkgMap[fromPath]
+	if ok {
+		nexts.add(pkg)
+	}
+	for next := range nexts.values {
+		f(next)
+		g.walkDownstream(next, f)
+	}
+}
+
+// fixPath fixes a path (import path or file path) to a file path
+// a/b/c.k -> a/b/c.k
+// if a/b/c.k exists and is a file: a/b/c -> a/b/c.k
+// if a/b/c.k not exists or is a dir: a/b/c -> a/b/c
 func (p *ImportDepParser) fixPath(path string) string {
 	if strings.HasSuffix(path, ".k") {
 		return path
@@ -108,48 +241,6 @@ func (p *ImportDepParser) fixPath(path string) string {
 		return path + ".k"
 	}
 	return path
-}
-
-// ListDownStreamFiles return a list of downstream depend files from the given changed path list.
-func (p *ImportDepParser) ListDownStreamFiles() []string {
-	for _, path := range p.opt.ChangedPaths {
-		if strings.HasSuffix(path, ".k") && !strings.HasSuffix(path, "_test.k") {
-			if _, err := fs.Stat(p.vfs, path); errors.Is(err, os.ErrNotExist) {
-				// changed KCL file (not test file) not exists, might be deleted
-				pkgpath := pathpkg.Dir(path)
-				importPath := strings.TrimSuffix(path, ".k")
-				downStreamPaths := []string{pkgpath, importPath}
-				for _, v := range downStreamPaths {
-					if p.depsGraph.vertices.Contains(v) {
-						currentFileV := Vertex{path}
-						p.depsGraph.AddVertex(currentFileV)
-						p.depsGraph.AddEdge(Edge{currentFileV, Vertex{v}})
-					}
-				}
-			}
-		}
-	}
-	return p.GetRelatives(p.opt.ChangedPaths, true)
-}
-
-// ListUpstreamFiles return a list of upstream dependent files from the given path list.
-func (p *ImportDepParser) ListUpstreamFiles() []string {
-	return p.GetRelatives(p.opt.Files, false)
-}
-
-// GetRelatives returns a list of file paths that have import relation(directly or indirectly) with the focus paths.
-// If the downStream is set to true, that means only the file paths that depend on the focus paths will be returned.
-// Otherwise, only the file paths that the focus paths depend on will be returned.
-func (p *ImportDepParser) GetRelatives(focusPaths []string, downStream bool) []string {
-	visited := map[string]bool{}
-	for _, focus := range focusPaths {
-		visit(p.depsGraph, focus, visited, downStream)
-	}
-	relatives := make([]string, 0, len(visited))
-	for affected := range visited {
-		relatives = append(relatives, affected)
-	}
-	return relatives
 }
 
 // listKFiles returns a list of KCL file paths under the given package path or by the given file path. It will return an empty list if no KCL files found

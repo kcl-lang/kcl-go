@@ -141,6 +141,8 @@ var testDepParser = []struct {
 		changed: []string{"appops/projectC/base/base.k"},
 		downStreams: []string{
 			"appops/projectC/base/base.k",
+			"appops/projectC/base/base",
+			"appops/projectC/base",
 		},
 	},
 	{
@@ -155,6 +157,7 @@ var testDepParser = []struct {
 		changed: []string{"base/frontend/not_exist/deleted_file.k"},
 		downStreams: []string{
 			"base/frontend/not_exist/deleted_file.k",
+			"base/frontend/not_exist/deleted_file",
 			"base/frontend/not_exist",
 			"appops/projectD/base/base.k",
 			"appops/projectD/base",
@@ -201,6 +204,7 @@ var testDepParser = []struct {
 		},
 		changed: []string{"base/frontend/not_exist.k"},
 		downStreams: []string{
+			"base/frontend",
 			"base/frontend/not_exist.k",
 			"base/frontend/not_exist",
 			"appops/projectD/base/base.k",
