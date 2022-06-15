@@ -52,7 +52,7 @@ func NewImportDepParserWithFS(vfs fs.FS, opt DepOption) *ImportDepParser {
 		opt:          opt,
 	}
 	for _, file := range opt.Files {
-		p.Inspect(file)
+		p.inspect(file)
 	}
 	return p
 }
@@ -67,6 +67,8 @@ type importGraph struct {
 	pkgMap map[string]string
 	// pkgFiles is the pkg files map. the key is a KCL package path and the value is a set of file paths within the package
 	pkgFiles map[string]*stringSet
+	// processed is a stringSet to track all processed package paths and file paths to avoid repeated file parsing
+	processed *stringSet
 }
 
 // newImportGraph initiates an import graph
@@ -76,6 +78,7 @@ func newImportGraph() *importGraph {
 		importedBy: make(map[string]*stringSet),
 		pkgMap:     make(map[string]string),
 		pkgFiles:   make(map[string]*stringSet),
+		processed:  emptyStringSet(),
 	}
 }
 
@@ -111,15 +114,19 @@ func (s *stringSet) toStringSlice() []string {
 	return result
 }
 
-// Inspect will inspect current path: read the file content and parse import stmts, record the deps relation between the imported and importing.
+// inspect will inspect current path: read the file content and parse import stmts, record the deps relation between the imported and importing.
 // if path is a file, each file in the pkg dir containing the file will be parsed
 // if path is a pkg path, each file in the pkg path will be parsed
-func (p *ImportDepParser) Inspect(path string) {
+func (p *ImportDepParser) inspect(path string) {
 	var kFiles []string
 	pkgpath := path
 	if strings.HasSuffix(path, ".k") {
 		pkgpath = pathpkg.Dir(path)
 	}
+	if p.importsGraph.processed.contains(pkgpath) {
+		return
+	}
+	p.importsGraph.processed.add(pkgpath)
 	kFiles = listKFiles(p.vfs, pkgpath)
 	for _, f := range kFiles {
 		p.importsGraph.pkgMap[f] = pkgpath
@@ -132,7 +139,7 @@ func (p *ImportDepParser) Inspect(path string) {
 			panic(err)
 		}
 		for _, importPath := range parseImport(string(src)) {
-			importPath = p.fixPath(fixImportPath(f, importPath))
+			importPath = fixPath(p.vfs, fixImportPath(f, importPath))
 			if _, ok := p.importsGraph.imports[f]; !ok {
 				p.importsGraph.imports[f] = emptyStringSet()
 			}
@@ -141,11 +148,7 @@ func (p *ImportDepParser) Inspect(path string) {
 			}
 			p.importsGraph.imports[f].add(importPath)
 			p.importsGraph.importedBy[importPath].add(f)
-
-			if _, ok := p.importsGraph.imports[importPath]; ok {
-				continue
-			}
-			p.Inspect(importPath)
+			p.inspect(importPath)
 		}
 	}
 }
@@ -233,11 +236,11 @@ func (g *importGraph) walkDownstream(fromPath string, f func(filepath string)) {
 // a/b/c.k -> a/b/c.k
 // if a/b/c.k exists and is a file: a/b/c -> a/b/c.k
 // if a/b/c.k not exists or is a dir: a/b/c -> a/b/c
-func (p *ImportDepParser) fixPath(path string) string {
+func fixPath(vfs fs.FS, path string) string {
 	if strings.HasSuffix(path, ".k") {
 		return path
 	}
-	if fi, _ := fs.Stat(p.vfs, path+".k"); fi != nil && !fi.IsDir() {
+	if fi, _ := fs.Stat(vfs, path+".k"); fi != nil && !fi.IsDir() {
 		return path + ".k"
 	}
 	return path
@@ -344,10 +347,14 @@ func parseImport(code string) []string {
 	return import_list
 }
 
-// fixImportPath fixes the original import_path by the filepath that defines the import and returns a filepath (or package path) of the file (or package) to import
-func fixImportPath(filepath, import_path string) string {
-	if !strings.HasPrefix(import_path, ".") {
-		return strings.Replace(import_path, ".", "/", -1)
+// fixImportPath fixes the original importPath to a file path (or package path)
+// the filepath is the file path that defines an import and the importPath is the path part of an import statement
+// suppose the filepath is a.b.c.k, and the import path is:
+// 1. an absolute import path d.e, the result will be: d/e
+// 2. a relative import path ..d.e, the result will be: a/d/e
+func fixImportPath(filepath, importPath string) string {
+	if !strings.HasPrefix(importPath, ".") {
+		return strings.Replace(importPath, ".", "/", -1)
 	}
 
 	pkgpath := filepath
@@ -356,20 +363,20 @@ func fixImportPath(filepath, import_path string) string {
 	}
 
 	// count leading dot
-	var dotCount = len(import_path)
-	for i, c := range import_path {
+	var dotCount = len(importPath)
+	for i, c := range importPath {
 		if c != '.' {
 			dotCount = i
 			break
 		}
 	}
-	import_path = import_path[dotCount:]
-	import_path = strings.Replace(import_path, ".", "/", -1)
+	importPath = importPath[dotCount:]
+	importPath = strings.Replace(importPath, ".", "/", -1)
 
 	// import .metadata
 	if dotCount == 1 {
-		import_path = pkgpath + "/" + import_path
-		return strings.Replace(import_path, ".", "/", -1)
+		importPath = pkgpath + "/" + importPath
+		return importPath
 	}
 
 	var ss = strings.Split(pkgpath, "/")
@@ -377,6 +384,6 @@ func fixImportPath(filepath, import_path string) string {
 		dotCount = len(ss) + 1
 	}
 
-	import_parts := append(ss[:len(ss)-(dotCount-1)], import_path)
-	return strings.Join(import_parts, "/")
+	importParts := append(ss[:len(ss)-(dotCount-1)], importPath)
+	return strings.Join(importParts, "/")
 }

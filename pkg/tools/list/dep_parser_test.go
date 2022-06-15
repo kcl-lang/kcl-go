@@ -36,8 +36,8 @@ func TestFindPkgInfo_failed(t *testing.T) {
 	}
 }
 
-func TestDepParser_graph(t *testing.T) {
-	for _, testdata := range testDepParser {
+func TestImportDepParser_ListUpstreamFiles(t *testing.T) {
+	for _, testdata := range testImportDepParser {
 		t.Run(testdata.name, func(t *testing.T) {
 			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files})
 			assert.Nil(t, err, "NewDepParser failed")
@@ -47,8 +47,8 @@ func TestDepParser_graph(t *testing.T) {
 	}
 }
 
-func TestDepParser_affected(t *testing.T) {
-	for _, testdata := range testDepParser {
+func TestImportDepParser_ListDownStreamFiles(t *testing.T) {
+	for _, testdata := range testImportDepParser {
 		t.Run(testdata.name, func(t *testing.T) {
 			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files, ChangedPaths: testdata.changed})
 			assert.Nil(t, err, "NewDepParser failed")
@@ -58,7 +58,88 @@ func TestDepParser_affected(t *testing.T) {
 	}
 }
 
-var testDepParser = []struct {
+func TestImportDepParser_fixPath(t *testing.T) {
+	testData := []struct {
+		name    string
+		oriPath string
+		expect  string
+	}{
+		{
+			name:    "file path with .k suffix",
+			oriPath: "base/frontend/container/container.k",
+			expect:  "base/frontend/container/container.k",
+		},
+		{
+			name:    "file path without .k suffix",
+			oriPath: "base/frontend/container/container",
+			expect:  "base/frontend/container/container.k",
+		},
+		{
+			name:    "dir path",
+			oriPath: "base/frontend/container",
+			expect:  "base/frontend/container",
+		},
+		{
+			name:    "dir path",
+			oriPath: "base/frontend/container/invalid",
+			expect:  "base/frontend/container/invalid",
+		},
+	}
+	for _, tData := range testData {
+		t.Run(tData.name, func(t *testing.T) {
+			vfs := os.DirFS("./testdata/complicate")
+			assert.Equal(t, tData.expect, fixPath(vfs, tData.oriPath))
+		})
+	}
+}
+
+func TestImportDepParser_listKFiles(t *testing.T) {
+	testData := []struct {
+		name     string
+		filePath string
+		expect   []string
+	}{
+		{
+			name:     "path to a KCL file",
+			filePath: "base/frontend/container/container.k",
+			expect:   []string{"base/frontend/container/container.k"},
+		},
+		{
+			name:     "path to a KCL file without suffix",
+			filePath: "base/frontend/container/container",
+			expect:   []string{"base/frontend/container/container.k"},
+		},
+		{
+			name:     "path to a KCL package",
+			filePath: "base/frontend/container",
+			expect:   []string{"base/frontend/container/container.k", "base/frontend/container/container_port.k"},
+		},
+		{
+			name:     "path to a KCL package containing test/internal/non-kcl files",
+			filePath: "base/frontend/container/probe",
+			expect: []string{
+				"base/frontend/container/probe/probe.k",
+				"base/frontend/container/probe/exec.k",
+				"base/frontend/container/probe/http.k",
+				"base/frontend/container/probe/tcp.k",
+			},
+		},
+	}
+	for _, tData := range testData {
+		t.Run(tData.name, func(t *testing.T) {
+			vfs := os.DirFS("./testdata/complicate")
+			assert.ElementsMatch(t, tData.expect, listKFiles(vfs, tData.filePath))
+		})
+	}
+}
+func TestImportDepParser_invalidFilePath(t *testing.T) {
+	t.Run("NewImportDepParser invalid file path", func(t *testing.T) {
+		_, err := NewImportDepParser("./testdata/complicate/", DepOption{Files: []string{"appops/projectA/invalid.k"}, ChangedPaths: []string{}})
+		assert.EqualError(t, err, "invalid file path: stat testdata/complicate/appops/projectA/invalid.k: no such file or directory", "err not match")
+	})
+}
+
+var testImportDepParser = []struct {
 	name        string
 	root        string
 	files       []string
@@ -128,6 +209,80 @@ var testDepParser = []struct {
 			"base/frontend/job/job.k",
 			"base/render/server/server_render.k",
 			"base/render/job/job_render.k",
+		},
+	},
+	{
+		name:  "projectE_no_repeat_process_same_import",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectE/base/base.k"},
+		upStreams: []string{
+			"appops/projectE/base/base.k",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+		},
+		changed: []string{
+			"base/frontend/container/container.k",
+		},
+		downStreams: []string{
+			"appops/projectE/base/base.k",
+			"appops/projectE/base",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+		},
+	},
+	{
+		name:  "projectF-relative-import",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectF/dev/main.k"},
+		upStreams: []string{
+			"appops/projectF/dev/main.k",
+			"appops/projectF/base/base.k",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+		},
+		changed: []string{"base/frontend/container/container.k"},
+		downStreams: []string{
+			"base/frontend/container/container.k",
+			"base/frontend/container",
+			"base/frontend/server/server.k",
+			"base/frontend/server",
+			"appops/projectF/base/base.k",
+			"appops/projectF/base",
+			"appops/projectF/dev/main.k",
+			"appops/projectF/dev",
+		},
+	},
+	{
+		name:  "projectG-absolute-import-module",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectG/dev/main.k"},
+		upStreams: []string{
+			"appops/projectG/dev/main.k",
+			"appops/projectG/base/base.k",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+		},
+		changed: []string{"base/frontend/container/container.k"},
+		downStreams: []string{
+			"base/frontend/container/container.k",
+			"base/frontend/container",
+			"base/frontend/server/server.k",
+			"base/frontend/server",
+			"appops/projectG/base/base.k",
+			"appops/projectG/base",
+			"appops/projectG/dev/main.k",
+			"appops/projectG/dev",
 		},
 	},
 	{
