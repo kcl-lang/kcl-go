@@ -322,20 +322,19 @@ func parseImport(code string) []string {
 		}
 
 		ss := strings.Fields(lineCode)
-		if len(ss) == 0 {
-			continue
-		}
 
-		// 'import xx' must at the begin
-		if !strings.HasPrefix(ss[0], "import") {
-			break
-		}
+		if len(ss) > 0 {
+			// 'import xx' must at the beginning
+			if !strings.HasPrefix(ss[0], "import") {
+				break
+			}
 
-		// import abc
-		// import abc as bcd
-		if len(ss) >= 0 {
-			pkgpath := strings.Trim(ss[1], `'"`)
-			m[pkgpath] = pkgpath
+			// import abc
+			// import abc as bcd
+			if len(ss) >= 2 {
+				pkgpath := strings.Trim(ss[1], `'"`)
+				m[pkgpath] = pkgpath
+			}
 		}
 	}
 
