@@ -3,13 +3,29 @@
 package list
 
 import (
+	"path/filepath"
 	"reflect"
 	"sort"
 	"testing"
 )
 
 func TestListDepFiles(t *testing.T) {
-	files, err := ListDepFiles("../../../testdata/app0", nil)
+	testListDepFiles(t, nil)
+}
+
+func TestListDepFiles_restful(t *testing.T) {
+	testListDepFiles(t, &Option{
+		RestfulUrl: "http://" + tRestfulAddr,
+	})
+}
+
+func testListDepFiles(t *testing.T, opt *Option) {
+	abspath, err := filepath.Abs("../../../testdata/app0")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	files, err := ListDepFiles(abspath, opt)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -34,7 +34,10 @@ func InitKclvmRoot(kclvmRoot string) {
 			g_Python3Path = s
 		}
 	}
+}
 
+func GetKclvmRoot() string {
+	return g_KclvmRoot
 }
 
 func GetKclvmPath() (string, error) {

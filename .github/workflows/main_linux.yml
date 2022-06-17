@@ -26,6 +26,9 @@ jobs:
       - run: which kcl
       - run: kcl --version || true
 
+      # install kcl-go
+      - run: GOBIN=${HOME}/.kclvm-go/ubuntu/bin go install ./cmds/kcl-go
+
       - run: go test -v -coverprofile=profile.cov ./...
 
       - uses: shogo82148/actions-goveralls@v1

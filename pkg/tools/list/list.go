@@ -2,11 +2,29 @@
 
 package list
 
+import (
+	"context"
+
+	"kusionstack.io/kclvm-go/pkg/service"
+	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+)
+
 // ListDepFiles return the depend files from the given path. It will scan and parse the kusion applications within the workdir,
 // then list depend files of the applications.
 func ListDepFiles(workDir string, opt *Option) (files []string, err error) {
 	if opt == nil {
 		opt = &Option{}
+	}
+
+	if opt.RestfulUrl != "" {
+		client := service.NewRestClient(opt.RestfulUrl)
+		reply, err := client.ListDepFiles(context.Background(), &gpyrpc.ListDepFiles_Args{
+			WorkDir: workDir,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return reply.Files, nil
 	}
 
 	pkgroot, pkgpath, err := FindPkgInfo(workDir)

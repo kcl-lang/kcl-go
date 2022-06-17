@@ -29,6 +29,7 @@ type Option struct {
 	ProjectYaml string // default: Default_ProjectYaml
 	FlagAll     bool
 	UseAbsPath  bool
+	RestfulUrl  string
 }
 
 func (p *Option) merge(other *Option) {

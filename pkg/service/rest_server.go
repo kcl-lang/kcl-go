@@ -18,6 +18,11 @@ import (
 
 var _ = fmt.Sprint
 
+type RestfulResult struct {
+	Error  string        `json:"error"`
+	Result proto.Message `json:"result"`
+}
+
 type restServer struct {
 	address string
 	router  *httprouter.Router
@@ -50,41 +55,36 @@ func (p *restServer) Run() error {
 }
 
 func (p *restServer) initHttpRrouter() {
-	p.router.GET("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
-	p.router.GET("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
+	methodMap := map[string]func(w http.ResponseWriter, r *http.Request, ps httprouter.Params){
+		// BuiltinService
+		"BuiltinService.Ping":       p.handle_Ping,
+		"BuiltinService.ListMethod": p.handle_ListMethod,
 
-	p.router.GET("/api:protorpc/KclvmService.ParseFile_LarkTree", p.handle_ParseFile_LarkTree)
-	p.router.GET("/api:protorpc/KclvmService.ParseFile_AST", p.handle_ParseFile_AST)
-	p.router.GET("/api:protorpc/KclvmService.ParseProgram_AST", p.handle_ParseProgram_AST)
-	p.router.GET("/api:protorpc/KclvmService.ExecProgram", p.handle_ExecProgram)
-	p.router.GET("/api:protorpc/KclvmService.ResetPlugin", p.handle_ResetPlugin)
-	p.router.GET("/api:protorpc/KclvmService.FormatCode", p.handle_FormatCode)
-	p.router.GET("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
-	p.router.GET("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
-	p.router.GET("/api:protorpc/KclvmService.OverrideFile", p.handle_OverrideFile)
-	p.router.GET("/api:protorpc/KclvmService.EvalCode", p.handle_EvalCode)
-	p.router.GET("/api:protorpc/KclvmService.ResolveCode", p.handle_ResolveCode)
-	p.router.GET("/api:protorpc/KclvmService.GetSchemaType", p.handle_GetSchemaType)
-	p.router.GET("/api:protorpc/KclvmService.ValidateCode", p.handle_ValidateCode)
-	p.router.GET("/api:protorpc/KclvmService.SpliceCode", p.handle_SpliceCode)
+		// KclvmService
+		"KclvmService.ParseFile_LarkTree":  p.handle_ParseFile_LarkTree,
+		"KclvmService.ParseFile_AST":       p.handle_ParseFile_AST,
+		"KclvmService.ParseProgram_AST":    p.handle_ParseProgram_AST,
+		"KclvmService.ExecProgram":         p.handle_ExecProgram,
+		"KclvmService.ResetPlugin":         p.handle_ResetPlugin,
+		"KclvmService.FormatCode":          p.handle_FormatCode,
+		"KclvmService.FormatPath":          p.handle_FormatPath,
+		"KclvmService.LintPath":            p.handle_LintPath,
+		"KclvmService.OverrideFile":        p.handle_OverrideFile,
+		"KclvmService.EvalCode":            p.handle_EvalCode,
+		"KclvmService.ResolveCode":         p.handle_ResolveCode,
+		"KclvmService.GetSchemaType":       p.handle_GetSchemaType,
+		"KclvmService.ValidateCode":        p.handle_ValidateCode,
+		"KclvmService.SpliceCode":          p.handle_SpliceCode,
+		"KclvmService.ListDepFiles":        p.handle_ListDepFiles,
+		"KclvmService.ListUpStreamFiles":   p.handle_ListUpStreamFiles,
+		"KclvmService.ListDownStreamFiles": p.handle_ListDownStreamFiles,
+		"KclvmService.LoadSettingsFiles":   p.handle_LoadSettingsFiles,
+	}
 
-	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
-	p.router.POST("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
-
-	p.router.POST("/api:protorpc/KclvmService.ParseFile_LarkTree", p.handle_ParseFile_LarkTree)
-	p.router.POST("/api:protorpc/KclvmService.ParseFile_AST", p.handle_ParseFile_AST)
-	p.router.POST("/api:protorpc/KclvmService.ParseProgram_AST", p.handle_ParseProgram_AST)
-	p.router.POST("/api:protorpc/KclvmService.ExecProgram", p.handle_ExecProgram)
-	p.router.POST("/api:protorpc/KclvmService.ResetPlugin", p.handle_ResetPlugin)
-	p.router.POST("/api:protorpc/KclvmService.FormatCode", p.handle_FormatCode)
-	p.router.POST("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
-	p.router.POST("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
-	p.router.POST("/api:protorpc/KclvmService.OverrideFile", p.handle_OverrideFile)
-	p.router.POST("/api:protorpc/KclvmService.EvalCode", p.handle_EvalCode)
-	p.router.POST("/api:protorpc/KclvmService.ResolveCode", p.handle_ResolveCode)
-	p.router.POST("/api:protorpc/KclvmService.GetSchemaType", p.handle_GetSchemaType)
-	p.router.POST("/api:protorpc/KclvmService.ValidateCode", p.handle_ValidateCode)
-	p.router.POST("/api:protorpc/KclvmService.SpliceCode", p.handle_SpliceCode)
+	for methodName, methodFunc := range methodMap {
+		p.router.GET("/api:protorpc/"+methodName, methodFunc)
+		p.router.POST("/api:protorpc/"+methodName, methodFunc)
+	}
 }
 
 func (p *restServer) handle(
@@ -106,10 +106,7 @@ func (p *restServer) handle(
 
 	w.Header().Set("Content-Type", "application/json")
 
-	var result struct {
-		Error  string        `json:"error"`
-		Result proto.Message `json:"result"`
-	}
+	var result RestfulResult
 	if x, err := fn(); err != nil {
 		result.Error = err.Error()
 	} else {
