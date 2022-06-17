@@ -67,6 +67,10 @@ func NewLispAppCmd() *cli.Command {
 				Usage: "set custom project.yaml file",
 				Value: "project.yaml",
 			},
+			&cli.BoolFlag{
+				Name:  "use-fast-parser",
+				Usage: "use fast parser",
+			},
 		},
 
 		Action: func(c *cli.Context) error {
@@ -80,6 +84,8 @@ func NewLispAppCmd() *cli.Command {
 				flagHasIndex   = c.Bool("show-index")
 
 				flagAll = c.Bool("include-all")
+
+				flagUseFastParser = c.Bool("use-fast-parser")
 			)
 
 			pkgroot, pkgpath, err := list.FindPkgInfo(c.Args().First())
@@ -113,6 +119,30 @@ func NewLispAppCmd() *cli.Command {
 						fmt.Println("pkgpath:", pkgpath)
 					}
 				}
+			}
+
+			if flagUseFastParser {
+				depParser := list.NewSingleAppDepParser(pkgroot, list.Option{
+					KclYaml:     c.String("kcl-yaml-file"),
+					ProjectYaml: c.String("project-yaml-file"),
+				})
+
+				if flagListFile {
+					if pkgpath != "" {
+						for i, s := range depParser.GetAppFiles(pkgpath, flagAll) {
+							fmt.Println(goodPath(i, s))
+						}
+					}
+				}
+				if flagListPackage {
+					if pkgpath != "" {
+						for i, s := range depParser.GetAppPkgs(pkgpath, flagAll) {
+							fmt.Println(goodPath(i, s))
+						}
+					}
+				}
+
+				return nil
 			}
 
 			depParser := list.NewDepParser(pkgroot, list.Option{
