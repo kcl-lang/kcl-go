@@ -65,6 +65,8 @@ type DepParser struct {
 	touchedFilesDag map[string]color
 	touchedApps     []string
 	untouchedApps   []string
+
+	err error
 }
 
 type color uint32
@@ -110,10 +112,16 @@ func NewDepParserWithFS(vfs fs.FS, opts ...Option) *DepParser {
 	p.projectYamlDirList = p.getProjectYamlDirList()
 
 	for _, main_k := range p.mainKList {
-		p.loadImportMap(pathpkg.Dir(main_k), p.importMap)
+		if err := p.loadImportMap(pathpkg.Dir(main_k), p.importMap); err != nil {
+			p.err = err
+			break
+		}
 	}
 	for _, kcl_yaml := range p.kclYamlList {
-		p.loadImportMap(pathpkg.Dir(kcl_yaml), p.importMap)
+		if err := p.loadImportMap(pathpkg.Dir(kcl_yaml), p.importMap); err != nil {
+			p.err = err
+			break
+		}
 	}
 
 	return p
@@ -224,7 +232,8 @@ func (p *DepParser) checkPkgColor(pkgpath string) color {
 	if !strings.ContainsAny(pkgpath, `\/`) {
 		return black
 	}
-	if strings.HasPrefix(pkgpath, "kcl_plugin/") {
+
+	if isBuiltinPkg(pkgpath) || isPluginPkg(pkgpath) {
 		return black
 	}
 
@@ -274,7 +283,8 @@ func (p *DepParser) GetDepPkgList(pkgpath string) []string {
 }
 
 func (p *DepParser) GetPkgFileList(pkgpath string) []string {
-	return loadKFileList(p.vfs, pkgpath, p.opt)
+	files, _ := loadKFileList(p.vfs, pkgpath, p.opt)
+	return files
 }
 
 func (p *DepParser) GetMainKList() []string {
@@ -393,19 +403,31 @@ func (p *DepParser) getKList() []string {
 	return list
 }
 
-func (p *DepParser) loadImportMap(path string, import_map map[string][]string) {
+func (p *DepParser) loadImportMap(path string, import_map map[string][]string) error {
+	if p.err != nil {
+		return p.err
+	}
+
 	pkgpath := path
 	if strings.HasSuffix(path, ".k") {
 		pkgpath = pathpkg.Dir(path)
 	}
 
+	if isBuiltinPkg(pkgpath) || isPluginPkg(pkgpath) {
+		return nil
+	}
+
 	if _, ok := import_map[pkgpath]; ok {
-		return
+		return nil
 	}
 
 	var k_files []string
 	if x, ok := p.pkgFilesMap[pkgpath]; !ok {
-		k_files = loadKFileList(p.vfs, pkgpath, p.opt)
+		var err error
+		k_files, err = loadKFileList(p.vfs, pkgpath, p.opt)
+		if err != nil {
+			return fmt.Errorf("package %s: %w", pkgpath, err)
+		}
 		p.pkgFilesMap[pkgpath] = k_files
 	} else {
 		k_files = x
@@ -414,7 +436,7 @@ func (p *DepParser) loadImportMap(path string, import_map map[string][]string) {
 	for _, file := range k_files {
 		src, err := fs.ReadFile(p.vfs, file)
 		if err != nil {
-			panic(err)
+			return fmt.Errorf("package %s: %w", pkgpath, err)
 		}
 
 	Loop:
@@ -429,21 +451,23 @@ func (p *DepParser) loadImportMap(path string, import_map map[string][]string) {
 
 			import_map[pkgpath] = append(import_map[pkgpath], import_path)
 
-			p.loadImportMap(import_path, import_map)
+			if err := p.loadImportMap(import_path, import_map); err != nil {
+				return err
+			}
 		}
 	}
 
 	sort.Strings(import_map[pkgpath])
-	return
+	return nil
 }
 
-func loadKFileList(vfs fs.FS, path string, opt Option) []string {
+func loadKFileList(vfs fs.FS, path string, opt Option) ([]string, error) {
 	if strings.HasSuffix(path, ".k") {
-		return []string{path}
+		return []string{path}, nil
 	}
 
 	if fi, _ := fs.Stat(vfs, path+".k"); fi != nil && !fi.IsDir() {
-		return []string{path + ".k"}
+		return []string{path + ".k"}, nil
 	}
 
 	kclYamlPath := pathpkg.Join(path, opt.KclYaml)
@@ -498,7 +522,9 @@ func loadKFileList(vfs fs.FS, path string, opt Option) []string {
 		}
 
 		if len(settings.Config.Files) > 0 {
-			return settings.Config.Files
+			return settings.Config.Files, nil
+		} else {
+			return nil, fmt.Errorf("no kcl file")
 		}
 	}
 
@@ -524,7 +550,11 @@ func loadKFileList(vfs fs.FS, path string, opt Option) []string {
 		k_files = append(k_files, pathpkg.Join(path, info.Name()))
 	}
 
-	return k_files
+	if len(k_files) == 0 {
+		return nil, fmt.Errorf("no kcl file")
+	}
+
+	return k_files, nil
 }
 
 // kcl_cli_configs:

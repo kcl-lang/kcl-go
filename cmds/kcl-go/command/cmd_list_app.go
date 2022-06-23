@@ -129,14 +129,24 @@ func NewLispAppCmd() *cli.Command {
 
 				if flagListFile {
 					if pkgpath != "" {
-						for i, s := range depParser.GetAppFiles(pkgpath, flagAll) {
+						appFiles, err := depParser.GetAppFiles(pkgpath, flagAll)
+						if err != nil {
+							fmt.Println(err)
+							os.Exit(1)
+						}
+						for i, s := range appFiles {
 							fmt.Println(goodPath(i, s))
 						}
 					}
 				}
 				if flagListPackage {
 					if pkgpath != "" {
-						for i, s := range depParser.GetAppPkgs(pkgpath, flagAll) {
+						appFiles, err := depParser.GetAppPkgs(pkgpath, flagAll)
+						if err != nil {
+							fmt.Println(err)
+							os.Exit(1)
+						}
+						for i, s := range appFiles {
 							fmt.Println(goodPath(i, s))
 						}
 					}

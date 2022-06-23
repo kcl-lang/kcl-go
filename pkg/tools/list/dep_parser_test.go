@@ -172,7 +172,10 @@ func TestSingleAppDepParser_listDepFiles(t *testing.T) {
 
 	depParser := NewSingleAppDepParser(pkgroot, Option{})
 
-	files := depParser.GetAppFiles(pkgpath, true)
+	files, err := depParser.GetAppFiles(pkgpath, true)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	expect := []string{
 		"main.k",
