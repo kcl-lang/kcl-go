@@ -69,7 +69,7 @@ func newLispAppCmd() *cli.Command {
 			},
 			&cli.BoolFlag{
 				Name:  "use-fast-parser",
-				Usage: "use fast parser",
+				Usage: "use fast parser only parse one app depend files",
 			},
 		},
 
