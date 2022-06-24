@@ -22,7 +22,7 @@ const (
 
 func TestMain(m *testing.M) {
 	// go install kcl-go
-	if err := tInstalKclGo(); err != nil {
+	if err := tInstallKclGo(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -43,7 +43,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func tInstalKclGo() error {
+func tInstallKclGo() error {
 	var gobin string
 	if runtime.GOOS == "windows" {
 		gobin = kclvm_runtime.MustGetKclvmRoot()
