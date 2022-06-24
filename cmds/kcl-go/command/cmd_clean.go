@@ -12,7 +12,7 @@ import (
 	"kusionstack.io/kclvm-go/pkg/utils"
 )
 
-func newCleanCmd() *cli.Command {
+func NewCleanCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "clean",
 		Usage: "remove cached files",

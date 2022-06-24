@@ -11,7 +11,7 @@ import (
 	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
 )
 
-func newDocCmd() *cli.Command {
+func NewDocCmd() *cli.Command {
 	return &cli.Command{
 		Hidden:          false,
 		SkipFlagParsing: true,

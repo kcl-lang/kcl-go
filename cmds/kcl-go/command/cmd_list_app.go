@@ -11,7 +11,7 @@ import (
 	"kusionstack.io/kclvm-go/pkg/tools/list"
 )
 
-func newLispAppCmd() *cli.Command {
+func NewLispAppCmd() *cli.Command {
 	return &cli.Command{
 		Hidden:    false,
 		Name:      "list-app",

@@ -14,7 +14,7 @@ import (
 	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
 )
 
-func newLintCmd() *cli.Command {
+func NewLintCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: false,
 		Name:   "lint",

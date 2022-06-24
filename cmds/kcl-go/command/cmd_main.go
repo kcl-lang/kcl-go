@@ -51,31 +51,29 @@ func Main() {
 	}
 
 	app.Commands = []*cli.Command{
-		newSetpupKclvmCmd(),
+		NewSetpupKclvmCmd(),
 
-		newBuildInfoCmd(),
+		NewKclCmd(), // go run main.go kcl -D aa=11 -D bb=22 main.k other.k
 
-		newKclCmd(), // go run main.go kcl -D aa=11 -D bb=22 main.k other.k
+		NewRunCmd(),
+		NewValidateCmd(),
+		NewTestCmd(),
+		NewPluginCmd(),
+		NewCleanCmd(),
 
-		newRunCmd(),
-		newValidateCmd(),
-		newTestCmd(),
-		newPluginCmd(),
-		newCleanCmd(),
+		NewLintCmd(),
+		NewFmtCmd(),
+		NewDocCmd(),
 
-		newLintCmd(),
-		newFmtCmd(),
-		newDocCmd(),
+		NewGrpcServerCmd(),
+		NewRestServerCmd(),
 
-		newGrpcServerCmd(),
-		newRestServerCmd(),
+		NewAstCmd(),
 
-		newAstCmd(),
-
-		newListCmd(),
-		newLispAppCmd(),
-		newTourCmd(),
-		newLspCmd(),
+		NewListCmd(),
+		NewLispAppCmd(),
+		NewTourCmd(),
+		NewLspCmd(),
 	}
 
 	if len(os.Args) == 2 && os.Args[1] == "-gen-markdown" {

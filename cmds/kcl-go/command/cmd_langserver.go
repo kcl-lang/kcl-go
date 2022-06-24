@@ -52,7 +52,7 @@ var lspFlags = []cli.Flag{
 	},
 }
 
-func newLspCmd() *cli.Command {
+func NewLspCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: true,
 		Name:   "lsp",

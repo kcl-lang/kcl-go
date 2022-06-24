@@ -23,7 +23,7 @@ var cmdRestServerFlags = []cli.Flag{
 	},
 }
 
-func newRestServerCmd() *cli.Command {
+func NewRestServerCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: false,
 		Name:   "rest-server",

@@ -23,7 +23,7 @@ var cmdGrpcServerFlags = []cli.Flag{
 	},
 }
 
-func newGrpcServerCmd() *cli.Command {
+func NewGrpcServerCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: false,
 		Name:   "grpc-server",
