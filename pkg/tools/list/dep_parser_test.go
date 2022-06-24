@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"sort"
+	"strings"
 	"testing"
 	"testing/fstest"
 
@@ -166,13 +167,32 @@ func TestDepParser_listDepFiles(t *testing.T) {
 	}
 }
 
+func TestDepParser_listDepFiles_failed(t *testing.T) {
+	pkgroot := "../../../testdata"
+
+	depParser := NewDepParser(pkgroot, Option{})
+
+	err := depParser.GetError()
+	if err == nil {
+		t.Fatal("expect error, got nil")
+	}
+
+	expectErrMsg := "package app0-failed/sub_not_found: no kcl file"
+	if !strings.Contains(err.Error(), expectErrMsg) {
+		t.Fatalf("expect %q, got %q", expectErrMsg, err)
+	}
+}
+
 func TestSingleAppDepParser_listDepFiles(t *testing.T) {
 	pkgroot := "../../../testdata"
 	pkgpath := "app0"
 
 	depParser := NewSingleAppDepParser(pkgroot, Option{})
 
-	files := depParser.GetAppFiles(pkgpath, true)
+	files, err := depParser.GetAppFiles(pkgpath, true)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	expect := []string{
 		"main.k",

@@ -37,6 +37,24 @@ func InitKclvmRoot(kclvmRoot string) {
 
 }
 
+// GetKclvmRoot return kclvm root directory, return error if kclvm not found.
+func GetKclvmRoot() (string, error) {
+	if g_KclvmRoot == "" {
+		return "", ErrKclvmRootNotFound
+	}
+	return g_KclvmRoot, nil
+}
+
+// GetKclvmRoot return kclvm root directory, panic if kclvm not found.
+func MustGetKclvmRoot() string {
+	s, err := GetKclvmRoot()
+	if err != nil {
+		panic(err)
+	}
+	return s
+}
+
+// GetKclvmPath return kclvm/python3 executable path, return error if not found.
 func GetKclvmPath() (string, error) {
 	if g_Python3Path == "" {
 		return "", ErrPython3NotFound
@@ -47,6 +65,7 @@ func GetKclvmPath() (string, error) {
 	return g_Python3Path, nil
 }
 
+// MustGetKclvmPath return kclvm/python3 executable path, panic if not found.
 func MustGetKclvmPath() string {
 	s, err := GetKclvmPath()
 	if err != nil {

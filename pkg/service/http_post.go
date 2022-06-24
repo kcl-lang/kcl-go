@@ -22,9 +22,17 @@ func httpPost(urlpath string, input, output interface{}) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/json")
 
-	r, err := http.DefaultClient.Do(req)
+	// python -m kclvm.program.rpc-server -http=<addr> do not support application/json Content-Type
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{
+		Transport: &http.Transport{
+			DisableCompression: true,
+		},
+	}
+
+	r, err := client.Do(req)
 	if err != nil {
 		return err
 	}
