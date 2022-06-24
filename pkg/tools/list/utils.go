@@ -2,6 +2,7 @@ package list
 
 import "strings"
 
+// TODO: read from kclvm rust.
 var standardSystemModules = []string{
 	"collection",
 	"net",
@@ -26,5 +27,5 @@ func isBuiltinPkg(pkgpath string) bool {
 }
 
 func isPluginPkg(pkgpath string) bool {
-	return strings.HasPrefix(pkgpath, "kcl_plugin/")
+	return strings.HasPrefix(pkgpath, "kcl_plugin/") || strings.HasPrefix(pkgpath, "kcl_plugin.")
 }
