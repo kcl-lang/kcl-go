@@ -73,7 +73,7 @@ var runRunFlags = []cli.Flag{
 	},
 }
 
-func NewRunCmd() *cli.Command {
+func newRunCmd() *cli.Command {
 	return &cli.Command{
 		Name:      "run",
 		Usage:     "compile and run KCL program",

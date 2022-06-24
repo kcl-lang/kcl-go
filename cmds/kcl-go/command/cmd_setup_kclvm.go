@@ -36,7 +36,7 @@ var cmdSetupKclvmFlags = []cli.Flag{
 	},
 }
 
-func NewSetpupKclvmCmd() *cli.Command {
+func newSetpupKclvmCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: false,
 		Name:   "setup-kclvm",

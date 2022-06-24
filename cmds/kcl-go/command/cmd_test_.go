@@ -9,7 +9,7 @@ import (
 	"kusionstack.io/kclvm-go/pkg/tools/ktest"
 )
 
-func NewTestCmd() *cli.Command {
+func newTestCmd() *cli.Command {
 	return &cli.Command{
 		Name:      "test",
 		Usage:     "test packages",

@@ -11,7 +11,7 @@ import (
 	kcl "kusionstack.io/kclvm-go"
 )
 
-func NewFmtCmd() *cli.Command {
+func newFmtCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: false,
 		Name:   "fmt",

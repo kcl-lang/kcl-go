@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewBuildInfoCmd() *cli.Command {
+func newBuildInfoCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: false,
 		Name:   "build-info",

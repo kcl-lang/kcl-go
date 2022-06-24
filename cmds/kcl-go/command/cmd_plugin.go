@@ -11,7 +11,7 @@ import (
 	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
 )
 
-func NewPluginCmd() *cli.Command {
+func newPluginCmd() *cli.Command {
 	return &cli.Command{
 		SkipFlagParsing: true,
 		Name:            "plugin",

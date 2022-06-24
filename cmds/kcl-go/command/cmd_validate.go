@@ -41,7 +41,7 @@ var cmdValidateFlags = []cli.Flag{
 	},
 }
 
-func NewValidateCmd() *cli.Command {
+func newValidateCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: false,
 		Name:   "vet",

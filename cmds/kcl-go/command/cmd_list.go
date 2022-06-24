@@ -14,7 +14,7 @@ import (
 // list options
 // list schema attributes
 
-func NewListCmd() *cli.Command {
+func newListCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: true,
 		Name:   "list",

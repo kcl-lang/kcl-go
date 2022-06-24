@@ -13,7 +13,7 @@ import (
 
 var cmdAstFlags = []cli.Flag{}
 
-func NewAstCmd() *cli.Command {
+func newAstCmd() *cli.Command {
 	return &cli.Command{
 		Hidden:    false,
 		Name:      "dev-ast",

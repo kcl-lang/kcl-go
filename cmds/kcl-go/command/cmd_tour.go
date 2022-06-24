@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func NewTourCmd() *cli.Command {
+func newTourCmd() *cli.Command {
 	return &cli.Command{
 		Hidden: true,
 		Name:   "tour",
