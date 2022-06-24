@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"sort"
+	"strings"
 	"testing"
 	"testing/fstest"
 
@@ -163,6 +164,22 @@ func TestDepParser_listDepFiles(t *testing.T) {
 
 	if !reflect.DeepEqual(files, expect) {
 		t.Fatalf("\nexpect = %v\ngot    = %v", expect, files)
+	}
+}
+
+func TestDepParser_listDepFiles_failed(t *testing.T) {
+	pkgroot := "../../../testdata"
+
+	depParser := NewDepParser(pkgroot, Option{})
+
+	err := depParser.GetError()
+	if err == nil {
+		t.Fatal("expect error, got nil")
+	}
+
+	expectErrMsg := "package app0-failed/sub_not_found: no kcl file"
+	if !strings.Contains(err.Error(), expectErrMsg) {
+		t.Fatalf("expect %q, got %q", expectErrMsg, err)
 	}
 }
 

@@ -1,0 +1,20 @@
+kcl_cli_configs:
+  file:
+    - main.k
+    - ${KCL_MOD}/app0/sub/sub.k
+
+  disable_none: false
+  strict_range_check: false
+  debug: false
+
+kcl_options:
+  - key: app-name
+    value: xappinfo
+  - key: image
+    value: image-url
+  - key: deploy-topology
+    value: [
+      { "idc": "x10", "zone": "R000C", "replicas": 4 },
+      { "idc": "x10", "zone": "R000A", "replicas": 4 },
+      { "idc": "x10", "zone": "R000B", "replicas": 4 },
+    ]

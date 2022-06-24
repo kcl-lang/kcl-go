@@ -127,6 +127,9 @@ func NewDepParserWithFS(vfs fs.FS, opts ...Option) *DepParser {
 	return p
 }
 
+// GetError return parser error.
+func (p *DepParser) GetError() error { return p.err }
+
 func (p *DepParser) GetAppFiles(pkgpath string, includeDependFiles bool) []string {
 	if !includeDependFiles {
 		return p.pkgFilesMap[pkgpath]

@@ -159,6 +159,10 @@ func newLispAppCmd() *cli.Command {
 				KclYaml:     c.String("kcl-yaml-file"),
 				ProjectYaml: c.String("project-yaml-file"),
 			})
+			if err := depParser.GetError(); err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
 
 			if flagListFile {
 				if pkgpath != "" {
