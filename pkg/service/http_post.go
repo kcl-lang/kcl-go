@@ -22,9 +22,15 @@ func httpPost(urlpath string, input, output interface{}) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	r, err := http.DefaultClient.Do(req)
+	client := &http.Client{
+		Transport: &http.Transport{
+			DisableCompression: true,
+		},
+	}
+
+	r, err := client.Do(req)
 	if err != nil {
 		return err
 	}
