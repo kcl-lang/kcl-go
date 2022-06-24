@@ -22,6 +22,8 @@ func httpPost(urlpath string, input, output interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	// python -m kclvm.program.rpc-server -http=<addr> do not support application/json Content-Type
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	client := &http.Client{
