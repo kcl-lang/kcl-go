@@ -39,21 +39,60 @@ func TestFindPkgInfo_failed(t *testing.T) {
 func TestImportDepParser_ListUpstreamFiles(t *testing.T) {
 	for _, testdata := range testImportDepParser {
 		t.Run(testdata.name, func(t *testing.T) {
-			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files})
+			depParser, err := newImportDepParser(testdata.root, DepOption{Files: testdata.files})
 			assert.Nil(t, err, "NewDepParser failed")
-			deps := depParser.ListUpstreamFiles()
+			deps := depParser.upstreamFiles()
 			assert.ElementsMatch(t, testdata.upStreams, deps)
 		})
 	}
 }
 
-func TestImportDepParser_ListDownStreamFiles(t *testing.T) {
+func TestImportDepParser_ListDownstreamFiles(t *testing.T) {
 	for _, testdata := range testImportDepParser {
 		t.Run(testdata.name, func(t *testing.T) {
-			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files, ChangedPaths: testdata.changed})
+			depParser, err := newImportDepParser(testdata.root, DepOption{Files: testdata.files, UpStreams: testdata.changed})
 			assert.Nil(t, err, "NewDepParser failed")
-			affected := depParser.ListDownStreamFiles()
+			affected := depParser.downStreamFiles()
 			assert.ElementsMatch(t, testdata.downStreams, affected)
+		})
+	}
+}
+
+func TestImportDepParser_fixImportPath(t *testing.T) {
+	testData := []struct {
+		name       string
+		filePath   string
+		importPath string
+		expect     string
+	}{
+		{
+			name:       "absolute import",
+			filePath:   "main.k",
+			importPath: "base.b",
+			expect:     "base/b",
+		},
+		{
+			name:       "relative import1",
+			filePath:   "base/b.k",
+			importPath: ".a",
+			expect:     "base/a",
+		},
+		{
+			name:       "relative import2",
+			filePath:   "base/a.k",
+			importPath: "..frontend",
+			expect:     "frontend",
+		},
+		{
+			name:       "invalid import: out of program bound",
+			filePath:   "base/a.k",
+			importPath: "...frontend",
+			expect:     "frontend",
+		},
+	}
+	for _, tData := range testData {
+		t.Run(tData.name, func(t *testing.T) {
+			assert.Equal(t, tData.expect, fixImportPath(tData.filePath, tData.importPath))
 		})
 	}
 }
@@ -133,8 +172,8 @@ func TestImportDepParser_listKFiles(t *testing.T) {
 	}
 }
 func TestImportDepParser_invalidFilePath(t *testing.T) {
-	t.Run("NewImportDepParser invalid file path", func(t *testing.T) {
-		_, err := NewImportDepParser("./testdata/complicate/", DepOption{Files: []string{"appops/projectA/invalid.k"}, ChangedPaths: []string{}})
+	t.Run("newImportDepParser invalid file path", func(t *testing.T) {
+		_, err := newImportDepParser("./testdata/complicate/", DepOption{Files: []string{"appops/projectA/invalid.k"}, UpStreams: []string{}})
 		assert.EqualError(t, err, "invalid file path: stat testdata/complicate/appops/projectA/invalid.k: no such file or directory", "err not match")
 	})
 }
@@ -152,9 +191,6 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k"},
 		upStreams: []string{
-			"appops/projectA/base/base.k",
-			"appops/projectA/dev/main.k",
-			"base/render/server/server_render.k",
 			"base/frontend/server",
 			"base/frontend/server/server.k",
 			"base/frontend/container",
@@ -163,7 +199,6 @@ var testImportDepParser = []struct {
 		},
 		changed: []string{"base/frontend/container/container_port.k"},
 		downStreams: []string{
-			"base/frontend/container/container_port.k",
 			"base/frontend/container",
 			"base/frontend/server/server.k",
 			"base/frontend/server",
@@ -176,9 +211,6 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectB/base/base.k", "appops/projectB/dev/main.k", "base/render/job/job_render.k"},
 		upStreams: []string{
-			"appops/projectB/base/base.k",
-			"appops/projectB/dev/main.k",
-			"base/render/job/job_render.k",
 			"base/frontend/job",
 			"base/frontend/job/job.k",
 			"base/frontend/container",
@@ -187,7 +219,6 @@ var testImportDepParser = []struct {
 		},
 		changed: []string{"base/render/job/job_render.k"},
 		downStreams: []string{
-			"base/render/job/job_render.k",
 			"base/render/job",
 		},
 	},
@@ -196,10 +227,6 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k", "appops/projectB/base/base.k", "appops/projectB/dev/main.k", "base/render/job/job_render.k"},
 		upStreams: []string{
-			"appops/projectA/base/base.k",
-			"appops/projectB/base/base.k",
-			"appops/projectA/dev/main.k",
-			"appops/projectB/dev/main.k",
 			"base/frontend/server",
 			"base/frontend/server/server.k",
 			"base/frontend/container",
@@ -207,8 +234,6 @@ var testImportDepParser = []struct {
 			"base/frontend/container/container_port.k",
 			"base/frontend/job",
 			"base/frontend/job/job.k",
-			"base/render/server/server_render.k",
-			"base/render/job/job_render.k",
 		},
 	},
 	{
@@ -216,7 +241,6 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectE/base/base.k"},
 		upStreams: []string{
-			"appops/projectE/base/base.k",
 			"base/frontend/server",
 			"base/frontend/server/server.k",
 			"base/frontend/container",
@@ -232,7 +256,6 @@ var testImportDepParser = []struct {
 			"base/frontend/server",
 			"base/frontend/server/server.k",
 			"base/frontend/container",
-			"base/frontend/container/container.k",
 		},
 	},
 	{
@@ -240,7 +263,6 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectF/dev/main.k"},
 		upStreams: []string{
-			"appops/projectF/dev/main.k",
 			"appops/projectF/base/base.k",
 			"base/frontend/server",
 			"base/frontend/server/server.k",
@@ -250,7 +272,6 @@ var testImportDepParser = []struct {
 		},
 		changed: []string{"base/frontend/container/container.k"},
 		downStreams: []string{
-			"base/frontend/container/container.k",
 			"base/frontend/container",
 			"base/frontend/server/server.k",
 			"base/frontend/server",
@@ -265,7 +286,6 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectG/dev/main.k"},
 		upStreams: []string{
-			"appops/projectG/dev/main.k",
 			"appops/projectG/base/base.k",
 			"base/frontend/server",
 			"base/frontend/server/server.k",
@@ -275,7 +295,6 @@ var testImportDepParser = []struct {
 		},
 		changed: []string{"base/frontend/container/container.k"},
 		downStreams: []string{
-			"base/frontend/container/container.k",
 			"base/frontend/container",
 			"base/frontend/server/server.k",
 			"base/frontend/server",
@@ -286,17 +305,12 @@ var testImportDepParser = []struct {
 		},
 	},
 	{
-		name:  "projectC-delete-unused-file",
-		root:  "./testdata/complicate/",
-		files: []string{"appops/projectC/dev/main.k", "base/render/server/server_render.k"},
-		upStreams: []string{
-			"appops/projectC/dev/main.k",
-			"base/render/server/server_render.k",
-		},
-		changed: []string{"appops/projectC/base/base.k"},
+		name:      "projectC-delete-unused-file",
+		root:      "./testdata/complicate/",
+		files:     []string{"appops/projectC/dev/main.k", "base/render/server/server_render.k"},
+		upStreams: []string{},
+		changed:   []string{"appops/projectC/base/base.k"},
 		downStreams: []string{
-			"appops/projectC/base/base.k",
-			"appops/projectC/base/base",
 			"appops/projectC/base",
 		},
 	},
@@ -305,14 +319,10 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
 		upStreams: []string{
-			"appops/projectD/base/base.k",
-			"appops/projectD/dev/main.k",
 			"base/frontend/not_exist",
 		},
 		changed: []string{"base/frontend/not_exist/deleted_file.k"},
 		downStreams: []string{
-			"base/frontend/not_exist/deleted_file.k",
-			"base/frontend/not_exist/deleted_file",
 			"base/frontend/not_exist",
 			"appops/projectD/base/base.k",
 			"appops/projectD/base",
@@ -323,27 +333,20 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
 		upStreams: []string{
-			"appops/projectD/base/base.k",
-			"appops/projectD/dev/main.k",
 			"base/frontend/not_exist",
 		},
-		changed: []string{"base/frontend/not_exist/deleted_test.k"},
-		downStreams: []string{
-			"base/frontend/not_exist/deleted_test.k",
-		},
+		changed:     []string{"base/frontend/not_exist/deleted_test.k"},
+		downStreams: []string{},
 	},
 	{
 		name:  "projectD-delete-imported-pkg",
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
 		upStreams: []string{
-			"appops/projectD/base/base.k",
-			"appops/projectD/dev/main.k",
 			"base/frontend/not_exist",
 		},
 		changed: []string{"base/frontend/not_exist"},
 		downStreams: []string{
-			"base/frontend/not_exist",
 			"appops/projectD/base/base.k",
 			"appops/projectD/base",
 		},
@@ -353,17 +356,24 @@ var testImportDepParser = []struct {
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
 		upStreams: []string{
-			"appops/projectD/base/base.k",
-			"appops/projectD/dev/main.k",
 			"base/frontend/not_exist",
 		},
 		changed: []string{"base/frontend/not_exist.k"},
 		downStreams: []string{
 			"base/frontend",
-			"base/frontend/not_exist.k",
-			"base/frontend/not_exist",
 			"appops/projectD/base/base.k",
 			"appops/projectD/base",
+		},
+	},
+	{
+		name:  "projectH-file-directory-name-conflict",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectH/dev/main.k"},
+		upStreams: []string{
+			"appops/projectH/base/base/base.k",
+			"appops/projectH/base/base",
+			"base/frontend/server/server/server.k",
+			"base/frontend/server/server",
 		},
 	},
 }

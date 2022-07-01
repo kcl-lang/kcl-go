@@ -5,3 +5,5 @@ schema Server:
     type: "Deployment" | "StatefulSet" | "DaemonSet" = "Deployment"
     mainContainer: container.Container
     sideCars?: [container.Container]
+
+print("this is frontend/server/server.k")
