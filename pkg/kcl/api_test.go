@@ -96,9 +96,6 @@ func TestListUpstreamFiles(t *testing.T) {
 	}
 
 	expect := []string{
-		"appops/projectA/base/base.k",
-		"appops/projectA/dev/main.k",
-		"base/render/server/server_render.k",
 		"base/frontend/server/server.k",
 		"base/frontend/container/container.k",
 		"base/frontend/container/container_port.k",

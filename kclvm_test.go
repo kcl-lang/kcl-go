@@ -260,9 +260,6 @@ func TestListUpStreamFiles(t *testing.T) {
 	}
 
 	expect := []string{
-		"main.k",
-		"app0/before/base.k",
-		"app0/main.k",
 		"app0/sub",
 		"app0/sub/sub.k",
 		"kcl_plugin/hello",
