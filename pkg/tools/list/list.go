@@ -33,6 +33,11 @@ func ListDepFiles(workDir string, opt *Option) (files []string, err error) {
 
 // ListUpStreamFiles returns a list of the UpStream dependent packages/files from the given path list.
 //
+// Usage Caution
+//
+// The implementation of this API is based on reading files in opt.Files so the time-consuming is positively related to the number of files.
+// Do not call the API with high frequency and please ensure at least 10 seconds interval when calling.
+//
 // Terminology
 //
 // The word "UpStream" means the dependent direction between two files/packages. One file/package (named f) depends on its UpStream files/packages
@@ -85,6 +90,11 @@ func ListUpStreamFiles(workDir string, opt *DepOption) (deps []string, err error
 // ListDownStreamFiles returns a list of DownStream dependent packages/files from the given changed path list.
 // A typical use is to list all the DownStream files when some files changed(added/modified/deleted) in a KCL configuration repository so that
 // certain test cases on those files, instead of all the test cases will need to be rerun to save integration time.
+//
+// Usage Caution
+//
+// The implementation of this API is based on reading files in opt.Files so the time-consuming is positively related to the number of files.
+// Do not call the API with high frequency and please ensure at least 10 seconds interval when calling.
 //
 // Terminology
 //

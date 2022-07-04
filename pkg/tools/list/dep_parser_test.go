@@ -58,6 +58,26 @@ func TestImportDepParser_ListDownstreamFiles(t *testing.T) {
 	}
 }
 
+func BenchmarkImportDepParser_walkDownStream(b *testing.B) {
+	testdata := testImportDepParser[0]
+	depParser, err := newImportDepParser(testdata.root, DepOption{Files: testdata.files, UpStreams: testdata.changed})
+	if err == nil {
+		for i := 0; i < b.N; i++ {
+			_ = depParser.downStreamFiles()
+		}
+	}
+}
+
+func BenchmarkImportDepParser_walkUpStreamFiles(b *testing.B) {
+	testdata := testImportDepParser[0]
+	depParser, err := newImportDepParser(testdata.root, DepOption{Files: testdata.files, UpStreams: testdata.changed})
+	if err == nil {
+		for i := 0; i < b.N; i++ {
+			_ = depParser.upstreamFiles()
+		}
+	}
+}
+
 func TestImportDepParser_fixImportPath(t *testing.T) {
 	testData := []struct {
 		name       string
