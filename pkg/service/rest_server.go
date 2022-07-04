@@ -18,6 +18,12 @@ import (
 
 var _ = fmt.Sprint
 
+// Client represents an restful method result.
+type RestfulResult struct {
+	Error  string        `json:"error"`
+	Result proto.Message `json:"result"`
+}
+
 type restServer struct {
 	address string
 	router  *httprouter.Router
@@ -106,10 +112,7 @@ func (p *restServer) handle(
 
 	w.Header().Set("Content-Type", "application/json")
 
-	var result struct {
-		Error  string        `json:"error"`
-		Result proto.Message `json:"result"`
-	}
+	var result RestfulResult
 	if x, err := fn(); err != nil {
 		result.Error = err.Error()
 	} else {

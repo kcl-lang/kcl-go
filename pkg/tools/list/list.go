@@ -20,7 +20,11 @@ func ListDepFiles(workDir string, opt *Option) (files []string, err error) {
 
 	depParser := NewSingleAppDepParser(pkgroot, *opt)
 
-	for _, s := range depParser.GetAppFiles(pkgpath, opt.FlagAll) {
+	appFiles, err := depParser.GetAppFiles(pkgpath, opt.FlagAll)
+	if err != nil {
+		return nil, err
+	}
+	for _, s := range appFiles {
 		if opt.UseAbsPath {
 			files = append(files, pkgroot+"/"+s)
 		} else {

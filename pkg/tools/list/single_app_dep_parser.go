@@ -3,6 +3,7 @@
 package list
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	pathpkg "path"
@@ -18,6 +19,8 @@ type SingleAppDepParser struct {
 	pkgFilesMap map[string][]string
 
 	allfiles []string
+
+	err error
 }
 
 func NewSingleAppDepParser(root string, opt ...Option) *SingleAppDepParser {
@@ -40,17 +43,21 @@ func NewSingleAppDepParserWithFS(vfs fs.FS, opts ...Option) *SingleAppDepParser 
 	return p
 }
 
-func (p *SingleAppDepParser) GetAppFiles(appPkgpath string, includeDependFiles bool) []string {
-	p.parseOnce(appPkgpath)
+func (p *SingleAppDepParser) GetAppFiles(appPkgpath string, includeDependFiles bool) ([]string, error) {
+	if err := p.parseOnce(appPkgpath); err != nil {
+		return nil, err
+	}
 
 	if includeDependFiles {
-		return p.allfiles
+		return p.allfiles, nil
 	}
-	return p.pkgFilesMap[appPkgpath]
+	return p.pkgFilesMap[appPkgpath], nil
 }
 
-func (p *SingleAppDepParser) GetAppPkgs(appPkgpath string, includeDependFiles bool) []string {
-	p.parseOnce(appPkgpath)
+func (p *SingleAppDepParser) GetAppPkgs(appPkgpath string, includeDependFiles bool) ([]string, error) {
+	if err := p.parseOnce(appPkgpath); err != nil {
+		return nil, err
+	}
 
 	if includeDependFiles {
 		var pkgs []string
@@ -58,15 +65,15 @@ func (p *SingleAppDepParser) GetAppPkgs(appPkgpath string, includeDependFiles bo
 			pkgs = append(pkgs, k)
 		}
 		sort.Strings(pkgs)
-		return pkgs
+		return pkgs, nil
 	}
 
-	return p.importMap[appPkgpath]
+	return p.importMap[appPkgpath], nil
 }
 
-func (p *SingleAppDepParser) parseOnce(appPkgpath string) {
+func (p *SingleAppDepParser) parseOnce(appPkgpath string) error {
 	if p.appPkgpath == appPkgpath {
-		return
+		return p.err
 	}
 
 	p.appPkgpath = appPkgpath
@@ -74,7 +81,10 @@ func (p *SingleAppDepParser) parseOnce(appPkgpath string) {
 	p.pkgFilesMap = make(map[string][]string)
 	p.allfiles = []string{}
 
-	p.scanAppFiles(appPkgpath)
+	if err := p.scanAppFiles(appPkgpath); err != nil {
+		p.err = err
+		return err
+	}
 
 	var filesMap = make(map[string]struct{})
 	for _, files := range p.pkgFilesMap {
@@ -86,15 +96,23 @@ func (p *SingleAppDepParser) parseOnce(appPkgpath string) {
 		p.allfiles = append(p.allfiles, s)
 	}
 	sort.Strings(p.allfiles)
+	return nil
 }
 
-func (p *SingleAppDepParser) scanAppFiles(pkgpath string) {
+func (p *SingleAppDepParser) scanAppFiles(pkgpath string) error {
+	if isBuiltinPkg(pkgpath) || isPluginPkg(pkgpath) {
+		return nil
+	}
+
 	if _, ok := p.pkgFilesMap[pkgpath]; ok {
-		return
+		return nil
 	}
 
 	// 1. loadKFileList
-	k_files := loadKFileList(p.vfs, pkgpath, p.opt)
+	k_files, err := loadKFileList(p.vfs, pkgpath, p.opt)
+	if err != nil {
+		return fmt.Errorf("package %s: %w", pkgpath, err)
+	}
 	p.pkgFilesMap[pkgpath] = k_files
 
 	// 2. parse import
@@ -121,6 +139,10 @@ func (p *SingleAppDepParser) scanAppFiles(pkgpath string) {
 
 	// 4. scan import
 	for _, import_path := range importList {
-		p.scanAppFiles(import_path)
+		if err := p.scanAppFiles(import_path); err != nil {
+			return err
+		}
 	}
+
+	return err
 }
