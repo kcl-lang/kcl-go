@@ -38,49 +38,53 @@ func TestFindPkgInfo_failed(t *testing.T) {
 }
 
 func TestImportDepParser_ListUpstreamFiles(t *testing.T) {
-	for _, testdata := range testImportDepParser {
-		t.Run(testdata.name, func(t *testing.T) {
-			depParser, err := newImportDepParser(testdata.root, DepOption{Files: testdata.files})
+	for _, tc := range importDepParserTestCases {
+		t.Run(tc.name, func(t *testing.T) {
+			depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files})
 			assert.Nil(t, err, "NewDepParser failed")
 			deps := depParser.upstreamFiles()
-			assert.ElementsMatch(t, testdata.upStreams, deps)
+			assert.ElementsMatch(t, tc.upStreams, deps)
 		})
 	}
 }
 
 func TestImportDepParser_ListDownstreamFiles(t *testing.T) {
-	for _, testdata := range testImportDepParser {
-		t.Run(testdata.name, func(t *testing.T) {
-			depParser, err := newImportDepParser(testdata.root, DepOption{Files: testdata.files, UpStreams: testdata.changed})
+	for _, tc := range importDepParserTestCases {
+		t.Run(tc.name, func(t *testing.T) {
+			depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
 			assert.Nil(t, err, "NewDepParser failed")
 			affected := depParser.downStreamFiles()
-			assert.ElementsMatch(t, testdata.downStreams, affected)
+			assert.ElementsMatch(t, tc.downStreams, affected)
 		})
 	}
 }
 
 func BenchmarkImportDepParser_walkDownStream(b *testing.B) {
-	testdata := testImportDepParser[0]
-	depParser, err := newImportDepParser(testdata.root, DepOption{Files: testdata.files, UpStreams: testdata.changed})
-	if err == nil {
-		for i := 0; i < b.N; i++ {
-			_ = depParser.downStreamFiles()
-		}
+	tc := importDepParserTestCases[0]
+	depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		depParser.downStreamFiles()
 	}
 }
 
 func BenchmarkImportDepParser_walkUpStreamFiles(b *testing.B) {
-	testdata := testImportDepParser[0]
-	depParser, err := newImportDepParser(testdata.root, DepOption{Files: testdata.files, UpStreams: testdata.changed})
-	if err == nil {
-		for i := 0; i < b.N; i++ {
-			_ = depParser.upstreamFiles()
-		}
+	tc := importDepParserTestCases[0]
+	depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		depParser.upstreamFiles()
 	}
 }
 
 func TestImportDepParser_fixImportPath(t *testing.T) {
-	testData := []struct {
+	testCases := []struct {
 		name       string
 		filePath   string
 		importPath string
@@ -111,15 +115,15 @@ func TestImportDepParser_fixImportPath(t *testing.T) {
 			expect:     "frontend",
 		},
 	}
-	for _, tData := range testData {
-		t.Run(tData.name, func(t *testing.T) {
-			assert.Equal(t, tData.expect, fixImportPath(tData.filePath, tData.importPath))
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expect, fixImportPath(tc.filePath, tc.importPath))
 		})
 	}
 }
 
-func TestImportDepParser_fixPath(t *testing.T) {
-	testData := []struct {
+func Test_fixPath(t *testing.T) {
+	testCases := []struct {
 		name    string
 		oriPath string
 		expect  string
@@ -145,16 +149,16 @@ func TestImportDepParser_fixPath(t *testing.T) {
 			expect:  "base/frontend/container/invalid",
 		},
 	}
-	for _, tData := range testData {
-		t.Run(tData.name, func(t *testing.T) {
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
 			vfs := os.DirFS("./testdata/complicate")
-			assert.Equal(t, tData.expect, fixPath(vfs, tData.oriPath))
+			assert.Equal(t, tc.expect, fixPath(vfs, tc.oriPath))
 		})
 	}
 }
 
-func TestImportDepParser_listKFiles(t *testing.T) {
-	testData := []struct {
+func Test_listKFiles(t *testing.T) {
+	testCases := []struct {
 		name     string
 		filePath string
 		expect   []string
@@ -185,21 +189,19 @@ func TestImportDepParser_listKFiles(t *testing.T) {
 			},
 		},
 	}
-	for _, tData := range testData {
-		t.Run(tData.name, func(t *testing.T) {
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
 			vfs := os.DirFS("./testdata/complicate")
-			assert.ElementsMatch(t, tData.expect, listKFiles(vfs, tData.filePath))
+			assert.ElementsMatch(t, tc.expect, listKFiles(vfs, tc.filePath))
 		})
 	}
 }
-func TestImportDepParser_invalidFilePath(t *testing.T) {
-	t.Run("newImportDepParser invalid file path", func(t *testing.T) {
-		_, err := newImportDepParser("./testdata/complicate/", DepOption{Files: []string{"appops/projectA/invalid.k"}, UpStreams: []string{}})
-		assert.EqualError(t, err, "invalid file path: stat testdata/complicate/appops/projectA/invalid.k: no such file or directory", "err not match")
-	})
+func Test_invalidFilePath(t *testing.T) {
+	_, err := newImportDepParser("./testdata/complicate/", DepOptions{Files: []string{"appops/projectA/invalid.k"}, UpStreams: []string{}})
+	assert.EqualError(t, err, "invalid file path: stat testdata/complicate/appops/projectA/invalid.k: no such file or directory", "err not match")
 }
 
-var testImportDepParser = []struct {
+var importDepParserTestCases = []struct {
 	name        string
 	root        string
 	files       []string

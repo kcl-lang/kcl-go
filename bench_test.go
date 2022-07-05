@@ -100,12 +100,16 @@ var listUpDownStreamData = struct {
 
 func BenchmarkImportDepParser_ListDownStreamFiles(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _ = ListDownStreamFiles(listUpDownStreamData.root, &ListDepsOption{Files: listUpDownStreamData.files, UpStreams: listUpDownStreamData.changed})
+		if _, err := ListDownStreamFiles(listUpDownStreamData.root, &ListDepsOptions{Files: listUpDownStreamData.files, UpStreams: listUpDownStreamData.changed}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
 func BenchmarkImportDepParser_ListUpStreamFiles(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _ = ListUpStreamFiles(listUpDownStreamData.root, &ListDepsOption{Files: listUpDownStreamData.files})
+		if _, err := ListUpStreamFiles(listUpDownStreamData.root, &ListDepsOptions{Files: listUpDownStreamData.files}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }

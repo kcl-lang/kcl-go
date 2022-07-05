@@ -254,7 +254,7 @@ func TestGetSchemaType(t *testing.T) {
 }
 
 func TestListUpStreamFiles(t *testing.T) {
-	files, err := kclvm.ListUpStreamFiles("./testdata/", &kclvm.ListDepsOption{Files: []string{"main.k", "app0/before/base.k", "app0/main.k"}})
+	files, err := kclvm.ListUpStreamFiles("./testdata/", &kclvm.ListDepsOptions{Files: []string{"main.k", "app0/before/base.k", "app0/main.k"}})
 	if err != nil {
 		t.Fatal(err)
 	}

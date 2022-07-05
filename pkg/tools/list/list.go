@@ -73,10 +73,10 @@ func ListDepFiles(workDir string, opt *Option) (files []string, err error) {
 //
 // To list UpStream files/packages of the file main.k, the function call will be:
 //
-//  ListUpStreamFiles("demo", &DepOption{Files:[]string{"main.k"})
+//  ListUpStreamFiles("demo", &DepOptions{Files:[]string{"main.k"})
 //
 // Then its UpStream files/packages will be: base, base/a.k and base/b.k
-func ListUpStreamFiles(workDir string, opt *DepOption) (deps []string, err error) {
+func ListUpStreamFiles(workDir string, opt *DepOptions) (deps []string, err error) {
 	if opt == nil || opt.Files == nil {
 		return nil, nil
 	}
@@ -129,7 +129,7 @@ func ListUpStreamFiles(workDir string, opt *DepOption) (deps []string, err error
 //
 // To list DownStream files/packages of the file base/a.k, the function call will be:
 //
-//  ListDownStreamFiles("demo", &DepOption{Files:[]string{"main.k"}, UpStreams:[]string{"base/a.k"})
+//  ListDownStreamFiles("demo", &DepOptions{Files:[]string{"main.k"}, UpStreams:[]string{"base/a.k"})
 //
 // Then the DownStream files/packages of the file base/a.k will be: base/b.k, base and main.k
 // If the import statement in main.k changes to:
@@ -142,7 +142,7 @@ func ListUpStreamFiles(workDir string, opt *DepOption) (deps []string, err error
 // 	import base
 // And the DownStream files/packages of the file base/a.k stays the same
 //
-func ListDownStreamFiles(workDir string, opt *DepOption) ([]string, error) {
+func ListDownStreamFiles(workDir string, opt *DepOptions) ([]string, error) {
 	if opt == nil || opt.Files == nil || opt.UpStreams == nil {
 		return nil, nil
 	}
