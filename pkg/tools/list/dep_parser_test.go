@@ -122,7 +122,7 @@ func TestImportDepParser_fixImportPath(t *testing.T) {
 	}
 }
 
-func Test_fixPath(t *testing.T) {
+func TestFixPath(t *testing.T) {
 	testCases := []struct {
 		name    string
 		oriPath string
@@ -157,7 +157,7 @@ func Test_fixPath(t *testing.T) {
 	}
 }
 
-func Test_listKFiles(t *testing.T) {
+func TestListKFiles(t *testing.T) {
 	testCases := []struct {
 		name     string
 		filePath string
@@ -196,7 +196,7 @@ func Test_listKFiles(t *testing.T) {
 		})
 	}
 }
-func Test_invalidFilePath(t *testing.T) {
+func TestInvalidFilePath(t *testing.T) {
 	_, err := newImportDepParser("./testdata/complicate/", DepOptions{Files: []string{"appops/projectA/invalid.k"}, UpStreams: []string{}})
 	assert.EqualError(t, err, "invalid file path: stat testdata/complicate/appops/projectA/invalid.k: no such file or directory", "err not match")
 }
