@@ -205,10 +205,11 @@ func addValueOnIndex(m map[string]stringSet, index string, value string) {
 func (p *importDepParser) upstreamFiles() []string {
 	upFiles := emptyStringSet()
 	for _, f := range p.opt.Files {
-		p.importGraph.walkUpstream(f, func(filepath string) {
-			upFiles.add(filepath)
-		}, func(filepath string) bool {
-			return upFiles.contains(filepath)
+		p.importGraph.walkUpstream(f, func(filepath string) (walked bool) {
+			if walked = upFiles.contains(filepath); !walked {
+				upFiles.add(filepath)
+			}
+			return
 		})
 	}
 	return upFiles.toSlice()
@@ -235,17 +236,18 @@ func (p *importDepParser) downStreamFiles() []string {
 		}
 	}
 	for _, f := range p.opt.UpStreams {
-		p.importGraph.walkDownstream(f, func(filepath string) {
-			downFiles.add(filepath)
-		}, func(filepath string) bool {
-			return downFiles.contains(filepath)
+		p.importGraph.walkDownstream(f, func(filepath string) (walked bool) {
+			if walked = downFiles.contains(filepath); !walked {
+				downFiles.add(filepath)
+			}
+			return
 		})
 	}
 	return downFiles.toSlice()
 }
 
 // walkUpstream walks through the importGraph starting from the start file and up to the files the start file imports recursively
-func (g *importGraph) walkUpstream(start string, walkFunc func(filepath string), walked func(filepath string) bool) {
+func (g *importGraph) walkUpstream(start string, walkFunc func(filepath string) (walked bool)) {
 	// 1. collect all the upstream files/packages of the start file
 	nexts := g.importIndex[start]
 	if nexts == nil {
@@ -253,23 +255,27 @@ func (g *importGraph) walkUpstream(start string, walkFunc func(filepath string),
 	}
 	for next := range nexts {
 		// 2. for each path in the upstream list:
-		// 2.1 walk that path
-		walkFunc(next)
+		// 2.1 walk that path if it has been walked
+		if walkFunc(next) {
+			continue
+		}
 		// 2.2 when the path is a package path, all the files in that package will be walked recursively
 		if files, ok := g.fileIndex[next]; ok {
 			for file := range files {
-				walkFunc(file)
-				g.walkUpstream(file, walkFunc, walked)
+				if walkFunc(file) {
+					continue
+				}
+				g.walkUpstream(file, walkFunc)
 			}
 		} else {
 			// 2.2 when the path is a file path, walk it recursively
-			g.walkUpstream(next, walkFunc, walked)
+			g.walkUpstream(next, walkFunc)
 		}
 	}
 }
 
 // walkDownstream walks the importGraph starting from a start path and walks down to its downstream files recursively
-func (g *importGraph) walkDownstream(start string, walkFunc func(filepath string), walked func(filepath string) bool) {
+func (g *importGraph) walkDownstream(start string, walkFunc func(filepath string) (walked bool)) {
 	// 1. collect all the downstream files/packages of the start file
 	// 1.1 list one step down stream files by searching the start file in the import inverted index
 	nexts := g.importIndexInverted[start]
@@ -284,10 +290,10 @@ func (g *importGraph) walkDownstream(start string, walkFunc func(filepath string
 	}
 	// 2. call the walkFunc on each one of the DownStream files/packages, and recursively walk on them
 	for next := range nexts {
-		if !walked(next) {
-			walkFunc(next)
-			g.walkDownstream(next, walkFunc, walked)
+		if walkFunc(next) {
+			continue
 		}
+		g.walkDownstream(next, walkFunc)
 	}
 }
 

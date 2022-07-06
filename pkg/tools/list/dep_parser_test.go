@@ -83,6 +83,30 @@ func BenchmarkImportDepParser_walkUpStreamFiles(b *testing.B) {
 	}
 }
 
+func BenchmarkImportDepParser_walkDownStream_invalid(b *testing.B) {
+	tc := importDepParserTestCases[12]
+	depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		depParser.downStreamFiles()
+	}
+}
+
+func BenchmarkImportDepParser_walkUpStreamFiles_invalid(b *testing.B) {
+	tc := importDepParserTestCases[12]
+	depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		depParser.upstreamFiles()
+	}
+}
+
 func TestImportDepParser_fixImportPath(t *testing.T) {
 	testCases := []struct {
 		name       string
@@ -397,6 +421,27 @@ var importDepParserTestCases = []struct {
 			"appops/projectH/base/base",
 			"base/frontend/server/server/server.k",
 			"base/frontend/server/server",
+		},
+	},
+	{
+		name:  "projectI-recursive-import",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectI/dev/main.k"},
+		upStreams: []string{
+			"base/frontend/invalid_b/invalid_module_B_1.k",
+			"base/frontend/invalid_b/invalid_module_B_2.k",
+			"base/frontend/invalid_a",
+			"base/frontend/invalid_a/invalid_module_A.k",
+		},
+		changed: []string{"base/frontend/invalid_a/invalid_module_A.k"},
+		downStreams: []string{
+			"appops/projectI/dev",
+			"appops/projectI/dev/main.k",
+			"base/frontend/invalid_b",
+			"base/frontend/invalid_b/invalid_module_B_1.k",
+			"base/frontend/invalid_b/invalid_module_B_2.k",
+			"base/frontend/invalid_a",
+			"base/frontend/invalid_a/invalid_module_A.k",
 		},
 	},
 }
