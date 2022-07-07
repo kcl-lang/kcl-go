@@ -41,7 +41,7 @@ import (
 
 type (
 	Option             = kcl.Option
-	ListDepsOption     = list.DepOption
+	ListDepsOptions    = list.DepOptions
 	ListDepFilesOption = list.Option
 	ValidateOptions    = validate.ValidateOptions
 	KCLResult          = kcl.KCLResult
@@ -134,12 +134,12 @@ func ListDepFiles(workDir string, opt *ListDepFilesOption) (files []string, err 
 }
 
 // ListUpStreamFiles return a list of upstream depend files from the given path list
-func ListUpStreamFiles(workDir string, opt *ListDepsOption) (deps []string, err error) {
+func ListUpStreamFiles(workDir string, opt *ListDepsOptions) (deps []string, err error) {
 	return list.ListUpStreamFiles(workDir, opt)
 }
 
 // ListDownStreamFiles return a list of downstream depend files from the given changed path list.
-func ListDownStreamFiles(workDir string, opt *ListDepsOption) ([]string, error) {
+func ListDownStreamFiles(workDir string, opt *ListDepsOptions) ([]string, error) {
 	return list.ListDownStreamFiles(workDir, opt)
 }
 

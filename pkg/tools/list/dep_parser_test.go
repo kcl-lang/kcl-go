@@ -37,44 +37,207 @@ func TestFindPkgInfo_failed(t *testing.T) {
 	}
 }
 
-func TestDepParser_graph(t *testing.T) {
-	for _, testdata := range testDepParser {
-		t.Run(testdata.name, func(t *testing.T) {
-			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files})
+func TestImportDepParser_ListUpstreamFiles(t *testing.T) {
+	for _, tc := range importDepParserTestCases {
+		t.Run(tc.name, func(t *testing.T) {
+			depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files})
 			assert.Nil(t, err, "NewDepParser failed")
-			deps := depParser.ListUpstreamFiles()
-			assert.ElementsMatch(t, testdata.depFiles, deps)
+			deps := depParser.upstreamFiles()
+			assert.ElementsMatch(t, tc.upStreams, deps)
 		})
 	}
 }
 
-func TestDepParser_affected(t *testing.T) {
-	for _, testdata := range testDepParser {
-		t.Run(testdata.name, func(t *testing.T) {
-			depParser, err := NewImportDepParser(testdata.root, DepOption{Files: testdata.files, ChangedPaths: testdata.changed})
+func TestImportDepParser_ListDownstreamFiles(t *testing.T) {
+	for _, tc := range importDepParserTestCases {
+		t.Run(tc.name, func(t *testing.T) {
+			depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
 			assert.Nil(t, err, "NewDepParser failed")
-			affected := depParser.ListDownStreamFiles()
-			assert.ElementsMatch(t, testdata.affected, affected)
+			affected := depParser.downStreamFiles()
+			assert.ElementsMatch(t, tc.downStreams, affected)
 		})
 	}
 }
 
-var testDepParser = []struct {
-	name     string
-	root     string
-	files    []string
-	depFiles []string
-	changed  []string
-	affected []string
+func BenchmarkImportDepParser_walkDownStream(b *testing.B) {
+	tc := importDepParserTestCases[0]
+	depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		depParser.downStreamFiles()
+	}
+}
+
+func BenchmarkImportDepParser_walkUpStreamFiles(b *testing.B) {
+	tc := importDepParserTestCases[0]
+	depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		depParser.upstreamFiles()
+	}
+}
+
+func BenchmarkImportDepParser_walkDownStream_invalid(b *testing.B) {
+	tc := importDepParserTestCases[12]
+	depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		depParser.downStreamFiles()
+	}
+}
+
+func BenchmarkImportDepParser_walkUpStreamFiles_invalid(b *testing.B) {
+	tc := importDepParserTestCases[12]
+	depParser, err := newImportDepParser(tc.root, DepOptions{Files: tc.files, UpStreams: tc.changed})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		depParser.upstreamFiles()
+	}
+}
+
+func TestImportDepParser_fixImportPath(t *testing.T) {
+	testCases := []struct {
+		name       string
+		filePath   string
+		importPath string
+		expect     string
+	}{
+		{
+			name:       "absolute import",
+			filePath:   "main.k",
+			importPath: "base.b",
+			expect:     "base/b",
+		},
+		{
+			name:       "relative import1",
+			filePath:   "base/b.k",
+			importPath: ".a",
+			expect:     "base/a",
+		},
+		{
+			name:       "relative import2",
+			filePath:   "base/a.k",
+			importPath: "..frontend",
+			expect:     "frontend",
+		},
+		{
+			name:       "invalid import: out of program bound",
+			filePath:   "base/a.k",
+			importPath: "...frontend",
+			expect:     "frontend",
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expect, fixImportPath(tc.filePath, tc.importPath))
+		})
+	}
+}
+
+func TestFixPath(t *testing.T) {
+	testCases := []struct {
+		name    string
+		oriPath string
+		expect  string
+	}{
+		{
+			name:    "file path with .k suffix",
+			oriPath: "base/frontend/container/container.k",
+			expect:  "base/frontend/container/container.k",
+		},
+		{
+			name:    "file path without .k suffix",
+			oriPath: "base/frontend/container/container",
+			expect:  "base/frontend/container/container.k",
+		},
+		{
+			name:    "dir path",
+			oriPath: "base/frontend/container",
+			expect:  "base/frontend/container",
+		},
+		{
+			name:    "dir path",
+			oriPath: "base/frontend/container/invalid",
+			expect:  "base/frontend/container/invalid",
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			vfs := os.DirFS("./testdata/complicate")
+			assert.Equal(t, tc.expect, fixPath(vfs, tc.oriPath))
+		})
+	}
+}
+
+func TestListKFiles(t *testing.T) {
+	testCases := []struct {
+		name     string
+		filePath string
+		expect   []string
+	}{
+		{
+			name:     "path to a KCL file",
+			filePath: "base/frontend/container/container.k",
+			expect:   []string{"base/frontend/container/container.k"},
+		},
+		{
+			name:     "path to a KCL file without suffix",
+			filePath: "base/frontend/container/container",
+			expect:   []string{"base/frontend/container/container.k"},
+		},
+		{
+			name:     "path to a KCL package",
+			filePath: "base/frontend/container",
+			expect:   []string{"base/frontend/container/container.k", "base/frontend/container/container_port.k"},
+		},
+		{
+			name:     "path to a KCL package containing test/internal/non-kcl files",
+			filePath: "base/frontend/container/probe",
+			expect: []string{
+				"base/frontend/container/probe/probe.k",
+				"base/frontend/container/probe/exec.k",
+				"base/frontend/container/probe/http.k",
+				"base/frontend/container/probe/tcp.k",
+			},
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			vfs := os.DirFS("./testdata/complicate")
+			assert.ElementsMatch(t, tc.expect, listKFiles(vfs, tc.filePath))
+		})
+	}
+}
+func TestInvalidFilePath(t *testing.T) {
+	_, err := newImportDepParser("./testdata/complicate/", DepOptions{Files: []string{"appops/projectA/invalid.k"}, UpStreams: []string{}})
+	assert.EqualError(t, err, "invalid file path: stat testdata/complicate/appops/projectA/invalid.k: no such file or directory", "err not match")
+}
+
+var importDepParserTestCases = []struct {
+	name        string
+	root        string
+	files       []string
+	upStreams   []string
+	changed     []string
+	downStreams []string
 }{
 	{
 		name:  "projectA",
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k"},
-		depFiles: []string{
-			"appops/projectA/base/base.k",
-			"appops/projectA/dev/main.k",
-			"base/render/server/server_render.k",
+		upStreams: []string{
 			"base/frontend/server",
 			"base/frontend/server/server.k",
 			"base/frontend/container",
@@ -82,8 +245,7 @@ var testDepParser = []struct {
 			"base/frontend/container/container_port.k",
 		},
 		changed: []string{"base/frontend/container/container_port.k"},
-		affected: []string{
-			"base/frontend/container/container_port.k",
+		downStreams: []string{
 			"base/frontend/container",
 			"base/frontend/server/server.k",
 			"base/frontend/server",
@@ -95,10 +257,7 @@ var testDepParser = []struct {
 		name:  "projectB",
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectB/base/base.k", "appops/projectB/dev/main.k", "base/render/job/job_render.k"},
-		depFiles: []string{
-			"appops/projectB/base/base.k",
-			"appops/projectB/dev/main.k",
-			"base/render/job/job_render.k",
+		upStreams: []string{
 			"base/frontend/job",
 			"base/frontend/job/job.k",
 			"base/frontend/container",
@@ -106,8 +265,7 @@ var testDepParser = []struct {
 			"base/frontend/container/container_port.k",
 		},
 		changed: []string{"base/render/job/job_render.k"},
-		affected: []string{
-			"base/render/job/job_render.k",
+		downStreams: []string{
 			"base/render/job",
 		},
 	},
@@ -115,11 +273,7 @@ var testDepParser = []struct {
 		name:  "projectAB",
 		root:  "./testdata/complicate/",
 		files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k", "appops/projectB/base/base.k", "appops/projectB/dev/main.k", "base/render/job/job_render.k"},
-		depFiles: []string{
-			"appops/projectA/base/base.k",
-			"appops/projectB/base/base.k",
-			"appops/projectA/dev/main.k",
-			"appops/projectB/dev/main.k",
+		upStreams: []string{
 			"base/frontend/server",
 			"base/frontend/server/server.k",
 			"base/frontend/container",
@@ -127,8 +281,167 @@ var testDepParser = []struct {
 			"base/frontend/container/container_port.k",
 			"base/frontend/job",
 			"base/frontend/job/job.k",
-			"base/render/server/server_render.k",
-			"base/render/job/job_render.k",
+		},
+	},
+	{
+		name:  "projectE_no_repeat_process_same_import",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectE/base/base.k"},
+		upStreams: []string{
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+		},
+		changed: []string{
+			"base/frontend/container/container.k",
+		},
+		downStreams: []string{
+			"appops/projectE/base/base.k",
+			"appops/projectE/base",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+		},
+	},
+	{
+		name:  "projectF-relative-import",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectF/dev/main.k"},
+		upStreams: []string{
+			"appops/projectF/base/base.k",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+		},
+		changed: []string{"base/frontend/container/container.k"},
+		downStreams: []string{
+			"base/frontend/container",
+			"base/frontend/server/server.k",
+			"base/frontend/server",
+			"appops/projectF/base/base.k",
+			"appops/projectF/base",
+			"appops/projectF/dev/main.k",
+			"appops/projectF/dev",
+		},
+	},
+	{
+		name:  "projectG-absolute-import-module",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectG/dev/main.k"},
+		upStreams: []string{
+			"appops/projectG/base/base.k",
+			"base/frontend/server",
+			"base/frontend/server/server.k",
+			"base/frontend/container",
+			"base/frontend/container/container.k",
+			"base/frontend/container/container_port.k",
+		},
+		changed: []string{"base/frontend/container/container.k"},
+		downStreams: []string{
+			"base/frontend/container",
+			"base/frontend/server/server.k",
+			"base/frontend/server",
+			"appops/projectG/base/base.k",
+			"appops/projectG/base",
+			"appops/projectG/dev/main.k",
+			"appops/projectG/dev",
+		},
+	},
+	{
+		name:      "projectC-delete-unused-file",
+		root:      "./testdata/complicate/",
+		files:     []string{"appops/projectC/dev/main.k", "base/render/server/server_render.k"},
+		upStreams: []string{},
+		changed:   []string{"appops/projectC/base/base.k"},
+		downStreams: []string{
+			"appops/projectC/base",
+		},
+	},
+	{
+		name:  "projectD-delete-imported",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
+		upStreams: []string{
+			"base/frontend/not_exist",
+		},
+		changed: []string{"base/frontend/not_exist/deleted_file.k"},
+		downStreams: []string{
+			"base/frontend/not_exist",
+			"appops/projectD/base/base.k",
+			"appops/projectD/base",
+		},
+	},
+	{
+		name:  "projectD-delete-test-file",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
+		upStreams: []string{
+			"base/frontend/not_exist",
+		},
+		changed:     []string{"base/frontend/not_exist/deleted_test.k"},
+		downStreams: []string{},
+	},
+	{
+		name:  "projectD-delete-imported-pkg",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
+		upStreams: []string{
+			"base/frontend/not_exist",
+		},
+		changed: []string{"base/frontend/not_exist"},
+		downStreams: []string{
+			"appops/projectD/base/base.k",
+			"appops/projectD/base",
+		},
+	},
+	{
+		name:  "projectD-delete-imported-file",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectD/base/base.k", "appops/projectD/dev/main.k"},
+		upStreams: []string{
+			"base/frontend/not_exist",
+		},
+		changed: []string{"base/frontend/not_exist.k"},
+		downStreams: []string{
+			"base/frontend",
+			"appops/projectD/base/base.k",
+			"appops/projectD/base",
+		},
+	},
+	{
+		name:  "projectH-file-directory-name-conflict",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectH/dev/main.k"},
+		upStreams: []string{
+			"appops/projectH/base/base/base.k",
+			"appops/projectH/base/base",
+			"base/frontend/server/server/server.k",
+			"base/frontend/server/server",
+		},
+	},
+	{
+		name:  "projectI-recursive-import",
+		root:  "./testdata/complicate/",
+		files: []string{"appops/projectI/dev/main.k"},
+		upStreams: []string{
+			"base/frontend/invalid_b/invalid_module_B_1.k",
+			"base/frontend/invalid_b/invalid_module_B_2.k",
+			"base/frontend/invalid_a",
+			"base/frontend/invalid_a/invalid_module_A.k",
+		},
+		changed: []string{"base/frontend/invalid_a/invalid_module_A.k"},
+		downStreams: []string{
+			"appops/projectI/dev",
+			"appops/projectI/dev/main.k",
+			"base/frontend/invalid_b",
+			"base/frontend/invalid_b/invalid_module_B_1.k",
+			"base/frontend/invalid_b/invalid_module_B_2.k",
+			"base/frontend/invalid_a",
+			"base/frontend/invalid_a/invalid_module_A.k",
 		},
 	},
 }
