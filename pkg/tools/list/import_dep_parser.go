@@ -52,7 +52,7 @@ func newImportDepParser(root string, opt DepOptions) (p *importDepParser, err er
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.New(fmt.Sprintf("%s", r))
+			err = errors.New(fmt.Sprintf("%v", r))
 		}
 	}()
 	for _, file := range opt.Files {
@@ -177,7 +177,7 @@ func (p *importDepParser) inspect(path string) {
 		// 3.2 read file content and extract import paths from it
 		src, err := fs.ReadFile(p.vfs, f)
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 		for _, importPath := range parseImport(string(src)) {
 			importPath = fixPath(p.vfs, fixImportPath(f, importPath))
