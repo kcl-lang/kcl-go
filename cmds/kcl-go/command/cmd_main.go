@@ -5,6 +5,7 @@ package command
 import (
 	"fmt"
 	"os"
+	"runtime/debug"
 
 	"github.com/urfave/cli/v2"
 
@@ -16,7 +17,14 @@ func Main() {
 	app := cli.NewApp()
 	app.Name = "kcl-go"
 	app.Usage = "K Configuration Language Virtual Machine"
-	app.Version = "0.0.1"
+	app.Version = func() string {
+		if info, ok := debug.ReadBuildInfo(); ok {
+			if info.Main.Version != "" {
+				return info.Main.Version
+			}
+		}
+		return "(devel)"
+	}()
 
 	// kclvm -m kclvm
 	// kclvm -m kclvm.tools.plugin
@@ -52,6 +60,7 @@ func Main() {
 
 	app.Commands = []*cli.Command{
 		NewSetpupKclvmCmd(),
+		NewBuildInfoCmd(),
 
 		NewKclCmd(), // go run main.go kcl -D aa=11 -D bb=22 main.k other.k
 
