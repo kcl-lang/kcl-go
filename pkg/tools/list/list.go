@@ -77,7 +77,7 @@ func ListDepFiles(workDir string, opt *Option) (files []string, err error) {
 //
 // Then its UpStream files/packages will be: base, base/a.k and base/b.k
 func ListUpStreamFiles(workDir string, opt *DepOptions) (deps []string, err error) {
-	if opt == nil || opt.Files == nil {
+	if opt == nil || len(opt.Files) == 0 {
 		return nil, nil
 	}
 	pkgroot, _, err := FindPkgInfo(workDir)
@@ -143,7 +143,7 @@ func ListUpStreamFiles(workDir string, opt *DepOptions) (deps []string, err erro
 // And the DownStream files/packages of the file base/a.k stays the same
 //
 func ListDownStreamFiles(workDir string, opt *DepOptions) ([]string, error) {
-	if opt == nil || opt.Files == nil || opt.UpStreams == nil {
+	if opt == nil || len(opt.Files) == 0 || len(opt.UpStreams) == 0 {
 		return nil, nil
 	}
 	pkgroot, _, err := FindPkgInfo(workDir)
