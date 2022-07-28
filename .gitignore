@@ -9,6 +9,14 @@
 a.out*
 zz_*
 /_build*
+.vscode/*
+.DS_Store
+
+
 *.dylib
 *.lock
 .kclvm
+
+!/pkg/spec/c_api_call/packaged/lib/**/*.so
+!/pkg/spec/c_api_call/packaged/lib/**/*.dylib
+!/pkg/spec/c_api_call/packaged/lib/**/*.dll
