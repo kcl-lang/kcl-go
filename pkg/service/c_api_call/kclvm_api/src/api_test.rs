@@ -1,7 +1,7 @@
-use crate::*;
-use kclvm_api::model::gpyrpc::*;
-use kclvm_api::service::util::*;
-use std::ffi::CStr;
+use crate::model::gpyrpc::*;
+use crate::service::api::*;
+use crate::service::util::*;
+use std::ffi::{CStr, CString};
 use std::fs;
 use std::path::Path;
 const TEST_DATA_PATH: &str = "./src/testdata";
