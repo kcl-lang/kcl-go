@@ -17,6 +17,7 @@ zz_*
 *.lock
 .kclvm
 
+
 **/target/*
 
 !/pkg/spec/c_api_call/packaged/lib/**/*.so
