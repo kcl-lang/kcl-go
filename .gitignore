@@ -18,8 +18,8 @@ zz_*
 .kclvm
 
 
-**/target/*
+**/target
 
-!/pkg/spec/c_api_call/packaged/lib/**/*.so
-!/pkg/spec/c_api_call/packaged/lib/**/*.dylib
-!/pkg/spec/c_api_call/packaged/lib/**/*.dll
+!/pkg/service/c_api_call/packaged/lib/**/*.so
+!/pkg/service/c_api_call/packaged/lib/**/*.dylib
+!/pkg/service/c_api_call/packaged/lib/**/*.dll

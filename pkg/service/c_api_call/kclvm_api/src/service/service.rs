@@ -4,6 +4,7 @@ use crate::model::gpyrpc::*;
 
 
 use kclvm_parser::load_program;
+use kclvm::ValueRef;
 use protobuf_json_mapping::print_to_string_with_options;
 use protobuf_json_mapping::PrintOptions;
 
@@ -60,31 +61,17 @@ impl KclvmService {
         let program = load_program(&kcl_paths_str.as_slice(), Some(opts))?;
         let start_time = SystemTime::now();
         let json_result = kclvm_runner::execute(program, plgin_agent, &native_args)?;
+        let kcl_val = ValueRef::from_json(&json_result).unwrap();
+        let (json_result,yaml_result)= kcl_val.plan();
         let escape_time = match SystemTime::now().duration_since(start_time) {
             Ok(dur) => dur.as_secs_f32(),
             Err(err) => return Err(err.to_string()),
         };
         let mut result = ExecProgram_Result::default();
-        result.json_result = json_result.clone();
+        result.json_result =  json_result;
         result.escaped_time = escape_time.to_string();
         if !args.disable_yaml_result {
-            //if diable_yaml_result == flase ,transfrom json_result to yaml_result
-            let yaml_value = match serde_json::from_str::<serde_yaml::Value>(json_result.as_str()) {
-                Ok(val) => val,
-                Err(err) => return Err(err.to_string()),
-            };
-            let yaml_result = match serde_yaml::to_string(&yaml_value) {
-                Ok(str) => str,
-                Err(err) => return Err(err.to_string()),
-            };
-            //remove yaml prefix
-            let yaml_prefix = "---\n";
-            if yaml_result.starts_with(yaml_prefix) {
-                result.yaml_result =
-                    String::from(&yaml_result[yaml_prefix.len()..yaml_result.len()]);
-            } else {
-                result.yaml_result = yaml_result;
-            }
+           result.yaml_result = yaml_result;
         }
         Ok(result)
     }

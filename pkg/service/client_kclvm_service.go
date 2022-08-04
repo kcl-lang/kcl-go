@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/rpc"
+	"os"
+	"strings"
 
 	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
 	capicall "kusionstack.io/kclvm-go/pkg/service/c_api_call"
@@ -20,9 +22,13 @@ type KclvmServiceClient struct {
 }
 
 func NewKclvmServiceClient() *KclvmServiceClient {
-	return &KclvmServiceClient{
+	c := &KclvmServiceClient{
 		Runtime: kclvm_runtime.GetRuntime(),
 	}
+	if strings.EqualFold(os.Getenv("KCLVM_SERVICE_CLIENT_HANDLER"), "native") {
+		c.IsNative = true
+	}
+	return c
 }
 
 func (p *KclvmServiceClient) getClient(c *rpc.Client) KclvmService {

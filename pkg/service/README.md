@@ -7,9 +7,16 @@ $ make clean
 ```
 
 ### Call Kclvm Service by C API
+enable Kclvm Service C API by environment variable
+```
+$ export KCLVM_SERVICE_CLIENT_HANDLER=native
+
+```
+
+enable Kclvm Service C API by source
 ```
 client := service.NewKclvmServiceClient()
-client.IsNative = true //set native flag
+client.IsNative = true
 ..........
 result ,err :=client.ExecProgram(args)
 ```
