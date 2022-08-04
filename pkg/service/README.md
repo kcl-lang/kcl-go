@@ -7,7 +7,7 @@ $ make clean
 ```
 
 ### Call Kclvm Service by C API
-enable Kclvm Service C API by 
+enable Kclvm Service C API by environment variable
 ```
 $ export KCLVM_SERVICE_CLIENT_HANDLER=native
 

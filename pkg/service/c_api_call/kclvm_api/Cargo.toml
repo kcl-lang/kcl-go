@@ -14,7 +14,7 @@ serde_json = "1.0"
 serde_yaml = "0.9.2"
 protobuf-json-mapping = "3.1.0"
 serde = { version = "1", features = ["derive"] }
-kclvm ={git = "https://github.com/Peefy/KCLVM.git", branch = "yaml-plan-with-delimiter" }
+kclvm = {git = "https://github.com/Peefy/KCLVM.git", branch = "yaml-plan-with-delimiter" }
 
 kclvm-runner = {git = "https://github.com/Peefy/KCLVM.git", branch = "yaml-plan-with-delimiter" }
 kclvm-parser = {git = "https://github.com/Peefy/KCLVM.git", branch = "yaml-plan-with-delimiter" }
