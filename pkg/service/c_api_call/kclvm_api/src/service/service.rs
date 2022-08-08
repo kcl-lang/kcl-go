@@ -12,7 +12,7 @@ pub struct KclvmService {
     //Store the error information of the last call
     pub kclvm_service_err_buffer: String,
 
-    pub plgin_agent : u64
+    pub plugin_agent : u64
 }
 
 impl Default for KclvmService {
