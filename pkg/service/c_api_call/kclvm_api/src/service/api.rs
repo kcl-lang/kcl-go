@@ -68,18 +68,17 @@ pub extern "C" fn kclvm_service_call(
     call: *const c_char,
     args: *const c_char,
 ) -> *const c_char {
-    let args = c2str(args).as_bytes();
-    let call = c2str(call);
-    let call = _kclvm_get_service_fn_ptr_by_name(call);
-    if call == 0 {
-        panic!("null fn ptr");
-    }
-
     let prev_hook = std::panic::take_hook();
 
     // disable print panic info
     std::panic::set_hook(Box::new(|_info| {}));
     let result = std::panic::catch_unwind(|| {
+        let args = unsafe { std::ffi::CStr::from_ptr(args) }.to_bytes();
+        let call = c2str(call);
+        let call = _kclvm_get_service_fn_ptr_by_name(call);
+        if call == 0 {
+            panic!("null fn ptr");
+        }
         let call = (&call as *const u64) as *const ()
             as *const fn(serv: *mut KclvmService, args: &[u8]) -> *const c_char;
         unsafe { (*call)(serv, args) }

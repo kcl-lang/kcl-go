@@ -2,9 +2,8 @@ use std::{path::Path, string::String, time::SystemTime};
 
 use crate::model::gpyrpc::*;
 
-
-use kclvm_parser::load_program;
 use kclvm::ValueRef;
+use kclvm_parser::load_program;
 use protobuf_json_mapping::print_to_string_with_options;
 use protobuf_json_mapping::PrintOptions;
 
@@ -62,16 +61,16 @@ impl KclvmService {
         let start_time = SystemTime::now();
         let json_result = kclvm_runner::execute(program, plgin_agent, &native_args)?;
         let kcl_val = ValueRef::from_json(&json_result).unwrap();
-        let (json_result,yaml_result)= kcl_val.plan();
+        let (json_result, yaml_result) = kcl_val.plan();
         let escape_time = match SystemTime::now().duration_since(start_time) {
             Ok(dur) => dur.as_secs_f32(),
             Err(err) => return Err(err.to_string()),
         };
         let mut result = ExecProgram_Result::default();
-        result.json_result =  json_result;
+        result.json_result = json_result;
         result.escaped_time = escape_time.to_string();
         if !args.disable_yaml_result {
-           result.yaml_result = yaml_result;
+            result.yaml_result = yaml_result;
         }
         Ok(result)
     }
