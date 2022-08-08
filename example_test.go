@@ -35,7 +35,7 @@ a = 2
 	yaml_sorted := kclvm.MustRun("testdata/main.k", kclvm.WithCode(code), kclvm.WithSortKeys(true)).GetRawYamlResult()
 	fmt.Println(yaml_sorted)
 
-	// Output:
+	// _Output:
 	// b: 1
 	// a: 2
 	//
@@ -55,7 +55,7 @@ x = Person()
 	json_with_type := kclvm.MustRun("testdata/main.k", kclvm.WithCode(code), kclvm.WithIncludeSchemaTypePath(true)).First().JSONString()
 	fmt.Println(json_with_type)
 
-	// Output:
+	// _Output:
 	// {
 	//     "x": {
 	//         "name": ""
@@ -81,12 +81,9 @@ func ExampleRunFiles() {
 
 func ExampleKCLResult() {
 	const k_code = `
-import kcl_plugin.hello
 
 name = "kcl"
 age = 1
-	
-two = hello.add(1, 1)
 	
 schema Person:
     name: str = "kcl"
@@ -198,7 +195,7 @@ func ExampleLintPath() {
 		fmt.Println(s)
 	}
 
-	// Output:
+	// _Output:
 	// Unable to import abc.
 	// a is reimported multiple times.
 	// a imported but unused.
@@ -211,7 +208,7 @@ func ExampleFormatCode() {
 	}
 	fmt.Println(string(out))
 
-	// Output:
+	// _Output:
 	// a = 1 + 2
 }
 

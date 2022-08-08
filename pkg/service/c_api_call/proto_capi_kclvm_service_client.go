@@ -18,7 +18,7 @@ type PROTOCAPI_KclvmServiceClient struct {
 }
 
 func PROTOCAPI_NewKclvmServiceClient() *PROTOCAPI_KclvmServiceClient {
-	c := PROTOCAPI_KclvmServiceClient{client: C.kclvm_service_new()}
+	c := PROTOCAPI_KclvmServiceClient{client: C.kclvm_service_new(0)}
 	runtime.SetFinalizer(&c, func(x *PROTOCAPI_KclvmServiceClient) {
 		C.kclvm_service_delete(c.client)
 	})

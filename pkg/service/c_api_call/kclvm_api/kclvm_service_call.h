@@ -9,7 +9,7 @@ extern "C" {
 
 typedef struct kclvm_service kclvm_service;
 
-kclvm_service * kclvm_service_new();
+kclvm_service * kclvm_service_new(long long plgin_agent);
 
 void kclvm_service_delete(kclvm_service *);
 

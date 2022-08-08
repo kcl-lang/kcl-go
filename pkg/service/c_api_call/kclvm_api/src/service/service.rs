@@ -11,12 +11,15 @@ use protobuf_json_mapping::PrintOptions;
 pub struct KclvmService {
     //Store the error information of the last call
     pub kclvm_service_err_buffer: String,
+
+    pub plgin_agent : u64
 }
 
 impl Default for KclvmService {
     fn default() -> Self {
         Self {
             kclvm_service_err_buffer: "\0".to_string(),
+            plgin_agent: 0,
         }
     }
 }
@@ -43,7 +46,6 @@ impl KclvmService {
         .unwrap();
         //parse native_args from json string
         let native_args = kclvm_runner::ExecProgramArgs::from_str(args_json.as_str());
-        let plgin_agent = 0;
         let opts = native_args.get_load_program_options();
         let k_files = &native_args.k_filename_list;
         let mut kcl_paths = Vec::<String>::new();
@@ -59,7 +61,7 @@ impl KclvmService {
 
         let program = load_program(&kcl_paths_str.as_slice(), Some(opts))?;
         let start_time = SystemTime::now();
-        let json_result = kclvm_runner::execute(program, plgin_agent, &native_args)?;
+        let json_result = kclvm_runner::execute(program, self.plgin_agent, &native_args)?;
         let kcl_val = ValueRef::from_json(&json_result).unwrap();
         let (json_result, yaml_result) = kcl_val.plan();
         let escape_time = match SystemTime::now().duration_since(start_time) {
