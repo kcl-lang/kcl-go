@@ -11,9 +11,9 @@ type kclvm_service = KclvmService;
 
 //Create an instance of KclvmService and return its pointer
 #[no_mangle]
-pub extern "C" fn kclvm_service_new(plgin_agent :u64) -> *mut kclvm_service {
+pub extern "C" fn kclvm_service_new(plugin_agent :u64) -> *mut kclvm_service {
     let mut serv = KclvmService::default();
-    serv.plgin_agent=plgin_agent;
+    serv.plugin_agent=plugin_agent;
     new_mut_ptr(serv)
 }
 
