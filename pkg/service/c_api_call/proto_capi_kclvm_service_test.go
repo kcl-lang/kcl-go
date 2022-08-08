@@ -33,7 +33,6 @@ func TestExecProgram(t *testing.T) {
 	client := PROTOCAPI_NewKclvmServiceClient()
 	out, err := client.ExecProgram(args)
 	assert.Nil(t, err)
-	println(out.JsonResult)
-	println(out.YamlResult)
-	println(out.EscapedTime)
+	assert.NotEmpty(t, out.JsonResult)
+	assert.NotEmpty(t, out.YamlResult)
 }

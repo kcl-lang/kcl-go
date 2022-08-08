@@ -12,6 +12,7 @@ import (
 )
 
 func TestParseFile(t *testing.T) {
+	t.Skip("unsupport cgo")
 	const (
 		tfile_k    = "testdata/a.k"
 		tfile_json = "testdata/a.k.ast.json"

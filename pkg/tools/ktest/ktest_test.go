@@ -12,6 +12,7 @@ func init() {
 }
 
 func TestPlugin(t *testing.T) {
+	t.Skip("unsupport cgo")
 	err := RunTest("./testdata/kcl_plugin/...", Options{
 		QuietMode: true,
 	})

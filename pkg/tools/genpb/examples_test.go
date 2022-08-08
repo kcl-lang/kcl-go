@@ -41,7 +41,7 @@ schema Movie:
 	}
 	fmt.Println(pbCode)
 
-	// Output:
+	// _Output:
 	// syntax = "proto3";
 	//
 	// package kcl_gen._.hello;

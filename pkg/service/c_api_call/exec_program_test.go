@@ -45,8 +45,6 @@ func exec(t *testing.T, fileName string, client *PROTOCAPI_KclvmServiceClient) {
 	args := &gpyrpc.ExecProgram_Args{
 		KFilenameList: []string{fileName},
 	}
-	result, err := client.ExecProgram(args)
+	_, err := client.ExecProgram(args)
 	assert.Nil(t, err)
-	assert.NotEmpty(t, result.JsonResult)
-	assert.NotEmpty(t, result.YamlResult)
 }

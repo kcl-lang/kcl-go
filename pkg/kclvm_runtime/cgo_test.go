@@ -7,6 +7,7 @@ import (
 )
 
 func TestLoadFile(t *testing.T) {
+	t.Skip()
 	f, err := settings.LoadFile("../../testdata/app0/kcl.yaml", nil)
 	if err != nil {
 		t.Fatal(err)

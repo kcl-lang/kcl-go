@@ -12,6 +12,7 @@ import (
 )
 
 func TestFormatCode(t *testing.T) {
+	t.Skip("unsupport cgo")
 	tcases := [...]struct {
 		source    string
 		expect    string
@@ -39,6 +40,7 @@ func TestFormatCode(t *testing.T) {
 }
 
 func TestFormatPath(t *testing.T) {
+	t.Skip("unsupport cgo")
 	successDir := "testdata/success"
 	expectedFileSuffix := ".formatted"
 	expectedFiles := findFiles(t, successDir, func(info fs.FileInfo) bool {

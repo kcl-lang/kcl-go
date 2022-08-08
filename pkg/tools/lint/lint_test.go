@@ -8,6 +8,7 @@ import (
 )
 
 func TestLintPath(t *testing.T) {
+	t.Skip("unsupport cgo")
 	expect := `hello imported but unused.`
 
 	ss, err := LintPath("./testdata/a.k")

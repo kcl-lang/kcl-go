@@ -7,6 +7,7 @@ import (
 )
 
 func TestValidateCode(t *testing.T) {
+	t.Skip("unsupport cgo")
 	data := `{"key": "value"}`
 	code := `
 schema Person:

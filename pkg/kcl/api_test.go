@@ -69,6 +69,7 @@ func TestRun_failed(t *testing.T) {
 }
 
 func TestEvalCode(t *testing.T) {
+	t.Skip("unsupport cgo")
 	const k_code = `
 name = "kcl"
 i = 123
@@ -82,6 +83,7 @@ f = 1.5
 }
 
 func TestGetSchemaType(t *testing.T) {
+	t.Skip("unsupport cgo")
 	const k_code = `a=1`
 
 	result, err := GetSchemaType("main.k", k_code, "")
