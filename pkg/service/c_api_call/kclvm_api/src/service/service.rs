@@ -19,7 +19,7 @@ impl Default for KclvmService {
     fn default() -> Self {
         Self {
             kclvm_service_err_buffer: "\0".to_string(),
-            plgin_agent: 0,
+            plugin_agent: 0,
         }
     }
 }
