@@ -86,7 +86,7 @@ pub extern "C" fn kclvm_service_call(
         //todo uniform error handling
         Ok(result) => result,
         Err(panic_err) => {
-            let mut err_message = if let Some(s) = panic_err.downcast_ref::<&str>() {
+            let err_message = if let Some(s) = panic_err.downcast_ref::<&str>() {
                 s.to_string()
             } else if let Some(s) = panic_err.downcast_ref::<&String>() {
                 (*s).clone()
@@ -97,6 +97,7 @@ pub extern "C" fn kclvm_service_call(
             };
             let serv_ref = mut_ptr_as_ref(serv);
             serv_ref.kclvm_service_err_buffer = err_message.clone();
+            serv_ref.kclvm_service_err_buffer.push('\0');
             let c_string =
                 std::ffi::CString::new(err_message.as_str()).expect("CString::new failed");
             let ptr = c_string.into_raw();
