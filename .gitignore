@@ -12,3 +12,6 @@ zz_*
 *.dylib
 *.lock
 .kclvm
+
+**/target/
+**/.DS_Store
