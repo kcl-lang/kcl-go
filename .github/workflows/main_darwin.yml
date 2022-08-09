@@ -12,6 +12,8 @@ jobs:
         with:
           go-version: 1.17
 
+      - run: echo "CGO_ENABLED=0" >> $GITHUB_ENV
+
       - run: go build ./cmds/kcl-go
       - run: go run ./cmds/kcl-go
 
@@ -21,5 +23,6 @@ jobs:
       - run: which kclvm || which python3
       - run: which kcl
       - run: kcl --version || true
+
 
       - run: go test ./...
