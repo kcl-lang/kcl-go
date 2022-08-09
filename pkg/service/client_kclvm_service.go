@@ -6,22 +6,37 @@ import (
 	"fmt"
 	"io"
 	"net/rpc"
+	"os"
+	"strings"
 
 	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
+	capicall "kusionstack.io/kclvm-go/pkg/service/c_api_call"
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
 )
 
+var _ KclvmService = (*capicall.PROTOCAPI_KclvmServiceClient)(nil)
+
+var Default_IsNative = false
+
 type KclvmServiceClient struct {
-	Runtime *kclvm_runtime.Runtime
+	Runtime  *kclvm_runtime.Runtime
+	IsNative bool //if true ,call service by C API
 }
 
 func NewKclvmServiceClient() *KclvmServiceClient {
-	return &KclvmServiceClient{
+	c := &KclvmServiceClient{
 		Runtime: kclvm_runtime.GetRuntime(),
 	}
+	if Default_IsNative || strings.EqualFold(os.Getenv("KCLVM_SERVICE_CLIENT_HANDLER"), "native") {
+		c.IsNative = true
+	}
+	return c
 }
 
-func (p *KclvmServiceClient) getClient(c *rpc.Client) *gpyrpc.PROTORPC_KclvmServiceClient {
+func (p *KclvmServiceClient) getClient(c *rpc.Client) KclvmService {
+	if p.IsNative {
+		return capicall.PROTOCAPI_NewKclvmServiceClient()
+	}
 	return &gpyrpc.PROTORPC_KclvmServiceClient{Client: c}
 }
 func (p *KclvmServiceClient) wrapErr(err error, stderr io.Reader) error {
