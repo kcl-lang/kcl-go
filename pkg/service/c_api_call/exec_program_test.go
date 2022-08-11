@@ -14,7 +14,9 @@ import (
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
 )
 
-const EXEC_DATA_PATH = "./exec_data/"
+const CORRECT_DATA_PATH = "./exec_data/correct_data"
+
+const ERROR_DATA_PATH = "./exec_data/error_data"
 
 func getFiles(root string, suffix string, sorted bool) []string {
 	var files = []string{}
@@ -33,18 +35,29 @@ func getFiles(root string, suffix string, sorted bool) []string {
 	return files
 }
 
-func TestExecSingleFile(t *testing.T) {
+func TestExecCorrectSingleFile(t *testing.T) {
 	client := PROTOCAPI_NewKclvmServiceClient()
-	files := getFiles(EXEC_DATA_PATH, ".k", true)
+	files := getFiles(CORRECT_DATA_PATH, ".k", true)
 	for _, file := range files {
-		exec(t, file, client)
+		_, err := exec(file, client)
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 
-func exec(t *testing.T, fileName string, client *PROTOCAPI_KclvmServiceClient) {
+func TestExecErrorSingleFile(t *testing.T) {
+	client := PROTOCAPI_NewKclvmServiceClient()
+	files := getFiles(ERROR_DATA_PATH, ".k", true)
+	for _, file := range files {
+		_, err := exec(file, client)
+		assert.NotNil(t, err)
+	}
+}
+
+func exec(fileName string, client *PROTOCAPI_KclvmServiceClient) (out *gpyrpc.ExecProgram_Result, err error) {
 	args := &gpyrpc.ExecProgram_Args{
 		KFilenameList: []string{fileName},
 	}
-	_, err := client.ExecProgram(args)
-	assert.Nil(t, err)
+	return client.ExecProgram(args)
 }

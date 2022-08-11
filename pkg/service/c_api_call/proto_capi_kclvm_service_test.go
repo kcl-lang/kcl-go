@@ -22,7 +22,7 @@ func TestPing(t *testing.T) {
 
 func TestExecProgram(t *testing.T) {
 
-	workdir, _ := filepath.Abs(EXEC_DATA_PATH)
+	workdir, _ := filepath.Abs(CORRECT_DATA_PATH)
 	args := &gpyrpc.ExecProgram_Args{
 		WorkDir:       workdir,
 		KFilenameList: []string{"hello.k"},

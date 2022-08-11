@@ -70,6 +70,9 @@ pub extern "C" fn kclvm_service_call(
     call: *const c_char,
     args: *const c_char,
 ) -> *const c_char {
+    let pre_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(|_| {}));
+
     let result = std::panic::catch_unwind(|| {
         let args = unsafe { std::ffi::CStr::from_ptr(args) }.to_bytes();
         let call = c2str(call);
@@ -81,7 +84,7 @@ pub extern "C" fn kclvm_service_call(
             as *const fn(serv: *mut KclvmService, args: &[u8]) -> *const c_char;
         unsafe { (*call)(serv, args) }
     });
-
+    std::panic::set_hook(pre_hook);
     match result {
         //todo uniform error handling
         Ok(result) => result,
