@@ -7,10 +7,11 @@ $ make clean
 ```
 
 ### Call Kclvm Service by C API
-First, make sure CGO is enabled
+First, make sure CGO is enabled and use build tag kclvm_service_capi
 ```
 $ export CGO_ENABLED=1
-
+$ go build -tags kclvm_service_capi
+$ go test -tags kclvm_service_capi ./...
 ```
 
 
