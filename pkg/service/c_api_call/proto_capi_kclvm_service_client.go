@@ -21,11 +21,13 @@ type PROTOCAPI_KclvmServiceClient struct {
 }
 
 func PROTOCAPI_NewKclvmServiceClient() *PROTOCAPI_KclvmServiceClient {
-	c := PROTOCAPI_KclvmServiceClient{client: C.kclvm_service_new(C.longlong(0))}
+	c := new(PROTOCAPI_KclvmServiceClient)
+	c.client = C.kclvm_service_new(C.longlong(0))
 	runtime.SetFinalizer(&c, func(x *PROTOCAPI_KclvmServiceClient) {
-		C.kclvm_service_delete(c.client)
+		C.kclvm_service_delete(x.client)
+		x.client = nil
 	})
-	return &c
+	return c
 }
 
 func (c *PROTOCAPI_KclvmServiceClient) cApiCall(callName string, in proto.Message, out protoreflect.ProtoMessage) error {
