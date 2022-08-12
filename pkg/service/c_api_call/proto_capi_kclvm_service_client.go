@@ -25,7 +25,7 @@ type PROTOCAPI_KclvmServiceClient struct {
 
 func PROTOCAPI_NewKclvmServiceClient() *PROTOCAPI_KclvmServiceClient {
 	c := new(PROTOCAPI_KclvmServiceClient)
-	c.client = C.kclvm_service_new(C.longlong(kcl_plugin.GetInvokeJsonProxyPtr()))
+	c.client = NewKclvmService(C.longlong(kcl_plugin.GetInvokeJsonProxyPtr()))
 	runtime.SetFinalizer(c, func(x *PROTOCAPI_KclvmServiceClient) {
 		DeleteKclvmService(x.client)
 		x.client = nil

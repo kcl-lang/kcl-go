@@ -77,12 +77,7 @@ func InvokeJson(method, args_json, kwargs_json string) (result_json string) {
 	return _Invoke(method, args_json, kwargs_json)
 }
 
-var limitChan_Invoke = make(chan struct{}, 4)
-
 func _Invoke(method, args_json, kwargs_json string) (result_json string) {
-	limitChan_Invoke <- struct{}{}
-	defer func() { <-limitChan_Invoke }()
-
 	defer func() {
 		if r := recover(); r != nil {
 			result_json = JSONError(errors.New(fmt.Sprint(r)))

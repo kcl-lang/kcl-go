@@ -34,13 +34,3 @@ func c_String_new(s string) *C.char {
 	c_String.buf[id] = cs
 	return cs
 }
-
-func c_String_free_all(s string) {
-	c_String.Lock()
-	defer c_String.Unlock()
-
-	for i, cs := range c_String.buf {
-		C.free(unsafe.Pointer(cs))
-		c_String.buf[i] = nil
-	}
-}
