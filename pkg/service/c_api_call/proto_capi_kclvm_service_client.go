@@ -15,6 +15,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"kusionstack.io/kclvm-go/pkg/kcl_plugin"
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
 )
 
@@ -24,7 +25,7 @@ type PROTOCAPI_KclvmServiceClient struct {
 
 func PROTOCAPI_NewKclvmServiceClient() *PROTOCAPI_KclvmServiceClient {
 	c := new(PROTOCAPI_KclvmServiceClient)
-	c.client = NewKclvmService(C.longlong(0))
+	c.client = NewKclvmService(C.longlong(kcl_plugin.GetInvokeJsonProxyPtr()))
 	runtime.SetFinalizer(c, func(x *PROTOCAPI_KclvmServiceClient) {
 		DeleteKclvmService(x.client)
 		x.client = nil
