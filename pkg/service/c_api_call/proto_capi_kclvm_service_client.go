@@ -3,8 +3,10 @@
 
 package capicall
 
-// #include "kclvm_service_call.h"
-// #include <stdlib.h>
+/*
+#include <stdlib.h>
+typedef struct kclvm_service kclvm_service;
+*/
 import "C"
 import (
 	"errors"
@@ -22,9 +24,9 @@ type PROTOCAPI_KclvmServiceClient struct {
 
 func PROTOCAPI_NewKclvmServiceClient() *PROTOCAPI_KclvmServiceClient {
 	c := new(PROTOCAPI_KclvmServiceClient)
-	c.client = C.kclvm_service_new(C.longlong(0))
+	c.client = NewKclvmService(C.longlong(0))
 	runtime.SetFinalizer(c, func(x *PROTOCAPI_KclvmServiceClient) {
-		C.kclvm_service_delete(x.client)
+		DeleteKclvmService(x.client)
 		x.client = nil
 	})
 	return c
@@ -52,18 +54,17 @@ func (c *PROTOCAPI_KclvmServiceClient) cApiCall(callName string, in proto.Messag
 
 	defer C.free(unsafe.Pointer(cIn))
 
-	cOut := C.kclvm_service_call(c.client, cCallName, cIn)
+	cOut := KclvmServiceCall(c.client, cCallName, cIn)
 
-	defer C.kclvm_service_free_string(cOut)
+	defer KclvmServiceFreeString(cOut)
 
-	cErr := C.kclvm_service_get_error_buffer(c.client)
+	cErr := GetKclvmServiceError(c.client)
 
-	defer C.kclvm_service_clear_error_buffer(c.client)
+	defer ClearKclvmServiceError(c.client)
 
 	goErr := C.GoString(cErr)
 
 	if len(goErr) > 0 {
-		C.kclvm_service_clear_error_buffer(c.client)
 		return errors.New(goErr)
 	}
 	return proto.Unmarshal([]byte(C.GoString(cOut)), out)
