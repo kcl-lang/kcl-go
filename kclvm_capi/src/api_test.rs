@@ -15,7 +15,12 @@ fn test_c_api_call_exec_program() {
     let input = fs::read_to_string(&input_path)
         .expect(format!("Something went wrong reading {}", input_path.display()).as_str());
     let args = unsafe {
-        CString::from_vec_unchecked(parse_message_from_json::<ExecProgram_Args>(&input).unwrap().write_to_bytes().unwrap())
+        CString::from_vec_unchecked(
+            parse_message_from_json::<ExecProgram_Args>(&input)
+                .unwrap()
+                .write_to_bytes()
+                .unwrap(),
+        )
     };
     let call = CString::new("KclvmService.ExecProgram").unwrap();
     let result_ptr = kclvm_service_call(serv, call.as_ptr(), args.as_ptr()) as *mut i8;
