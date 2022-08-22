@@ -12,6 +12,7 @@ import (
 	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
 	capicall "kusionstack.io/kclvm-go/pkg/service/c_api_call"
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kusionstack.io/kclvm-go/pkg/tools/list"
 )
 
 var _ KclvmService = (*capicall.PROTOCAPI_KclvmServiceClient)(nil)
@@ -199,26 +200,68 @@ func (p *KclvmServiceClient) Hover(args *gpyrpc.Hover_Args) (resp *gpyrpc.Hover_
 }
 
 func (p *KclvmServiceClient) ListDepFiles(args *gpyrpc.ListDepFiles_Args) (resp *gpyrpc.ListDepFiles_Result, err error) {
-	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
-		resp, err = p.getClient(c).ListDepFiles(args)
-		err = p.wrapErr(err, stderr)
-	})
+	resp = new(gpyrpc.ListDepFiles_Result)
+
+	resp.Pkgroot, resp.Pkgpath, err = list.FindPkgInfo(args.WorkDir)
+	if err != nil {
+		return nil, err
+	}
+
+	var goodPath = func(i int, s string) string {
+		if args.UseAbsPath {
+			return resp.Pkgroot + "/" + s
+		} else {
+			return s
+		}
+	}
+
+	if args.UseFastParser {
+		depParser := list.NewSingleAppDepParser(resp.Pkgroot, list.Option{})
+		appFiles, err := depParser.GetAppFiles(resp.Pkgpath, args.IncludeAll)
+		if err != nil {
+			return nil, err
+		}
+
+		for i, s := range appFiles {
+			resp.Files = append(resp.Files, goodPath(i, s))
+		}
+	} else {
+		depParser := list.NewDepParser(resp.Pkgroot, list.Option{})
+		if err := depParser.GetError(); err != nil {
+			return nil, err
+		}
+		for i, s := range depParser.GetAppFiles(resp.Pkgpath, args.IncludeAll) {
+			resp.Files = append(resp.Files, goodPath(i, s))
+		}
+	}
+
 	return
 }
 
 func (p *KclvmServiceClient) ListUpStreamFiles(args *gpyrpc.ListUpStreamFiles_Args) (resp *gpyrpc.ListUpStreamFiles_Result, err error) {
-	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
-		resp, err = p.getClient(c).ListUpStreamFiles(args)
-		err = p.wrapErr(err, stderr)
+	files, err := list.ListUpStreamFiles(args.WorkDir, &list.DepOptions{
+		Files: args.Files,
 	})
+	if err != nil {
+		return nil, err
+	}
+	resp = &gpyrpc.ListUpStreamFiles_Result{
+		Files: files,
+	}
 	return
 }
 
 func (p *KclvmServiceClient) ListDownStreamFiles(args *gpyrpc.ListDownStreamFiles_Args) (resp *gpyrpc.ListDownStreamFiles_Result, err error) {
-	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
-		resp, err = p.getClient(c).ListDownStreamFiles(args)
-		err = p.wrapErr(err, stderr)
+	files, err := list.ListDownStreamFiles(args.WorkDir, &list.DepOptions{
+		Files:     args.Files,
+		UpStreams: args.ChangedPaths,
 	})
+	if err != nil {
+		return nil, err
+	}
+	resp = &gpyrpc.ListDownStreamFiles_Result{
+		Files: files,
+	}
 	return
 }
 
