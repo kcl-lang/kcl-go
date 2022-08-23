@@ -50,8 +50,11 @@ func initRuntime(maxProc int) {
 		os.Setenv("PYTHONHOME", "")
 		os.Setenv("PYTHONPATH", filepath.Join(g_KclvmRoot, "lib", "site-packages"))
 	}
-
-	pyrpcRuntime = NewRuntime(int(maxProc), MustGetKclvmPath(), "-m", "kclvm.program.rpc-server")
+	if strings.EqualFold(os.Getenv("KCLVM_SERVICE_CLIENT_HANDLER"), "native") {
+		pyrpcRuntime = NewRuntime(int(maxProc), findKclvmRoot()+"/bin/gorpc")
+	} else {
+		pyrpcRuntime = NewRuntime(int(maxProc), MustGetKclvmPath(), "-m", "kclvm.program.rpc-server")
+	}
 	pyrpcRuntime.Start()
 
 	client := &BuiltinServiceClient{
