@@ -137,6 +137,5 @@ func (p *Runtime) freeProc(proc *_Process) {
 
 	if proc != nil {
 		proc.SetFree()
-		proc.Kill() // fix memory leak
 	}
 }
