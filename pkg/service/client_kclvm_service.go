@@ -8,18 +8,12 @@ import (
 	"net/rpc"
 
 	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
-	capicall "kusionstack.io/kclvm-go/pkg/service/c_api_call"
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
 	"kusionstack.io/kclvm-go/pkg/tools/list"
 )
 
-var _ KclvmService = (*capicall.PROTOCAPI_KclvmServiceClient)(nil)
-
-var Default_IsNative = false
-
 type KclvmServiceClient struct {
-	Runtime  *kclvm_runtime.Runtime
-	IsNative bool //if true ,call service by C API
+	Runtime *kclvm_runtime.Runtime
 }
 
 func NewKclvmServiceClient() *KclvmServiceClient {
