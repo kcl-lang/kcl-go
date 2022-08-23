@@ -16,6 +16,7 @@ import (
 var (
 	Debug        bool
 	pyrpcRuntime *Runtime
+	gorpcRuntime *Runtime
 	once         sync.Once
 )
 
@@ -24,6 +25,20 @@ func InitRuntime(maxProc int) {
 }
 
 func GetRuntime() *Runtime {
+	once.Do(func() { initRuntime(0) })
+	if strings.EqualFold(os.Getenv("KCLVM_SERVICE_CLIENT_HANDLER"), "native") {
+		return gorpcRuntime
+	} else {
+		return pyrpcRuntime
+	}
+}
+
+func GetGoRuntime() *Runtime {
+	once.Do(func() { initRuntime(0) })
+	return gorpcRuntime
+}
+
+func GetPyRuntime() *Runtime {
 	once.Do(func() { initRuntime(0) })
 	return pyrpcRuntime
 }
@@ -50,11 +65,10 @@ func initRuntime(maxProc int) {
 		os.Setenv("PYTHONHOME", "")
 		os.Setenv("PYTHONPATH", filepath.Join(g_KclvmRoot, "lib", "site-packages"))
 	}
-	if strings.EqualFold(os.Getenv("KCLVM_SERVICE_CLIENT_HANDLER"), "native") {
-		pyrpcRuntime = NewRuntime(int(maxProc), findKclvmRoot()+"/bin/gorpc")
-	} else {
-		pyrpcRuntime = NewRuntime(int(maxProc), MustGetKclvmPath(), "-m", "kclvm.program.rpc-server")
-	}
+	//todo add kclvm_capi gorpc server
+	gorpcRuntime = NewRuntime(int(maxProc), findKclvmRoot()+"/bin/gorpc")
+	pyrpcRuntime = NewRuntime(int(maxProc), MustGetKclvmPath(), "-m", "kclvm.program.rpc-server")
+	gorpcRuntime.Start()
 	pyrpcRuntime.Start()
 
 	client := &BuiltinServiceClient{
