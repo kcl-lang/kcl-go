@@ -1,5 +1,5 @@
-//go:build !cgo || !kclvm_service_capi
-// +build !cgo !kclvm_service_capi
+//go:build !cgo
+// +build !cgo
 
 package capicall
 
