@@ -6,37 +6,25 @@ import (
 	"fmt"
 	"io"
 	"net/rpc"
-	"os"
-	"strings"
 
 	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
-	capicall "kusionstack.io/kclvm-go/pkg/service/c_api_call"
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
 )
 
-var _ KclvmService = (*capicall.PROTOCAPI_KclvmServiceClient)(nil)
-
-var Default_IsNative = false
-
 type KclvmServiceClient struct {
-	Runtime  *kclvm_runtime.Runtime
-	IsNative bool //if true ,call service by C API
+	Runtime   *kclvm_runtime.Runtime
+	pyRuntime *kclvm_runtime.Runtime
 }
 
 func NewKclvmServiceClient() *KclvmServiceClient {
 	c := &KclvmServiceClient{
-		Runtime: kclvm_runtime.GetRuntime(),
-	}
-	if Default_IsNative || strings.EqualFold(os.Getenv("KCLVM_SERVICE_CLIENT_HANDLER"), "native") {
-		c.IsNative = true
+		Runtime:   kclvm_runtime.GetRuntime(),
+		pyRuntime: kclvm_runtime.GetPyRuntime(),
 	}
 	return c
 }
 
 func (p *KclvmServiceClient) getClient(c *rpc.Client) KclvmService {
-	if p.IsNative {
-		return capicall.PROTOCAPI_NewKclvmServiceClient()
-	}
 	return &gpyrpc.PROTORPC_KclvmServiceClient{Client: c}
 }
 func (p *KclvmServiceClient) wrapErr(err error, stderr io.Reader) error {
@@ -119,7 +107,7 @@ func (p *KclvmServiceClient) LintPath(args *gpyrpc.LintPath_Args) (resp *gpyrpc.
 }
 
 func (p *KclvmServiceClient) OverrideFile(args *gpyrpc.OverrideFile_Args) (resp *gpyrpc.OverrideFile_Result, err error) {
-	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+	p.pyRuntime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).OverrideFile(args)
 		err = p.wrapErr(err, stderr)
 	})
