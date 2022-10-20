@@ -7,7 +7,7 @@ import (
 
 func NewKpmCmd() *cli.Command {
 	return &cli.Command{
-		Hidden: false,
+		Hidden: true,
 		Name:   "kpm",
 		Usage:  "kpm is a kcl package manager",
 		Action: func(c *cli.Context) error {
