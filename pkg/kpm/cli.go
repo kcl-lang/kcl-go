@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/valyala/bytebufferpool"
+	"github.com/valyala/fasthttp"
 	"net/url"
 	"os"
 	"os/user"
@@ -50,6 +52,85 @@ func CLI(args ...string) {
 			return
 		}
 		err = CliDel(args[1:]...)
+		if err != nil {
+			println(err.Error())
+			return
+		}
+	case "search":
+		if len(args) != 2 {
+			println(CliSearchHelp)
+			return
+		}
+
+		err = CliSearch(args[1:]...)
+		if err != nil {
+			println(err.Error())
+			return
+		}
+	case "publish":
+		if len(args) < 2 {
+			println(CliPublishHelp)
+			return
+		}
+		err = CliPublish(args[1:]...)
+		if err != nil {
+			println(err.Error())
+			return
+		}
+	case "store":
+		if len(args) == 1 {
+			println(CliStoreHelp)
+			return
+		} else {
+			switch args[1] {
+			case "add":
+				if len(args) < 3 {
+					//请输入参数
+					println(CliStoreAddHelp)
+					return
+				}
+				err = CliStoreAdd(args[2:]...)
+				if err != nil {
+					println(err.Error())
+					return
+				}
+			case "addfile":
+				if len(args) < 3 {
+					println(CliStoreAddFileHelp)
+					return
+				}
+				err = CliStoreAddFile(args[2])
+				if err != nil {
+					println(err.Error())
+					return
+				}
+			default:
+				println(CliNotFound)
+				return
+
+			}
+		}
+		//无参命令
+	case "tidy":
+		err = CliTidy()
+		if err != nil {
+			println(err.Error())
+			return
+		}
+	case "download":
+		err = CliDownload(args[1:]...)
+		if err != nil {
+			println(err.Error())
+			return
+		}
+	case "graph":
+		err = CliGraph()
+		if err != nil {
+			println(err.Error())
+			return
+		}
+	case "verify":
+		err = CliVerify()
 		if err != nil {
 			println(err.Error())
 			return
@@ -339,6 +420,258 @@ func CliInit(pkg string) error {
 	}
 	//文件不存在,所以创建
 	err = os.WriteFile(pwd+Separator+"kcl.mod", []byte(DefaultKclModContent+`"`+KclvmMinVersion+`"`), 0777)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func CliDownload(args ...string) error {
+	p, err := NewKpmFileP(pwd)
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(p.kpmfile.Indirect); i++ {
+		rp := &p.kpmfile.Indirect[i]
+		err = rp.Get(KPM_ROOT, KPM_SERVER_ADDR)
+		if err != nil {
+			return err
+		}
+	}
+	for i := 0; i < len(p.kpmfile.Direct); i++ {
+		rp := &p.kpmfile.Direct[i]
+		err = rp.Get(KPM_ROOT, KPM_SERVER_ADDR)
+		if err != nil {
+			return err
+		}
+		err = rp.LinkToExternal(KPM_ROOT, KPM_SERVER_ADDR_PATH, pwd)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func CliGraph() error {
+	p, err := NewKpmFileP(pwd)
+	if err != nil {
+		return err
+	}
+	err = Graph(p.kpmfile)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func Graph(k *KpmFile) error {
+	if k == nil {
+		return nil
+	}
+	for i := 0; i < len(k.Direct); i++ {
+		rp := &k.Direct[i]
+
+		if rp.Type == "git" {
+			if rp.Version == "" || rp.Version == "v0.0.0" {
+				println(k.PackageName, rp.GitAddress+"@v0.0.0#"+rp.GitCommit)
+			} else {
+				println(k.PackageName, rp.GitAddress+"@"+rp.Version)
+			}
+		} else {
+			println(k.PackageName, rp.Name+"@"+rp.Version)
+		}
+	}
+	for i := 0; i < len(k.Direct); i++ {
+		rp := &k.Direct[i]
+		if rp.Type == "git" {
+			if rp.Version == "" || rp.Version == "v0.0.0" {
+				println(k.PackageName, rp.GitAddress+"@v0.0.0#"+rp.GitCommit)
+
+			} else {
+				println(k.PackageName, rp.GitAddress+"@"+rp.Version)
+			}
+		} else {
+			println(k.PackageName, rp.Name+"@"+rp.Version)
+		}
+		//读取文件
+		path := rp.LocalPath(KPM_ROOT, KPM_SERVER_ADDR_PATH)
+		file, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		pkginfo := PkgInfo{}
+		err = json.Unmarshal(file, &pkginfo)
+		if err != nil {
+			return err
+		}
+		if pkginfo.KpmFileHash != "" {
+			//路径
+			readFile, err := os.ReadFile(KPM_ROOT + Separator + "store" + Separator + "v1" + Separator + "files" + Separator + HashMod([]byte(pkginfo.KpmFileHash)) + Separator + pkginfo.KpmFileHash)
+			if err != nil {
+				return err
+			}
+			kpmfile := KpmFile{}
+			err = json.Unmarshal(readFile, &kpmfile)
+			if err != nil {
+				return err
+			}
+			err = Graph(&kpmfile)
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func CliPublish(args ...string) error {
+	compress := "br"
+	pkgv := strings.Split(args[0], "@")
+	if len(pkgv) != 2 {
+		return errors.New("ArgsWrong")
+	}
+	pkginfo := NewPkgInfo(pkgv[0], pkgv[1], pwd)
+	//先打包目录
+	buffer, err := pkginfo.CreatePublishTarByteBuffer(KPM_ROOT, compress)
+	if err != nil {
+		return err
+	}
+	req := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(req)
+	req.Header.SetMethod("POST")
+	req.Header.Set("X-KPM-PKG-COMPRESS", compress)
+	req.SetHost(KPM_SERVER_ADDR_PATH)
+	req.SetRequestURI(KPM_SERVER_ADDR + "/api/v1/u/publish")
+	req.SetBodyRaw(buffer.B)
+	bytebufferpool.Put(buffer)
+	resp := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(resp)
+	println(req.Header.String())
+	if err = fasthttp.Do(req, resp); err != nil {
+		return err
+	}
+
+	if resp.StatusCode() != 200 {
+		return errors.New("fetch " + KPM_SERVER_ADDR + " err")
+	}
+	stdresp := StdResp{}
+	err = json.Unmarshal(resp.Body(), &stdresp)
+	if err != nil {
+		return err
+	}
+	if stdresp.Code != 0 {
+
+		return errors.New("fetch " + KPM_SERVER_ADDR + " failed")
+	}
+	println("publish success!")
+	//本地生成info，服务器反馈需要上传的包hash文件，上传hash文件，服务器开始校验
+	return nil
+}
+
+// CliSearch 在线模糊搜索或者精准搜索包，不支持git包
+func CliSearch(args ...string) error {
+	req := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(req)
+	req.Header.SetMethod("GET")
+	req.SetHost(KPM_SERVER_ADDR_PATH)
+	req.SetRequestURI(KPM_SERVER_ADDR + "/api/v1/search")
+	req.URI().QueryArgs().Set("pkgname", args[0])
+	resp := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(resp)
+	if err := fasthttp.Do(req, resp); err != nil {
+		return err
+	}
+	if resp.StatusCode() != 200 {
+		return errors.New("fetch " + KPM_SERVER_ADDR + " failed")
+	}
+	pkgsresp := SearchPkgsResp{}
+	err := json.Unmarshal(resp.Body(), &pkgsresp)
+	if err != nil {
+		return err
+	}
+	if pkgsresp.Code != 0 {
+		return errors.New("fetch " + KPM_SERVER_ADDR + " failed")
+	}
+	if len(pkgsresp.Data) == 0 {
+		println("Search results is empty")
+		return nil
+	}
+	println("Name", "Version", "Description")
+	for i := 0; i < len(pkgsresp.Data); i++ {
+		println(pkgsresp.Data[i].Name, pkgsresp.Data[i].Version, pkgsresp.Data[i].Description)
+	}
+	return nil
+}
+
+func CliTidy() error {
+	rq, err := FindRequires(pwd)
+	if err != nil {
+		return err
+	}
+	subpkgMap := make(map[string]Set, 16)
+	for i := 0; i < len(rq); i++ {
+		if strings.HasPrefix(rq[i], ExternalDependencies+".") {
+			dotcount := 0
+			var pkgAlias []byte
+			var subpkg string
+			for j := 0; j < len(rq[i]); j++ {
+				if rq[i][j] == '.' {
+					dotcount++
+				}
+				if dotcount == 1 {
+					pkgAlias = append(pkgAlias, rq[i][j])
+				}
+				if dotcount == 2 {
+					subpkg = rq[i][j+1:]
+					break
+				}
+			}
+			set, exist := subpkgMap[string(pkgAlias[1:])]
+			if exist {
+				set.SAdd(subpkg)
+			} else {
+				subpkgMap[string(pkgAlias[1:])] = AcquireSet()
+			}
+		}
+
+	}
+
+	//先过滤extern，再得到别名，再通过子包搜索是在哪个包下
+
+	return nil
+}
+func CliVerify() error {
+	return nil
+}
+func CliStoreAdd(args ...string) error {
+	flag_git := false
+	var pkgvs []string
+	for i := 0; i < len(args); i++ {
+		if strings.HasPrefix(args[i], "-") {
+			switch args[i] {
+			case "-git":
+				flag_git = true
+			}
+		} else {
+			pkgvs = args[i:]
+			break
+		}
+	}
+	for i := 0; i < len(pkgvs); i++ {
+		//args[i]
+		rp := &Require{}
+		err := rp.NewRequireFromPkgString(pkgvs[i], flag_git)
+		if err != nil {
+			return err
+		}
+		err = rp.Get(KPM_ROOT, KPM_SERVER_ADDR)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func CliStoreAddFile(fpath string) error {
+	err := StoreAddFile(fpath, KPM_ROOT, true)
 	if err != nil {
 		return err
 	}
