@@ -83,6 +83,7 @@ func Main() {
 		NewLispAppCmd(),
 		NewTourCmd(),
 		NewLspCmd(),
+		NewKpmCmd(),
 	}
 
 	if len(os.Args) == 2 && os.Args[1] == "-gen-markdown" {
