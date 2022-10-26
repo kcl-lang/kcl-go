@@ -1,7 +1,20 @@
-package kpm
+package kpm2
 
 const (
-	CliHelp      = `kpm  <command> [arguments]...`
+	CliHelp = `Usage:
+
+        kpm  <command> [arguments]
+
+The commands are:
+        add     add dependencies pkg
+        del    del  dependencies pkg
+        download    download dependencies pkg to local cache and link to workspace
+        graph       print dependencies pkg requirement graph
+        init        initialize new module in current directory
+        store       Reads and performs actions on kpm store that is on the current filesystem
+        publish     publish dependencies pkg
+        search      search  dependencies pkg
+`
 	CliNotFound  = `unknown command`
 	CliStoreHelp = `Usage: kpm store <command>
 
@@ -22,5 +35,3 @@ Commands:
 	//CliTidyHelp=""
 	//CliGraphHelp=""
 )
-const DefaultKclModContent = `[expected]
-kclvm_version=`

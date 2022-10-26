@@ -1,4 +1,4 @@
-package kpm
+package kpm2
 
 // KPM_ROOT kpm工作目录
 var KPM_ROOT = "C:\\kpmroot"

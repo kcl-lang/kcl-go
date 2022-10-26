@@ -1,4 +1,4 @@
-package kpm
+package kpm2
 
 type SearchPkg struct {
 	//包名

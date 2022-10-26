@@ -1,4 +1,4 @@
-package kpm
+package kpm2
 
 import (
 	"encoding/hex"

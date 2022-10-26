@@ -1,4 +1,4 @@
-package kpm
+package kpm2
 
 import (
 	"archive/tar"

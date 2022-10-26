@@ -11,10 +11,11 @@ func NewKpmCmd() *cli.Command {
 		Name:   "kpm",
 		Usage:  "kpm is a kcl package manager",
 		Action: func(c *cli.Context) error {
-			kpm.CLI(c.Args().Slice()...)
-			if c.NArg() == 0 {
-				cli.ShowAppHelpAndExit(c, 0)
+			err := kpm.CLI(c.Args().Slice()...)
+			if err != nil {
+				return err
 			}
+
 			return nil
 		},
 	}
