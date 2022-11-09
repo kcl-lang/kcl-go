@@ -10,12 +10,18 @@ import (
 )
 
 type Metadata struct {
-	Name        string
-	Version     string
-	Integrity   GlobalStore.Integrity
+	//包名
+	Name string
+	//版本
+	Version string
+	//包完整性校验信息
+	Integrity GlobalStore.Integrity
+	//包大小
 	PackageSize int64
-	SubPkgName  []string
-	Files       GlobalStore.FileInfoMap
+	//子包名称
+	SubPkgName []string
+	//文件hash
+	Files GlobalStore.FileInfoMap
 }
 
 // NewMetadata 生成新的包的元数据

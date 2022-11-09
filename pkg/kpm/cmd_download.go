@@ -13,6 +13,7 @@ func NewDownloadCmd() *cli.Command {
 				cli.ShowAppHelpAndExit(c, 0)
 			}
 			println("download...")
+
 			return nil
 		},
 	}

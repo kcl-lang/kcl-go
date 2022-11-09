@@ -9,17 +9,8 @@ import (
 	"os/user"
 )
 
-type CliClient struct {
-	GitStore         *GlobalStore.FileStore
-	RegistryStore    *GlobalStore.FileStore
-	WorkDir          string
-	Root             string
-	RegistryAddr     string
-	RegistryAddrPath string
-	KclVmVersion     string
-}
-
 var kpmC CliClient
+var systempkg = []string{"base64", "crypto", "json", "math", "net", "regex", "time", "units", "yaml"}
 
 func Setup() error {
 	var err error
@@ -57,7 +48,7 @@ func Setup() error {
 		BucketCountIndexNumber: 2,
 		BucketAllocationMethod: "hashStrPrefix",
 		BucketHashType:         "sha512",
-	})
+	}, GlobalStore.IgnoreDotGitPath)
 	kpmC.RegistryStore, err = GlobalStore.NewFileStore(GlobalStore.FileStoreConfig{
 		Root:                   kpmC.Root,
 		Metadata:               "registry" + PathHandle.Separator + kpmC.RegistryAddrPath + PathHandle.Separator + "metadata",
@@ -66,7 +57,7 @@ func Setup() error {
 		BucketCountIndexNumber: 2,
 		BucketAllocationMethod: "hashStrPrefix",
 		BucketHashType:         "sha512",
-	})
+	}, GlobalStore.IgnoreDotGitPath)
 
 	if err != nil {
 		return err
