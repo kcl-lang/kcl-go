@@ -8,11 +8,13 @@ type KpmFile struct {
 	//直接需要的依赖，别名不重复
 	Direct DirectRequire `json:"direct,omitempty"`
 	//间接需要的依赖，不看别名，包名版本唯一即可
-	Indirect []Require `json:"indirect,omitempty"`
+	Indirect IndirectRequire `json:"indirect,omitempty"`
 }
-type DirectRequire map[string]Require
+type DirectRequire map[string]RequireBase
+type IndirectRequire map[PkgString]RequirePlus
 
 // AddRequire 添加依赖到KpmFile
-func (kf *KpmFile) AddRequire() {
-
+func (kf *KpmFile) AddRequire(r Require) {
+	kf.Direct[r.Alias] = r.RequireBase
+	kpmC.Get(r.RequireBase)
 }

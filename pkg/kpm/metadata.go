@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/orangebees/go-oneutils/Convert"
 	"github.com/orangebees/go-oneutils/GlobalStore"
-	"github.com/orangebees/go-oneutils/PathHandle"
 	"os"
 	"strings"
 )
@@ -63,7 +62,7 @@ func NewMetadata(pkgName, pkgVersion, pkgPath string, gs *GlobalStore.FileStore)
 
 // LoadLocalMetadata 加载本地元数据
 func LoadLocalMetadata(pkgName, pkgVersion string, gs *GlobalStore.FileStore) (*Metadata, error) {
-	path, err := gs.GetMetadataPath(PathHandle.URLToLocalDirPath(pkgName + "@" + pkgVersion))
+	path, err := gs.GetMetadataPath(pkgName + "@" + pkgVersion)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +80,7 @@ func LoadLocalMetadata(pkgName, pkgVersion string, gs *GlobalStore.FileStore) (*
 
 // Build 通过元数据构造包
 func (md *Metadata) Build(gs *GlobalStore.FileStore) error {
-	err := gs.BuildDir(md.Files, PathHandle.URLToLocalDirPath(md.Name)+"@"+md.Version)
+	err := gs.BuildDir(md.Files, md.Name+"@"+md.Version)
 	if err != nil {
 		return err
 	}
@@ -90,10 +89,11 @@ func (md *Metadata) Build(gs *GlobalStore.FileStore) error {
 
 // Save 保存元数据
 func (md *Metadata) Save(gs *GlobalStore.FileStore) error {
-	path, err := gs.GetMetadataPath(PathHandle.URLToLocalDirPath(md.Name + "@" + md.Version))
+	path, err := gs.GetMetadataPath(md.Name + "@" + md.Version)
 	if err != nil {
 		return err
 	}
+	path = path + ".json"
 	marshal, err := json.Marshal(md)
 	if err != nil {
 		return err

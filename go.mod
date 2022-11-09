@@ -11,7 +11,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mattn/go-unicodeclass v0.0.1
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/orangebees/go-oneutils v0.0.3
+	github.com/orangebees/go-oneutils v0.0.4
 	github.com/sourcegraph/jsonrpc2 v0.1.0
 	github.com/stretchr/testify v1.7.1
 	github.com/urfave/cli/v2 v2.6.0
