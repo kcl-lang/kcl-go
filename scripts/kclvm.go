@@ -23,9 +23,10 @@ const (
 )
 
 const (
-	KclvmAbiVersion         KclvmVersionType = "v0.4.3"
-	KclvmVersionType_latest                  = KclvmVersionType_v0_4_3
+	KclvmAbiVersion         KclvmVersionType = "v0.4.4"
+	KclvmVersionType_latest                  = KclvmVersionType_v0_4_4_alpha_1
 
+	KclvmVersionType_v0_4_4_alpha_1 KclvmVersionType = "v0.4.4-alpha.1"
 	KclvmVersionType_v0_4_3         KclvmVersionType = "v0.4.3"
 	KclvmVersionType_v0_4_3_alpha_1 KclvmVersionType = "v0.4.3-alpha.1"
 	KclvmVersionType_v0_4_2_alpha_5 KclvmVersionType = "v0.4.2-alpha.5"
@@ -61,6 +62,12 @@ var (
 	KclvmDownloadUrlBase_mirrors = []string{}
 
 	KclvmMd5sum = map[string]string{
+		// https://github.com/KusionStack/KCLVM/releases/tag/v0.4.4-alpha.1
+		"kclvm-v0.4.4-alpha.1-Darwin.tar.gz":       "", // read from *.md5.txt
+		"kclvm-v0.4.4-alpha.1-Darwin-arm64.tar.gz": "", // read from *.md5.txt
+		"kclvm-v0.4.4-alpha.1-centos.tar.gz":       "", // read from *.md5.txt
+		"kclvm-v0.4.4-alpha.1-ubuntu.tar.gz":       "", // read from *.md5.txt
+
 		// https://github.com/KusionStack/KCLVM/releases/tag/v0.4.3
 		"kclvm-v0.4.3-Darwin.tar.gz":       "", // read from *.md5.txt
 		"kclvm-v0.4.3-Darwin-arm64.tar.gz": "", // read from *.md5.txt
