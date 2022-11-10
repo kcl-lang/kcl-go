@@ -66,6 +66,7 @@ func LoadLocalMetadata(pkgName, pkgVersion string, gs *GlobalStore.FileStore) (*
 	if err != nil {
 		return nil, err
 	}
+	path += ".json"
 	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err

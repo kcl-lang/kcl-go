@@ -28,3 +28,7 @@ type RequireBase struct {
 	//git:github.com/a/b@v0.0.0#asdfghjkl
 	//reg:b@v0.0.1
 }
+
+func (rb RequireBase) GetPkgString() PkgString {
+	return PkgString(rb.Type + ":" + rb.Name + "@" + string(rb.Version))
+}

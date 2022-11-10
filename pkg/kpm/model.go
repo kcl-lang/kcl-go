@@ -1,6 +1,8 @@
 package kpm
 
-import "github.com/orangebees/go-oneutils/GlobalStore"
+import (
+	"github.com/orangebees/go-oneutils/GlobalStore"
+)
 
 type CliClient struct {
 	GitStore         *GlobalStore.FileStore
@@ -25,7 +27,23 @@ func (c CliClient) Get(rb RequireBase) error {
 	}
 	if exist {
 		//找到包
+		println("found", rb.GetPkgString())
+		return nil
 	}
+	println("not found pkg", rb.GetPkgString())
+	//找不到，开始查找元文件
+	metadata, err := LoadLocalMetadata(rb.Name, string(rb.Version), store)
+	if err != nil {
+		//找不到元文件,下载
+		return err
+	}
+	err = metadata.Build(store)
+	if err != nil {
+		return err
+	}
+	//如果元文件找不到，则下载
+	//下载成功则得到元数据，开始检查hash文件是否缺失
+
 	return nil
 }
 
@@ -62,6 +80,7 @@ func (c CliClient) Get(rb RequireBase) error {
 //}
 
 func (c CliClient) PkgDownload(rb RequireBase) error {
+
 	return nil
 }
 func (c CliClient) Build(rb RequireBase) error {
