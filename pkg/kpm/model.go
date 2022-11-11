@@ -1,7 +1,13 @@
 package kpm
 
 import (
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/orangebees/go-oneutils/ExecCmd"
 	"github.com/orangebees/go-oneutils/GlobalStore"
+	"github.com/orangebees/go-oneutils/PathHandle"
+	"os"
+	"strings"
 )
 
 type CliClient struct {
@@ -35,6 +41,7 @@ func (c CliClient) Get(rb RequireBase) error {
 	metadata, err := LoadLocalMetadata(rb.Name, string(rb.Version), store)
 	if err != nil {
 		//找不到元文件,下载
+
 		return err
 	}
 	err = metadata.Build(store)
@@ -80,15 +87,45 @@ func (c CliClient) Get(rb RequireBase) error {
 //}
 
 func (c CliClient) PkgDownload(rb RequireBase) error {
-
-	return nil
-}
-func (c CliClient) Build(rb RequireBase) error {
 	if rb.Type == "git" {
+		//默认都有版本号
+		err := PathHandle.RunInTempDir(func(tmppath string) error {
+			println(tmppath)
+			r, err := git.PlainClone(tmppath, false, &git.CloneOptions{
+				URL:      "https://" + rb.Name,
+				Progress: os.Stdout,
+			})
+			iter, err := r.Tags()
+			if err != nil {
+				return err
+			}
+			var commitHash = make([]byte, 40)
+			commitHash = commitHash[:0]
+			var commitTag = make([]byte, 8)
+			commitTag = commitTag[:0]
+			err = iter.ForEach(func(ref *plumbing.Reference) error {
+				commitHash = append(commitHash[:0], ref.Hash().String()...)
+				commitTag = append(commitTag[:0], strings.TrimPrefix(string(ref.Name()), "refs/tags/")...)
+				return nil
+			})
+			err = ExecCmd.Run(tmppath, "git", "fetch", "origin", string(commitHash))
+			err = ExecCmd.Run(tmppath, "git", "reset", "--hard", "FETCH_HEAD")
+			if err != nil {
+				return err
+			}
+			println(string(commitHash))
+			println(string(commitTag))
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+	} else {
 
 	}
 	return nil
 }
+
 func (c CliClient) PkgInfoIsInLocal(rb RequireBase) error {
 	c.GitStore.GetMetadataPath(rb.Name)
 	return nil
