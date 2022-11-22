@@ -57,6 +57,23 @@ func GetHandle(libs []string) (*LibHandle, error) {
 	return nil, ErrSoNotFound
 }
 
+// GetGlobalHandle tries to get a handle to a library (.so) with flag RTLD_GLOBAL
+func GetGlobalHandle(libs []string) (*LibHandle, error) {
+	for _, name := range libs {
+		libname := C.CString(name)
+		defer C.free(unsafe.Pointer(libname))
+		handle := C.dlopen(libname, C.RTLD_LAZY|C.RTLD_GLOBAL)
+		if handle != nil {
+			h := &LibHandle{
+				Handle:  handle,
+				Libname: name,
+			}
+			return h, nil
+		}
+	}
+	return nil, ErrSoNotFound
+}
+
 // GetSymbolPointer takes a symbol name and returns a pointer to the symbol.
 func (l *LibHandle) GetSymbolPointer(symbol string) (unsafe.Pointer, error) {
 	sym := C.CString(symbol)
