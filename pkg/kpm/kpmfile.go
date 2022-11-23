@@ -1,5 +1,7 @@
 package kpm
 
+import "github.com/orangebees/go-oneutils/GlobalStore"
+
 type KpmFile struct {
 	//包名，确定包的命名空间
 	PackageName string `json:"package_name"`
@@ -11,10 +13,13 @@ type KpmFile struct {
 	Indirect IndirectRequire `json:"indirect,omitempty"`
 }
 type DirectRequire map[string]RequireBase
-type IndirectRequire map[PkgString]RequirePlus
+type IndirectRequire map[PkgString]GlobalStore.Integrity
 
 // AddRequire 添加依赖到KpmFile
 func (kf *KpmFile) AddRequire(r Require) {
+	//直接
 	kf.Direct[r.Alias] = r.RequireBase
 	kpmC.Get(r.RequireBase)
+	//间接
+	kf.Indirect[r.RequireBase.GetPkgString()] = r.RequireBase.Integrity
 }

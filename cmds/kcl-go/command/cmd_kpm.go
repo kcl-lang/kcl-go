@@ -2,7 +2,7 @@ package command
 
 import (
 	"github.com/urfave/cli/v2"
-	"kusionstack.io/kclvm-go/pkg/kpm"
+	"kusionstack.io/kclvm-go/pkg/kpm2"
 )
 
 func NewKpmCmd() *cli.Command {
@@ -11,10 +11,11 @@ func NewKpmCmd() *cli.Command {
 		Name:   "kpm",
 		Usage:  "kpm is a kcl package manager",
 		Action: func(c *cli.Context) error {
-			err := kpm.CLI(c.Args().Slice()...)
-			if err != nil {
-				return err
-			}
+			kpm2.CLI(c.Args().Slice()...)
+			//err := kpm2.CLI(c.Args().Slice()...)
+			//if err != nil {
+			//	return err
+			//}
 
 			return nil
 		},
