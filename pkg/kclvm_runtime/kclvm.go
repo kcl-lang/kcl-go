@@ -5,15 +5,51 @@ package kclvm_runtime
 import (
 	_ "embed"
 	"errors"
+	"fmt"
+	"go/build"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+
+	kclPlugin "kusionstack.io/kcl-plugin"
+	kclvmArtifact "kusionstack.io/kclvm-artifact"
+	"kusionstack.io/kclvm-go/pkg/logger"
 )
 
-var (
+func init() {
+
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = build.Default.GOPATH
+	}
+
+	err := kclvmArtifact.InstallKclvm(gopath)
+	if err != nil {
+		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
+	}
+	kclvmArtifact.CleanInstall()
+
 	g_Python3Path = findPython3Path()
-	g_KclvmRoot   = findKclvmRoot()
+	g_KclvmRoot = findKclvmRoot()
+	kclvmPluginPath := filepath.Join(g_KclvmRoot, "plugins")
+	if runtime.GOOS == "windows" {
+		kclvmPluginPath = filepath.Join(g_KclvmRoot, "bin", "plugins")
+	}
+
+	_, err = os.Stat(kclvmPluginPath)
+
+	if os.IsNotExist(err) {
+		err = kclPlugin.InstallPlugins(kclvmPluginPath)
+		if err != nil {
+			panic(fmt.Errorf("install kclvm plugins failed: %s", err.Error()))
+		}
+	}
+}
+
+var (
+	g_Python3Path string
+	g_KclvmRoot   string
 )
 
 var (
@@ -88,7 +124,7 @@ func findPython3Path() string {
 }
 
 func findKclvmRoot() string {
-	kclvm_cli_exe := "kclvm_cli"
+	kclvm_cli_exe := "kclvm"
 	if runtime.GOOS == "windows" {
 		kclvm_cli_exe += ".exe"
 	}

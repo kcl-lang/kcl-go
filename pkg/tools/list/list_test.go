@@ -7,9 +7,6 @@ import (
 	"sort"
 	"strings"
 	"testing"
-
-	"kusionstack.io/kclvm-go/pkg/service"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
 )
 
 func TestListDepFiles(t *testing.T) {
@@ -33,6 +30,8 @@ func TestListDepFiles(t *testing.T) {
 	}
 }
 
+// TODO: https://github.com/KusionStack/kclvm-go/issues/74
+/*
 func TestListDepFiles_restful(t *testing.T) {
 	var args = gpyrpc.ListDepFiles_Args{
 		WorkDir:       "../../../testdata/app0",
@@ -66,6 +65,7 @@ func TestListDepFiles_restful(t *testing.T) {
 		t.Fatalf("\nexpect = %v\ngot    = %v", expect, files)
 	}
 }
+*/
 
 func TestListDepFiles_failed(t *testing.T) {
 	_, err := ListDepFiles("../../../testdata/app0-failed", nil)
@@ -79,6 +79,8 @@ func TestListDepFiles_failed(t *testing.T) {
 	}
 }
 
+// TODO: https://github.com/KusionStack/kclvm-go/issues/74
+/*
 func TestListDepFiles_restfulFailed(t *testing.T) {
 	var args = gpyrpc.ListDepFiles_Args{
 		WorkDir:       "../../../testdata/app0-failed",
@@ -101,3 +103,4 @@ func TestListDepFiles_restfulFailed(t *testing.T) {
 		t.Fatalf("expect %q, got %q", expectErrMsg, err)
 	}
 }
+*/

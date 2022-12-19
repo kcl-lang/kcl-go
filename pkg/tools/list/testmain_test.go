@@ -23,12 +23,12 @@ const (
 func TestMain(m *testing.M) {
 	// go install kcl-go
 	if err := tInstallKclGo(); err != nil {
-		log.Fatal(err)
+		log.Fatal("run go install failed: ", err)
 	}
 
 	go func() {
 		if err := tStartPyFastHttpServer(tRestServerAddr); err != nil {
-			log.Fatal(err)
+			log.Fatal("start py fast http server failed: ", err)
 		}
 	}()
 
@@ -51,8 +51,9 @@ func tInstallKclGo() error {
 		gobin = filepath.Join(kclvm_runtime.MustGetKclvmRoot(), "bin")
 	}
 
-	if _, err := tRunGoInstall(gobin, tKclGoPkg); err != nil {
-		return err
+	if out, err := tRunGoInstall(gobin, tKclGoPkg); err != nil {
+
+		return fmt.Errorf("%s: %s", err.Error(), string(out))
 	}
 	return nil
 }
