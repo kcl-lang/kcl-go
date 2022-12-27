@@ -13,7 +13,7 @@ import (
 	"runtime"
 
 	kclPlugin "kusionstack.io/kcl-plugin"
-	kclvmArtifact "kusionstack.io/kclvm-artifact"
+	kclvmArtifact "kusionstack.io/kclvm-artifact-go"
 	"kusionstack.io/kclvm-go/pkg/logger"
 )
 
