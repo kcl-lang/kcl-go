@@ -158,5 +158,5 @@ honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWh
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 kusionstack.io/kcl-plugin v0.4.1-alpha2 h1:m43JJhpJSjl/Q3FqghJf5dRIwdXsrJeKxrHhgqLJqbA=
 kusionstack.io/kcl-plugin v0.4.1-alpha2/go.mod h1:VgB7qXVbDGWFOh/qb/yXf75+UrliP5EPXOQUDqBCdAQ=
-kusionstack.io/kclvm-artifact-go v0.4.4-beta.2 h1:2O88iavTScewogSuei+o3mX4AHGqfGW50gwjBOvyDmM=
-kusionstack.io/kclvm-artifact-go v0.4.4-beta.2/go.mod h1:WI+NvDeMqu1AduJT119X7q8KQdYmKfv4Nq4OvZ1tAsI=
+kusionstack.io/kclvm-artifact-go v0.4.4-beta.3 h1:ChClPgtKmdVP8U/4NnDnKKZSCFZgFuaucAPp8WH+oG0=
+kusionstack.io/kclvm-artifact-go v0.4.4-beta.3/go.mod h1:WI+NvDeMqu1AduJT119X7q8KQdYmKfv4Nq4OvZ1tAsI=
