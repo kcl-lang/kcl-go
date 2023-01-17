@@ -1,5 +1,10 @@
 name: build-and-test-macos
-on: push
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "releases/*"
 jobs:
   build-and-test:
     runs-on: macos-12
