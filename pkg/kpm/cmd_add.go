@@ -1,10 +1,9 @@
 package kpm
 
 import (
-	"encoding/json"
-	"github.com/orangebees/go-oneutils/PathHandle"
+	"errors"
+	"github.com/orangebees/go-oneutils/Semver"
 	"github.com/urfave/cli/v2"
-	"os"
 )
 
 func NewAddCmd() *cli.Command {
@@ -21,18 +20,11 @@ func NewAddCmd() *cli.Command {
 				cli.ShowAppHelpAndExit(c, 0)
 			}
 			println("add...")
-			//读取
-			filebytes, err := os.ReadFile(kpmC.WorkDir + PathHandle.Separator + "kpm.json")
+			kf, err := kpmC.LoadKpmFileStructInWorkdir()
 			if err != nil {
 				return err
 			}
-			kf := KpmFile{}
-			err = json.Unmarshal(filebytes, &kf)
-			if err != nil {
-				return err
-			}
-
-			//操作，先get包，再检测直接依赖中是否有同名包。检测包版本，检测
+			//操作，先get包，再检测直接依赖中是否有同名包。检测包最小版本，检测
 			ps := c.Args().Slice()[c.Args().Len()-1]
 			if c.Bool("git") {
 				ps = "git:" + ps
@@ -57,17 +49,36 @@ func NewAddCmd() *cli.Command {
 			if kf.Indirect == nil {
 				kf.Indirect = make(IndirectRequire, 16)
 			}
-			kf.Direct[rb.GetShortName()] = rb
-			//保存
-			marshal, err := json.Marshal(&kf)
-			if err != nil {
-				return err
+			shortname := rb.GetShortName()
+			kf.Direct[shortname] = rb
+			dkf, err := kpmC.LoadKpmFileStruct(&rb)
+			if err == nil {
+				//找到文件
+				kfv, err := Semver.NewFromString(kf.KclvmMinVersion)
+				if err != nil {
+					return err
+				}
+				dkfv, err := Semver.NewFromString(dkf.KclvmMinVersion)
+				if err != nil {
+					return err
+				}
+				if kfv.Cmp(dkfv) == -1 {
+					return errors.New("the KclvmMinVersion of the added dependency " + shortname + " is greater than the KclvmMinVersion of the workspace")
+				}
+				for k, v := range dkf.Indirect {
+					kf.Indirect[k] = v
+				}
+				for _, v := range dkf.Direct {
+					kf.Indirect[v.GetPkgString()] = v.Integrity
+				}
 			}
-			err = os.WriteFile(kpmC.WorkDir+PathHandle.Separator+"kpm.json", marshal, os.ModePerm)
-			if err != nil {
-				return err
-			}
+			//找不到文件
 
+			//保存
+			err = kpmC.SaveKpmFileInWorkdir(kf)
+			if err != nil {
+				return err
+			}
 			return nil
 		},
 	}

@@ -1,10 +1,7 @@
 package kpm
 
 import (
-	"encoding/json"
-	"github.com/orangebees/go-oneutils/PathHandle"
 	"github.com/urfave/cli/v2"
-	"os"
 )
 
 func NewDownloadCmd() *cli.Command {
@@ -18,12 +15,7 @@ func NewDownloadCmd() *cli.Command {
 				cli.ShowAppHelpAndExit(c, 0)
 			}
 			println("download...")
-			filebytes, err := os.ReadFile(kpmC.WorkDir + PathHandle.Separator + "kpm.json")
-			if err != nil {
-				return err
-			}
-			kf := KpmFile{}
-			err = json.Unmarshal(filebytes, &kf)
+			kf, err := kpmC.LoadKpmFileStructInWorkdir()
 			if err != nil {
 				return err
 			}

@@ -1,9 +1,11 @@
 package kpm
 
 import (
+	"encoding/json"
 	"github.com/orangebees/go-oneutils/ExecCmd"
 	"github.com/orangebees/go-oneutils/GlobalStore"
 	"github.com/orangebees/go-oneutils/PathHandle"
+	"os"
 )
 
 type CliClient struct {
@@ -91,6 +93,54 @@ func (c CliClient) PkgDownload(rb *RequireBase) error {
 	} else {
 		//仓库版本
 
+	}
+	return nil
+}
+
+func (c CliClient) LoadKpmFileStruct(rb *RequireBase) (*KpmFile, error) {
+	var store *GlobalStore.FileStore
+	if rb.Type == "git" {
+		store = kpmC.GitStore
+	} else {
+		store = kpmC.RegistryStore
+	}
+	path, err := store.GetDirPath(rb.GetPkgString())
+	if err != nil {
+		return nil, err
+	}
+	filebytes, err := os.ReadFile(path + PathHandle.Separator + "kpm.json")
+	if err != nil {
+		return nil, err
+	}
+	kf := KpmFile{}
+	err = json.Unmarshal(filebytes, &kf)
+	if err != nil {
+		return nil, err
+	}
+	return &kf, nil
+}
+
+func (c CliClient) LoadKpmFileStructInWorkdir() (*KpmFile, error) {
+	filebytes, err := os.ReadFile(c.WorkDir + PathHandle.Separator + "kpm.json")
+	if err != nil {
+		return nil, err
+	}
+	kf := KpmFile{}
+	err = json.Unmarshal(filebytes, &kf)
+	if err != nil {
+		return nil, err
+	}
+	return &kf, nil
+}
+
+func (c CliClient) SaveKpmFileInWorkdir(kf *KpmFile) error {
+	marshal, err := json.Marshal(&kf)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(c.WorkDir+PathHandle.Separator+"kpm.json", marshal, os.ModePerm)
+	if err != nil {
+		return err
 	}
 	return nil
 }

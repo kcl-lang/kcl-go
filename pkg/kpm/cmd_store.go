@@ -21,6 +21,24 @@ func NewStoreCmd() *cli.Command {
 			switch c.Args().First() {
 			case "add":
 				//添加包到全局存储
+				ps := c.Args().Slice()[c.Args().Len()-1]
+				if c.Bool("git") {
+					ps = "git:" + ps
+				} else {
+					ps = "registry:" + ps
+				}
+				println(ps)
+				pkgStruct, err := GetRequirePkgStruct(ps)
+				if err != nil {
+					return err
+				}
+				rb := RequireBase{
+					RequirePkgStruct: *pkgStruct,
+				}
+				err = kpmC.Get(&rb)
+				if err != nil {
+					return err
+				}
 			case "addfile":
 				//添加当前工作目录到全局存储
 				fim, err := kpmC.GitStore.AddDir(kpmC.WorkDir)
