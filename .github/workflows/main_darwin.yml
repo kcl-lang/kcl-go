@@ -1,5 +1,10 @@
 name: build-and-test-macos
-on: push
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "releases/*"
 jobs:
   build-and-test:
     runs-on: macos-12
@@ -13,15 +18,5 @@ jobs:
           go-version: 1.17
 
 
-      - run: go build ./cmds/kcl-go
-      - run: go run ./cmds/kcl-go
-
-      - run: go run ./cmds/kcl-go setup-kclvm -triple=Darwin -outdir=${HOME}/.kclvm-go
-      - run: echo "${HOME}/.kclvm-go/Darwin/bin" >> $GITHUB_PATH
-
-      - run: which kclvm || which python3
-      - run: which kcl
-      - run: kcl --version || true
-
-
+      - run: go run ./cmds/kcl-go kcl hello.k
       - run: go test ./...
