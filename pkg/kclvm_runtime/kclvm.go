@@ -33,9 +33,6 @@ func init() {
 	g_Python3Path = findPython3Path()
 	g_KclvmRoot = findKclvmRoot()
 	kclvmPluginPath := filepath.Join(g_KclvmRoot, "plugins")
-	if runtime.GOOS == "windows" {
-		kclvmPluginPath = filepath.Join(g_KclvmRoot, "bin", "plugins")
-	}
 
 	_, err = os.Stat(kclvmPluginPath)
 
