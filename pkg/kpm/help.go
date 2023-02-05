@@ -7,3 +7,5 @@ const (
 )
 const DefaultKclModContent = string(`[expected]
 kclvm_version="` + kclvm.KclvmAbiVersion + `"`)
+
+const DefaultRegistryAddr = "http://baidu.com"

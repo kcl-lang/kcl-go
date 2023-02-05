@@ -104,7 +104,7 @@ func (c CliClient) LoadKpmFileStruct(rb *RequireBase) (*KpmFile, error) {
 	} else {
 		store = kpmC.RegistryStore
 	}
-	path, err := store.GetDirPath(rb.GetPkgString())
+	path, err := store.GetDirPath(rb.Name + "@" + string(rb.Version))
 	if err != nil {
 		return nil, err
 	}

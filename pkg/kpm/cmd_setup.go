@@ -34,6 +34,8 @@ func Setup() error {
 	}
 	if tmp := os.Getenv("KPM_SERVER_ADDR"); tmp != "" {
 		kpmC.RegistryAddr = tmp
+	} else {
+		kpmC.RegistryAddr = DefaultRegistryAddr
 	}
 	parse, err := url.Parse(kpmC.RegistryAddr)
 	if err != nil {

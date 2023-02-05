@@ -63,7 +63,9 @@ func NewAddCmd() *cli.Command {
 					return err
 				}
 				if kfv.Cmp(dkfv) == -1 {
-					return errors.New("the KclvmMinVersion of the added dependency " + shortname + " is greater than the KclvmMinVersion of the workspace")
+					e := errors.New("the KclvmMinVersion of the added dependency " + shortname + " is greater than the KclvmMinVersion of the workspace")
+					println(e.Error())
+					return e
 				}
 				for k, v := range dkf.Indirect {
 					kf.Indirect[k] = v
@@ -72,8 +74,6 @@ func NewAddCmd() *cli.Command {
 					kf.Indirect[v.GetPkgString()] = v.Integrity
 				}
 			}
-			//找不到文件
-
 			//保存
 			err = kpmC.SaveKpmFileInWorkdir(kf)
 			if err != nil {
