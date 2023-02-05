@@ -12,14 +12,12 @@ type Require struct {
 }
 
 type RequireBase struct {
-	////包类型 git，registry
-
 	RequirePkgStruct
-	//校验和 sha512
+	//完整性校验和 sha512
 	Integrity GlobalStore.Integrity `json:"integrity"`
 
 	//git:github.com/a/b@v0.0.1
-	//git:github.com/a/b@v0.0.0#asdfghjkl
+	//git:github.com/a/b@v0.0.0+#asdfghjkl
 	//registry:github.com/a/b@v0.0.1
 }
 
@@ -30,10 +28,6 @@ type RequirePkgStruct struct {
 	Name string `json:"name"`
 	//确定此包的版本
 	Version Semver.VersionString `json:"version"`
-
-	//git:github.com/a/b@v0.0.1
-	//git:github.com/a/b@v0.0.0#asdfghjkl
-	//reg:github.com/a/b@v0.0.1
 }
 
 func (rps *RequirePkgStruct) GetPkgString() PkgString {

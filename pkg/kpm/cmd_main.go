@@ -21,7 +21,7 @@ func CLI(args ...string) error {
 	if err != nil {
 		return err
 	}
-	//添加一个参数确保与os.Args数量一致
+	//Add a parameter that ensures that the parameter is associated with "os. Args" are consistent in number。
 	nargs := make([]string, len(args))
 	nargs = nargs[:1]
 	nargs = append(nargs, args...)

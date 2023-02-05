@@ -43,7 +43,7 @@ func NewInitCmd() *cli.Command {
 			if err == nil {
 				return nil
 			}
-			//文件不存在,所以创建
+			//The file does not exist, so this file is created
 			err = os.WriteFile(kpmC.WorkDir+PathHandle.Separator+"kcl.mod", Convert.S2B(DefaultKclModContent), 0777)
 			if err != nil {
 				return err

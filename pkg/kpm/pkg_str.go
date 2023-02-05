@@ -7,9 +7,6 @@ import (
 
 type PkgString = string
 
-//konfig@v0.0.1
-//konfig@v0.0.0#bbbbbb
-
 func GetRequirePkgStruct(ps PkgString) (*RequirePkgStruct, error) {
 	b := ps
 	index1, index2 := 0, 0

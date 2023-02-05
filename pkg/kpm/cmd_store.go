@@ -20,7 +20,7 @@ func NewStoreCmd() *cli.Command {
 			}
 			switch c.Args().First() {
 			case "add":
-				//添加包到全局存储
+				//Add packages to the global store
 				ps := c.Args().Slice()[c.Args().Len()-1]
 				if c.Bool("git") {
 					ps = "git:" + ps
@@ -40,7 +40,7 @@ func NewStoreCmd() *cli.Command {
 					return err
 				}
 			case "addfile":
-				//添加当前工作目录到全局存储
+				//Add the current working directory to the global store
 				fim, err := kpmC.GitStore.AddDir(kpmC.WorkDir)
 				if err != nil {
 					return err

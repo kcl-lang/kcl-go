@@ -11,7 +11,6 @@ func NewDownloadCmd() *cli.Command {
 		Usage:  "download dependencies pkg to local cache and link to workspace",
 		Action: func(c *cli.Context) error {
 			if c.NArg() != 0 {
-				//此处不应该有参数
 				cli.ShowAppHelpAndExit(c, 0)
 			}
 			println("download...")

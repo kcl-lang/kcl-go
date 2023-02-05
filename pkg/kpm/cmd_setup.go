@@ -18,7 +18,7 @@ func Setup() error {
 	if err != nil {
 		return nil
 	}
-	//加载环境变量
+	//Load environment variables
 	if tmp := os.Getenv("KPM_ROOT"); tmp == "" {
 		home := ""
 		u, err := user.Current()

@@ -12,21 +12,14 @@ import (
 )
 
 type Metadata struct {
-	//包名
-	Name string `json:"name"`
-	//版本
-	Version Semver.VersionString `json:"version"`
-	//包完整性校验信息
-	Integrity GlobalStore.Integrity `json:"integrity"`
-	//包大小
-	PackageSize int64 `json:"package_size"`
-	//子包名称
-	SubPkgName []string `json:"sub_pkg_name,omitempty"`
-	//文件hash
-	Files GlobalStore.FileInfoMap `json:"files,omitempty"`
+	Name        string                  `json:"name"`
+	Version     Semver.VersionString    `json:"version"`
+	Integrity   GlobalStore.Integrity   `json:"integrity"`
+	PackageSize int64                   `json:"package_size"`
+	SubPkgName  []string                `json:"sub_pkg_name,omitempty"`
+	Files       GlobalStore.FileInfoMap `json:"files,omitempty"`
 }
 
-// NewMetadata 生成新的包的元数据
 func NewMetadata(pkgName, pkgPath string, pkgVersion string, gs *GlobalStore.FileStore) (*Metadata, error) {
 	fim, err := gs.AddDir(pkgPath)
 	if err != nil {
@@ -49,7 +42,6 @@ func NewMetadata(pkgName, pkgPath string, pkgVersion string, gs *GlobalStore.Fil
 		//计算包大小
 		m.PackageSize += info.Size
 		//添加子包名字
-		//
 		if strings.HasSuffix(k, ".k") {
 			tmp := make([]byte, len(k))
 			tmp = tmp[:0]
@@ -69,8 +61,6 @@ func NewMetadata(pkgName, pkgPath string, pkgVersion string, gs *GlobalStore.Fil
 	}
 	return &m, nil
 }
-
-// LoadLocalMetadata 加载本地元数据
 func LoadLocalMetadata(pkgName string, pkgVersion Semver.VersionString, gs *GlobalStore.FileStore) (*Metadata, error) {
 	path, err := gs.GetMetadataPath(pkgName + "@" + string(pkgVersion))
 	if err != nil {
@@ -88,8 +78,6 @@ func LoadLocalMetadata(pkgName string, pkgVersion Semver.VersionString, gs *Glob
 	}
 	return &md, nil
 }
-
-// Build 通过元数据构造包
 func (md *Metadata) Build(gs *GlobalStore.FileStore) error {
 	err := gs.BuildDir(md.Files, md.Name+"@"+string(md.Version))
 	if err != nil {
@@ -97,8 +85,6 @@ func (md *Metadata) Build(gs *GlobalStore.FileStore) error {
 	}
 	return nil
 }
-
-// Save 保存元数据
 func (md *Metadata) Save(gs *GlobalStore.FileStore) error {
 	path, err := gs.GetMetadataPath(md.Name + "@" + string(md.Version))
 	if err != nil {
