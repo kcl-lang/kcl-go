@@ -18,10 +18,17 @@ func NewDownloadCmd() *cli.Command {
 			if err != nil {
 				return err
 			}
-			for _, rb := range kf.Direct {
+			globalWriterFlag := false
+			for rbn, rb := range kf.Direct {
+				writerFlag := rb.Integrity == ""
 				err = kpmC.Get(&rb)
 				if err != nil {
+					println(err.Error())
 					return err
+				}
+				if writerFlag {
+					globalWriterFlag = true
+					kf.Direct[rbn] = rb
 				}
 			}
 			for ps, integrity := range kf.Indirect {
@@ -33,7 +40,19 @@ func NewDownloadCmd() *cli.Command {
 					RequirePkgStruct: *pkgStruct,
 					Integrity:        integrity,
 				}
+				writerFlag := rb.Integrity == ""
 				err = kpmC.Get(&rb)
+				if err != nil {
+					println(err.Error())
+					return err
+				}
+				if writerFlag {
+					globalWriterFlag = true
+					kf.Indirect[ps] = rb.Integrity
+				}
+			}
+			if globalWriterFlag {
+				err = kpmC.SaveKpmFileInWorkdir(kf)
 				if err != nil {
 					return err
 				}

@@ -24,7 +24,6 @@ func NewAddCmd() *cli.Command {
 			if err != nil {
 				return err
 			}
-			//操作，先get包，再检测直接依赖中是否有同名包。检测包最小版本，检测
 			ps := c.Args().Slice()[c.Args().Len()-1]
 			if c.Bool("git") {
 				ps = "git:" + ps

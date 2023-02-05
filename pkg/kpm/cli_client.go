@@ -2,6 +2,7 @@ package kpm
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/orangebees/go-oneutils/ExecCmd"
 	"github.com/orangebees/go-oneutils/GlobalStore"
 	"github.com/orangebees/go-oneutils/PathHandle"
@@ -45,6 +46,12 @@ func (c CliClient) Get(rb *RequireBase) error {
 		println("found", rb.GetPkgString())
 		if rb.Integrity == "" {
 			rb.Integrity = metadata.Integrity
+		} else {
+			if rb.Integrity != metadata.Integrity {
+				e := errors.New("the package integrity check failed")
+				println(e.Error())
+				return e
+			}
 		}
 		return nil
 	}
