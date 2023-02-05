@@ -7,26 +7,17 @@ import (
 
 type Require struct {
 	RequireBase
-	//别名
 	Alias string `json:"alias,omitempty"`
 }
 
 type RequireBase struct {
 	RequirePkgStruct
-	//完整性校验和 sha512
 	Integrity GlobalStore.Integrity `json:"integrity"`
-
-	//git:github.com/a/b@v0.0.1
-	//git:github.com/a/b@v0.0.0+#asdfghjkl
-	//registry:github.com/a/b@v0.0.1
 }
 
 type RequirePkgStruct struct {
-	//包类型 git，registry
-	Type string `json:"type"`
-	//包名，确定包的命名空间
-	Name string `json:"name"`
-	//确定此包的版本
+	Type    string               `json:"type"`
+	Name    string               `json:"name"`
 	Version Semver.VersionString `json:"version"`
 }
 
