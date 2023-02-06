@@ -49,6 +49,12 @@ func NewAddCmd() *cli.Command {
 				kf.Indirect = make(IndirectRequire, 16)
 			}
 			shortname := rb.GetShortName()
+			_, ok := kf.Direct[shortname]
+			if ok {
+				e := errors.New("this package already exists")
+				println(e)
+				return e
+			}
 			kf.Direct[shortname] = rb
 			dkf, err := kpmC.LoadKpmFileStruct(&rb)
 			if err == nil {

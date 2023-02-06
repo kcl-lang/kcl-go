@@ -1,12 +1,16 @@
 package kpm
 
 import (
+	"archive/tar"
 	"encoding/json"
 	"errors"
 	"github.com/orangebees/go-oneutils/ExecCmd"
+	"github.com/orangebees/go-oneutils/Fetch"
 	"github.com/orangebees/go-oneutils/GlobalStore"
 	"github.com/orangebees/go-oneutils/PathHandle"
+	"io"
 	"os"
+	"strings"
 )
 
 type CliClient struct {
@@ -67,8 +71,6 @@ func (c CliClient) Get(rb *RequireBase) error {
 }
 
 // PkgDownload 下载包
-//
-//	先检测包类型
 func (c CliClient) PkgDownload(rb *RequireBase) error {
 	println("downloading pkg", rb.GetPkgString())
 	if rb.Type == "git" {
@@ -99,7 +101,45 @@ func (c CliClient) PkgDownload(rb *RequireBase) error {
 		}
 	} else {
 		//仓库版本
+		data, err := Fetch.Text(c.RegistryAddr+"/pkg/"+rb.GetPkgString()+".tar.gz", "", Fetch.UseGetOption, Fetch.UseCompressOption)
+		if err != nil {
+			return err
+		}
 
+		err = PathHandle.RunInTempDir(func(tmppath string) error {
+			reader := tar.NewReader(strings.NewReader(data))
+			b := make([]byte, 8192)
+			for {
+				next, err := reader.Next()
+				if err == io.EOF {
+					break
+				}
+				if err != nil {
+					return err
+				}
+				b = b[:0]
+				readindex, _ := reader.Read(b)
+				err = os.WriteFile(tmppath+PathHandle.Separator+next.Name, b[:readindex], 0777)
+			}
+			t2 := tmppath + PathHandle.Separator + rb.GetShortName()
+			metadata, err := NewMetadata(rb.Name, t2, string(rb.Version), c.RegistryStore)
+			if err != nil {
+				return err
+			}
+			err = metadata.Save(c.RegistryStore)
+			if err != nil {
+				return err
+			}
+			err = metadata.Build(c.RegistryStore)
+			if err != nil {
+				return err
+			}
+			rb.Integrity = metadata.Integrity
+			return nil
+		})
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
