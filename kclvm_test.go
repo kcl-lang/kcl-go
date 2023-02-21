@@ -142,7 +142,9 @@ a2 = App {
     image = "new-a2-image:v123"
     name = "a2-app"
 }`)
+
 	got := strings.TrimSpace(string(data))
+	got = strings.ReplaceAll(got, "\r\n", "\n")
 
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Fatalf("golden mismatch (-want +got):\n%s", diff)
