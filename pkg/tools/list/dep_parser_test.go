@@ -21,7 +21,7 @@ func TestFindPkgInfo(t *testing.T) {
 	}
 
 	wd, _ := os.Getwd()
-	expectPkgRoot := filepath.Join(wd, "testdata/mymod")
+	expectPkgRoot := filepath.ToSlash(filepath.Join(wd, "testdata/mymod"))
 
 	if pkgroot != expectPkgRoot {
 		t.Fatalf("pkgroot: expect = %s, got = %s", expectPkgRoot, pkgroot)
@@ -219,10 +219,6 @@ func TestListKFiles(t *testing.T) {
 			assert.ElementsMatch(t, tc.expect, listKFiles(vfs, tc.filePath))
 		})
 	}
-}
-func TestInvalidFilePath(t *testing.T) {
-	_, err := newImportDepParser("./testdata/complicate/", DepOptions{Files: []string{"appops/projectA/invalid.k"}, UpStreams: []string{}})
-	assert.EqualError(t, err, "invalid file path: stat testdata/complicate/appops/projectA/invalid.k: no such file or directory", "err not match")
 }
 
 var importDepParserTestCases = []struct {

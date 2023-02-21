@@ -25,7 +25,8 @@ func GoodPkgPath(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return pkgPath, nil
+
+	return filepath.ToSlash(pkgPath), nil
 }
 
 func FindPkgRoot(workDir string) (string, error) {
