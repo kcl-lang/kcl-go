@@ -5,14 +5,14 @@
 [![license](https://img.shields.io/github/license/KusionStack/kclvm-go.svg)](https://github.com/KusionStack/kclvm-go/blob/master/LICENSE)
 
 - [Install Go 17+](https://go.dev/dl/)
-- [Install kclvm](https://kusionstack.io/docs/user_docs/getting-started/install) (or `go run ./cmds/kcl-go/ setup-kclvm` and add `./_build/{Darwin|Darwin-arm64|Linux}/bin` to `PATH`)
+- [Install kclvm](https://kcl-lang.io/docs/user_docs/getting-started/install) (or `go run ./cmds/kcl-go/ setup-kclvm` and add `./_build/{Darwin|Darwin-arm64|Linux}/bin` to `PATH`)
 
 ```
 $ go version
 go version go1.17.8 darwin/arm64
 $ which kclvm
 $ kclvm -m kclvm --version
-kclvm version is 0.4.1; checksum: ***
+kclvm version is 0.4.5; checksum: ***
 ```
 
 ## Run Test and hello.k
