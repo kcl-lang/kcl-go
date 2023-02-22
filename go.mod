@@ -17,7 +17,7 @@ require (
 	google.golang.org/protobuf v1.28.0
 	gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99
 	kusionstack.io/kcl-plugin v0.4.4
-	kusionstack.io/kclvm-artifact-go v0.4.4-beta.5.0.20230221121811-72c6525d26c6
+	kusionstack.io/kclvm-artifact-go v0.4.4-beta.6.0.20230222073855-196f87256b27
 )
 
 require (
