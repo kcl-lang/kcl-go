@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	yaml := kclvm.MustRun("hello.k", kclvm.WithCode(k_code)).First().YAMLString()
+	yaml := kclvm.MustRun("hello.k", kclvm.WithCode(k_code)).GetRawYamlResult()
 	fmt.Println(yaml)
 }
 
