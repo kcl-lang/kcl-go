@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/KusionStack/kclvm-go/badge.svg)](https://coveralls.io/github/KusionStack/kclvm-go)
 [![license](https://img.shields.io/github/license/KusionStack/kclvm-go.svg)](https://github.com/KusionStack/kclvm-go/blob/master/LICENSE)
 
-- [Install Go 17+](https://go.dev/dl/)
+- [Install Go 1.17+](https://go.dev/dl/)
 - [Install kclvm](https://kcl-lang.io/docs/user_docs/getting-started/install) (or `go run ./cmds/kcl-go/ setup-kclvm` and add `./_build/{Darwin|Darwin-arm64|Linux}/bin` to `PATH`)
 
 ```
@@ -35,7 +35,7 @@ import (
 )
 
 func main() {
-	yaml := kclvm.MustRun("hello.k", kclvm.WithCode(k_code)).First().YAMLString()
+	yaml := kclvm.MustRun("hello.k", kclvm.WithCode(k_code)).GetRawYamlResult()
 	fmt.Println(yaml)
 }
 
