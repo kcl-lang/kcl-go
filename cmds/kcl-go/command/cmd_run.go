@@ -48,10 +48,6 @@ var runRunFlags = []cli.Flag{
 		Usage: "Sort result keys",
 	},
 	&cli.BoolFlag{
-		Name:  "use-raw-result",
-		Usage: "Use kclvm raw result",
-	},
-	&cli.BoolFlag{
 		Name:    "strict-range-check",
 		Aliases: []string{"r"},
 		Usage:   "Do perform strict numeric range check",
@@ -126,30 +122,14 @@ func NewRunCmd() *cli.Command {
 
 			switch strings.ToLower(c.String("output-type")) {
 			case "json":
-				if c.Bool("use-raw-result") {
-					fmt.Println(result.GetRawJsonResult())
-				} else {
-					fmt.Println(result.First().JSONString())
-				}
+				fmt.Println(result.GetRawJsonResult())
 
 			case "yaml":
-				{
-					if c.Bool("use-raw-result") {
-						fmt.Println(result.GetRawYamlResult())
-					} else {
-						var resultStringList []string
-						for _, r := range result.Slice() {
-							resultStringList = append(resultStringList, r.YAMLString())
-						}
-						fmt.Println(strings.Join(resultStringList, "\n---\n"))
-					}
-				}
+				fmt.Println(result.GetRawYamlResult())
+
 			default:
-				if c.Bool("use-raw-result") {
-					fmt.Println(result.GetRawYamlResult())
-				} else {
-					fmt.Println(result.First().YAMLString())
-				}
+				fmt.Println(result.GetRawYamlResult())
+
 			}
 			return nil
 		},
