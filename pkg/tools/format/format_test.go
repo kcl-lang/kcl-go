@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"path"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -37,9 +38,6 @@ func TestFormatCode(t *testing.T) {
 	}
 }
 
-// TODO: fix Broken pipe in kclvm_py, see in :
-// https://github.com/KusionStack/kclvm-go/issues/75
-/*
 func TestFormatPath(t *testing.T) {
 	successDir := "testdata/success"
 	expectedFileSuffix := ".formatted"
@@ -90,7 +88,6 @@ func TestFormatPath(t *testing.T) {
 		assert.Equal(t, expected, get, fmt.Sprintf("format path get wrong result. formatted content mismatch, file: %s, expect: %s, get: %s", actualFile, expected, get))
 	}
 }
-*/
 
 type filterFile func(fs.FileInfo) bool
 
