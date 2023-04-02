@@ -4,7 +4,6 @@ package kclvm_runtime
 
 import (
 	"bytes"
-	"errors"
 	"io"
 	"net/rpc"
 	"os/exec"
@@ -106,15 +105,22 @@ func newLimitBuffer(cap int) *limitBuffer {
 	return &limitBuffer{cap: cap}
 }
 
-func (b *limitBuffer) Write(p []byte) (n int, err error) {
-	n = b.cap - b.buf.Len()
+func (b *limitBuffer) Write(p []byte) (int, error) {
+	n := b.cap - b.buf.Len()
 	if n > 0 {
-		b.buf.Write(p[:n])
+		if n > len(p) {
+			n = len(p)
+		}
+		var err error
+		n, err = b.buf.Write(p[:n])
+		if err != nil {
+			return n, err
+		}
 	}
 	if n < len(p) {
-		err = errors.New("limitBuffer: overflow")
+		return n, io.ErrShortWrite
 	}
-	return n, err
+	return n, nil
 }
 
 func (b *limitBuffer) Read(p []byte) (n int, err error) {
