@@ -1,6 +1,6 @@
 // Copyright 2022 The KCL Authors. All rights reserved.
 
-package genpb
+package gen
 
 import (
 	"encoding/json"
