@@ -1,17 +1,18 @@
 // Copyright 2022 The KCL Authors. All rights reserved.
 
-package genpb_test
+package gen_test
 
 import (
 	"fmt"
 	"log"
+	"testing"
 
-	"kusionstack.io/kclvm-go/pkg/tools/genpb"
+	"kusionstack.io/kclvm-go/pkg/tools/gen"
 )
 
-var _ = genpb.GenProto
+var _ = gen.GenProto
 
-func Example() {
+func TestGenProto(t *testing.T) {
 	const code = `
 import units
 
@@ -35,7 +36,7 @@ schema Movie:
 	unknown2?: any = None
 `
 
-	pbCode, err := genpb.GenProto("hello.k", code, nil)
+	pbCode, err := gen.GenProto("hello.k", code, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
