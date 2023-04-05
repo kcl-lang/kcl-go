@@ -3,6 +3,7 @@ package gen
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"kusionstack.io/kclvm-go/pkg/kcl"
 	pb "kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
@@ -90,8 +91,9 @@ func (g *goGenerator) GenSchema(w io.Writer, typ *pb.KclType) {
 		goFieldType := g.GetTypeName(fieldType)
 		kclFieldType := getKclTypeName(fieldType)
 
+		goTagInfo := fmt.Sprintf(`kcl:"name=%s,type=%s"`, fieldName, g.GetFieldTag(fieldType))
 		goFieldDefines = append(goFieldDefines,
-			fmt.Sprintf("%s %s", fieldName, goFieldType),
+			fmt.Sprintf("%s %s %s", fieldName, goFieldType, "`"+goTagInfo+"`"),
 		)
 		goFieldDocs = append(goFieldDocs,
 			fmt.Sprintf("// kcl-type: %s", kclFieldType),
@@ -160,6 +162,40 @@ func (g *goGenerator) GetTypeName(typ *pb.KclType) string {
 				return "string"
 			}
 		}
+		panic(fmt.Sprintf("ERR: unknown '%v', json = %v\n", typ.Type, jsonString(typ)))
+	}
+}
+
+func (g *goGenerator) GetFieldTag(typ *pb.KclType) string {
+	switch typ.Type {
+	case typSchema:
+		return typ.SchemaName
+	case typDict:
+		return fmt.Sprintf("{%s:%s}", g.GetFieldTag(typ.Key), g.GetFieldTag(typ.Item))
+	case typList:
+		return fmt.Sprintf("[%s]", g.GetFieldTag(typ.Item))
+	case typStr:
+		return "str"
+	case typInt:
+		return "int"
+	case typFloat:
+		return "float"
+	case typBool:
+		return "bool"
+
+	case typAny:
+		return "any"
+	case typUnion:
+		var ss []string
+		for _, t := range typ.UnionTypes {
+			ss = append(ss, t.Type)
+		}
+		return strings.Join(ss, "|")
+
+	case typNumberMultiplier:
+		return "units.NumberMultiplier"
+
+	default:
 		panic(fmt.Sprintf("ERR: unknown '%v', json = %v\n", typ.Type, jsonString(typ)))
 	}
 }
