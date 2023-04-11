@@ -178,12 +178,6 @@ func WithSortKeys(sortKeys bool) Option {
 	return *opt
 }
 
-func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option {
-	var opt = newOption()
-	opt.IncludeSchemaTypePath = includeSchemaTypePath
-	return *opt
-}
-
 func (p *Option) merge(opts ...Option) *Option {
 	for _, opt := range opts {
 		if opt.ExecProgram_Args == nil {

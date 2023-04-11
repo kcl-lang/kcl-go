@@ -7,10 +7,10 @@ import (
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
 )
 
-func LintPath(path string) (results []string, err error) {
+func LintPath(paths []string) (results []string, err error) {
 	client := service.NewKclvmServiceClient()
 	resp, err := client.LintPath(&gpyrpc.LintPath_Args{
-		Path: path,
+		Paths: paths,
 	})
 	if err != nil {
 		return nil, err

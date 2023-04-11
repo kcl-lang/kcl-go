@@ -38,7 +38,6 @@ a = 2
 	// Output:
 	// b: 1
 	// a: 2
-	//
 	// a: 2
 	// b: 1
 }
@@ -52,18 +51,9 @@ x = Person()
 	json := kclvm.MustRun("testdata/main.k", kclvm.WithCode(code)).First().JSONString()
 	fmt.Println(json)
 
-	json_with_type := kclvm.MustRun("testdata/main.k", kclvm.WithCode(code), kclvm.WithIncludeSchemaTypePath(true)).First().JSONString()
-	fmt.Println(json_with_type)
-
 	// Output:
 	// {
 	//     "x": {
-	//         "name": ""
-	//     }
-	// }
-	// {
-	//     "x": {
-	//         "@type": "Person",
 	//         "name": ""
 	//     }
 	// }
@@ -81,12 +71,10 @@ func ExampleRunFiles() {
 
 func ExampleKCLResult() {
 	const k_code = `
-import kcl_plugin.hello
-
 name = "kcl"
 age = 1
 	
-two = hello.add(1, 1)
+two = 2
 	
 schema Person:
     name: str = "kcl"
@@ -147,12 +135,10 @@ func ExampleRun_getField() {
 
 func Example() {
 	const k_code = `
-import kcl_plugin.hello
-
 name = "kcl"
 age = 1
 
-two = hello.add(1, 1)
+two = 2
 
 schema Person:
     name: str = "kcl"
@@ -186,11 +172,10 @@ x1 = Person {
 }
 
 func ExampleLintPath() {
-	// import abc # unable to import
 	// import a
 	// import a # reimport
 
-	results, err := kclvm.LintPath("testdata/lint/import.k")
+	results, err := kclvm.LintPath([]string{"testdata/lint/import.k"})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -199,9 +184,8 @@ func ExampleLintPath() {
 	}
 
 	// Output:
-	// Unable to import abc.
-	// a is reimported multiple times.
-	// a imported but unused.
+	// Module 'a' is reimported multiple times
+	// Module 'a' imported but unused
 }
 
 func ExampleFormatCode() {

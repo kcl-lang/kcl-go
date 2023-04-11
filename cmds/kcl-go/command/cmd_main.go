@@ -27,7 +27,6 @@ func Main() {
 	}()
 
 	// kclvm -m kclvm
-	// kclvm -m kclvm.tools.plugin
 	app.UsageText = `kcl-go
    kcl-go [global options] command [command options] [arguments...]
 
@@ -62,27 +61,19 @@ func Main() {
 		NewSetpupKclvmCmd(),
 		NewBuildInfoCmd(),
 
-		NewKclCmd(), // go run main.go kcl -D aa=11 -D bb=22 main.k other.k
-
 		NewRunCmd(),
 		NewValidateCmd(),
-		NewTestCmd(),
-		NewPluginCmd(),
 		NewCleanCmd(),
 
 		NewLintCmd(),
 		NewFmtCmd(),
 		NewDocCmd(),
 
-		NewGrpcServerCmd(),
 		NewRestServerCmd(),
-
-		NewAstCmd(),
 
 		NewListCmd(),
 		NewLispAppCmd(),
 		NewTourCmd(),
-		NewLspCmd(),
 	}
 
 	if len(os.Args) == 2 && os.Args[1] == "-gen-markdown" {

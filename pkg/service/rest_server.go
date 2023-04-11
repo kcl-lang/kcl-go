@@ -59,38 +59,24 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
 	p.router.GET("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
-	p.router.GET("/api:protorpc/KclvmService.ParseFile_LarkTree", p.handle_ParseFile_LarkTree)
-	p.router.GET("/api:protorpc/KclvmService.ParseFile_AST", p.handle_ParseFile_AST)
-	p.router.GET("/api:protorpc/KclvmService.ParseProgram_AST", p.handle_ParseProgram_AST)
 	p.router.GET("/api:protorpc/KclvmService.ExecProgram", p.handle_ExecProgram)
-	p.router.GET("/api:protorpc/KclvmService.ResetPlugin", p.handle_ResetPlugin)
 	p.router.GET("/api:protorpc/KclvmService.FormatCode", p.handle_FormatCode)
 	p.router.GET("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
 	p.router.GET("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
 	p.router.GET("/api:protorpc/KclvmService.OverrideFile", p.handle_OverrideFile)
-	p.router.GET("/api:protorpc/KclvmService.EvalCode", p.handle_EvalCode)
-	p.router.GET("/api:protorpc/KclvmService.ResolveCode", p.handle_ResolveCode)
 	p.router.GET("/api:protorpc/KclvmService.GetSchemaType", p.handle_GetSchemaType)
 	p.router.GET("/api:protorpc/KclvmService.ValidateCode", p.handle_ValidateCode)
-	p.router.GET("/api:protorpc/KclvmService.SpliceCode", p.handle_SpliceCode)
 
 	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
 	p.router.POST("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
-	p.router.POST("/api:protorpc/KclvmService.ParseFile_LarkTree", p.handle_ParseFile_LarkTree)
-	p.router.POST("/api:protorpc/KclvmService.ParseFile_AST", p.handle_ParseFile_AST)
-	p.router.POST("/api:protorpc/KclvmService.ParseProgram_AST", p.handle_ParseProgram_AST)
 	p.router.POST("/api:protorpc/KclvmService.ExecProgram", p.handle_ExecProgram)
-	p.router.POST("/api:protorpc/KclvmService.ResetPlugin", p.handle_ResetPlugin)
 	p.router.POST("/api:protorpc/KclvmService.FormatCode", p.handle_FormatCode)
 	p.router.POST("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
 	p.router.POST("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
 	p.router.POST("/api:protorpc/KclvmService.OverrideFile", p.handle_OverrideFile)
-	p.router.POST("/api:protorpc/KclvmService.EvalCode", p.handle_EvalCode)
-	p.router.POST("/api:protorpc/KclvmService.ResolveCode", p.handle_ResolveCode)
 	p.router.POST("/api:protorpc/KclvmService.GetSchemaType", p.handle_GetSchemaType)
 	p.router.POST("/api:protorpc/KclvmService.ValidateCode", p.handle_ValidateCode)
-	p.router.POST("/api:protorpc/KclvmService.SpliceCode", p.handle_SpliceCode)
 }
 
 func (p *restServer) handle(
@@ -142,38 +128,10 @@ func (p *restServer) handle_ListMethod(w http.ResponseWriter, r *http.Request, p
 	})
 }
 
-func (p *restServer) handle_ParseFile_LarkTree(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	var args = new(gpyrpc.ParseFile_LarkTree_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ParseFile_LarkTree(args)
-	})
-}
-
-func (p *restServer) handle_ParseFile_AST(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	var args = new(gpyrpc.ParseFile_AST_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ParseFile_AST(args)
-	})
-}
-
-func (p *restServer) handle_ParseProgram_AST(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	var args = new(gpyrpc.ParseProgram_AST_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ParseProgram_AST(args)
-	})
-}
-
 func (p *restServer) handle_ExecProgram(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var args = new(gpyrpc.ExecProgram_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.ExecProgram(args)
-	})
-}
-
-func (p *restServer) handle_ResetPlugin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	var args = new(gpyrpc.ResetPlugin_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ResetPlugin(args)
 	})
 }
 
@@ -205,20 +163,6 @@ func (p *restServer) handle_OverrideFile(w http.ResponseWriter, r *http.Request,
 	})
 }
 
-func (p *restServer) handle_EvalCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	args := new(gpyrpc.EvalCode_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.EvalCode(args)
-	})
-}
-
-func (p *restServer) handle_ResolveCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	args := new(gpyrpc.ResolveCode_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ResolveCode(args)
-	})
-}
-
 func (p *restServer) handle_GetSchemaType(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	args := new(gpyrpc.GetSchemaType_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
@@ -233,31 +177,10 @@ func (p *restServer) handle_ValidateCode(w http.ResponseWriter, r *http.Request,
 	})
 }
 
-func (p *restServer) handle_SpliceCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	args := new(gpyrpc.SpliceCode_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.SpliceCode(args)
-	})
-}
-
 func (p *restServer) handle_ListDepFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	args := new(gpyrpc.ListDepFiles_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.ListDepFiles(args)
-	})
-}
-
-func (p *restServer) handle_ListUpStreamFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	args := new(gpyrpc.ListUpStreamFiles_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ListUpStreamFiles(args)
-	})
-}
-
-func (p *restServer) handle_ListDownStreamFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	args := new(gpyrpc.ListDownStreamFiles_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ListDownStreamFiles(args)
 	})
 }
 

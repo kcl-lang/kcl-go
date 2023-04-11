@@ -23,5 +23,5 @@ jobs:
           python-version: '3.10' 
 
       - run: go install ./... && C:\Users\runneradmin\go\bin\kcl-go.exe run hello.k
-      - run: go run ./cmds/kcl-go kcl hello.k
+      - run: go run ./cmds/kcl-go run hello.k
       - run: go test ./...

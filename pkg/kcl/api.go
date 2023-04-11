@@ -181,25 +181,6 @@ func RunFiles(paths []string, opts ...Option) (*KCLResultList, error) {
 	return run(paths, opts...)
 }
 
-func EvalCode(code string) (*KCLResult, error) {
-	client := service.NewKclvmServiceClient()
-	resp, err := client.EvalCode(&gpyrpc.EvalCode_Args{Code: code})
-	if err != nil {
-		return nil, err
-	}
-
-	var result KCLResult
-	if strings.TrimSpace(resp.JsonResult) == "" {
-		return &result, nil
-	}
-
-	if err := json.Unmarshal([]byte(resp.JsonResult), &result); err != nil {
-		return nil, err
-	}
-
-	return &result, nil
-}
-
 func GetSchemaType(file, code, schemaName string) ([]*gpyrpc.KclType, error) {
 	client := service.NewKclvmServiceClient()
 	resp, err := client.GetSchemaType(&gpyrpc.GetSchemaType_Args{
