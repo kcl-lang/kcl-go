@@ -17,3 +17,4 @@ zz_*
 **/.DS_Store
 **/.vscode
 __pycache__
+/vendor
