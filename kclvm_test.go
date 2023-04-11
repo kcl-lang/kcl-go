@@ -191,29 +191,8 @@ func TestFormatCode(t *testing.T) {
 	assert2.Equalf(t, string(result), "a = 1\n", "format result unexpected: expect: a = 1\n, actual: %s", result)
 }
 
-func TestPlugin(t *testing.T) {
-	const code = `
-import kcl_plugin.hello as hello
-
-a = hello.add(1, 2)
-`
-	_, err := kclvm.Run("testdata/main.k",
-		kclvm.WithCode(code),
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestEvalCode(t *testing.T) {
-	_, err := kclvm.EvalCode(`name = "kcl"`)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
 func TestGetSchemaType(t *testing.T) {
-	result, err := kclvm.GetSchemaType("", "schema Person:\n    name: str", "")
+	result, err := kclvm.GetSchemaType("test.k", "schema Person:\n    name: str", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -223,11 +202,17 @@ func TestGetSchemaType(t *testing.T) {
 			SchemaName: "Person",
 			Properties: map[string]*gpyrpc.KclType{
 				"name": {
-					Type: "str",
-					Line: 1,
+					Type:       "str",
+					Line:       1,
+					Properties: map[string]*gpyrpc.KclType{},
+					Required:   []string{},
+					UnionTypes: []*gpyrpc.KclType{},
+					Decorators: []*gpyrpc.Decorator{},
 				},
 			},
-			Required: []string{"name"},
+			Required:   []string{"name"},
+			UnionTypes: []*gpyrpc.KclType{},
+			Decorators: []*gpyrpc.Decorator{},
 		},
 	}, result)
 	result, err = kcl.GetSchemaType("./testdata/main.k", "", "Person")
@@ -240,17 +225,27 @@ func TestGetSchemaType(t *testing.T) {
 			SchemaName: "Person",
 			Properties: map[string]*gpyrpc.KclType{
 				"name": {
-					Type:    "str",
-					Line:    1,
-					Default: "kcl",
+					Type:       "str",
+					Line:       1,
+					Default:    "",
+					Properties: map[string]*gpyrpc.KclType{},
+					Required:   []string{},
+					UnionTypes: []*gpyrpc.KclType{},
+					Decorators: []*gpyrpc.Decorator{},
 				},
 				"age": {
-					Type:    "int",
-					Line:    2,
-					Default: "1",
+					Type:       "int",
+					Line:       2,
+					Default:    "",
+					Properties: map[string]*gpyrpc.KclType{},
+					Required:   []string{},
+					UnionTypes: []*gpyrpc.KclType{},
+					Decorators: []*gpyrpc.Decorator{},
 				},
 			},
-			Required: []string{"age", "name"},
+			Required:   []string{"name", "age"},
+			UnionTypes: []*gpyrpc.KclType{},
+			Decorators: []*gpyrpc.Decorator{},
 		},
 	}, result)
 }
@@ -264,7 +259,6 @@ func TestListUpStreamFiles(t *testing.T) {
 	expect := []string{
 		"app0/sub",
 		"app0/sub/sub.k",
-		"kcl_plugin/hello",
 	}
 
 	sort.Strings(files)

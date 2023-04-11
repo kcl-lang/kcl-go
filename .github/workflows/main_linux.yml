@@ -24,7 +24,7 @@ jobs:
 
       
 
-      - run: go run ./cmds/kcl-go kcl hello.k
+      - run: go run ./cmds/kcl-go run hello.k
 
       - run: go test -v -coverprofile=profile.cov ./...
 

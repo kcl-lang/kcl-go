@@ -8,9 +8,9 @@ import (
 )
 
 func TestLintPath(t *testing.T) {
-	expect := `hello imported but unused.`
+	expect := `Module 'math' imported but unused`
 
-	ss, err := LintPath("./testdata/a.k")
+	ss, err := LintPath([]string{"./testdata/a.k"})
 	if err != nil {
 		t.Fatal(err)
 	}

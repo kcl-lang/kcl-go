@@ -1,10 +1,12 @@
 package format
 
 import (
+	"bytes"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
-	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -23,7 +25,7 @@ func TestFormatCode(t *testing.T) {
 		},
 		{
 			source:    "a=a+",
-			expectErr: "KCL Syntax Error[E1001] : Invalid syntax\nInvalid syntax",
+			expectErr: "error[E1001]: InvalidSyntax\nexpected one of [\"identifier\", \"literal\", \"(\", \"[\", \"{\"] got newline\n\n",
 		},
 	}
 
@@ -39,7 +41,7 @@ func TestFormatCode(t *testing.T) {
 }
 
 func TestFormatPath(t *testing.T) {
-	successDir := "testdata/success"
+	successDir := filepath.Join("testdata", "success")
 	expectedFileSuffix := ".formatted"
 	expectedFiles := findFiles(t, successDir, func(info fs.FileInfo) bool {
 		return strings.HasSuffix(info.Name(), expectedFileSuffix)
@@ -71,12 +73,15 @@ func TestFormatPath(t *testing.T) {
 
 	var changedPathsRelative []string
 	for _, p := range changedPaths {
-		changedPathsRelative = append(changedPathsRelative, strings.TrimSuffix(path.Join(successDir, p), ".k")+expectedFileSuffix)
+		changedPathsRelative = append(changedPathsRelative, strings.TrimSuffix(p, ".k")+expectedFileSuffix)
 	}
 	assert.ElementsMatchf(t, expectedFiles, changedPathsRelative, "format path get wrong result. changedPath mismatch, expect: %s, get: %s", expectedFiles, changedPathsRelative)
 
 	for _, expectedFile := range expectedFiles {
 		expected, err := ioutil.ReadFile(expectedFile)
+		if runtime.GOOS == "windows" {
+			expected = bytes.Replace(expected, []byte{0xd, 0xa}, []byte{0xa}, -1)
+		}
 		if err != nil {
 			t.Fatalf("read expected formatted file failed: %s", expectedFile)
 		}
@@ -99,7 +104,7 @@ func findFiles(t testing.TB, testDir string, filter filterFile) (names []string)
 	for _, f := range files {
 		if !f.IsDir() {
 			if filter(f) {
-				names = append(names, path.Join(testDir, f.Name()))
+				names = append(names, filepath.Join(testDir, f.Name()))
 			}
 		}
 	}

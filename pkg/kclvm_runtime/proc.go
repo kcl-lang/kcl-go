@@ -8,7 +8,7 @@ import (
 	"net/rpc"
 	"os/exec"
 
-	"github.com/chai2010/protorpc"
+	"github.com/powerman/rpc-codec/jsonrpc2"
 )
 
 type _Process struct {
@@ -55,7 +55,7 @@ func createProcess(exe string, arg ...string) (p *_Process, err error) {
 
 	// NewXxxServiceClient 会独占 信道(只能选择1个), 多个客户端需要手工构建 client
 	conn := &procReadWriteCloser{proc: p, r: p.stdout, w: p.stdin}
-	p.c = rpc.NewClientWithCodec(protorpc.NewClientCodec(conn))
+	p.c = rpc.NewClientWithCodec(jsonrpc2.NewClientCodec(conn))
 
 	return p, nil
 }

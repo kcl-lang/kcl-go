@@ -1,7 +1,7 @@
 
 # kcl-lint: W0411 hello imported but unused
 
-import kcl_plugin.hello
+import math
 
 a = 1
 

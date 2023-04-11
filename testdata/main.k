@@ -1,9 +1,7 @@
-import kcl_plugin.hello
-
 name = "kcl-go"
 age = 2
 
-four = hello.add(1, 3)
+four = 4
 
 schema Person:
     name: str = "kcl"

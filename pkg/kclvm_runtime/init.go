@@ -4,10 +4,7 @@ package kclvm_runtime
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"runtime"
-	"strings"
 	"sync"
 
 	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
@@ -16,7 +13,6 @@ import (
 var (
 	Debug        bool
 	pyrpcRuntime *Runtime
-	gorpcRuntime *Runtime
 	once         sync.Once
 )
 
@@ -26,16 +22,7 @@ func InitRuntime(maxProc int) {
 
 func GetRuntime() *Runtime {
 	once.Do(func() { initRuntime(0) })
-	if strings.EqualFold(os.Getenv("KCLVM_SERVICE_CLIENT_HANDLER"), "native") {
-		return gorpcRuntime
-	} else {
-		return pyrpcRuntime
-	}
-}
-
-func GetGoRuntime() *Runtime {
-	once.Do(func() { initRuntime(0) })
-	return gorpcRuntime
+	return pyrpcRuntime
 }
 
 func GetPyRuntime() *Runtime {
@@ -51,24 +38,11 @@ func initRuntime(maxProc int) {
 		maxProc = runtime.NumCPU() * 2
 	}
 
-	if g_Python3Path == "" {
-		panic(ErrPython3NotFound)
-	}
 	if g_KclvmRoot == "" {
 		panic(ErrKclvmRootNotFound)
 	}
 
-	if strings.HasSuffix(g_Python3Path, "kclvm") || strings.HasSuffix(g_Python3Path, "kclvm.exe") {
-		os.Setenv("PYTHONHOME", "")
-		os.Setenv("PYTHONPATH", "")
-	} else {
-		os.Setenv("PYTHONHOME", "")
-		os.Setenv("PYTHONPATH", filepath.Join(g_KclvmRoot, "lib", "site-packages"))
-	}
-	//todo add kclvm_capi gorpc server
-	gorpcRuntime = NewRuntime(int(maxProc), findKclvmRoot()+"/bin/gorpc")
-	pyrpcRuntime = NewRuntime(int(maxProc), MustGetKclvmPath(), "-m", "kclvm.program.rpc-server")
-	gorpcRuntime.Start()
+	pyrpcRuntime = NewRuntime(int(maxProc), "kclvm_cli", "server")
 	pyrpcRuntime.Start()
 
 	client := &BuiltinServiceClient{

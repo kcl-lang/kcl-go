@@ -5,14 +5,12 @@ package kclvm_runtime
 import (
 	_ "embed"
 	"errors"
-	"fmt"
 	"go/build"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 
-	kclPlugin "kusionstack.io/kcl-plugin"
 	kclvmArtifact "kusionstack.io/kclvm-artifact-go"
 	"kusionstack.io/kclvm-go/pkg/logger"
 )
@@ -30,44 +28,19 @@ func init() {
 	}
 	kclvmArtifact.CleanInstall()
 
-	g_Python3Path = findPython3Path()
 	g_KclvmRoot = findKclvmRoot()
-	kclvmPluginPath := filepath.Join(g_KclvmRoot, "plugins")
-
-	_, err = os.Stat(kclvmPluginPath)
-
-	if os.IsNotExist(err) {
-		err = kclPlugin.InstallPlugins(kclvmPluginPath)
-		if err != nil {
-			panic(fmt.Errorf("install kclvm plugins failed: %s", err.Error()))
-		}
-	}
 }
 
 var (
-	g_Python3Path string
-	g_KclvmRoot   string
+	g_KclvmRoot string
 )
 
 var (
-	ErrPython3NotFound   = errors.New("python3 not found")
 	ErrKclvmRootNotFound = errors.New("kclvm root not found")
 )
 
 func InitKclvmRoot(kclvmRoot string) {
 	g_KclvmRoot = kclvmRoot
-	if runtime.GOOS == "windows" {
-		s := filepath.Join(g_KclvmRoot, "kclvm.exe")
-		if fi, _ := os.Lstat(s); fi != nil && !fi.IsDir() {
-			g_Python3Path = s
-		}
-	} else {
-		s := filepath.Join(g_KclvmRoot, "bin", "kclvm")
-		if fi, _ := os.Lstat(s); fi != nil && !fi.IsDir() {
-			g_Python3Path = s
-		}
-	}
-
 }
 
 // GetKclvmRoot return kclvm root directory, return error if kclvm not found.
@@ -89,13 +62,10 @@ func MustGetKclvmRoot() string {
 
 // GetKclvmPath return kclvm/python3 executable path, return error if not found.
 func GetKclvmPath() (string, error) {
-	if g_Python3Path == "" {
-		return "", ErrPython3NotFound
-	}
 	if g_KclvmRoot == "" {
 		return "", ErrKclvmRootNotFound
 	}
-	return g_Python3Path, nil
+	return g_KclvmRoot, nil
 }
 
 // MustGetKclvmPath return kclvm/python3 executable path, panic if not found.
@@ -107,21 +77,8 @@ func MustGetKclvmPath() string {
 	return s
 }
 
-func findPython3Path() string {
-	for _, s := range []string{"kclvm", "python3"} {
-		exeName := s
-		if runtime.GOOS == "windows" {
-			exeName += ".exe"
-		}
-		if path, err := exec.LookPath(exeName); err == nil {
-			return path
-		}
-	}
-	return ""
-}
-
 func findKclvmRoot() string {
-	kclvm_cli_exe := "kclvm"
+	kclvm_cli_exe := "kclvm_cli"
 	if runtime.GOOS == "windows" {
 		kclvm_cli_exe += ".exe"
 	}

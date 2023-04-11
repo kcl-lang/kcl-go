@@ -29,7 +29,7 @@ func NewLintCmd() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			kclvm_runtime.InitRuntime(c.Int("max-proc"))
-			results, err := kcl.LintPath(c.Args().First())
+			results, err := kcl.LintPath(c.Args().Slice())
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)

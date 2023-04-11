@@ -106,11 +106,6 @@ func WithSortKeys(sortKeys bool) Option {
 	return kcl.WithSortKeys(sortKeys)
 }
 
-// WithIncludeSchemaTypePath returns a Option which hold a includeSchemaTypePath switch.
-func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option {
-	return kcl.WithIncludeSchemaTypePath(includeSchemaTypePath)
-}
-
 // FormatCode returns the formatted code.
 func FormatCode(code interface{}) ([]byte, error) {
 	return format.FormatCode(code)
@@ -144,15 +139,17 @@ func ListDownStreamFiles(workDir string, opt *ListDepsOptions) ([]string, error)
 }
 
 // LintPath lint files from the given path
-func LintPath(path string) (results []string, err error) {
-	return lint.LintPath(path)
+func LintPath(paths []string) (results []string, err error) {
+	return lint.LintPath(paths)
 }
 
 // OverrideFile rewrites a file with override spec
 // file: string. The File that need to be overridden
 // specs: []string. List of specs that need to be overridden.
-//     Each spec string satisfies the form: <pkgpath>:<field_path>=<filed_value> or <pkgpath>:<field_path>-
-//     When the pkgpath is '__main__', it can be omitted.
+//
+//	Each spec string satisfies the form: <pkgpath>:<field_path>=<filed_value> or <pkgpath>:<field_path>-
+//	When the pkgpath is '__main__', it can be omitted.
+//
 // importPaths. List of import statements that need to be added
 func OverrideFile(file string, specs, importPaths []string) (bool, error) {
 	return override.OverrideFile(file, specs, importPaths)
@@ -163,18 +160,19 @@ func ValidateCode(data, code string, opt *ValidateOptions) (ok bool, err error) 
 	return validate.ValidateCode(data, code, opt)
 }
 
-func EvalCode(code string) (*KCLResult, error) {
-	return kcl.EvalCode(code)
-}
-
 // GetSchemaType returns schema types from a kcl file or code.
 //
 // file: string
-//     The kcl filename
+//
+//	The kcl filename
+//
 // code: string
-//     The kcl code string
+//
+//	The kcl code string
+//
 // schema_name: string
-//    The schema name got, when the schema name is empty, all schemas are returned.
+//
+//	The schema name got, when the schema name is empty, all schemas are returned.
 func GetSchemaType(file, code, schemaName string) ([]*KclType, error) {
 	return kcl.GetSchemaType(file, code, schemaName)
 }

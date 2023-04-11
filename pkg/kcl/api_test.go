@@ -68,19 +68,6 @@ func TestRun_failed(t *testing.T) {
 	tAssert(t, err != nil, err)
 }
 
-func TestEvalCode(t *testing.T) {
-	const k_code = `
-name = "kcl"
-i = 123
-f = 1.5
-`
-
-	result, err := EvalCode(k_code)
-	tAssert(t, err == nil, err)
-	tAssert(t, result != nil)
-	tAssert(t, fmt.Sprint(result.Get("name")) == "kcl", result)
-}
-
 func TestGetSchemaType(t *testing.T) {
 	const k_code = `a=1`
 
