@@ -58,7 +58,6 @@ func Main() {
 	}
 
 	app.Commands = []*cli.Command{
-		NewSetpupKclvmCmd(),
 		NewBuildInfoCmd(),
 
 		NewRunCmd(),

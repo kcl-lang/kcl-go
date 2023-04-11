@@ -6,8 +6,8 @@
 
 ## Building
 
-- [Install Go 1.17+](https://go.dev/dl/)
-- [Install KCLVM](https://kcl-lang.io/docs/user_docs/getting-started/install) (or `go run ./cmds/kcl-go/ setup-kclvm` and add `./_build/{Darwin|Darwin-arm64|Linux}/bin` to `PATH`)
+- [Install Go 1.18+](https://go.dev/dl/)
+- [Install KCLVM](https://kcl-lang.io/docs/user_docs/getting-started/install)
 
 ```bash
 $ go run ./cmds/kcl-go

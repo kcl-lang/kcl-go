@@ -21,17 +21,11 @@ func Unzip(zipFile, outputDir string) error {
 
 	for _, f := range archive.File {
 		filePath := filepath.Join(dst, f.Name)
-		if DebugMode {
-			fmt.Println("unzip ", filePath)
-		}
 
 		if !strings.HasPrefix(filePath, filepath.Clean(dst)+string(os.PathSeparator)) {
 			return fmt.Errorf("invalid file path")
 		}
 		if f.FileInfo().IsDir() {
-			if DebugMode {
-				fmt.Println("creating directory...")
-			}
 			os.MkdirAll(filePath, os.ModePerm)
 			continue
 		}
