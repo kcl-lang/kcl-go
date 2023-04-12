@@ -1,4 +1,4 @@
-// Copyright 2022 The KCL Authors. All rights reserved.
+// Copyright 2023 The KCL Authors. All rights reserved.
 
 /*
 Package list extracts information by parsing KCL source code and return it as list. For now, the supported information to be listed will be UpStream/DownStream dependency files.
