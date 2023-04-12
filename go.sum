@@ -152,9 +152,5 @@ gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99 h1:dbuHpmKjkDzSOMKAWl10QNlga
 gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
-kusionstack.io/kcl-plugin v0.4.4 h1:Ke6SMbZ33qaR0mTCaZSVmVop+8Hk8UQK217z7ml97z8=
-kusionstack.io/kcl-plugin v0.4.4/go.mod h1:VgB7qXVbDGWFOh/qb/yXf75+UrliP5EPXOQUDqBCdAQ=
-kusionstack.io/kclvm-artifact-go v0.4.6-beta.1 h1:2Xwt7f5MviPKTH9/69sXgxmz2Z7EIQtj9GLrFfBOu+0=
-kusionstack.io/kclvm-artifact-go v0.4.6-beta.1/go.mod h1:WI+NvDeMqu1AduJT119X7q8KQdYmKfv4Nq4OvZ1tAsI=
-kusionstack.io/kclvm-artifact-go v0.4.6-beta.1.0.20230411114844-5a448e338f14 h1:K5bfPdFWgJO3+ydHNYhXuELOxLnxOubcKJWXk77Y8/U=
-kusionstack.io/kclvm-artifact-go v0.4.6-beta.1.0.20230411114844-5a448e338f14/go.mod h1:WI+NvDeMqu1AduJT119X7q8KQdYmKfv4Nq4OvZ1tAsI=
+kusionstack.io/kclvm-artifact-go v0.4.6 h1:BqVreppjq6rQt2aSXGlmzlq8vKM5zCdIJTPog+ZG6pU=
+kusionstack.io/kclvm-artifact-go v0.4.6/go.mod h1:WI+NvDeMqu1AduJT119X7q8KQdYmKfv4Nq4OvZ1tAsI=
