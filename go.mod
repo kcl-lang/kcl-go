@@ -6,7 +6,7 @@ require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
 	github.com/golang/protobuf v1.5.2
-	github.com/google/go-cmp v0.5.8
+	github.com/google/go-cmp v0.5.9
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/powerman/rpc-codec v1.2.2
@@ -14,8 +14,8 @@ require (
 	github.com/urfave/cli/v2 v2.6.0
 	google.golang.org/grpc v1.46.0
 	google.golang.org/protobuf v1.28.0
-	gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99
-	kusionstack.io/kclvm-artifact-go v0.4.6
+	gopkg.in/yaml.v3 v3.0.1
+	kusionstack.io/kclvm-artifact-go v0.4.7-0.20230413074010-eebca415b81f
 )
 
 require (
@@ -24,8 +24,8 @@ require (
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
-	golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4 // indirect
-	golang.org/x/text v0.3.3 // indirect
+	golang.org/x/net v0.9.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 )
