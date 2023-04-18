@@ -15,7 +15,7 @@ require (
 	google.golang.org/grpc v1.46.0
 	google.golang.org/protobuf v1.28.0
 	gopkg.in/yaml.v3 v3.0.1
-	kusionstack.io/kclvm-artifact-go v0.4.7-0.20230413074010-eebca415b81f
+	kusionstack.io/kclvm-artifact-go v0.4.7-0.20230418081720-4863d13f80d1
 )
 
 require (
