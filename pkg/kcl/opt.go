@@ -65,23 +65,6 @@ func ParseArgs(pathList []string, opts ...Option) (Option, error) {
 	}
 
 	if len(args.KFilenameList) == 0 {
-		if isDir(args.WorkDir) {
-			args.KCodeList = nil
-
-			files, err := os.ReadDir(args.WorkDir)
-			if err != nil {
-				return Option{}, err
-			}
-
-			for _, file := range files {
-				name := file.Name()
-				if !strings.HasPrefix(name, "_") && strings.HasSuffix(name, ".k") {
-					args.KFilenameList = append(args.KFilenameList, filepath.Join(args.WorkDir, name))
-				}
-			}
-		}
-	}
-	if len(args.KFilenameList) == 0 {
 		return Option{}, fmt.Errorf("kcl.Run: no kcl file")
 	}
 
