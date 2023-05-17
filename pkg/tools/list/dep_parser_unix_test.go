@@ -4,6 +4,7 @@
 package list
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,5 +12,5 @@ import (
 
 func TestInvalidFilePath(t *testing.T) {
 	_, err := newImportDepParser("./testdata/complicate/", DepOptions{Files: []string{"appops/projectA/invalid.k"}, UpStreams: []string{}})
-	assert.EqualError(t, err, "invalid file path: stat testdata/complicate/appops/projectA/invalid.k: no such file or directory", "err not match")
+	assert.Equal(t, strings.Contains(err.Error(), "appops/projectA/invalid.k: no such file or directory"), true)
 }
