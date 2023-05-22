@@ -17,17 +17,8 @@ jobs:
         with:
           go-version: 1.17
 
-      - run: sudo apt-get update
-      - run: sudo apt-get install python3 python3-pip -y
-      - run: sudo apt-get install -y python3-dev libffi-dev
-      - run: sudo apt-get install -y zlib1g-dev ncurses-dev build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
-
-      
-
       - run: go run ./cmds/kcl-go run hello.k
-
-      - run: go test -v -coverprofile=profile.cov ./...
-
+      - run: go test -p 1 -v -coverprofile=profile.cov ./...
       - uses: shogo82148/actions-goveralls@v1
         with:
           path-to-profile: profile.cov

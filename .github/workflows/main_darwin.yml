@@ -17,6 +17,5 @@ jobs:
         with:
           go-version: 1.17
 
-
       - run: go run ./cmds/kcl-go run hello.k
       - run: go test ./...
