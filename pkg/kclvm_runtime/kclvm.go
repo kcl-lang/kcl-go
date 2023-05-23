@@ -5,24 +5,18 @@ package kclvm_runtime
 import (
 	_ "embed"
 	"errors"
-	"go/build"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 
 	kclvmArtifact "kusionstack.io/kclvm-artifact-go"
 	"kusionstack.io/kclvm-go/pkg/logger"
+	"kusionstack.io/kclvm-go/pkg/path"
 )
 
 func init() {
 
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		gopath = build.Default.GOPATH
-	}
-
-	err := kclvmArtifact.InstallKclvm(gopath)
+	err := kclvmArtifact.InstallKclvm(path.LibPath())
 	if err != nil {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}
@@ -32,11 +26,8 @@ func init() {
 }
 
 var (
-	g_KclvmRoot string
-)
-
-var (
-	ErrKclvmRootNotFound = errors.New("kclvm root not found")
+	g_KclvmRoot          string
+	ErrKclvmRootNotFound = errors.New("kclvm root not found, please ensure kcl is in your PATH")
 )
 
 func InitKclvmRoot(kclvmRoot string) {
