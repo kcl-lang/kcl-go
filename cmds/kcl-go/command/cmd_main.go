@@ -59,6 +59,7 @@ func Main() {
 
 	app.Commands = []*cli.Command{
 		NewBuildInfoCmd(),
+		NewVersionCmd(),
 
 		NewRunCmd(),
 		NewValidateCmd(),
