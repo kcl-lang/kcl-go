@@ -9,17 +9,19 @@ type (
 
 const (
 	KclvmTripleType_unknown      KclvmTripleType = ""
-	KclvmTripleType_centos       KclvmTripleType = "centos"
-	KclvmTripleType_ubuntu       KclvmTripleType = "ubuntu"
-	KclvmTripleType_darwin       KclvmTripleType = "Darwin"
-	KclvmTripleType_darwin_arm64 KclvmTripleType = "Darwin-arm64"
+	KclvmTripleType_linux_amd64  KclvmTripleType = "linux-amd64"
+	KclvmTripleType_linux_arm64  KclvmTripleType = "linux-arm64"
+	KclvmTripleType_darwin_amd64 KclvmTripleType = "darwin-amd64"
+	KclvmTripleType_darwin_arm64 KclvmTripleType = "darwin-arm64"
 	KclvmTripleType_windows      KclvmTripleType = "windows"
 )
 
 const (
-	KclvmAbiVersion         KclvmVersionType = KclvmVersionType_v0_4_6
-	KclvmVersionType_latest                  = KclvmVersionType_v0_4_6
+	KclvmAbiVersion         KclvmVersionType = KclvmVersionType_v0_5_0_alpha_2
+	KclvmVersionType_latest                  = KclvmVersionType_v0_5_0_alpha_2
 
+	KclvmVersionType_v0_5_0_alpha_2 KclvmVersionType = "v0.5.0-alpha.2"
+	KclvmVersionType_v0_5_0_alpha_1 KclvmVersionType = "v0.5.0-alpha.1"
 	KclvmVersionType_v0_4_6         KclvmVersionType = "v0.4.6"
 	KclvmVersionType_v0_4_5         KclvmVersionType = "v0.4.5"
 	KclvmVersionType_v0_4_5_alpha_2 KclvmVersionType = "v0.4.5-alpha.2"
