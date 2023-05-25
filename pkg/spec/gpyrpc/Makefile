@@ -6,5 +6,3 @@ default:
 
 	cp ./kusionstack.io/kclvm-go/pkg/spec/gpyrpc/gpyrpc.pb.go gpyrpc.pb.go
 	-rm -rf ./kusionstack.io
-
-clean:
