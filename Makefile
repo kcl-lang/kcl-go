@@ -22,6 +22,9 @@ default:
 clean:
 	-rm -rf ./_build
 
+test:
+	go test ./...
+
 # ----------------
 # Docker
 # ----------------
