@@ -3,20 +3,37 @@
 package kclvm_runtime
 
 import (
+	"context"
 	_ "embed"
 	"errors"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"time"
 
+	"github.com/gofrs/flock"
 	kclvmArtifact "kusionstack.io/kclvm-artifact-go"
 	"kusionstack.io/kclvm-go/pkg/logger"
 	"kusionstack.io/kclvm-go/pkg/path"
 )
 
 func init() {
-
-	err := kclvmArtifact.InstallKclvm(path.LibPath())
+	// Get the install lib path.
+	path := path.LibPath()
+	// Acquire a file lock for process synchronization
+	lockPath := filepath.Join(path, "init.lock")
+	fileLock := flock.New(lockPath)
+	lockCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	locked, err := fileLock.TryLockContext(lockCtx, time.Second)
+	if err == nil && locked {
+		defer fileLock.Unlock()
+	}
+	if err != nil {
+		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
+	}
+	// Install lib
+	err = kclvmArtifact.InstallKclvm(path)
 	if err != nil {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}
