@@ -12,7 +12,7 @@
 // limitations under the License.
 package path
 
-const lp = lazypath("kcl")
+const lp = lazypath("")
 
 // LibPath returns the path where the kcl lib installed location.
 func LibPath(elem ...string) string { return lp.libPath(elem...) }

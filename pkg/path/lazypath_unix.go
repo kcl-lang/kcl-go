@@ -16,9 +16,14 @@
 package path
 
 import (
-	"path/filepath"
+	"go/build"
+	"os"
 )
 
 func libHome() string {
-	return filepath.Join(HomeDir(), ".config")
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = build.Default.GOPATH
+	}
+	return gopath
 }
