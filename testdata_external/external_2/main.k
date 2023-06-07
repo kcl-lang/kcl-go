@@ -1,0 +1,1 @@
+e2 = 'Hello External_2 World!'
