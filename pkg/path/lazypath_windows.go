@@ -15,7 +15,10 @@
 
 package path
 
-import "os"
+import (
+	"go/build"
+	"os"
+)
 
 func libHome() string {
 	gopath := os.Getenv("GOPATH")
