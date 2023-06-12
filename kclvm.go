@@ -78,6 +78,9 @@ func RunFiles(paths []string, opts ...Option) (*KCLResultList, error) {
 // WithCode returns a Option which hold a kcl source code list.
 func WithCode(codes ...string) Option { return kcl.WithCode(codes...) }
 
+// WithExternalPkgs returns a Option which hold a external package list.
+func WithExternalPkgs(externalPkgs ...string) Option { return kcl.WithExternalPkgs(externalPkgs...) }
+
 // WithKFilenames returns a Option which hold a filenames list.
 func WithKFilenames(filenames ...string) Option { return kcl.WithKFilenames(filenames...) }
 

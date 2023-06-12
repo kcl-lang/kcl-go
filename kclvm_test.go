@@ -5,6 +5,7 @@ package kclvm_test
 import (
 	"flag"
 	"os"
+	"path/filepath"
 	"reflect"
 	"sort"
 	"strconv"
@@ -288,4 +289,18 @@ func TestListDepFiles(t *testing.T) {
 	if !reflect.DeepEqual(files, expect) {
 		t.Fatalf("\nexpect = %v\ngot    = %v", expect, files)
 	}
+}
+
+func TestWithExternalpkg(t *testing.T) {
+	absPath1, err := filepath.Abs("./testdata_external/external_1/")
+	assert2.Equal(t, nil, err)
+	absPath2, err := filepath.Abs("./testdata_external/external_2/")
+	assert2.Equal(t, nil, err)
+	opt := kclvm.WithExternalPkgs("external_1="+absPath1, "external_2="+absPath2)
+	result, err := kclvm.Run("./testdata/import-external/main.k", opt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, "[{\"a\": \"Hello External_1 World!\", \"b\": \"Hello External_2 World!\"}]", result.GetRawJsonResult())
+	assert2.Equal(t, "a: Hello External_1 World!\nb: Hello External_2 World!", result.GetRawYamlResult())
 }

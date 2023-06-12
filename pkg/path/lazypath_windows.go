@@ -15,6 +15,15 @@
 
 package path
 
-import "os"
+import (
+	"go/build"
+	"os"
+)
 
-func libHome() string { return os.Getenv("APPDATA") }
+func libHome() string {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = build.Default.GOPATH
+	}
+	return gopath
+}
