@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestListDepFiles(t *testing.T) {
@@ -104,3 +106,16 @@ func TestListDepFiles_restfulFailed(t *testing.T) {
 	}
 }
 */
+
+func TestNewDepParser(t *testing.T) {
+
+	dp := NewDepParser("../../../testdata_import_builtin", Option{
+		KclYaml:     "kcl.yaml",
+		ProjectYaml: "project.yaml",
+	})
+
+	assert.Equal(t, dp.err, nil)
+	assert.Equal(t, len(dp.pkgFilesMap), 2)
+	assert.Equal(t, dp.pkgFilesMap["entry"], []string{"entry/main.k"})
+	assert.Equal(t, dp.pkgFilesMap["sub"], []string{"sub/main.k"})
+}
