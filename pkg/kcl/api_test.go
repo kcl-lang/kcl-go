@@ -30,6 +30,13 @@ f = 1.5
 
 	result, err := RunFiles([]string{case_path}, WithCode(k_code))
 	tAssert(t, err == nil, err)
+	tAssert(t, result != nil)
+
+	opts := WithCode(k_code)
+	opts.Merge(WithKFilenames(case_path))
+	result, err = RunWithOpts(opts)
+	tAssert(t, result != nil)
+	tAssert(t, err == nil, err)
 
 	result, err = Run(case_path, WithCode(k_code))
 	tAssert(t, err == nil, err)

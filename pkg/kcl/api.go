@@ -177,6 +177,14 @@ func Run(path string, opts ...Option) (*KCLResultList, error) {
 	return run([]string{path}, opts...)
 }
 
+// RunWithOpts is the same as Run, but it does not require a path as input.
+// Note: you need to specify the path in options by method WithKFilenameList()
+// or the workdir in method WorkDir(),
+// or it will return an error.
+func RunWithOpts(opts ...Option) (*KCLResultList, error) {
+	return run([]string{}, opts...)
+}
+
 func RunFiles(paths []string, opts ...Option) (*KCLResultList, error) {
 	return run(paths, opts...)
 }
