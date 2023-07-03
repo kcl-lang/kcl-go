@@ -1,4 +1,4 @@
-# kclvm-go: KCLVM SDK for Go
+# KCL Go SDK
 
 [![GoDoc](https://godoc.org/github.com/KusionStack/kclvm-go?status.svg)](https://godoc.org/github.com/KusionStack/kclvm-go)
 [![Coverage Status](https://coveralls.io/repos/github/KusionStack/kclvm-go/badge.svg)](https://coveralls.io/github/KusionStack/kclvm-go)
@@ -6,7 +6,7 @@
 
 ## Building
 
-- [Install Go 1.18+](https://go.dev/dl/)
+- [Install Go 1.19+](https://go.dev/dl/)
 - [Install KCLVM](https://kcl-lang.io/docs/user_docs/getting-started/install)
 
 ```bash

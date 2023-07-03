@@ -1,6 +1,6 @@
 module kusionstack.io/kclvm-go
 
-go 1.18
+go 1.19
 
 require (
 	github.com/chai2010/jsonv v1.1.3
@@ -16,7 +16,7 @@ require (
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/yaml.v3 v3.0.1
-	kusionstack.io/kclvm-artifact-go v0.5.0-alpha.4
+	kcl-lang.io/kcl-artifact-go v0.5.0-beta.1
 )
 
 require (
