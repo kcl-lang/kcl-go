@@ -17,7 +17,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"kcl-lang.io/kcl-go"
+	kclvm "kcl-lang.io/kcl-go"
 	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
