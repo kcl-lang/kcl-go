@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"kusionstack.io/kclvm-go"
+	"kcl-lang.io/kcl-go"
 )
 
 func assert(v bool, a ...interface{}) {

@@ -17,9 +17,9 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"kusionstack.io/kclvm-go"
-	"kusionstack.io/kclvm-go/pkg/kcl"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go"
+	"kcl-lang.io/kcl-go/pkg/kcl"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 const tEnvNumCpu = "KCLVM_GO_API_TEST_NUM_CPU"
