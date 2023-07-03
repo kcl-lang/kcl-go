@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/gofrs/flock"
-	kclvmArtifact "kusionstack.io/kclvm-artifact-go"
+	artifact "kcl-lang.io/kcl-artifact-go"
 	"kusionstack.io/kclvm-go/pkg/logger"
 	"kusionstack.io/kclvm-go/pkg/path"
 )
@@ -33,11 +33,11 @@ func init() {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}
 	// Install lib
-	err = kclvmArtifact.InstallKclvm(path)
+	err = artifact.InstallKclvm(path)
 	if err != nil {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}
-	kclvmArtifact.CleanInstall()
+	artifact.CleanInstall()
 
 	g_KclvmRoot = findKclvmRoot()
 }
