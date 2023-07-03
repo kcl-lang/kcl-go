@@ -3,7 +3,7 @@ package gen
 import (
 	"io"
 
-	pb "kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	pb "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 type Generator interface {

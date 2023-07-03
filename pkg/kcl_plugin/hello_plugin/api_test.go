@@ -5,7 +5,7 @@ package hello_plugin
 import (
 	"testing"
 
-	"kusionstack.io/kclvm-go/pkg/kcl_plugin"
+	"kcl-lang.io/kcl-go/pkg/kcl_plugin"
 )
 
 func TestPlugin_global_int(t *testing.T) {
@@ -62,8 +62,8 @@ func TestPlugin_update_dict(t *testing.T) {
 		"name": 123,
 	}
 
-	result_json := kcl_plugin.Invoke("kcl_plugin.hello.update_dict", []interface{}{dict, "name", "KusionStack"}, nil)
-	if result_json != `{"name":"KusionStack"}` {
+	result_json := kcl_plugin.Invoke("kcl_plugin.hello.update_dict", []interface{}{dict, "name", "kcl-lang"}, nil)
+	if result_json != `{"name":"kcl-lang"}` {
 		t.Fatal(result_json)
 	}
 }

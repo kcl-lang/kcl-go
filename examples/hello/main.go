@@ -8,8 +8,8 @@ package main
 import (
 	"fmt"
 
-	"kusionstack.io/kclvm-go"
-	_ "kusionstack.io/kclvm-go/pkg/kcl_plugin/hello_plugin"
+	"kcl-lang.io/kcl-go"
+	_ "kcl-lang.io/kcl-go/pkg/kcl_plugin/hello_plugin"
 )
 
 func main() {
@@ -24,7 +24,7 @@ name = "kcl"
 age = 1
 two = hello.add(1, 1)
 
-hello.say_hello('hello KusionStack')
+hello.say_hello('hello KCL')
 
 low_kcl = hello.tolower('KCL')
 

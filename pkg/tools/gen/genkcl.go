@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"kusionstack.io/kclvm-go/pkg/logger"
+	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
 type GenKclOptions struct {

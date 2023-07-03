@@ -3,8 +3,8 @@
 package validate
 
 import (
-	"kusionstack.io/kclvm-go/pkg/service"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 type ValidateOptions struct {

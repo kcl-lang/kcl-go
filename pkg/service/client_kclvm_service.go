@@ -7,8 +7,8 @@ import (
 	"io"
 	"net/rpc"
 
-	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 type KclvmServiceClient struct {

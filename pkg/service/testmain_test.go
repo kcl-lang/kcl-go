@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
 )
 
 const tEnvNumCpu = "KCLVM_GO_API_TEST_NUM_CPU"

@@ -5,7 +5,7 @@ package hello_plugin
 import (
 	"fmt"
 
-	"kusionstack.io/kclvm-go/pkg/kcl_plugin"
+	"kcl-lang.io/kcl-go/pkg/kcl_plugin"
 )
 
 func init() {

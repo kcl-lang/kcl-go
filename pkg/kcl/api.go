@@ -12,8 +12,8 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
 
-	"kusionstack.io/kclvm-go/pkg/service"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 type KclType = gpyrpc.KclType

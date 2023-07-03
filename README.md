@@ -1,8 +1,8 @@
 # KCL Go SDK
 
-[![GoDoc](https://godoc.org/github.com/KusionStack/kclvm-go?status.svg)](https://godoc.org/github.com/KusionStack/kclvm-go)
-[![Coverage Status](https://coveralls.io/repos/github/KusionStack/kclvm-go/badge.svg)](https://coveralls.io/github/KusionStack/kclvm-go)
-[![license](https://img.shields.io/github/license/KusionStack/kclvm-go.svg)](https://github.com/KusionStack/kclvm-go/blob/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/kcl-lang/kcl-go?status.svg)](https://godoc.org/github.com/kcl-lang/kcl-go)
+[![Coverage Status](https://coveralls.io/repos/github/kcl-lang/kcl-go/badge.svg)](https://coveralls.io/github/kcl-lang/kcl-go)
+[![license](https://img.shields.io/github/license/kcl-lang/kcl-go.svg)](https://github.com/kcl-lang/kcl-go/blob/master/LICENSE)
 
 ## Building
 
@@ -37,7 +37,7 @@ package main
 import (
 	"fmt"
 
-	"kusionstack.io/kclvm-go"
+	"kcl-lang.io/kcl-go"
 )
 
 func main() {

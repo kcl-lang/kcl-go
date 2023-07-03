@@ -3,8 +3,8 @@
 package override
 
 import (
-	"kusionstack.io/kclvm-go/pkg/service"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 func OverrideFile(file string, specs, importPaths []string) (result bool, err error) {

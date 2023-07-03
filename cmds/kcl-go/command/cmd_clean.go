@@ -9,7 +9,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"kusionstack.io/kclvm-go/pkg/utils"
+	"kcl-lang.io/kcl-go/pkg/utils"
 )
 
 func NewCleanCmd() *cli.Command {

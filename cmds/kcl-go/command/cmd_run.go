@@ -10,8 +10,8 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"kusionstack.io/kclvm-go"
-	"kusionstack.io/kclvm-go/pkg/kcl"
+	"kcl-lang.io/kcl-go"
+	"kcl-lang.io/kcl-go/pkg/kcl"
 )
 
 // keep same as kcl command

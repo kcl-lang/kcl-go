@@ -8,7 +8,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"kusionstack.io/kclvm-go/pkg/tools/list"
+	"kcl-lang.io/kcl-go/pkg/tools/list"
 )
 
 func NewLispAppCmd() *cli.Command {

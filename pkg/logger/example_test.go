@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"kusionstack.io/kclvm-go/pkg/logger"
+	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
 func Example() {

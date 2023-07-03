@@ -7,7 +7,7 @@ import (
 	"log"
 	"testing"
 
-	"kusionstack.io/kclvm-go/pkg/tools/gen"
+	"kcl-lang.io/kcl-go/pkg/tools/gen"
 )
 
 var _ = gen.GenProto

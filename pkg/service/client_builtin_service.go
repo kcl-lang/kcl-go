@@ -3,7 +3,7 @@
 package service
 
 import (
-	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
 )
 
 type BuiltinServiceClient = kclvm_runtime.BuiltinServiceClient

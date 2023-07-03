@@ -36,8 +36,8 @@ func TestPlugin_strings_join(t *testing.T) {
 	if !CgoEnabled {
 		t.Skip("cgo disabled")
 	}
-	result_json := Invoke("kcl_plugin.strings.join", []interface{}{"KusionStack", "KCL", 123}, nil)
-	if result_json != `"KusionStack.KCL.123"` {
+	result_json := Invoke("kcl_plugin.strings.join", []interface{}{"KCL", "KCL", 123}, nil)
+	if result_json != `"KCL.KCL.123"` {
 		t.Fatal(result_json)
 	}
 }
@@ -46,8 +46,8 @@ func TestPlugin_strings_panic(t *testing.T) {
 	if !CgoEnabled {
 		t.Skip("cgo disabled")
 	}
-	result_json := Invoke("kcl_plugin.strings.panic", []interface{}{"KusionStack", "KCL", 123}, nil)
-	if result_json != `{"__kcl_PanicInfo__":true,"message":"[KusionStack KCL 123]"}` {
+	result_json := Invoke("kcl_plugin.strings.panic", []interface{}{"KCL", "KCL", 123}, nil)
+	if result_json != `{"__kcl_PanicInfo__":true,"message":"[KCL KCL 123]"}` {
 		t.Fatal(result_json)
 	}
 }

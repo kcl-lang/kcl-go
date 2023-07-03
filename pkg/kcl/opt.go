@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"kusionstack.io/kclvm-go/pkg/settings"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/settings"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 type Option struct {

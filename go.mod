@@ -1,4 +1,4 @@
-module kusionstack.io/kclvm-go
+module kcl-lang.io/kcl-go
 
 go 1.19
 

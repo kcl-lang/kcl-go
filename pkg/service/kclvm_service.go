@@ -1,6 +1,6 @@
 package service
 
-import "kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+import "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 
 type KclvmService interface {
 	Ping(in *gpyrpc.Ping_Args) (out *gpyrpc.Ping_Result, err error)

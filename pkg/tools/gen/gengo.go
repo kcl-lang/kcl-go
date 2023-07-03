@@ -5,8 +5,8 @@ import (
 	"io"
 	"strings"
 
-	"kusionstack.io/kclvm-go/pkg/kcl"
-	pb "kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/kcl"
+	pb "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 const goAnyType = "interface{}"

@@ -4,6 +4,6 @@
 // inspired by Python3 designed for Cloud-Native scenes used in Kusion.
 package main
 
-import "kusionstack.io/kclvm-go/cmds/kcl-go/command"
+import "kcl-lang.io/kcl-go/cmds/kcl-go/command"
 
 func main() { command.Main() }

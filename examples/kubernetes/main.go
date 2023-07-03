@@ -8,8 +8,8 @@ package main
 import (
 	"fmt"
 
-	"kusionstack.io/kclvm-go"
-	_ "kusionstack.io/kclvm-go/pkg/kcl_plugin/hello_plugin"
+	"kcl-lang.io/kcl-go"
+	_ "kcl-lang.io/kcl-go/pkg/kcl_plugin/hello_plugin"
 )
 
 func main() {

@@ -5,7 +5,7 @@ package service
 import (
 	"testing"
 
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 func TestRestServer_ping(t *testing.T) {

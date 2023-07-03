@@ -8,7 +8,7 @@ import (
 	"sort"
 	"testing"
 
-	"kusionstack.io/kclvm-go/pkg/tools/list"
+	"kcl-lang.io/kcl-go/pkg/tools/list"
 )
 
 var _ = fmt.Sprint

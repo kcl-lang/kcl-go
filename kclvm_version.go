@@ -2,7 +2,7 @@
 
 package kclvm
 
-import "kusionstack.io/kclvm-go/scripts"
+import "kcl-lang.io/kcl-go/scripts"
 
 // KclvmAbiVersion is the current kclvm ABI version.
 const KclvmAbiVersion = scripts.KclvmAbiVersion

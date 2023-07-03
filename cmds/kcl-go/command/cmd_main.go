@@ -9,8 +9,8 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
-	"kusionstack.io/kclvm-go/pkg/logger"
+	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
 func Main() {

@@ -30,13 +30,13 @@ KCLVM binding for Go
 package kclvm
 
 import (
-	"kusionstack.io/kclvm-go/pkg/kcl"
-	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
-	"kusionstack.io/kclvm-go/pkg/tools/format"
-	"kusionstack.io/kclvm-go/pkg/tools/lint"
-	"kusionstack.io/kclvm-go/pkg/tools/list"
-	"kusionstack.io/kclvm-go/pkg/tools/override"
-	"kusionstack.io/kclvm-go/pkg/tools/validate"
+	"kcl-lang.io/kcl-go/pkg/kcl"
+	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/tools/format"
+	"kcl-lang.io/kcl-go/pkg/tools/lint"
+	"kcl-lang.io/kcl-go/pkg/tools/list"
+	"kcl-lang.io/kcl-go/pkg/tools/override"
+	"kcl-lang.io/kcl-go/pkg/tools/validate"
 )
 
 type (

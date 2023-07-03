@@ -12,8 +12,8 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/julienschmidt/httprouter"
 
-	"kusionstack.io/kclvm-go/pkg/3rdparty/grpc_gateway_util"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/3rdparty/grpc_gateway_util"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 var _ = fmt.Sprint

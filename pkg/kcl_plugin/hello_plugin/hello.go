@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"kusionstack.io/kclvm-go/pkg/kcl_plugin"
+	"kcl-lang.io/kcl-go/pkg/kcl_plugin"
 )
 
 var global_int int64

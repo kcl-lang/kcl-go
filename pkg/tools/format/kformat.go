@@ -4,8 +4,8 @@ import (
 	"errors"
 	"io"
 
-	"kusionstack.io/kclvm-go/pkg/service"
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 func FormatCode(code interface{}) ([]byte, error) {

@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	"github.com/urfave/cli/v2"
-	"kusionstack.io/kclvm-go"
+	"kcl-lang.io/kcl-go"
 )
 
 func NewVersionCmd() *cli.Command {

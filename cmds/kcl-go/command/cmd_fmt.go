@@ -8,7 +8,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	kcl "kusionstack.io/kclvm-go"
+	kcl "kcl-lang.io/kcl-go"
 )
 
 func NewFmtCmd() *cli.Command {

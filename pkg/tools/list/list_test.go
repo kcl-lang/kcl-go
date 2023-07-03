@@ -32,7 +32,7 @@ func TestListDepFiles(t *testing.T) {
 	}
 }
 
-// TODO: https://github.com/KusionStack/kclvm-go/issues/74
+// TODO: https://github.com/kcl-lang/kcl-go/issues/74
 /*
 func TestListDepFiles_restful(t *testing.T) {
 	var args = gpyrpc.ListDepFiles_Args{
@@ -81,7 +81,7 @@ func TestListDepFiles_failed(t *testing.T) {
 	}
 }
 
-// TODO: https://github.com/KusionStack/kclvm-go/issues/74
+// TODO: https://github.com/kcl-lang/kcl-go/issues/74
 /*
 func TestListDepFiles_restfulFailed(t *testing.T) {
 	var args = gpyrpc.ListDepFiles_Args{

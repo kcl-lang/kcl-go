@@ -10,8 +10,8 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	kcl "kusionstack.io/kclvm-go"
-	"kusionstack.io/kclvm-go/pkg/kclvm_runtime"
+	kcl "kcl-lang.io/kcl-go"
+	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
 )
 
 func NewLintCmd() *cli.Command {

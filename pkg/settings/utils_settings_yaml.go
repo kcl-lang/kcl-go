@@ -12,8 +12,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
-	tools_list "kusionstack.io/kclvm-go/pkg/tools/list"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
+	tools_list "kcl-lang.io/kcl-go/pkg/tools/list"
 )
 
 type SettingsFile struct {

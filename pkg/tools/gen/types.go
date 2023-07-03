@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	pb "kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	pb "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 const (

@@ -9,7 +9,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"kusionstack.io/kclvm-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 var _ = fmt.Sprint

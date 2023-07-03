@@ -13,8 +13,8 @@ import (
 
 	"github.com/gofrs/flock"
 	artifact "kcl-lang.io/kcl-artifact-go"
-	"kusionstack.io/kclvm-go/pkg/logger"
-	"kusionstack.io/kclvm-go/pkg/path"
+	"kcl-lang.io/kcl-go/pkg/logger"
+	"kcl-lang.io/kcl-go/pkg/path"
 )
 
 func init() {
