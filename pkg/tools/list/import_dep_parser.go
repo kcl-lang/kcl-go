@@ -65,38 +65,39 @@ func newImportDepParser(root string, opt DepOptions) (p *importDepParser, err er
 // By walking the import index and file index recursively, you can then walk through all the upstream paths of the start path.
 // And on the contrary, by walking the inverted import index and inverted file index recursively, you can then walk through all the downstream paths of the start path.
 //
-// Example
+// # Example
 //
 // For instance a KCL program that comes with three files: main.k and base/a.k, base/b.k,
 // and the file main.k contains an import statement that imports base/b.k to it, while the file base/b.k imports base/a.k:
 //
-//  # main.k imports base/b.k
-//  # base/b.k imports base/a.k
+//	 # main.k imports base/b.k
+//	 # base/b.k imports base/a.k
 //
-// 	demo (KCL program root)
-// 	├── base
-// 	│   ├── a.k
-// 	│   └── b.k         # import .a
-// 	└── main.k          # import base.b
+//		demo (KCL program root)
+//		├── base
+//		│   ├── a.k
+//		│   └── b.k         # import .a
+//		└── main.k          # import base.b
 //
 // the importGraph of the program will be:
-//  importIndex: map[string]stringSet{
-//  	"main.k":   {values: map[string]bool{"base/b.k": true}},
-//  	"base/b.k": {values: map[string]bool{"base/a.k": true}},
-//  },
-//  importIndexInverted: map[string]stringSet{
-//  	"base/b.k": {values: map[string]bool{"main.k": true}},
-// 		"base/a.k": {values: map[string]bool{"base/b.k": true}},
-//  },
-//  fileIndex: map[string]stringSet{
-//  	".":    {values: map[string]bool{"main.k": true}},
-//  	"base": {values: map[string]bool{"base/a.k": true, "base/b.k": true}},
-//  },
-//  fileIndexInverted: map[string]string{
-//  	"base/a.k": "base",
-//  	"base/b.k": "base",
-//  	"main.k":   ".",
-//  }
+//
+//	 importIndex: map[string]stringSet{
+//	 	"main.k":   {values: map[string]bool{"base/b.k": true}},
+//	 	"base/b.k": {values: map[string]bool{"base/a.k": true}},
+//	 },
+//	 importIndexInverted: map[string]stringSet{
+//	 	"base/b.k": {values: map[string]bool{"main.k": true}},
+//			"base/a.k": {values: map[string]bool{"base/b.k": true}},
+//	 },
+//	 fileIndex: map[string]stringSet{
+//	 	".":    {values: map[string]bool{"main.k": true}},
+//	 	"base": {values: map[string]bool{"base/a.k": true, "base/b.k": true}},
+//	 },
+//	 fileIndexInverted: map[string]string{
+//	 	"base/a.k": "base",
+//	 	"base/b.k": "base",
+//	 	"main.k":   ".",
+//	 }
 type importGraph struct {
 	// importIndex indicates list of KCL files and which paths appear in them as import path
 	importIndex map[string]stringSet
@@ -364,10 +365,11 @@ func shouldIgnore(name string) bool {
 
 // parseImport parses the KCL code and extracts the import paths from import statements
 // For instance, the import paths parsed in following code with content will be: []string{"base.frontend", "base.api.core.v1"}
-//   import base.frontend
-//   import base.api.core.v1 as core_v1
 //
-//   main = frontend.Server{}
+//	import base.frontend
+//	import base.api.core.v1 as core_v1
+//
+//	main = frontend.Server{}
 func parseImport(code string) []string {
 	var m = make(map[string]string)
 	var longStrPrefix string

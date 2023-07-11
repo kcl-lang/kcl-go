@@ -1,10 +1,10 @@
-// Copyright 2021 The KCL Authors. All rights reserved.
+// Copyright 2023 The KCL Authors. All rights reserved.
 
 /*
-KCLVM binding for Go
+KCL Go SDK
 
 	┌─────────────────┐         ┌─────────────────┐           ┌─────────────────┐
-	│     kcl files   │         │   KCLVM-Go-API  │           │  KCLResultList  │
+	│     kcl files   │         │    KCL-Go-API   │           │  KCLResultList  │
 	│  ┌───────────┐  │         │                 │           │                 │
 	│  │    1.k    │  │         │                 │           │                 │
 	│  └───────────┘  │         │                 │           │  ┌───────────┐  │         ┌───────────────┐

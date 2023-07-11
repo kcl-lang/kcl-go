@@ -7,7 +7,6 @@
 ## Building
 
 - [Install Go 1.19+](https://go.dev/dl/)
-- [Install KCLVM](https://kcl-lang.io/docs/user_docs/getting-started/install)
 
 ```bash
 $ go run ./cmds/kcl-go
@@ -29,7 +28,7 @@ x1:
 go test ./...
 ```
 
-## Run KCL Code with KCLVM Go SDK
+## Run KCL Code with Go SDK
 
 ```go
 package main
@@ -37,11 +36,11 @@ package main
 import (
 	"fmt"
 
-	"kcl-lang.io/kcl-go"
+	kcl "kcl-lang.io/kcl-go"
 )
 
 func main() {
-	yaml := kclvm.MustRun("kubernetes.k", kclvm.WithCode(k_code)).GetRawYamlResult()
+	yaml := kcl.MustRun("kubernetes.k", kcl.WithCode(k_code)).GetRawYamlResult()
 	fmt.Println(yaml)
 }
 
