@@ -16,6 +16,8 @@ var (
 	once         sync.Once
 )
 
+const tip = "Tip: Have you used a binary version of KCL in your PATH that is not consistent with the KCL Go SDK? You can upgrade or reduce the KCL version or delete the KCL in your PATH"
+
 func InitRuntime(maxProc int) {
 	once.Do(func() { initRuntime(maxProc) })
 }
@@ -53,15 +55,10 @@ func initRuntime(maxProc int) {
 	{
 		args := &gpyrpc.Ping_Args{Value: "ping: kcl-go rest-server"}
 		resp, err := client.Ping(args)
-		if err != nil {
-			fmt.Println("KclvmRuntime: ping failed")
-			fmt.Println("kclvm path:", MustGetKclvmPath())
+		if err != nil || resp.Value != args.Value {
+			fmt.Println("Init kcl runtime failed, path: ", MustGetKclvmPath())
+			fmt.Println(tip)
 			panic(err)
-		}
-		if resp.Value != args.Value {
-			fmt.Println("KclvmRuntime: ping failed, resp =", resp)
-			fmt.Println("kclvm path:", MustGetKclvmPath())
-			panic("ping failed")
 		}
 	}
 }

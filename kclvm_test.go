@@ -17,8 +17,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	kclvm "kcl-lang.io/kcl-go"
-	"kcl-lang.io/kcl-go/pkg/kcl"
+	kcl "kcl-lang.io/kcl-go"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -30,7 +29,7 @@ func TestMain(m *testing.M) {
 	if s := os.Getenv(tEnvNumCpu); s != "" {
 		if x, err := strconv.Atoi(s); err == nil {
 			println(tEnvNumCpu, "=", s)
-			kclvm.InitKclvmRuntime(x)
+			kcl.InitKclvmRuntime(x)
 		}
 	}
 
@@ -38,11 +37,11 @@ func TestMain(m *testing.M) {
 }
 
 func TestRunFiles(t *testing.T) {
-	_, err := kclvm.RunFiles([]string{"./testdata/app0/kcl.yaml"})
+	_, err := kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = kclvm.RunFiles([]string{"./testdata/app0/kcl.yaml"})
+	_, err = kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,7 +53,7 @@ func TestRunFiles(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, e := kclvm.RunFiles([]string{"./testdata/app0/kcl.yaml"})
+			_, e := kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
 			chErr <- e
 		}()
 	}
@@ -88,8 +87,8 @@ a2 = App {
 	}
 	kfile.Close()
 
-	result, err := kclvm.Run(testdata_main_k,
-		kclvm.WithCode(code),
+	result, err := kcl.Run(testdata_main_k,
+		kcl.WithCode(code),
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -107,11 +106,11 @@ a2 = App {
 	kfile, err = os.Create(testdata_main_k)
 	kfile.Close()
 
-	result, err = kclvm.Run(testdata_main_k,
-		kclvm.WithCode(code),
-		kclvm.WithOverrides(":a1.image=\"new-a1-image\""),
-		kclvm.WithOverrides("__main__:a2.image=\"new-a2-image:v123\""),
-		kclvm.WithPrintOverridesAST(true),
+	result, err = kcl.Run(testdata_main_k,
+		kcl.WithCode(code),
+		kcl.WithOverrides(":a1.image=\"new-a1-image\""),
+		kcl.WithOverrides("__main__:a2.image=\"new-a2-image:v123\""),
+		kcl.WithPrintOverridesAST(true),
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -155,7 +154,7 @@ a2 = App {
 func _BenchmarkRunFilesParallel(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_, err := kclvm.RunFiles([]string{"./testdata/app0/kcl.yaml"})
+			_, err := kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
 			if err != nil {
 				b.Fatal(err)
 			}
@@ -164,28 +163,28 @@ func _BenchmarkRunFilesParallel(b *testing.B) {
 }
 
 func TestWithKFilenames(t *testing.T) {
-	kclvm.WithKFilenames("/testdata/main.k")
+	kcl.WithKFilenames("/testdata/main.k")
 }
 
 func TestWithOptions(t *testing.T) {
-	kclvm.WithOptions("key1=value1", "key2=value2")
+	kcl.WithOptions("key1=value1", "key2=value2")
 }
 
 func TestWithSettings(t *testing.T) {
-	kclvm.WithSettings("a_settings.yml")
+	kcl.WithSettings("a_settings.yml")
 }
 
 func TestWithWorkDir(t *testing.T) {
 	wd, _ := os.Getwd()
-	kclvm.WithWorkDir(wd)
+	kcl.WithWorkDir(wd)
 }
 
 func TestWithDisableNone(t *testing.T) {
-	kclvm.WithDisableNone(true)
+	kcl.WithDisableNone(true)
 }
 
 func TestFormatCode(t *testing.T) {
-	result, err := kclvm.FormatCode("a=1")
+	result, err := kcl.FormatCode("a=1")
 	if err != nil {
 		t.Error(err)
 	}
@@ -193,7 +192,7 @@ func TestFormatCode(t *testing.T) {
 }
 
 func TestGetSchemaType(t *testing.T) {
-	result, err := kclvm.GetSchemaType("test.k", "schema Person:\n    name: str", "")
+	result, err := kcl.GetSchemaType("test.k", "schema Person:\n    name: str", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -252,7 +251,7 @@ func TestGetSchemaType(t *testing.T) {
 }
 
 func TestListUpStreamFiles(t *testing.T) {
-	files, err := kclvm.ListUpStreamFiles("./testdata/", &kclvm.ListDepsOptions{Files: []string{"main.k", "app0/before/base.k", "app0/main.k"}})
+	files, err := kcl.ListUpStreamFiles("./testdata/", &kcl.ListDepsOptions{Files: []string{"main.k", "app0/before/base.k", "app0/main.k"}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -271,7 +270,7 @@ func TestListUpStreamFiles(t *testing.T) {
 }
 
 func TestListDepFiles(t *testing.T) {
-	files, err := kclvm.ListDepFiles("./testdata/app0", nil)
+	files, err := kcl.ListDepFiles("./testdata/app0", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -296,8 +295,8 @@ func TestWithExternalpkg(t *testing.T) {
 	assert2.Equal(t, nil, err)
 	absPath2, err := filepath.Abs("./testdata_external/external_2/")
 	assert2.Equal(t, nil, err)
-	opt := kclvm.WithExternalPkgs("external_1="+absPath1, "external_2="+absPath2)
-	result, err := kclvm.Run("./testdata/import-external/main.k", opt)
+	opt := kcl.WithExternalPkgs("external_1="+absPath1, "external_2="+absPath2)
+	result, err := kcl.Run("./testdata/import-external/main.k", opt)
 	if err != nil {
 		t.Fatal(err)
 	}

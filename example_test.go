@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	kclvm "kcl-lang.io/kcl-go"
+	kcl "kcl-lang.io/kcl-go"
 )
 
 func assert(v bool, a ...interface{}) {
@@ -17,7 +17,7 @@ func assert(v bool, a ...interface{}) {
 }
 
 func ExampleMustRun() {
-	yaml := kclvm.MustRun("testdata/main.k", kclvm.WithCode(`name = "kcl"`)).First().YAMLString()
+	yaml := kcl.MustRun("testdata/main.k", kcl.WithCode(`name = "kcl"`)).First().YAMLString()
 	fmt.Println(yaml)
 
 	// Output:
@@ -29,10 +29,10 @@ func ExampleMustRun_rawYaml() {
 b = 1
 a = 2
 `
-	yaml := kclvm.MustRun("testdata/main.k", kclvm.WithCode(code)).GetRawYamlResult()
+	yaml := kcl.MustRun("testdata/main.k", kcl.WithCode(code)).GetRawYamlResult()
 	fmt.Println(yaml)
 
-	yaml_sorted := kclvm.MustRun("testdata/main.k", kclvm.WithCode(code), kclvm.WithSortKeys(true)).GetRawYamlResult()
+	yaml_sorted := kcl.MustRun("testdata/main.k", kcl.WithCode(code), kcl.WithSortKeys(true)).GetRawYamlResult()
 	fmt.Println(yaml_sorted)
 
 	// Output:
@@ -48,7 +48,7 @@ schema Person:
 
 x = Person()
 `
-	json := kclvm.MustRun("testdata/main.k", kclvm.WithCode(code)).First().JSONString()
+	json := kcl.MustRun("testdata/main.k", kcl.WithCode(code)).First().JSONString()
 	fmt.Println(json)
 
 	// Output:
@@ -60,12 +60,12 @@ x = Person()
 }
 
 func ExampleMustRun_settings() {
-	yaml := kclvm.MustRun("./testdata/app0/kcl.yaml").First().YAMLString()
+	yaml := kcl.MustRun("./testdata/app0/kcl.yaml").First().YAMLString()
 	fmt.Println(yaml)
 }
 
 func ExampleRunFiles() {
-	result, _ := kclvm.RunFiles([]string{"./testdata/app0/kcl.yaml"})
+	result, _ := kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
 	fmt.Println(result.First().YAMLString())
 }
 
@@ -84,7 +84,7 @@ x0 = Person {name = "kcl-go"}
 x1 = Person {age = 101}
 `
 
-	result := kclvm.MustRun("testdata/main.k", kclvm.WithCode(k_code)).First()
+	result := kcl.MustRun("testdata/main.k", kcl.WithCode(k_code)).First()
 
 	fmt.Println("x0.name:", result.Get("x0.name"))
 	fmt.Println("x1.age:", result.Get("x1.age"))
@@ -107,7 +107,7 @@ x = {
 }
 `
 
-	result := kclvm.MustRun("testdata/main.k", kclvm.WithCode(k_code)).First()
+	result := kcl.MustRun("testdata/main.k", kcl.WithCode(k_code)).First()
 
 	var person struct {
 		Name string
@@ -123,7 +123,7 @@ x = {
 
 func ExampleRun_getField() {
 	// run kcl.yaml
-	x, err := kclvm.Run("./testdata/app0/kcl.yaml")
+	x, err := kcl.Run("./testdata/app0/kcl.yaml")
 	assert(err == nil, err)
 
 	// print deploy_topology[1].zone
@@ -150,12 +150,12 @@ x1 = Person {
 }
 `
 
-	yaml := kclvm.MustRun("testdata/main.k", kclvm.WithCode(k_code)).First().YAMLString()
+	yaml := kcl.MustRun("testdata/main.k", kcl.WithCode(k_code)).First().YAMLString()
 	fmt.Println(yaml)
 
 	fmt.Println("----")
 
-	result := kclvm.MustRun("./testdata/main.k").First()
+	result := kcl.MustRun("./testdata/main.k").First()
 	fmt.Println(result.JSONString())
 
 	fmt.Println("----")
@@ -175,7 +175,7 @@ func ExampleLintPath() {
 	// import a
 	// import a # reimport
 
-	results, err := kclvm.LintPath([]string{"testdata/lint/import.k"})
+	results, err := kcl.LintPath([]string{"testdata/lint/import.k"})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -189,7 +189,7 @@ func ExampleLintPath() {
 }
 
 func ExampleFormatCode() {
-	out, err := kclvm.FormatCode(`a  =  1+2`)
+	out, err := kcl.FormatCode(`a  =  1+2`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -200,7 +200,7 @@ func ExampleFormatCode() {
 }
 
 func ExampleFormatPath() {
-	changedPaths, err := kclvm.FormatPath("testdata/fmt")
+	changedPaths, err := kcl.FormatPath("testdata/fmt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -212,8 +212,8 @@ func ExampleWithOptions() {
 name = option("name")
 age = option("age")
 `
-	x, err := kclvm.Run("hello.k", kclvm.WithCode(code),
-		kclvm.WithOptions("name=kcl", "age=1"),
+	x, err := kcl.Run("hello.k", kcl.WithCode(code),
+		kcl.WithOptions("name=kcl", "age=1"),
 	)
 	if err != nil {
 		log.Fatal(err)
