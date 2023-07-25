@@ -203,6 +203,20 @@ func GetSchemaType(file, code, schemaName string) ([]*gpyrpc.KclType, error) {
 	return resp.SchemaTypeList, nil
 }
 
+func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*gpyrpc.KclType, error) {
+	client := service.NewKclvmServiceClient()
+	resp, err := client.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
+		File:       file,
+		Code:       code,
+		SchemaName: schemaName,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.SchemaTypeMapping, nil
+}
+
 func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 	args, err := ParseArgs(pathList, opts...)
 	if err != nil {

@@ -19,3 +19,5 @@ zz_*
 __pycache__
 /vendor
 profile.cov
+
+.idea/

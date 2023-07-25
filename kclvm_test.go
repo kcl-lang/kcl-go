@@ -250,6 +250,64 @@ func TestGetSchemaType(t *testing.T) {
 	}, result)
 }
 
+func TestGetSchemaTypeMapping(t *testing.T) {
+	result, err := kcl.GetSchemaTypeMapping("test.k", "schema Person:\n    name: str", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, map[string]*gpyrpc.KclType{
+		"Person": {
+			Type:       "schema",
+			SchemaName: "Person",
+			Properties: map[string]*gpyrpc.KclType{
+				"name": {
+					Type:       "str",
+					Line:       1,
+					Properties: map[string]*gpyrpc.KclType{},
+					Required:   []string{},
+					UnionTypes: []*gpyrpc.KclType{},
+					Decorators: []*gpyrpc.Decorator{},
+				},
+			},
+			Required:   []string{"name"},
+			UnionTypes: []*gpyrpc.KclType{},
+			Decorators: []*gpyrpc.Decorator{},
+		},
+	}, result)
+	result, err = kcl.GetSchemaTypeMapping("./testdata/main.k", "", "Person")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, map[string]*gpyrpc.KclType{
+		"Person": {
+			Type:       "schema",
+			SchemaName: "Person",
+			Properties: map[string]*gpyrpc.KclType{
+				"name": {
+					Type:       "str",
+					Line:       1,
+					Default:    "",
+					Properties: map[string]*gpyrpc.KclType{},
+					Required:   []string{},
+					UnionTypes: []*gpyrpc.KclType{},
+					Decorators: []*gpyrpc.Decorator{},
+				},
+				"age": {
+					Type:       "int",
+					Line:       2,
+					Default:    "",
+					Properties: map[string]*gpyrpc.KclType{},
+					Required:   []string{},
+					UnionTypes: []*gpyrpc.KclType{},
+					Decorators: []*gpyrpc.Decorator{},
+				},
+			},
+			Required:   []string{"name", "age"},
+			UnionTypes: []*gpyrpc.KclType{},
+			Decorators: []*gpyrpc.Decorator{},
+		},
+	}, result)
+}
 func TestListUpStreamFiles(t *testing.T) {
 	files, err := kcl.ListUpStreamFiles("./testdata/", &kcl.ListDepsOptions{Files: []string{"main.k", "app0/before/base.k", "app0/main.k"}})
 	if err != nil {
