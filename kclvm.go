@@ -1,5 +1,6 @@
 // Copyright 2023 The KCL Authors. All rights reserved.
 
+// Package kclvm
 /*
 KCL Go SDK
 
@@ -178,4 +179,21 @@ func ValidateCode(data, code string, opt *ValidateOptions) (ok bool, err error) 
 //	The schema name got, when the schema name is empty, all schemas are returned.
 func GetSchemaType(file, code, schemaName string) ([]*KclType, error) {
 	return kcl.GetSchemaType(file, code, schemaName)
+}
+
+// GetSchemaTypeMapping returns a <schemaName>:<schemaType> mapping of schema types from a kcl file or code.
+//
+// file: string
+//
+//	The kcl filename
+//
+// code: string
+//
+//	The kcl code string
+//
+// schema_name: string
+//
+//	The schema name got, when the schema name is empty, all schemas are returned.
+func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*KclType, error) {
+	return kcl.GetSchemaTypeMapping(file, code, schemaName)
 }
