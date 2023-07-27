@@ -6,6 +6,7 @@ import (
 	"context"
 	_ "embed"
 	"errors"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -17,7 +18,18 @@ import (
 	"kcl-lang.io/kcl-go/pkg/path"
 )
 
+const (
+	DisableArtifactEnvVar = "KCL_GO_DISABLE_ARTIFACT"
+)
+
 func init() {
+	if os.Getenv(DisableArtifactEnvVar) == "" {
+		installKclArtifact()
+	}
+	g_KclvmRoot = findKclvmRoot()
+}
+
+func installKclArtifact() {
 	// Get the install lib path.
 	path := path.LibPath()
 	// Acquire a file lock for process synchronization
@@ -38,8 +50,6 @@ func init() {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}
 	artifact.CleanInstall()
-
-	g_KclvmRoot = findKclvmRoot()
 }
 
 var (
