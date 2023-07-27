@@ -32,6 +32,10 @@ func init() {
 func installKclArtifact() {
 	// Get the install lib path.
 	path := path.LibPath()
+	err := os.MkdirAll(path, 0777)
+	if err != nil {
+		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
+	}
 	// Acquire a file lock for process synchronization
 	lockPath := filepath.Join(path, "init.lock")
 	fileLock := flock.New(lockPath)
