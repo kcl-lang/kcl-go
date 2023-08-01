@@ -1,0 +1,19 @@
+## Schema {{.SchemaName}}
+
+{{.SchemaDoc}}
+
+### Attributes
+
+{{range $name, $property := .Properties}}**{{$name}}**{{if containsString $.Required $name }} *required*{{end}}
+
+`{{$property.Type}}`
+
+todo: The description of the property
+
+{{end}}{{/*if eq .Example ""*/}}### Examples
+
+todo: The example section
+{{/*end*/}}
+## Source Files
+
+- [{{.SchemaName}}](todo: filepath)
