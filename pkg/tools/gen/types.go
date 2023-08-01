@@ -117,3 +117,82 @@ func getSortedFieldNames(fields map[string]*pb.KclType) []string {
 	}
 	return ss
 }
+
+// kclSchema is the top-level structure for a kcl schema file.
+// It contains all the imports and schemas in this file.
+type kclSchema struct {
+	Imports []string
+	Schemas []schema
+}
+
+// schema is a kcl schema definition.
+type schema struct {
+	Name        string
+	Description string
+	Properties  []property
+}
+
+// property is a kcl schema property definition.
+type property struct {
+	Name         string
+	Description  string
+	Type         typeInterface
+	Required     bool
+	HasDefault   bool
+	DefaultValue interface{}
+}
+
+type typeInterface interface {
+	Format() string
+}
+
+type typePrimitive string
+
+func (t typePrimitive) Format() string {
+	return string(t)
+}
+
+type typeArray struct {
+	Items typeInterface
+}
+
+func (t typeArray) Format() string {
+	return "[" + t.Items.Format() + "]"
+}
+
+type typeUnion struct {
+	Items []typeInterface
+}
+
+func (t typeUnion) Format() string {
+	var items []string
+	for _, v := range t.Items {
+		items = append(items, v.Format())
+	}
+	return strings.Join(items, " | ")
+}
+
+type typeDict struct {
+	Key   typeInterface
+	Value typeInterface
+}
+
+func (t typeDict) Format() string {
+	return "{" + t.Key.Format() + ":" + t.Value.Format() + "}"
+}
+
+type typeCustom struct {
+	Name string
+}
+
+func (t typeCustom) Format() string {
+	return t.Name
+}
+
+type typeValue struct {
+	Value interface{}
+}
+
+func (t typeValue) Format() string {
+	return formatValue(t.Value)
+}
