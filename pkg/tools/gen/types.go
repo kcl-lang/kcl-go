@@ -130,6 +130,7 @@ type schema struct {
 	Name        string
 	Description string
 	Properties  []property
+	Validations []validation
 }
 
 // property is a kcl schema property definition.
@@ -140,6 +141,17 @@ type property struct {
 	Required     bool
 	HasDefault   bool
 	DefaultValue interface{}
+}
+
+// validation is a kcl schema validation definition.
+type validation struct {
+	Name             string
+	Minimum          *float64
+	ExclusiveMinimum bool
+	Maximum          *float64
+	ExclusiveMaximum bool
+	MinLength        *int
+	MaxLength        *int
 }
 
 type typeInterface interface {

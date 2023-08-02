@@ -10,6 +10,8 @@ import (
 var (
 	//go:embed templates/header.gotmpl
 	headerTmpl string
+	//go:embed templates/validator.gotmpl
+	validatorTmpl string
 	//go:embed templates/schema.gotmpl
 	schemaTmpl string
 )
@@ -23,6 +25,7 @@ var funcs = template.FuncMap{
 func (k *kclGenerator) genKclSchema(w io.Writer, s kclSchema) error {
 	tmpl := &template.Template{}
 	tmpl = addTemplate(tmpl, "header", headerTmpl)
+	tmpl = addTemplate(tmpl, "validator", validatorTmpl)
 	tmpl = addTemplate(tmpl, "schema", schemaTmpl)
 	return tmpl.Funcs(funcs).Execute(w, s)
 }

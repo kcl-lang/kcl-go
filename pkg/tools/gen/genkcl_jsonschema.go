@@ -132,6 +132,12 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 				}
 				propSch.Name = strcase.ToSnake(key)
 				result.Properties = append(result.Properties, propSch.property)
+				if !propSch.IsSchema {
+					for _, validate := range propSch.Validations {
+						validate.Name = propSch.Name
+						result.Validations = append(result.Validations, validate)
+					}
+				}
 			}
 		case *jsonschema.Default:
 			result.HasDefault = true
@@ -148,6 +154,34 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 					Value: unmarshalledVal,
 				})
 			}
+		case *jsonschema.Minimum:
+			result.Validations = append(result.Validations, validation{
+				Minimum:          (*float64)(v),
+				ExclusiveMinimum: false,
+			})
+		case *jsonschema.Maximum:
+			result.Validations = append(result.Validations, validation{
+				Maximum:          (*float64)(v),
+				ExclusiveMaximum: false,
+			})
+		case *jsonschema.ExclusiveMinimum:
+			result.Validations = append(result.Validations, validation{
+				Minimum:          (*float64)(v),
+				ExclusiveMinimum: true,
+			})
+		case *jsonschema.ExclusiveMaximum:
+			result.Validations = append(result.Validations, validation{
+				Maximum:          (*float64)(v),
+				ExclusiveMaximum: true,
+			})
+		case *jsonschema.MinLength:
+			result.Validations = append(result.Validations, validation{
+				MinLength: (*int)(v),
+			})
+		case *jsonschema.MaxLength:
+			result.Validations = append(result.Validations, validation{
+				MaxLength: (*int)(v),
+			})
 		default:
 			logger.GetLogger().Warningf("unknown Keyword: %s", k)
 		}

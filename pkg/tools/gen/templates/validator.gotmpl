@@ -1,0 +1,14 @@
+{{- range . -}}
+    {{- if .Maximum }}
+        {{ formatName .Name }} {{ if .ExclusiveMaximum }}<{{ else }}<={{ end }} {{ .Maximum }}
+    {{- end }}
+    {{- if .Minimum }}
+        {{ formatName .Name }} {{ if .ExclusiveMinimum }}>{{ else }}>={{ end }} {{ .Minimum }}
+    {{- end }}
+    {{- if .MaxLength }}
+        len({{ formatName .Name }}) <= {{ .MaxLength }}
+    {{- end }}
+    {{- if .MinLength }}
+        len({{ formatName .Name }}) >= {{ .MinLength }}
+    {{- end }}
+{{- end -}}
