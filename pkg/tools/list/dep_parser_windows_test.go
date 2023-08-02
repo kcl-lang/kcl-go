@@ -7,6 +7,6 @@ import (
 )
 
 func TestInvalidFilePath(t *testing.T) {
-	_, err := newImportDepParser("./testdata/complicate/", DepOptions{Files: []string{"appops/projectA/invalid.k"}, UpStreams: []string{}})
-	assert.EqualError(t, err, "invalid file path: CreateFile testdata/complicate/appops/projectA/invalid.k: The system cannot find the file specified.", "err not match")
+	_, err := newImportDepParser(".\\testdata\\complicate\\", DepOptions{Files: []string{"appops\\projectA\\invalid.k"}, UpStreams: []string{}})
+	assert.EqualError(t, err, "invalid file path: stat appops\\projectA\\invalid.k: invalid argument", "err not match")
 }

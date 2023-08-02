@@ -9,7 +9,7 @@ COPY . .
 
 RUN GOOS=linux GOARCH=amd64 go build ./cmds/kcl-go
 
-FROM kusionstack/kclvm
+FROM kcllang/kcl
 
 WORKDIR /app
 

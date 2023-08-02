@@ -4,7 +4,7 @@ PROJECT_NAME = kcl-go
 
 PWD:=$(shell pwd)
 
-BUILD_IMAGE:=kusionstack/kclvm-builder
+BUILD_IMAGE:=kcllang/kcl
 
 # export DOCKER_DEFAULT_PLATFORM=linux/amd64
 # or

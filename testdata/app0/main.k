@@ -1,4 +1,4 @@
-import .sub as sub
+import app0.sub as sub
 
 main1=3
 
