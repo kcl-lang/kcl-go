@@ -3,6 +3,8 @@ package doc
 import (
 	"github.com/stretchr/testify/assert"
 	kcl "kcl-lang.io/kcl-go"
+	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -53,6 +55,10 @@ todo: The example section
 		if err != nil {
 			t.Errorf("render failed, err: %s", err)
 		}
-		assert.Equal(t, tcase.expect, string(content), "render content mismatch")
+		expect := tcase.expect
+		if runtime.GOOS == "windows" {
+			expect = strings.ReplaceAll(tcase.expect, "\n", "\r\n")
+		}
+		assert.Equal(t, expect, string(content), "render content mismatch")
 	}
 }
