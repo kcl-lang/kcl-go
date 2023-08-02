@@ -3,7 +3,10 @@ package gen
 import (
 	"bytes"
 	"fmt"
+	assert2 "github.com/stretchr/testify/assert"
 	"log"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -110,4 +113,50 @@ schema Company:
 		}
 	}
 
+}
+
+func TestGenKclFromJson(t *testing.T) {
+	type testCase struct {
+		name   string
+		input  string
+		expect string
+	}
+	var cases []testCase
+
+	casesPath := filepath.Join("testdata", "jsonschema")
+	caseFiles, err := os.ReadDir(casesPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, caseFile := range caseFiles {
+		input := filepath.Join(casesPath, caseFile.Name(), "input.json")
+		expectFilepath := filepath.Join(casesPath, caseFile.Name(), "expect.k")
+		cases = append(cases, testCase{
+			name:   caseFile.Name(),
+			input:  input,
+			expect: readFileString(t, expectFilepath),
+		})
+	}
+
+	for _, testcase := range cases {
+		t.Run(testcase.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err := GenKcl(&buf, testcase.input, nil, &GenKclOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			result := buf.Bytes()
+			assert2.Equal(t, testcase.expect, string(bytes.ReplaceAll(result, []byte("\r\n"), []byte("\n"))))
+		})
+	}
+}
+
+func readFileString(t testing.TB, p string) (content string) {
+	data, err := os.ReadFile(p)
+	if err != nil {
+		t.Errorf("read file failed, %s", err)
+	}
+	data = bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
+	return string(data)
 }

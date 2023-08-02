@@ -12,14 +12,24 @@ import (
 )
 
 type GenKclOptions struct {
+	Mode         Mode
 	ParseFromTag bool
 }
+
+// Mode is the mode of kcl schema code generation.
+type Mode int
+
+const (
+	ModeAuto Mode = iota
+	ModeGoStruct
+	ModeJsonSchema
+)
 
 type kclGenerator struct {
 	opts *GenKclOptions
 }
 
-// GenKcl translate go struct to kcl schema code.
+// GenKcl translate other formats to kcl schema code. Now support go struct and json schema.
 func GenKcl(w io.Writer, filename string, src interface{}, opts *GenKclOptions) error {
 	return newKclGenerator(opts).GenSchema(w, filename, src)
 }
@@ -34,6 +44,40 @@ func newKclGenerator(opts *GenKclOptions) *kclGenerator {
 }
 
 func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) error {
+	if k.opts.Mode == ModeAuto {
+		switch {
+		case strings.HasSuffix(filename, ".go"):
+			k.opts.Mode = ModeGoStruct
+		case strings.HasSuffix(filename, ".json"):
+			k.opts.Mode = ModeJsonSchema
+		default:
+			code, err := readSource(filename, src)
+			if err != nil {
+				return err
+			}
+			codeStr := string(code)
+			switch {
+			case strings.Contains(codeStr, "package "):
+				k.opts.Mode = ModeGoStruct
+			case strings.Contains(codeStr, "$schema"):
+				k.opts.Mode = ModeJsonSchema
+			default:
+				return errors.New("failed to detect mode")
+			}
+		}
+	}
+
+	switch k.opts.Mode {
+	case ModeGoStruct:
+		return k.genSchemaFromGoStruct(w, filename, src)
+	case ModeJsonSchema:
+		return k.genSchemaFromJsonSchema(w, filename, src)
+	default:
+		return errors.New("unknown mode")
+	}
+}
+
+func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, src interface{}) error {
 	fmt.Fprintln(w)
 	goStructs, err := ParseGoSourceCode(filename, src)
 	if err != nil {
