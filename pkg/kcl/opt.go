@@ -234,9 +234,6 @@ func (p *Option) Merge(opts ...Option) *Option {
 		if opt.SortKeys {
 			p.SortKeys = opt.SortKeys
 		}
-		if opt.IncludeSchemaTypePath {
-			p.IncludeSchemaTypePath = opt.IncludeSchemaTypePath
-		}
 		if opt.ExternalPkgs != nil {
 			p.ExternalPkgs = append(p.ExternalPkgs, opt.ExternalPkgs...)
 		}
