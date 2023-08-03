@@ -26,31 +26,35 @@ func init() {
 	}
 }
 
+// GenContext defines the context during the generation
 type GenContext struct {
-	PackagePath      string
-	FilePaths        []string
-	Format           Format
-	Target           string
+	// PackagePath is the package path to the package or module to generate docs for
+	PackagePath string
+	// Format is the doc format to output
+	Format Format
+	// Target is the target directory to output the docs
+	Target string
+	// IgnoreDeprecated defines whether to generate documentation for deprecated schemas
 	IgnoreDeprecated bool
 }
 
+// GenOpts is the user interface defines the doc generate options
 type GenOpts struct {
-	Path             string
-	Format           string
-	Target           string
+	// Path is the path to the directory or file to generate docs for
+	Path string
+	// Format is the doc format to output
+	Format string
+	// Target is the target directory to output the docs
+	Target string
+	// IgnoreDeprecated defines whether to generate documentation for deprecated schemas
 	IgnoreDeprecated bool
 }
 
-const (
-	MD   = "md"
-	HTML = "html"
-)
-
-type Format int
+type Format string
 
 const (
-	Html Format = iota
-	Markdown
+	Html     Format = "html"
+	Markdown Format = "md"
 )
 
 func (g *GenContext) render(schemas map[string]*kcl.KclType) error {
@@ -102,14 +106,14 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 	g := &GenContext{}
 	// --- format ---
 	switch strings.ToLower(opts.Format) {
-	case MD:
+	case string(Markdown):
 		g.Format = Markdown
 		break
-	case HTML:
+	case string(Html):
 		g.Format = Html
 		break
 	default:
-		return nil, fmt.Errorf("invalid generate format. Allow values: %s", []string{MD, HTML})
+		return nil, fmt.Errorf("invalid generate format. Allow values: %s", []Format{Markdown, Html})
 	}
 
 	// --- package path ---
