@@ -13,7 +13,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/powerman/rpc-codec v1.2.2
 	github.com/qri-io/jsonpointer v0.1.1
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.6.0
 	github.com/wk8/go-ordered-map/v2 v2.1.8
 	google.golang.org/grpc v1.53.0
