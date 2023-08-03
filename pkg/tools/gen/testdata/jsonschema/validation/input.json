@@ -1,0 +1,25 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://example.com/schemas/book.json",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "string",
+			"minLength": 2,
+			"maxLength": 20
+		},
+		"price": {
+			"type": "number",
+			"minimum": 0,
+			"maximum": 99.9
+		},
+		"quantity": {
+			"type": "integer",
+			"exclusiveMinimum": 0,
+			"exclusiveMaximum": 100
+		}
+	},
+	"required": [
+		"title"
+	]
+}
