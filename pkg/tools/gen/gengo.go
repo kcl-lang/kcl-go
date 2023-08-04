@@ -150,7 +150,7 @@ func (g *goGenerator) GetTypeName(typ *pb.KclType) string {
 		return "int"
 
 	default:
-		if isLit, basicTyp, _ := isLitType(typ); isLit {
+		if isLit, basicTyp, _ := IsLitType(typ); isLit {
 			switch basicTyp {
 			case typBool:
 				return "bool"

@@ -57,22 +57,28 @@ const (
 	Markdown Format = "md"
 )
 
-func (g *GenContext) render(schemas map[string]*kcl.KclType) error {
+func (g *GenContext) render(spec *SwaggerV2Spec) error {
 	// make directory
 	err := os.MkdirAll(g.Target, 0755)
 	if err != nil {
 		return fmt.Errorf("failed to create docs/ directory under the target directory: %s", err)
 	}
-	for _, schema := range schemas {
+	for _, schema := range spec.Definitions {
+		// create package directory if not exist
+		pkgDir := filepath.Join(g.Target, schema.KclExtensions.XKclModelType.Import.Package)
+		err := os.MkdirAll(pkgDir, 0755)
+		if err != nil {
+			return fmt.Errorf("failed to create docs/%s directory under the target directory: %s", pkgDir, err)
+		}
 		// get doc file name
-		fileName := fmt.Sprintf("%s.md", schema.SchemaName)
+		fileName := fmt.Sprintf("%s.md", schema.KclExtensions.XKclModelType.Type)
 		// render doc content
 		content, err := g.renderContent(schema)
 		if err != nil {
 			return err
 		}
 		// write content to file
-		err = os.WriteFile(filepath.Join(g.Target, fileName), content, 0644)
+		err = os.WriteFile(filepath.Join(pkgDir, fileName), content, 0644)
 		if err != nil {
 			return fmt.Errorf("failed to write file %s in %s: %v", fileName, g.Target, err)
 		}
@@ -90,14 +96,17 @@ func funcMap() template.FuncMap {
 			}
 			return false
 		},
+		"kclType": func(tpe KclType) string {
+			return tpe.GetKclTypeName(false)
+		},
 	}
 }
 
-func (g *GenContext) renderContent(schema *kcl.KclType) ([]byte, error) {
+func (g *GenContext) renderContent(schema *KclType) ([]byte, error) {
 	var contentBuf bytes.Buffer
 	err := tmpl.Execute(&contentBuf, schema)
 	if err != nil {
-		return nil, fmt.Errorf("failed to render schema type %s with template", schema.SchemaName)
+		return nil, fmt.Errorf("failed to render schema type %s.%s with template, err: %s", schema.KclExtensions.XKclModelType.Import.Package, schema.KclExtensions.XKclModelType.Type, err)
 	}
 	return contentBuf.Bytes(), nil
 }
@@ -156,6 +165,7 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 	return g, nil
 }
 
+// GenDoc generate document files from KCL source files
 func (g *GenContext) GenDoc() error {
 	typeMapping, err := kcl.GetSchemaTypeMapping(g.PackagePath, "", "")
 	if err != nil {
@@ -164,9 +174,25 @@ func (g *GenContext) GenDoc() error {
 	if len(typeMapping) == 0 {
 		return fmt.Errorf("no schema found")
 	}
-	err = g.render(typeMapping)
+	spec := g.getSwagger2Spec(typeMapping)
+	err = g.render(spec)
 	if err != nil {
 		return fmt.Errorf("render doc failed: %s", err)
 	}
 	return nil
+}
+
+func (g *GenContext) getSwagger2Spec(typeMapping map[string]*kcl.KclType) *SwaggerV2Spec {
+	spec := &SwaggerV2Spec{
+		Swagger:     "2.0",
+		Definitions: make(map[string]*KclType),
+		Info: SpecInfo{
+			Title: g.PackagePath,
+		},
+	}
+	for name, t := range typeMapping {
+		spec.Definitions[fmt.Sprintf("%s.%s", t.PkgPath, t.SchemaName)] = GetKclOpenAPIType(t, spec.Definitions)
+		fmt.Println(fmt.Sprintf("generate docs for schema %s", name))
+	}
+	return spec
 }

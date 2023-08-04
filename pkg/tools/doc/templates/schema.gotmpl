@@ -1,19 +1,19 @@
-## Schema {{.SchemaName}}
+## Schema {{.KclExtensions.XKclModelType.Type}}
 
-{{.SchemaDoc}}
+{{.Description}}
 
 ### Attributes
 
-{{range $name, $property := .Properties}}**{{$name}}**{{if containsString $.Required $name }} *required*{{end}}
+{{range $name, $property := .Properties}}**{{$name}}**{{if containsString $.Required $name }} *required*{{end}}{{if $property.ReadOnly}} *readOnly*{{end}}
 
-`{{$property.Type}}`
+`{{kclType $property}}`{{if ne $property.Description ""}}
 
-todo: The description of the property
+{{$property.Description}}{{end}}
 
-{{end}}{{/*if eq .Example ""*/}}### Examples
+{{end}}{{if ne .Example ""}}### Examples
 
-todo: The example section
-{{/*end*/}}
+{{.Example}}
+{{end}}
 ## Source Files
 
-- [{{.SchemaName}}](todo: filepath)
+- [{{.KclExtensions.XKclModelType.Import.Package}}.{{.KclExtensions.XKclModelType.Type}}]({{.KclExtensions.XKclModelType.Import.Package}}.{{.KclExtensions.XKclModelType.Import.Alias}})

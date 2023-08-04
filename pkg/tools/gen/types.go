@@ -26,7 +26,7 @@ const (
 )
 
 func getKclTypeName(typ *pb.KclType) string {
-	if isLit, _, litValue := isLitType(typ); isLit {
+	if isLit, _, litValue := IsLitType(typ); isLit {
 		return litValue
 	}
 
@@ -63,7 +63,7 @@ func getKclTypeName(typ *pb.KclType) string {
 	}
 }
 
-func isLitType(typ *pb.KclType) (ok bool, basicTyp, litValue string) {
+func IsLitType(typ *pb.KclType) (ok bool, basicTyp, litValue string) {
 	if !strings.HasSuffix(typ.Type, ")") {
 		return
 	}
