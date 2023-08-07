@@ -152,6 +152,18 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 					Value: unmarshalledVal,
 				})
 			}
+		case *jsonschema.Const:
+			unmarshalledVal := interface{}(nil)
+			err := json.Unmarshal(*v, &unmarshalledVal)
+			if err != nil {
+				logger.GetLogger().Warningf("failed to unmarshal const value: %s", err)
+				continue
+			}
+			typeList.Items = append(typeList.Items, typeValue{
+				Value: unmarshalledVal,
+			})
+			result.HasDefault = true
+			result.DefaultValue = unmarshalledVal
 		case *jsonschema.Ref:
 			typeName := strcase.ToCamel(v.Reference[strings.LastIndex(v.Reference, "/")+1:])
 			typeList.Items = append(typeList.Items, typeCustom{Name: typeName})
