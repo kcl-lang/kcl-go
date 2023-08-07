@@ -1,0 +1,17 @@
+{{- if .Description }}
+    {{- formatDoc .Description "    " }}
+{{- else }}
+    {{- formatDoc .Name "    " }}
+{{- end }}
+
+{{- if .Properties }}
+
+    Attributes
+    ----------
+  {{- range .Properties }}
+    {{ formatName .Name }} : {{ formatType .Type }}, {{ if .Required }}required{{ else }}optional{{ end }}
+    {{- if .HasDefault }}, default is {{ formatValue .DefaultValue }}{{ end }}
+    {{- if .Description }}{{ "\n" }}{{ formatDoc .Description "        " }}{{ end }}
+  {{- end -}}
+
+{{- end -}}

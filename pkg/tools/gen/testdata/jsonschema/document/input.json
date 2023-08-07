@@ -1,0 +1,28 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://example.com/schemas/my-order.json",
+	"title": "My Order",
+	"description": "Schema for representing an order information.\r\nIt contains the order number, list of items and the current status.",
+	"type": "object",
+	"properties": {
+		"id": {
+			"description": "The unique order number.",
+			"type": "string"
+		},
+		"items": {
+			"description": "List of items in the order.",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"status": {
+			"description": "Current status of the order.",
+			"enum": ["processing", "done"],
+			"default": "processing"
+		}
+	},
+	"required": [
+		"id", "status"
+	]
+}

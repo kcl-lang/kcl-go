@@ -1,6 +1,10 @@
 {{ template "header" . }}
 {{ range .Schemas -}}
 schema {{ formatName .Name }}:
+    """{{- "\n" }}
+    {{- template "document" . }}
+    """{{- "\n" }}
+
 	{{- range .Properties }}
     {{ formatName .Name }}{{ if not .Required }}?{{ end }}: {{ formatType .Type }}{{ if .HasDefault }} = {{ formatValue .DefaultValue }}{{ end }}
     {{- end }}

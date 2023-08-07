@@ -4,10 +4,28 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema Book:
+    """
+    Book
+
+    Attributes
+    ----------
+    title : str, optional
+    author : Author, optional
+    """
+
     title?: str
     author?: Author
 
 schema Author:
+    """
+    Author
+
+    Attributes
+    ----------
+    name : str, optional
+    address : str, optional
+    """
+
     name?: str
     address?: str
 

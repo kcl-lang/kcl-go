@@ -4,6 +4,16 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema Book:
+    """
+    Book
+
+    Attributes
+    ----------
+    title : str, required
+    price : float, optional
+    quantity : int, optional
+    """
+
     title: str
     price?: float
     quantity?: int
