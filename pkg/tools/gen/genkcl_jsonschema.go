@@ -78,6 +78,8 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 	required := make(map[string]struct{})
 	for _, k := range s.OrderedKeywords {
 		switch v := s.Keywords[k].(type) {
+		case *jsonschema.Title:
+		case *jsonschema.Comment:
 		case *jsonschema.SchemaURI:
 		case *jsonschema.ID:
 			// if the schema has ID, use it as the name
@@ -85,12 +87,8 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			if lastSlashIndex != -1 {
 				result.Name = strings.Trim(string(*v)[lastSlashIndex+1:], ".json")
 			}
-		case *jsonschema.Title:
-			result.Description += string(*v)
 		case *jsonschema.Description:
-			result.Description += string(*v)
-		case *jsonschema.Comment:
-			result.Description += string(*v)
+			result.Description = string(*v)
 		case *jsonschema.Type:
 			if len(v.Vals) == 1 {
 				switch v.Vals[0] {
