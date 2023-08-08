@@ -56,6 +56,15 @@ func formatValue(v interface{}) string {
 			return "True"
 		}
 		return "False"
+	case map[string]interface{}:
+		var s strings.Builder
+		for _, key := range getSortedKeys(value) {
+			if s.Len() != 0 {
+				s.WriteString(", ")
+			}
+			s.WriteString(fmt.Sprintf("%s: %s", formatValue(key), formatValue(value[key])))
+		}
+		return "{" + s.String() + "}"
 	default:
 		return fmt.Sprintf("%v", value)
 	}

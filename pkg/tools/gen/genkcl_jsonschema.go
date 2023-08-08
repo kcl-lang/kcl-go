@@ -171,6 +171,22 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			for key, val := range *v {
 				ctx.resultMap[key] = convertSchemaFromJsonSchema(ctx, val, key)
 			}
+		case *jsonschema.AdditionalProperties:
+			switch v.SchemaType {
+			case jsonschema.SchemaTypeObject:
+				sch := convertSchemaFromJsonSchema(ctx, (*jsonschema.Schema)(v), "additionalProperties")
+				result.HasIndexSignature = true
+				result.IndexSignature = indexSignature{
+					Type: sch.Type,
+				}
+			case jsonschema.SchemaTypeTrue:
+				result.HasIndexSignature = true
+				result.IndexSignature = indexSignature{
+					Type: typePrimitive(typAny),
+				}
+			case jsonschema.SchemaTypeFalse:
+				result.HasIndexSignature = false
+			}
 		case *jsonschema.Minimum:
 			result.Validations = append(result.Validations, validation{
 				Minimum:          (*float64)(v),
