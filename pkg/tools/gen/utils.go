@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 )
 
 var _ = assert
@@ -54,4 +55,14 @@ func readSource(filename string, src interface{}) (data []byte, err error) {
 	default:
 		return nil, fmt.Errorf("unsupported src type: %T", src)
 	}
+}
+
+// getSortedKeys returns the keys sorted in alphabetical order of a map.
+func getSortedKeys[V any](m map[string]V) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }

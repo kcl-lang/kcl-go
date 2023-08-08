@@ -1,0 +1,22 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://example.com/schemas/book.json",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"authors": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"status": {
+			"const": "available"
+		}
+	},
+	"required": [
+		"title"
+	]
+}

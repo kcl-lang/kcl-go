@@ -127,10 +127,12 @@ type kclSchema struct {
 
 // schema is a kcl schema definition.
 type schema struct {
-	Name        string
-	Description string
-	Properties  []property
-	Validations []validation
+	Name              string
+	Description       string
+	Properties        []property
+	Validations       []validation
+	HasIndexSignature bool
+	IndexSignature    indexSignature
 }
 
 // property is a kcl schema property definition.
@@ -152,6 +154,13 @@ type validation struct {
 	ExclusiveMaximum bool
 	MinLength        *int
 	MaxLength        *int
+}
+
+// indexSignature is a kcl schema index signature definition.
+// It can be used to construct a dict with type.
+type indexSignature struct {
+	Alias string
+	Type  typeInterface
 }
 
 type typeInterface interface {

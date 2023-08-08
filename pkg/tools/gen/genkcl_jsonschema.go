@@ -48,12 +48,12 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 		Imports: []string{},
 		Schemas: []schema{result.schema},
 	}
-	for imp := range ctx.imports {
+	for _, imp := range getSortedKeys(ctx.imports) {
 		kclSch.Imports = append(kclSch.Imports, imp)
 	}
-	for _, res := range ctx.resultMap {
-		if res.IsSchema {
-			kclSch.Schemas = append(kclSch.Schemas, res.schema)
+	for _, key := range getSortedKeys(ctx.resultMap) {
+		if ctx.resultMap[key].IsSchema {
+			kclSch.Schemas = append(kclSch.Schemas, ctx.resultMap[key].schema)
 		}
 	}
 
@@ -151,6 +151,41 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 				typeList.Items = append(typeList.Items, typeValue{
 					Value: unmarshalledVal,
 				})
+			}
+		case *jsonschema.Const:
+			unmarshalledVal := interface{}(nil)
+			err := json.Unmarshal(*v, &unmarshalledVal)
+			if err != nil {
+				logger.GetLogger().Warningf("failed to unmarshal const value: %s", err)
+				continue
+			}
+			typeList.Items = append(typeList.Items, typeValue{
+				Value: unmarshalledVal,
+			})
+			result.HasDefault = true
+			result.DefaultValue = unmarshalledVal
+		case *jsonschema.Ref:
+			typeName := strcase.ToCamel(v.Reference[strings.LastIndex(v.Reference, "/")+1:])
+			typeList.Items = append(typeList.Items, typeCustom{Name: typeName})
+		case *jsonschema.Defs:
+			for key, val := range *v {
+				ctx.resultMap[key] = convertSchemaFromJsonSchema(ctx, val, key)
+			}
+		case *jsonschema.AdditionalProperties:
+			switch v.SchemaType {
+			case jsonschema.SchemaTypeObject:
+				sch := convertSchemaFromJsonSchema(ctx, (*jsonschema.Schema)(v), "additionalProperties")
+				result.HasIndexSignature = true
+				result.IndexSignature = indexSignature{
+					Type: sch.Type,
+				}
+			case jsonschema.SchemaTypeTrue:
+				result.HasIndexSignature = true
+				result.IndexSignature = indexSignature{
+					Type: typePrimitive(typAny),
+				}
+			case jsonschema.SchemaTypeFalse:
+				result.HasIndexSignature = false
 			}
 		case *jsonschema.Minimum:
 			result.Validations = append(result.Validations, validation{
