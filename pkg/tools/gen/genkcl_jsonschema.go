@@ -224,6 +224,15 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 				Regex: (*regexp.Regexp)(v),
 			})
 			ctx.imports["regex"] = struct{}{}
+		case *jsonschema.MultipleOf:
+			vInt := int(*v)
+			if float64(vInt) != float64(*v) {
+				logger.GetLogger().Warningf("unsupported multipleOf value: %f", *v)
+				continue
+			}
+			result.Validations = append(result.Validations, validation{
+				MultiplyOf: &vInt,
+			})
 		default:
 			logger.GetLogger().Warningf("unknown Keyword: %s", k)
 		}

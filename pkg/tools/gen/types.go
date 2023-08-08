@@ -156,6 +156,7 @@ type validation struct {
 	MinLength        *int
 	MaxLength        *int
 	Regex            *regexp.Regexp
+	MultiplyOf       *int
 }
 
 // indexSignature is a kcl schema index signature definition.
