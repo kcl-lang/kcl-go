@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/iancoleman/strcase"
@@ -38,7 +39,10 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 	js.Validate(context.Background(), nil)
 
 	// convert json schema to kcl schema
-	ctx := convertContext{resultMap: make(map[string]convertResult)}
+	ctx := convertContext{
+		resultMap: make(map[string]convertResult),
+		imports:   make(map[string]struct{}),
+	}
 	result := convertSchemaFromJsonSchema(ctx, js,
 		strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename)))
 	if !result.IsSchema {
@@ -215,6 +219,11 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			result.Validations = append(result.Validations, validation{
 				MaxLength: (*int)(v),
 			})
+		case *jsonschema.Pattern:
+			result.Validations = append(result.Validations, validation{
+				Regex: (*regexp.Regexp)(v),
+			})
+			ctx.imports["regex"] = struct{}{}
 		default:
 			logger.GetLogger().Warningf("unknown Keyword: %s", k)
 		}

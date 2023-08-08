@@ -11,4 +11,7 @@
     {{- if .MinLength }}
         len({{ formatName .Name }}) >= {{ .MinLength }}
     {{- end }}
+    {{- if .Regex }}
+        regex.match({{ formatName .Name }}, r"{{ .Regex }}")
+    {{- end }}
 {{- end -}}
