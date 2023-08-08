@@ -233,6 +233,20 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			result.Validations = append(result.Validations, validation{
 				MultiplyOf: &vInt,
 			})
+		case *jsonschema.UniqueItems:
+			if *v {
+				result.Validations = append(result.Validations, validation{
+					Unique: true,
+				})
+			}
+		case *jsonschema.MinItems:
+			result.Validations = append(result.Validations, validation{
+				MinLength: (*int)(v),
+			})
+		case *jsonschema.MaxItems:
+			result.Validations = append(result.Validations, validation{
+				MaxLength: (*int)(v),
+			})
 		default:
 			logger.GetLogger().Warningf("unknown Keyword: %s", k)
 		}

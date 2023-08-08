@@ -17,4 +17,7 @@
     {{- if .MultiplyOf }}
         multiplyof({{ formatName .Name }}, {{ .MultiplyOf }})
     {{- end }}
+    {{- if .Unique }}
+        isunique({{ formatName .Name }})
+    {{- end }}
 {{- end -}}
