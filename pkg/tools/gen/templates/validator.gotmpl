@@ -11,4 +11,13 @@
     {{- if .MinLength }}
         len({{ formatName .Name }}) >= {{ .MinLength }}
     {{- end }}
+    {{- if .Regex }}
+        regex.match({{ formatName .Name }}, r"{{ .Regex }}")
+    {{- end }}
+    {{- if .MultiplyOf }}
+        multiplyof({{ formatName .Name }}, {{ .MultiplyOf }})
+    {{- end }}
+    {{- if .Unique }}
+        isunique({{ formatName .Name }})
+    {{- end }}
 {{- end -}}

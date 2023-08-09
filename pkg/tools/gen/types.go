@@ -3,6 +3,7 @@ package gen
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -154,6 +155,9 @@ type validation struct {
 	ExclusiveMaximum bool
 	MinLength        *int
 	MaxLength        *int
+	Regex            *regexp.Regexp
+	MultiplyOf       *int
+	Unique           bool
 }
 
 // indexSignature is a kcl schema index signature definition.
