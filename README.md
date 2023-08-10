@@ -23,8 +23,7 @@ You can use KCL to
 - [Install Go 1.19+](https://go.dev/dl/)
 
 ```bash
-$ go run ./cmds/kcl-go
-$ go run ./cmds/kcl-go run hello.k
+go run ./cmds/kcl-go run hello.k
 name: kcl
 age: 1
 two: 2

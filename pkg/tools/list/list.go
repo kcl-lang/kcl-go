@@ -6,7 +6,7 @@ It can also be schemas, schema attributes and so on. Supporting on listing these
 */
 package list
 
-// ListDepFiles return the depend files from the given path. It will scan and parse the kusion applications within the workdir,
+// ListDepFiles return the depend files from the given path. It will scan and parse the applications within the workdir,
 // then list depend files of the applications.
 func ListDepFiles(workDir string, opt *Option) (files []string, err error) {
 	if opt == nil {

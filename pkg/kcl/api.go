@@ -1,6 +1,6 @@
 // Copyright 2021 The KCL Authors. All rights reserved.
 
-// Package kcl defines the top-level interface for the Kusion Configuration Language (KCL).
+// Package kcl defines the top-level interface for KCL.
 package kcl
 
 import (

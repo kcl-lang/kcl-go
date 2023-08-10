@@ -1,7 +1,7 @@
-// Copyright 2021 The KCL Authors. All rights reserved.
+// Copyright 2023 The KCL Authors. All rights reserved.
 
-// Kusion Configuration Language (KCL) is a declarative configuration language
-// inspired by Python3 designed for Cloud-Native scenes used in Kusion.
+// KCL is a declarative configuration language
+// inspired by Python3 designed for Cloud-Native scenes.
 package main
 
 import "kcl-lang.io/kcl-go/cmds/kcl-go/command"
