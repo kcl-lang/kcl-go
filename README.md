@@ -1,8 +1,22 @@
-# [KCL](https://github.com/kcl-lang/kcl-go) Go SDK
+# [KCL](https://github.com/kcl-lang/kcl) Go SDK
 
 [![GoDoc](https://godoc.org/github.com/kcl-lang/kcl-go?status.svg)](https://godoc.org/github.com/kcl-lang/kcl-go)
 [![Coverage Status](https://coveralls.io/repos/github/kcl-lang/kcl-go/badge.svg)](https://coveralls.io/github/kcl-lang/kcl-go)
 [![license](https://img.shields.io/github/license/kcl-lang/kcl-go.svg)](https://github.com/kcl-lang/kcl-go/blob/master/LICENSE)
+
+KCL is an open-source, constraint-based record and functional language that enhances the writing of complex configurations, including those for cloud-native scenarios. With its advanced programming language technology and practices, KCL is dedicated to promoting better modularity, scalability, and stability for configurations. It enables simpler logic writing and offers ease of automation APIs and integration with homegrown systems.
+
+## What is it for?
+
+You can use KCL to
+
++ [Generate low-level static configuration data](https://kcl-lang.io/docs/user_docs/guides/configuration) such as JSON, YAML, etc., or [integrate with existing data](https://kcl-lang.io/docs/user_docs/guides/data-integration).
++ Reduce boilerplate in configuration data with the [schema modeling](https://kcl-lang.io/docs/user_docs/guides/schema-definition).
++ Define schemas with [rule constraints for configuration data and validate](https://kcl-lang.io/docs/user_docs/guides/validation) them automatically.
++ Organize, simplify, unify and manage large configurations without side effects through [gradient automation schemes and GitOps](https://kcl-lang.io/docs/user_docs/guides/automation).
++ Manage large configurations in a scalable way with [isolated configuration blocks](https://kcl-lang.io/docs/reference/lang/tour#config-operations).
++ Mutating or validating Kubernetes resources with [cloud-native configuration tool plugins](https://kcl-lang.io/docs/user_docs/guides/working-with-k8s/).
++ Used as a platform engineering programming language to deliver modern applications with [Kusion Stack](https://kusionstack.io).
 
 ## Building
 
