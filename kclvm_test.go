@@ -192,12 +192,14 @@ func TestFormatCode(t *testing.T) {
 }
 
 func TestGetSchemaType(t *testing.T) {
-	result, err := kcl.GetSchemaType("test.k", "schema Person:\n    name: str", "")
+	result, err := kcl.GetSchemaType("test.k", "@info(\"v\", k=\"v\")\nschema Person:\n    name: str", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert2.Equal(t, []*gpyrpc.KclType{
 		{
+			Filename:   "test.k",
+			PkgPath:    "__main__",
 			Type:       "schema",
 			SchemaName: "Person",
 			Properties: map[string]*gpyrpc.KclType{
@@ -208,19 +210,35 @@ func TestGetSchemaType(t *testing.T) {
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
 					Decorators: []*gpyrpc.Decorator{},
+					Examples:   map[string]*gpyrpc.Example{},
 				},
 			},
 			Required:   []string{"name"},
 			UnionTypes: []*gpyrpc.KclType{},
-			Decorators: []*gpyrpc.Decorator{},
+			Decorators: []*gpyrpc.Decorator{
+				{
+					Name:      "info",
+					Arguments: []string{"\"v\""},
+					Keywords: map[string]string{
+						"k": "\"v\"",
+					},
+				},
+			},
+			Examples: map[string]*gpyrpc.Example{},
 		},
 	}, result)
-	result, err = kcl.GetSchemaType("./testdata/main.k", "", "Person")
+	p, err := filepath.Abs("./testdata/main.k")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err = kcl.GetSchemaType(p, "", "Person")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert2.Equal(t, []*gpyrpc.KclType{
 		{
+			Filename:   p,
+			PkgPath:    "__main__",
 			Type:       "schema",
 			SchemaName: "Person",
 			Properties: map[string]*gpyrpc.KclType{
@@ -232,6 +250,7 @@ func TestGetSchemaType(t *testing.T) {
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
 					Decorators: []*gpyrpc.Decorator{},
+					Examples:   map[string]*gpyrpc.Example{},
 				},
 				"age": {
 					Type:       "int",
@@ -241,11 +260,13 @@ func TestGetSchemaType(t *testing.T) {
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
 					Decorators: []*gpyrpc.Decorator{},
+					Examples:   map[string]*gpyrpc.Example{},
 				},
 			},
 			Required:   []string{"name", "age"},
 			UnionTypes: []*gpyrpc.KclType{},
 			Decorators: []*gpyrpc.Decorator{},
+			Examples:   map[string]*gpyrpc.Example{},
 		},
 	}, result)
 }
@@ -257,6 +278,8 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 	}
 	assert2.Equal(t, map[string]*gpyrpc.KclType{
 		"Person": {
+			Filename:   "test.k",
+			PkgPath:    "__main__",
 			Type:       "schema",
 			SchemaName: "Person",
 			Properties: map[string]*gpyrpc.KclType{
@@ -267,19 +290,28 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
 					Decorators: []*gpyrpc.Decorator{},
+					Examples:   map[string]*gpyrpc.Example{},
 				},
 			},
 			Required:   []string{"name"},
 			UnionTypes: []*gpyrpc.KclType{},
 			Decorators: []*gpyrpc.Decorator{},
+			Examples:   map[string]*gpyrpc.Example{},
 		},
 	}, result)
-	result, err = kcl.GetSchemaTypeMapping("./testdata/main.k", "", "Person")
+
+	p, err := filepath.Abs("./testdata/main.k")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err = kcl.GetSchemaTypeMapping(p, "", "Person")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert2.Equal(t, map[string]*gpyrpc.KclType{
 		"Person": {
+			Filename:   p,
+			PkgPath:    "__main__",
 			Type:       "schema",
 			SchemaName: "Person",
 			Properties: map[string]*gpyrpc.KclType{
@@ -291,6 +323,7 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
 					Decorators: []*gpyrpc.Decorator{},
+					Examples:   map[string]*gpyrpc.Example{},
 				},
 				"age": {
 					Type:       "int",
@@ -300,11 +333,13 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
 					Decorators: []*gpyrpc.Decorator{},
+					Examples:   map[string]*gpyrpc.Example{},
 				},
 			},
 			Required:   []string{"name", "age"},
 			UnionTypes: []*gpyrpc.KclType{},
 			Decorators: []*gpyrpc.Decorator{},
+			Examples:   map[string]*gpyrpc.Example{},
 		},
 	}, result)
 }
