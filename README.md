@@ -1,4 +1,4 @@
-# KCL Go SDK
+# [KCL](https://github.com/kcl-lang/kcl-go) Go SDK
 
 [![GoDoc](https://godoc.org/github.com/kcl-lang/kcl-go?status.svg)](https://godoc.org/github.com/kcl-lang/kcl-go)
 [![Coverage Status](https://coveralls.io/repos/github/kcl-lang/kcl-go/badge.svg)](https://coveralls.io/github/kcl-lang/kcl-go)
@@ -97,6 +97,10 @@ spec:
         ports:
         - containerPort: 80
 ```
+
+## Documents
+
+See the [KCL website](https://kcl-lang.io)
 
 ## License
 
