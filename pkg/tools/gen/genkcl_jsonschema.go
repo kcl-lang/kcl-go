@@ -72,10 +72,18 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 		return convertResult{IsSchema: false}
 	}
 
-	result := convertResult{IsSchema: false, Name: name}
-	if result.Name == "" {
-		result.Name = "MyType"
+	// for the name of the result, we prefer $id, then title, then name in parameter
+	// if none of them exists, "MyType" as default
+	if id, ok := s.Keywords["$id"].(*jsonschema.ID); ok {
+		lastSlashIndex := strings.LastIndex(string(*id), "/")
+		name = strings.Replace(string(*id)[lastSlashIndex+1:], ".json", "", -1)
+	} else if title, ok := s.Keywords["title"].(*jsonschema.Title); ok {
+		name = string(*title)
 	}
+	if name == "" {
+		name = "MyType"
+	}
+	result := convertResult{IsSchema: false, Name: name}
 
 	isArray := false
 	typeList := typeUnion{}
@@ -86,11 +94,6 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 		case *jsonschema.Comment:
 		case *jsonschema.SchemaURI:
 		case *jsonschema.ID:
-			// if the schema has ID, use it as the name
-			lastSlashIndex := strings.LastIndex(string(*v), "/")
-			if lastSlashIndex != -1 {
-				result.Name = strings.Trim(string(*v)[lastSlashIndex+1:], ".json")
-			}
 		case *jsonschema.Description:
 			result.Description = string(*v)
 		case *jsonschema.Type:
