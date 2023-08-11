@@ -26,6 +26,9 @@
 				"Science",
 				"History"
 			]
+		},
+		"rule": {
+			"type": "string"
 		}
 	},
 	"required": [

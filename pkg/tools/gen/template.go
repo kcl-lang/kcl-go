@@ -70,7 +70,39 @@ func formatValue(v interface{}) string {
 	}
 }
 
+var kclKeywords = map[string]struct{}{
+	"True":      {},
+	"False":     {},
+	"None":      {},
+	"Undefined": {},
+	"import":    {},
+	"and":       {},
+	"or":        {},
+	"in":        {},
+	"is":        {},
+	"not":       {},
+	"as":        {},
+	"if":        {},
+	"else":      {},
+	"elif":      {},
+	"for":       {},
+	"schema":    {},
+	"mixin":     {},
+	"protocol":  {},
+	"check":     {},
+	"assert":    {},
+	"all":       {},
+	"any":       {},
+	"map":       {},
+	"filter":    {},
+	"lambda":    {},
+	"rule":      {},
+}
+
 func formatName(name string) string {
+	if _, ok := kclKeywords[name]; ok {
+		return fmt.Sprintf("$%s", name)
+	}
 	return name
 }
 
