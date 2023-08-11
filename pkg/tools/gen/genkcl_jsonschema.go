@@ -145,6 +145,7 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			result.HasDefault = true
 			result.DefaultValue = v.Data
 		case *jsonschema.Enum:
+			typeList.Items = make([]typeInterface, 0, len(*v))
 			for _, val := range *v {
 				unmarshalledVal := interface{}(nil)
 				err := json.Unmarshal(val, &unmarshalledVal)
@@ -163,14 +164,12 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 				logger.GetLogger().Warningf("failed to unmarshal const value: %s", err)
 				continue
 			}
-			typeList.Items = append(typeList.Items, typeValue{
-				Value: unmarshalledVal,
-			})
+			typeList.Items = []typeInterface{typeValue{Value: unmarshalledVal}}
 			result.HasDefault = true
 			result.DefaultValue = unmarshalledVal
 		case *jsonschema.Ref:
 			typeName := strcase.ToCamel(v.Reference[strings.LastIndex(v.Reference, "/")+1:])
-			typeList.Items = append(typeList.Items, typeCustom{Name: typeName})
+			typeList.Items = []typeInterface{typeCustom{Name: typeName}}
 		case *jsonschema.Defs:
 			for key, val := range *v {
 				ctx.resultMap[key] = convertSchemaFromJsonSchema(ctx, val, key)
