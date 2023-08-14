@@ -191,7 +191,12 @@ func (g *GenContext) getSwagger2Spec(typeMapping map[string]*kcl.KclType) *Swagg
 		},
 	}
 	for name, t := range typeMapping {
-		spec.Definitions[fmt.Sprintf("%s.%s", t.PkgPath, t.SchemaName)] = GetKclOpenAPIType(t, spec.Definitions)
+		id := SchemaId(t)
+		if _, ok := spec.Definitions[id]; ok {
+			// skip if resolved
+			continue
+		}
+		spec.Definitions[id] = GetKclOpenAPIType(t, spec.Definitions, false)
 		fmt.Println(fmt.Sprintf("generate docs for schema %s", name))
 	}
 	return spec

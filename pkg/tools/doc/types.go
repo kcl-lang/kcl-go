@@ -2,9 +2,11 @@ package doc
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
+
 	kcl "kcl-lang.io/kcl-go"
 	"kcl-lang.io/kcl-go/pkg/tools/gen"
-	"strings"
 )
 
 // SwaggerV2Spec defines KCL OpenAPI Spec based on Swagger v2.0
@@ -197,7 +199,7 @@ func (tpe *KclType) isAnyType() bool {
 }
 
 // GetKclOpenAPIType converts the kcl.KclType(the representation of Type in KCL API) to KclType(the representation of Type in KCL Open API)
-func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclType) *KclType {
+func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclType, nested bool) *KclType {
 	t := KclType{
 		Description: from.Description,
 		Default:     from.Default,
@@ -219,13 +221,13 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclType) *KclType {
 		return &t
 	case "list":
 		t.Type = Array
-		t.Items = GetKclOpenAPIType(from.Item, defs)
+		t.Items = GetKclOpenAPIType(from.Item, defs, true)
 		return &t
 	case "dict":
 		t.Type = Object
-		t.AdditionalProperties = GetKclOpenAPIType(from.Item, defs)
+		t.AdditionalProperties = GetKclOpenAPIType(from.Item, defs, true)
 		t.KclExtensions = &KclExtensions{
-			XKclDictKeyType: GetKclOpenAPIType(from.Key, defs),
+			XKclDictKeyType: GetKclOpenAPIType(from.Key, defs, true),
 		}
 		return &t
 	case "schema":
@@ -234,33 +236,42 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclType) *KclType {
 			// skip converting if schema existed
 			t.Ref = refPath(id)
 			return &t
-		} else {
-			defs[id] = &t
 		}
+
+		// resolve type and add to definitions
+		defs[id] = &t
 		t.Type = Object
-		t.Properties = make(map[string]*KclType, len(t.Properties))
+		t.Properties = make(map[string]*KclType, len(from.Properties))
 		for name, fromProp := range from.Properties {
-			t.Properties[name] = GetKclOpenAPIType(fromProp, defs)
+			t.Properties[name] = GetKclOpenAPIType(fromProp, defs, true)
 		}
 		t.Required = from.Required
 		t.KclExtensions = &KclExtensions{
 			XKclModelType: &XKclModelType{
 				Import: &KclModelImportInfo{
 					Package: from.PkgPath,
-					Alias:   from.Filename[strings.LastIndex(from.Filename, "/")+1:],
+					Alias:   filepath.Base(from.Filename),
 				},
 				Type: from.SchemaName,
 			},
 		}
-		// todo t.Example = from.Examples
-		// todo t.KclExtensions.XKclDecorators = from.Decorators
+		// todo newT.Example = from.Examples
+		// todo newT.KclExtensions.XKclDecorators = from.Decorators
 		// todo externalDocs(see also)
-		return &t
+
+		if nested {
+			return &KclType{
+				Description: from.Description,
+				Ref:         refPath(id),
+			}
+		} else {
+			return &t
+		}
 	case "union":
 		t.Type = Object
 		tps := make([]*KclType, len(from.UnionTypes))
 		for i, unionType := range from.UnionTypes {
-			tps[i] = GetKclOpenAPIType(unionType, defs)
+			tps[i] = GetKclOpenAPIType(unionType, defs, true)
 		}
 		t.KclExtensions = &KclExtensions{
 			XKclUnionTypes: tps,

@@ -561,14 +561,15 @@ func loadKFileList(vfs fs.FS, path string, opt Option) ([]string, error) {
 }
 
 // kcl_cli_configs:
-//   file:
-//     - ../../../../base/pkg/kusion_models/app_configuration/sofa/sofa_app_configuration_render.k
-//     - ../../../../base/pkg/kusion_models/app_configuration/metadata_render.k
-//     - ../../../../base/pkg/kusion_models/app_configuration/deploy_topology_render.k
-//     - ../base/base.k
-//     - main.k
-//     - ../../../../base/pkg/kusion_models/app_configuration/sofa/sofa_app_configuration_backend.k
-//   disable_none: true
+//
+//	file:
+//	  - ../../../../base/pkg/kusion_models/app_configuration/sofa/sofa_app_configuration_render.k
+//	  - ../../../../base/pkg/kusion_models/app_configuration/metadata_render.k
+//	  - ../../../../base/pkg/kusion_models/app_configuration/deploy_topology_render.k
+//	  - ../base/base.k
+//	  - main.k
+//	  - ../../../../base/pkg/kusion_models/app_configuration/sofa/sofa_app_configuration_backend.k
+//	disable_none: true
 func fixKclYamlFilePath(dir, filepath string) string {
 	return pathpkg.Join(dir, filepath)
 }
