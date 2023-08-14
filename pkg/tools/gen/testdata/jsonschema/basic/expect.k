@@ -14,6 +14,7 @@ schema Book:
     price : float, optional
     available : bool, optional, default is True
     category : "Fiction" | "Science" | "History", optional
+    $rule : str, optional
     """
 
     title: str
@@ -21,4 +22,5 @@ schema Book:
     price?: float
     available?: bool = True
     category?: "Fiction" | "Science" | "History"
+    $rule?: str
 

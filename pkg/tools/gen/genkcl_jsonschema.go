@@ -72,10 +72,18 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 		return convertResult{IsSchema: false}
 	}
 
-	result := convertResult{IsSchema: false, Name: name}
-	if result.Name == "" {
-		result.Name = "MyType"
+	// for the name of the result, we prefer $id, then title, then name in parameter
+	// if none of them exists, "MyType" as default
+	if id, ok := s.Keywords["$id"].(*jsonschema.ID); ok {
+		lastSlashIndex := strings.LastIndex(string(*id), "/")
+		name = strings.Replace(string(*id)[lastSlashIndex+1:], ".json", "", -1)
+	} else if title, ok := s.Keywords["title"].(*jsonschema.Title); ok {
+		name = string(*title)
 	}
+	if name == "" {
+		name = "MyType"
+	}
+	result := convertResult{IsSchema: false, Name: name}
 
 	isArray := false
 	typeList := typeUnion{}
@@ -86,11 +94,6 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 		case *jsonschema.Comment:
 		case *jsonschema.SchemaURI:
 		case *jsonschema.ID:
-			// if the schema has ID, use it as the name
-			lastSlashIndex := strings.LastIndex(string(*v), "/")
-			if lastSlashIndex != -1 {
-				result.Name = strings.Trim(string(*v)[lastSlashIndex+1:], ".json")
-			}
 		case *jsonschema.Description:
 			result.Description = string(*v)
 		case *jsonschema.Type:
@@ -145,6 +148,7 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			result.HasDefault = true
 			result.DefaultValue = v.Data
 		case *jsonschema.Enum:
+			typeList.Items = make([]typeInterface, 0, len(*v))
 			for _, val := range *v {
 				unmarshalledVal := interface{}(nil)
 				err := json.Unmarshal(val, &unmarshalledVal)
@@ -163,17 +167,30 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 				logger.GetLogger().Warningf("failed to unmarshal const value: %s", err)
 				continue
 			}
-			typeList.Items = append(typeList.Items, typeValue{
-				Value: unmarshalledVal,
-			})
+			typeList.Items = []typeInterface{typeValue{Value: unmarshalledVal}}
 			result.HasDefault = true
 			result.DefaultValue = unmarshalledVal
 		case *jsonschema.Ref:
 			typeName := strcase.ToCamel(v.Reference[strings.LastIndex(v.Reference, "/")+1:])
-			typeList.Items = append(typeList.Items, typeCustom{Name: typeName})
+			typeList.Items = []typeInterface{typeCustom{Name: typeName}}
 		case *jsonschema.Defs:
 			for key, val := range *v {
-				ctx.resultMap[key] = convertSchemaFromJsonSchema(ctx, val, key)
+				sch := convertSchemaFromJsonSchema(ctx, val, key)
+				if !sch.IsSchema {
+					logger.GetLogger().Warningf("unsupported defining non-object: %s", key)
+					sch = convertResult{
+						IsSchema: true,
+						Name:     key,
+						schema: schema{
+							Name:              strcase.ToCamel(key),
+							HasIndexSignature: true,
+							IndexSignature: indexSignature{
+								Type: typePrimitive(typAny),
+							},
+						},
+					}
+				}
+				ctx.resultMap[key] = sch
 			}
 		case *jsonschema.AdditionalProperties:
 			switch v.SchemaType {
@@ -254,11 +271,19 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 
 	if result.IsSchema {
 		result.Type = typeCustom{Name: strcase.ToCamel(name)}
+		if len(result.Properties) == 0 && !result.HasIndexSignature {
+			result.HasIndexSignature = true
+			result.IndexSignature = indexSignature{Type: typePrimitive(typAny)}
+		}
 	} else {
-		if isArray {
-			result.Type = typeArray{Items: typeList}
+		if len(typeList.Items) != 0 {
+			if isArray {
+				result.Type = typeArray{Items: typeList}
+			} else {
+				result.Type = typeList
+			}
 		} else {
-			result.Type = typeList
+			result.Type = typePrimitive(typAny)
 		}
 	}
 	result.schema.Name = strcase.ToCamel(result.Name)

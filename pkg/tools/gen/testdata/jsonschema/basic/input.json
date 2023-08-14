@@ -20,11 +20,15 @@
 			"default": true
 		},
 		"category": {
+			"type": "string",
 			"enum": [
 				"Fiction",
 				"Science",
 				"History"
 			]
+		},
+		"rule": {
+			"type": "string"
 		}
 	},
 	"required": [

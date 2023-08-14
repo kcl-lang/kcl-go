@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/shop",
+  "description": "Schema for representing a shop information.\nIn this test case, we use some logic keywords like \"oneOf\" that can't be directly converted at the moment. To make it still work, we'll convert it into \"any\" type.",
+  "$defs": {
+    "product": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "clothing": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/product"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "clothing"
+            },
+            "material": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "products": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/clothing"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/clothing"
+          }
+        },
+        {
+          "const": "empty"
+        }
+      ]
+    }
+  }
+}
