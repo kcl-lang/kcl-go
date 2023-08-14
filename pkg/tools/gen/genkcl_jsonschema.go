@@ -175,7 +175,22 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			typeList.Items = []typeInterface{typeCustom{Name: typeName}}
 		case *jsonschema.Defs:
 			for key, val := range *v {
-				ctx.resultMap[key] = convertSchemaFromJsonSchema(ctx, val, key)
+				sch := convertSchemaFromJsonSchema(ctx, val, key)
+				if !sch.IsSchema {
+					logger.GetLogger().Warningf("unsupported defining non-object: %s", key)
+					sch = convertResult{
+						IsSchema: true,
+						Name:     key,
+						schema: schema{
+							Name:              strcase.ToCamel(key),
+							HasIndexSignature: true,
+							IndexSignature: indexSignature{
+								Type: typePrimitive(typAny),
+							},
+						},
+					}
+				}
+				ctx.resultMap[key] = sch
 			}
 		case *jsonschema.AdditionalProperties:
 			switch v.SchemaType {
@@ -256,11 +271,19 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 
 	if result.IsSchema {
 		result.Type = typeCustom{Name: strcase.ToCamel(name)}
+		if len(result.Properties) == 0 && !result.HasIndexSignature {
+			result.HasIndexSignature = true
+			result.IndexSignature = indexSignature{Type: typePrimitive(typAny)}
+		}
 	} else {
-		if isArray {
-			result.Type = typeArray{Items: typeList}
+		if len(typeList.Items) != 0 {
+			if isArray {
+				result.Type = typeArray{Items: typeList}
+			} else {
+				result.Type = typeList
+			}
 		} else {
-			result.Type = typeList
+			result.Type = typePrimitive(typAny)
 		}
 	}
 	result.schema.Name = strcase.ToCamel(result.Name)
