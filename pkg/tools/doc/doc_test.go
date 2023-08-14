@@ -14,13 +14,13 @@ import (
 
 func TestDocRender(t *testing.T) {
 	tcases := [...]struct {
-		source *KclType
+		source *KclOpenAPIType
 		expect string
 	}{
 		{
-			source: &KclType{
+			source: &KclOpenAPIType{
 				Description: "Description of Schema Person",
-				Properties: map[string]*KclType{
+				Properties: map[string]*KclOpenAPIType{
 					"name": {
 						Type:        "string",
 						Description: "name of the person",

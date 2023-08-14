@@ -11,10 +11,10 @@ import (
 
 // SwaggerV2Spec defines KCL OpenAPI Spec based on Swagger v2.0
 type SwaggerV2Spec struct {
-	Definitions map[string]*KclType    `json:"definitions"`
-	Paths       map[string]interface{} `json:"paths"`
-	Swagger     string                 `json:"swagger"`
-	Info        SpecInfo               `json:"info"`
+	Definitions map[string]*KclOpenAPIType `json:"definitions"`
+	Paths       map[string]interface{}     `json:"paths"`
+	Swagger     string                     `json:"swagger"`
+	Info        SpecInfo                   `json:"info"`
 }
 
 // SpecInfo defines KCL package info
@@ -24,7 +24,7 @@ type SpecInfo struct {
 	Description string `json:"description"`
 }
 
-// KclType defines the KCL representation of SchemaObject field in Swagger v2.0.
+// KclOpenAPIType defines the KCL representation of SchemaObject field in Swagger v2.0.
 // And the mapping between kcl type and the Kcl OpenAPI type is:
 //
 // ## Basic Types
@@ -56,21 +56,21 @@ type SpecInfo struct {
 // |    schema     | type: object, properties: propertyTypes, required, x-kcl-type |
 //
 // | nested schema | type: object, ref: jsonRefPath |
-type KclType struct {
-	Type                 SwaggerTypeName     // object, string, array, integer, number, bool
-	Format               TypeFormat          // type format
-	Default              string              // default value
-	Enum                 []string            // enum values
-	ReadOnly             bool                // readonly
-	Description          string              // description
-	Properties           map[string]*KclType // schema properties
-	Required             []string            // list of required schema property names
-	Items                *KclType            // list item type
-	AdditionalProperties *KclType            // dict value type
-	Example              string              // example
-	ExternalDocs         string              // externalDocs
-	KclExtensions        *KclExtensions      // x-kcl- extensions
-	Ref                  string              // reference to schema path
+type KclOpenAPIType struct {
+	Type                 SwaggerTypeName            // object, string, array, integer, number, bool
+	Format               TypeFormat                 // type format
+	Default              string                     // default value
+	Enum                 []string                   // enum values
+	ReadOnly             bool                       // readonly
+	Description          string                     // description
+	Properties           map[string]*KclOpenAPIType // schema properties
+	Required             []string                   // list of required schema property names
+	Items                *KclOpenAPIType            // list item type
+	AdditionalProperties *KclOpenAPIType            // dict value type
+	Example              string                     // example
+	ExternalDocs         string                     // externalDocs
+	KclExtensions        *KclExtensions             // x-kcl- extensions
+	Ref                  string                     // reference to schema path
 }
 
 // SwaggerTypeName defines possible values of "type" field in Swagger v2.0 spec
@@ -105,10 +105,10 @@ const (
 
 // KclExtensions defines all the KCL specific extensions patched to OpenAPI
 type KclExtensions struct {
-	XKclModelType   *XKclModelType  `json:"x-kcl-type,omitempty"`
-	XKclDecorators  *XKclDecorators `json:"x-kcl-decorators,omitempty"`
-	XKclUnionTypes  []*KclType      `json:"x-kcl-union-types,omitempty"`
-	XKclDictKeyType *KclType        `json:"x-kcl-dict-key-type,omitempty"` // dict key type
+	XKclModelType   *XKclModelType    `json:"x-kcl-type,omitempty"`
+	XKclDecorators  *XKclDecorators   `json:"x-kcl-decorators,omitempty"`
+	XKclUnionTypes  []*KclOpenAPIType `json:"x-kcl-union-types,omitempty"`
+	XKclDictKeyType *KclOpenAPIType   `json:"x-kcl-dict-key-type,omitempty"` // dict key type
 }
 
 // XKclModelType defines the `x-kcl-type` extension
@@ -130,8 +130,8 @@ type XKclDecorators struct {
 	Keywords  map[string]string
 }
 
-// GetKclTypeName get the string representation of a KclType
-func (tpe *KclType) GetKclTypeName(omitAny bool) string {
+// GetKclTypeName get the string representation of a KclOpenAPIType
+func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool) string {
 	if tpe.Ref != "" {
 		return tpe.Ref[strings.LastIndex(tpe.Ref, ".")+1:]
 	}
@@ -193,14 +193,14 @@ func (tpe *KclType) GetKclTypeName(omitAny bool) string {
 	return string(tpe.Type)
 }
 
-// isAnyType checks if a KclType is any type
-func (tpe *KclType) isAnyType() bool {
+// isAnyType checks if a KclOpenAPIType is any type
+func (tpe *KclOpenAPIType) isAnyType() bool {
 	return tpe.Type == Object && tpe.Properties == nil && tpe.AdditionalProperties == nil && tpe.Ref == "" && (tpe.KclExtensions == nil || tpe.KclExtensions.XKclUnionTypes == nil)
 }
 
-// GetKclOpenAPIType converts the kcl.KclType(the representation of Type in KCL API) to KclType(the representation of Type in KCL Open API)
-func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclType, nested bool) *KclType {
-	t := KclType{
+// GetKclOpenAPIType converts the kcl.KclType(the representation of Type in KCL API) to KclOpenAPIType(the representation of Type in KCL Open API)
+func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, nested bool) *KclOpenAPIType {
+	t := KclOpenAPIType{
 		Description: from.Description,
 		Default:     from.Default,
 	}
@@ -241,7 +241,7 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclType, nested bool)
 		// resolve type and add to definitions
 		defs[id] = &t
 		t.Type = Object
-		t.Properties = make(map[string]*KclType, len(from.Properties))
+		t.Properties = make(map[string]*KclOpenAPIType, len(from.Properties))
 		for name, fromProp := range from.Properties {
 			t.Properties[name] = GetKclOpenAPIType(fromProp, defs, true)
 		}
@@ -260,7 +260,7 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclType, nested bool)
 		// todo externalDocs(see also)
 
 		if nested {
-			return &KclType{
+			return &KclOpenAPIType{
 				Description: from.Description,
 				Ref:         refPath(id),
 			}
@@ -269,7 +269,7 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclType, nested bool)
 		}
 	case "union":
 		t.Type = Object
-		tps := make([]*KclType, len(from.UnionTypes))
+		tps := make([]*KclOpenAPIType, len(from.UnionTypes))
 		for i, unionType := range from.UnionTypes {
 			tps[i] = GetKclOpenAPIType(unionType, defs, true)
 		}

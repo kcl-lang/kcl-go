@@ -96,13 +96,13 @@ func funcMap() template.FuncMap {
 			}
 			return false
 		},
-		"kclType": func(tpe KclType) string {
+		"kclType": func(tpe KclOpenAPIType) string {
 			return tpe.GetKclTypeName(false)
 		},
 	}
 }
 
-func (g *GenContext) renderContent(schema *KclType) ([]byte, error) {
+func (g *GenContext) renderContent(schema *KclOpenAPIType) ([]byte, error) {
 	var contentBuf bytes.Buffer
 	err := tmpl.Execute(&contentBuf, schema)
 	if err != nil {
@@ -185,7 +185,7 @@ func (g *GenContext) GenDoc() error {
 func (g *GenContext) getSwagger2Spec(typeMapping map[string]*kcl.KclType) *SwaggerV2Spec {
 	spec := &SwaggerV2Spec{
 		Swagger:     "2.0",
-		Definitions: make(map[string]*KclType),
+		Definitions: make(map[string]*KclOpenAPIType),
 		Info: SpecInfo{
 			Title: g.PackagePath,
 		},
