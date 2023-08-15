@@ -14,8 +14,9 @@ import (
 
 func TestDocRender(t *testing.T) {
 	tcases := [...]struct {
-		source *KclOpenAPIType
-		expect string
+		source        *KclOpenAPIType
+		expectUnix    string
+		expectWindows string
 	}{
 		{
 			source: &KclOpenAPIType{
@@ -38,7 +39,7 @@ func TestDocRender(t *testing.T) {
 				},
 			},
 
-			expect: `## Schema Person
+			expectUnix: `## Schema Person
 
 Description of Schema Person
 
@@ -55,6 +56,23 @@ name of the person
 
 - [models.Person](models/person.k)
 `,
+			expectWindows: `## Schema Person
+
+Description of Schema Person
+
+### Attributes
+
+**name** *required*
+
+` + "`" + `str` + "`" + `
+
+name of the person
+
+
+## Source Files
+
+- [models.Person](models\person.k)
+`,
 		},
 	}
 
@@ -68,9 +86,12 @@ name of the person
 		if err != nil {
 			t.Errorf("render failed, err: %s", err)
 		}
-		expect := tcase.expect
+
+		var expect string
 		if runtime.GOOS == "windows" {
-			expect = strings.ReplaceAll(tcase.expect, "\n", "\r\n")
+			expect = strings.ReplaceAll(tcase.expectWindows, "\n", "\r\n")
+		} else {
+			expect = tcase.expectUnix
 		}
 		assert2.Equal(t, expect, string(content), "render content mismatch")
 	}
@@ -112,12 +133,18 @@ func initTestCases(t *testing.T) []*TestCase {
 	tcases := make([]*TestCase, len(sourcePkgs))
 
 	for i, p := range sourcePkgs {
+		resultDir := filepath.Join(cwd, testdataDir, p)
+		if runtime.GOOS == "windows" {
+			resultDir = filepath.Join(resultDir, "windows")
+		} else {
+			resultDir = filepath.Join(resultDir, "unixlike")
+		}
 		tcases[i] = &TestCase{
 			PackagePath: filepath.Join(testdataDir, p),
-			ExpectMd:    filepath.Join(cwd, testdataDir, p, "md"),
-			ExpectHtml:  filepath.Join(cwd, testdataDir, p, "html"),
-			GotMd:       filepath.Join(cwd, testdataDir, p, "md_got"),
-			GotHtml:     filepath.Join(cwd, testdataDir, p, "html_got"),
+			ExpectMd:    filepath.Join(resultDir, "md"),
+			ExpectHtml:  filepath.Join(resultDir, "html"),
+			GotMd:       filepath.Join(resultDir, "md_got"),
+			GotHtml:     filepath.Join(resultDir, "html_got"),
 		}
 	}
 	return tcases
