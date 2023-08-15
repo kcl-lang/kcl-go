@@ -84,16 +84,6 @@ const (
 	Bool    SwaggerTypeName = "bool"
 )
 
-// KclTypeName defines the KCL representation of basic types
-type KclTypeName string
-
-const (
-	Str      KclTypeName = "str"
-	BoolKcl  KclTypeName = "bool"
-	Int      KclTypeName = "int"
-	FloatKcl KclTypeName = "float"
-)
-
 // TypeFormat defines possible values of "format" field in Swagger v2.0 spec
 type TypeFormat string
 
@@ -139,13 +129,13 @@ func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool) string {
 		if tpe.ReadOnly {
 			return tpe.Default
 		}
-		return string(Str)
+		return typStr
 	case Integer:
 		if tpe.Format == Int64 {
 			if tpe.ReadOnly {
 				return tpe.Default
 			}
-			return string(Int)
+			return typInt
 		}
 		panic(fmt.Errorf("unexpected KCL OpenAPI type and format: %s(%s)", tpe.Type, tpe.Format))
 	case Number:
@@ -153,14 +143,14 @@ func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool) string {
 			if tpe.ReadOnly {
 				return tpe.Default
 			}
-			return string(FloatKcl)
+			return typFloat
 		}
 		panic(fmt.Errorf("unexpected KCL OpenAPI type and format: %s(%s)", tpe.Type, tpe.Format))
 	case Bool:
 		if tpe.ReadOnly {
 			return tpe.Default
 		}
-		return string(BoolKcl)
+		return typBool
 	case Array:
 		return fmt.Sprintf("[%s]", tpe.Items.GetKclTypeName(true))
 	case Object:
@@ -208,32 +198,32 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 		Default:     from.Default,
 	}
 	switch from.Type {
-	case string(Int):
+	case typInt:
 		t.Type = Integer
 		t.Format = Int64
 		return &t
-	case string(FloatKcl):
+	case typFloat:
 		t.Type = Number
 		t.Format = Float
 		return &t
-	case string(BoolKcl):
+	case typBool:
 		t.Type = Bool
 		return &t
-	case string(Str):
+	case typStr:
 		t.Type = String
 		return &t
-	case "list":
+	case typList:
 		t.Type = Array
 		t.Items = GetKclOpenAPIType(from.Item, defs, true)
 		return &t
-	case "dict":
+	case typDict:
 		t.Type = Object
 		t.AdditionalProperties = GetKclOpenAPIType(from.Item, defs, true)
 		t.KclExtensions = &KclExtensions{
 			XKclDictKeyType: GetKclOpenAPIType(from.Key, defs, true),
 		}
 		return &t
-	case "schema":
+	case typSchema:
 		id := SchemaId(from)
 		if _, ok := defs[id]; ok {
 			// skip converting if schema existed
@@ -274,7 +264,7 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 		} else {
 			return &t
 		}
-	case "union":
+	case typUnion:
 		t.Type = Object
 		tps := make([]*KclOpenAPIType, len(from.UnionTypes))
 		for i, unionType := range from.UnionTypes {
@@ -284,7 +274,7 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 			XKclUnionTypes: tps,
 		}
 		return &t
-	case "any":
+	case typAny:
 		t.Type = Object
 		return &t
 	default:
@@ -293,18 +283,18 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 			t.Enum = []string{litValue}
 			t.Default = litValue
 			switch basicType {
-			case string(BoolKcl):
+			case typBool:
 				t.Type = Bool
 				return &t
-			case string(Int):
+			case typInt:
 				t.Type = Integer
 				t.Format = Int64
 				return &t
-			case string(FloatKcl):
+			case typFloat:
 				t.Type = Number
 				t.Format = Float
 				return &t
-			case string(Str):
+			case typStr:
 				t.Type = String
 				return &t
 			default:
