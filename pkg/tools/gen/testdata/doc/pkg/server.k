@@ -1,3 +1,5 @@
+import k8s.deployment
+
 schema Server:
     """
     Server is the common user interface for long-running
@@ -43,3 +45,4 @@ schema Server:
     union2: "abc" | "def" = "abc"
     dictAny: {str:}
     listAny: []
+    backendWorkload: deployment.Deployment

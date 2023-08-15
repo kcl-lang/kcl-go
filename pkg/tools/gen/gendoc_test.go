@@ -99,27 +99,26 @@ func TestDocGenerate(t *testing.T) {
 	}
 }
 
-var testdataDir = filepath.Join("testdata", "doc")
-
 func initTestCases(t *testing.T) []*TestCase {
-	var tcases []*TestCase
-	paths, err := os.ReadDir(testdataDir)
-	if err != nil {
-		t.Fatal("missing testdata directory")
-	}
-
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatal("get work directory failed")
 	}
-	for _, path := range paths {
-		tcases = append(tcases, &TestCase{
-			PackagePath: filepath.Join(testdataDir, path.Name()),
-			ExpectMd:    filepath.Join(cwd, testdataDir, path.Name(), "md"),
-			ExpectHtml:  filepath.Join(cwd, testdataDir, path.Name(), "html"),
-			GotMd:       filepath.Join(cwd, testdataDir, path.Name(), "md_got"),
-			GotHtml:     filepath.Join(cwd, testdataDir, path.Name(), "html_got"),
-		})
+
+	testdataDir := filepath.Join("testdata", "doc")
+	sourcePkgs := []string{
+		"pkg",
+	}
+	tcases := make([]*TestCase, len(sourcePkgs))
+
+	for i, p := range sourcePkgs {
+		tcases[i] = &TestCase{
+			PackagePath: filepath.Join(testdataDir, p),
+			ExpectMd:    filepath.Join(cwd, testdataDir, p, "md"),
+			ExpectHtml:  filepath.Join(cwd, testdataDir, p, "html"),
+			GotMd:       filepath.Join(cwd, testdataDir, p, "md_got"),
+			GotHtml:     filepath.Join(cwd, testdataDir, p, "html_got"),
+		}
 	}
 	return tcases
 }

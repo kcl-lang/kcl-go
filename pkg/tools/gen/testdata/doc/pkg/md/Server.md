@@ -12,6 +12,10 @@ Server is the common user interface for long-running services adopting the best 
 
 `bool`
 
+**backendWorkload** *required*
+
+`Deployment`
+
 **containers** *required*
 
 `[Container]`
