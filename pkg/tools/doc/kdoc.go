@@ -65,13 +65,13 @@ func (g *GenContext) render(spec *SwaggerV2Spec) error {
 	}
 	for _, schema := range spec.Definitions {
 		// create package directory if not exist
-		pkgDir := filepath.Join(g.Target, schema.KclExtensions.XKclModelType.Import.Package)
+		pkgDir := schema.GetSchemaPkgDir(g.Target)
 		err := os.MkdirAll(pkgDir, 0755)
 		if err != nil {
 			return fmt.Errorf("failed to create docs/%s directory under the target directory: %s", pkgDir, err)
 		}
 		// get doc file name
-		fileName := fmt.Sprintf("%s.md", schema.KclExtensions.XKclModelType.Type)
+		fileName := fmt.Sprintf("%s.%s", schema.KclExtensions.XKclModelType.Type, g.Format)
 		// render doc content
 		content, err := g.renderContent(schema)
 		if err != nil {
@@ -98,6 +98,16 @@ func funcMap() template.FuncMap {
 		},
 		"kclType": func(tpe KclOpenAPIType) string {
 			return tpe.GetKclTypeName(false)
+		},
+		"fullTypeName": func(tpe KclOpenAPIType) string {
+			if tpe.KclExtensions.XKclModelType.Import.Package != "" {
+				return fmt.Sprintf("%s.%s", tpe.KclExtensions.XKclModelType.Import.Package, tpe.KclExtensions.XKclModelType.Type)
+			}
+			return tpe.KclExtensions.XKclModelType.Type
+		},
+		"sourcePath": func(tpe KclOpenAPIType) string {
+			// todo: let users specify the source code base path
+			return filepath.Join(tpe.GetSchemaPkgDir(""), tpe.KclExtensions.XKclModelType.Import.Alias)
 		},
 	}
 }

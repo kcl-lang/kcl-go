@@ -43,16 +43,3 @@ schema Server:
     union2: "abc" | "def" = "abc"
     dictAny: {str:}
     listAny: []
-    
-
-
-schema Container:
-    """
-    Container is the common user interface for long-running services.
-
-    Attributes
-    ----------
-    name: str, required
-        The name of the long-running container.
-    """
-    name: str

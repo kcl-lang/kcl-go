@@ -91,4 +91,4 @@ See also: kusion_models/core/v1/workload_metadata.k.
 
 ## Source Files
 
-- [__main__.Server](__main__.server.k)
+- [Server](server.k)

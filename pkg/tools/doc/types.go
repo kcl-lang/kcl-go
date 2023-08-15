@@ -198,6 +198,10 @@ func (tpe *KclOpenAPIType) isAnyType() bool {
 	return tpe.Type == Object && tpe.Properties == nil && tpe.AdditionalProperties == nil && tpe.Ref == "" && (tpe.KclExtensions == nil || tpe.KclExtensions.XKclUnionTypes == nil)
 }
 
+func (tpe *KclOpenAPIType) GetSchemaPkgDir(base string) string {
+	return filepath.Join(append([]string{base}, strings.Split(tpe.KclExtensions.XKclModelType.Import.Package, ".")...)...)
+}
+
 // GetKclOpenAPIType converts the kcl.KclType(the representation of Type in KCL API) to KclOpenAPIType(the representation of Type in KCL Open API)
 func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, nested bool) *KclOpenAPIType {
 	t := KclOpenAPIType{
@@ -246,10 +250,14 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 			t.Properties[name] = GetKclOpenAPIType(fromProp, defs, true)
 		}
 		t.Required = from.Required
+		packageName := from.PkgPath
+		if from.PkgPath == "__main__" {
+			packageName = ""
+		}
 		t.KclExtensions = &KclExtensions{
 			XKclModelType: &XKclModelType{
 				Import: &KclModelImportInfo{
-					Package: from.PkgPath,
+					Package: packageName,
 					Alias:   filepath.Base(from.Filename),
 				},
 				Type: from.SchemaName,
