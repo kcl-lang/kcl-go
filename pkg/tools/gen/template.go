@@ -9,13 +9,13 @@ import (
 )
 
 var (
-	//go:embed templates/document.gotmpl
+	//go:embed templates/kcl/document.gotmpl
 	documentTmpl string
-	//go:embed templates/header.gotmpl
+	//go:embed templates/kcl/header.gotmpl
 	headerTmpl string
-	//go:embed templates/validator.gotmpl
+	//go:embed templates/kcl/validator.gotmpl
 	validatorTmpl string
-	//go:embed templates/schema.gotmpl
+	//go:embed templates/kcl/schema.gotmpl
 	schemaTmpl string
 )
 

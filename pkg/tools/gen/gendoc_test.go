@@ -1,10 +1,10 @@
-package doc
+package gen
 
 import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	assert2 "github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -53,7 +53,7 @@ name of the person
 
 ## Source Files
 
-- [models.Person](models.person.k)
+- [models.Person](models/person.k)
 `,
 		},
 	}
@@ -72,7 +72,7 @@ name of the person
 		if runtime.GOOS == "windows" {
 			expect = strings.ReplaceAll(tcase.expect, "\n", "\r\n")
 		}
-		assert.Equal(t, expect, string(content), "render content mismatch")
+		assert2.Equal(t, expect, string(content), "render content mismatch")
 	}
 }
 
@@ -99,7 +99,7 @@ func TestDocGenerate(t *testing.T) {
 	}
 }
 
-const testdataDir = "testdata"
+var testdataDir = filepath.Join("testdata", "doc")
 
 func initTestCases(t *testing.T) []*TestCase {
 	var tcases []*TestCase

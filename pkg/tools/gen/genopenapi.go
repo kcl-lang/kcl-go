@@ -1,4 +1,4 @@
-package doc
+package gen
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	kcl "kcl-lang.io/kcl-go"
-	"kcl-lang.io/kcl-go/pkg/tools/gen"
 )
 
 // SwaggerV2Spec defines KCL OpenAPI Spec based on Swagger v2.0
@@ -289,7 +288,7 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 		t.Type = Object
 		return &t
 	default:
-		if isLit, basicType, litValue := gen.IsLitType(from); isLit {
+		if isLit, basicType, litValue := IsLitType(from); isLit {
 			t.ReadOnly = true
 			t.Enum = []string{litValue}
 			t.Default = litValue

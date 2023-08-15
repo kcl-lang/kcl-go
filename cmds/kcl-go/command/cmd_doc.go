@@ -5,7 +5,7 @@ package command
 import (
 	"fmt"
 	"github.com/urfave/cli/v2"
-	"kcl-lang.io/kcl-go/pkg/tools/doc"
+	"kcl-lang.io/kcl-go/pkg/tools/gen"
 )
 
 const version = "v0.0.1"
@@ -52,7 +52,7 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 					&cli.StringFlag{
 						Name:  "format",
 						Usage: "The document format to generate. Supported values: markdown, html, openapi",
-						Value: string(doc.Markdown),
+						Value: string(gen.Markdown),
 					},
 					&cli.StringFlag{
 						Name:  "target",
@@ -60,7 +60,7 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 					},
 				},
 				Action: func(context *cli.Context) error {
-					opts := doc.GenOpts{
+					opts := gen.GenOpts{
 						Path:             context.String("file-path"),
 						IgnoreDeprecated: context.Bool("ignore-deprecated"),
 						Format:           context.String("format"),

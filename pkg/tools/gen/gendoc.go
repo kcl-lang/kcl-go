@@ -1,4 +1,4 @@
-package doc
+package gen
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 	"text/template"
 )
 
-//go:embed templates/schema.gotmpl
+//go:embed templates/doc/schemaDoc.gotmpl
 var schemaDocTmpl string
 
 var tmpl *template.Template
