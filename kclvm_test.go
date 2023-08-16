@@ -66,6 +66,51 @@ func TestRunFiles(t *testing.T) {
 	}
 }
 
+func TestIndlu(t *testing.T) {
+	const code = `
+schema App:
+	image: str = "default"
+	name: str = "app"
+
+a1 = App {
+	name = "a1-app"
+}
+a2 = App {
+	image = "a2-image"
+	name = "a2-app"
+}
+`
+	const testdata_main_k = "testdata/main_include_schema_type_path.k"
+	kfile, err := os.Create(testdata_main_k)
+	if err != nil {
+		t.Fatal(err)
+	}
+	kfile.Close()
+
+	result, err := kcl.Run(testdata_main_k,
+		kcl.WithCode(code),
+		kcl.WithIncludeSchemaTypePath(true),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if expect, got := "App", result.First().Get("a1._type"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+	if expect, got := "App", result.First().Get("a2._type"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+	if expect, got := "default", result.First().Get("a1.image"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+	if expect, got := "a2-image", result.First().Get("a2.image"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+
+	os.Remove(testdata_main_k)
+	defer os.Remove(testdata_main_k)
+}
+
 func TestWithOverrides(t *testing.T) {
 	const code = `
 schema App:
@@ -245,7 +290,7 @@ func TestGetSchemaType(t *testing.T) {
 				"name": {
 					Type:       "str",
 					Line:       1,
-					Default:    "",
+					Default:    "\"kcl\"",
 					Properties: map[string]*gpyrpc.KclType{},
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
@@ -255,7 +300,7 @@ func TestGetSchemaType(t *testing.T) {
 				"age": {
 					Type:       "int",
 					Line:       2,
-					Default:    "",
+					Default:    "1",
 					Properties: map[string]*gpyrpc.KclType{},
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
@@ -318,7 +363,7 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 				"name": {
 					Type:       "str",
 					Line:       1,
-					Default:    "",
+					Default:    "\"kcl\"",
 					Properties: map[string]*gpyrpc.KclType{},
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},
@@ -328,7 +373,7 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 				"age": {
 					Type:       "int",
 					Line:       2,
-					Default:    "",
+					Default:    "1",
 					Properties: map[string]*gpyrpc.KclType{},
 					Required:   []string{},
 					UnionTypes: []*gpyrpc.KclType{},

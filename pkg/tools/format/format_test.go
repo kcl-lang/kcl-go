@@ -24,8 +24,12 @@ func TestFormatCode(t *testing.T) {
 			expect: "a = a + 1\n",
 		},
 		{
-			source:    "a=a+",
-			expectErr: "error[E1001]: InvalidSyntax\nexpected one of [\"identifier\", \"literal\", \"(\", \"[\", \"{\"] got newline\n\n",
+			source: "a=a+",
+			expect: "a = a + \n",
+		},
+		{
+			source: "a={a = 1,b=2}",
+			expect: "a = {a = 1, b = 2}\n",
 		},
 	}
 

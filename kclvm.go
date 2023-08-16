@@ -100,6 +100,11 @@ func WithWorkDir(workDir string) Option { return kcl.WithWorkDir(workDir) }
 // WithDisableNone returns a Option which hold a disable none switch.
 func WithDisableNone(disableNone bool) Option { return kcl.WithDisableNone(disableNone) }
 
+// WithIncludeSchemaTypePath returns a Option which hold a include schema type path switch.
+func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option {
+	return kcl.WithIncludeSchemaTypePath(includeSchemaTypePath)
+}
+
 // WithPrintOverridesAST returns a Option which hold a printOverridesAST switch.
 func WithPrintOverridesAST(printOverridesAST bool) Option {
 	return kcl.WithPrintOverridesAST(printOverridesAST)

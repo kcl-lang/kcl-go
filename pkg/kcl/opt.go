@@ -173,6 +173,13 @@ func WithDisableNone(disableNone bool) Option {
 	return *opt
 }
 
+// WithIncludeSchemaTypePath returns a Option which hold a include schema type path switch.
+func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option {
+	var opt = NewOption()
+	opt.IncludeSchemaTypePath = includeSchemaTypePath
+	return *opt
+}
+
 // kcl -k --sort_keys
 func WithSortKeys(sortKeys bool) Option {
 	var opt = NewOption()
@@ -233,6 +240,9 @@ func (p *Option) Merge(opts ...Option) *Option {
 
 		if opt.SortKeys {
 			p.SortKeys = opt.SortKeys
+		}
+		if opt.IncludeSchemaTypePath {
+			p.IncludeSchemaTypePath = opt.IncludeSchemaTypePath
 		}
 		if opt.ExternalPkgs != nil {
 			p.ExternalPkgs = append(p.ExternalPkgs, opt.ExternalPkgs...)
