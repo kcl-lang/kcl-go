@@ -42,7 +42,7 @@ See also: kusion_models/core/v1/metadata.k.
 
 **litBool** *required* *readOnly*
 
-`true`
+`True`
 
 **litFloat** *required* *readOnly*
 
@@ -78,7 +78,7 @@ See also: kusion_models/core/v1/metadata.k.
 
 **union** *required*
 
-`"abc" | 123 | true | 1.11 | Container`
+`"abc" | 123 | True | 1.11 | Container`
 
 **union2** *required*
 

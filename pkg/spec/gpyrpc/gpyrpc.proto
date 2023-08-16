@@ -1,7 +1,6 @@
 // Copyright 2023 The KCL Authors. All rights reserved.
 //
-// This file defines the request parameters and return structure of the KCLVM RPC server.
-// We can use the following command to start a KCLVM RPC server.
+// This file defines the request parameters and return structure of the KCL RPC server.
 
 syntax = "proto3";
 
@@ -23,7 +22,7 @@ message CmdExternalPkgSpec {
 // kcl main.k -D name=value
 message CmdArgSpec {
 	string name = 1;
-	string value = 2; // TODO: any?
+	string value = 2;
 }
 
 // kcl main.k -O pkgpath:path.to.field=field_value
@@ -149,6 +148,9 @@ message ExecProgram_Args {
 
 	// -E --external : external packages path
 	repeated CmdExternalPkgSpec external_pkgs = 13;
+
+	// Whether including schema type in JSON/YAML result
+	bool include_schema_type_path = 14;
 }
 
 message ExecProgram_Result {
@@ -274,6 +276,7 @@ message CliConfig {
 	int64 verbose = 7;
 	bool debug = 8;
 	bool sort_keys = 9;
+	bool include_schema_type_path = 10;
 }
 
 message KeyValuePair {
@@ -286,7 +289,7 @@ message KeyValuePair {
 // ----------------------------------------------------------------------------
 
 message KclType {
-	string type = 1;                     // schema, dict, list, str, int, float, bool, null, type_string
+	string type = 1;                     // schema, dict, list, str, int, float, bool, any, union, number_multiplier
 	repeated KclType union_types = 2 ;   // union types
 	string default = 3;                  // default value
 
