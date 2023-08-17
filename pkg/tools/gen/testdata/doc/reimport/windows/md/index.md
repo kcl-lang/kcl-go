@@ -2,7 +2,7 @@
 
 ### Index
 
-- [A](a.md)
+- [A](A.md)
 
-- [B](a.md)
+- [B](B.md)
 
