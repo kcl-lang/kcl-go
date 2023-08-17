@@ -80,6 +80,8 @@ func IsLitType(typ *pb.KclType) (ok bool, basicTyp, litValue string) {
 		return true, "float", typ.Type[i:j]
 	case strings.HasPrefix(typ.Type, "str("):
 		return true, "str", strconv.Quote(typ.Type[i:j])
+	case strings.HasPrefix(typ.Type, "number_multiplier("):
+		return true, typNumberMultiplier, typ.Type[i:j]
 	}
 	return
 }

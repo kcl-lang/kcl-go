@@ -25,36 +25,37 @@ type SpecInfo struct {
 
 // KclOpenAPIType defines the KCL representation of SchemaObject field in Swagger v2.0.
 // And the mapping between kcl type and the Kcl OpenAPI type is:
-//
-// ## Basic Types
-//
-// | KCL Type   |  KCL OpenAPI Type (format) |
-//
-// | ---------- | -------------------------- |
-//
-// |    str     |        string              |
-//
-// |    int     |       integer(int64)       |
-//
-// |   float    |       number(float)        |
-//
-// |   bool     |       bool                 |
-//
-// ## Composite Types
-//
-// |  KCL Types    |     KCL OpenAPI Types         |
-//
-// |  ----------   |   --------------------------  |
-//
-// |     list      |  type:array, items: itemType  |
-//
-// |     dict      | type: object, additionalProperties: valueType, x-kcl-dict-key-type: keyType |
-//
-// |     union     | type: object, x-kcl-union-types: unionTypes                   |
-//
-// |    schema     | type: object, properties: propertyTypes, required, x-kcl-type |
-//
-// | nested schema | type: object, ref: jsonRefPath |
+/*
+
+## basic types
+	┌───────────────────────┬──────────────────────────────────────┐
+	│      KCL Types        │      KCL OpenAPI Types (format)      │
+	├───────────────────────┼──────────────────────────────────────┤
+	│       str             │         string                       │
+	├───────────────────────┼──────────────────────────────────────┤
+	│       int             │        integer(int64)                │
+	├───────────────────────┼──────────────────────────────────────┤
+	│      float            │         number(float)                │
+	├───────────────────────┼──────────────────────────────────────┤
+	│       bool            │             bool                     │
+	├───────────────────────┼──────────────────────────────────────┤
+	│   number_multiplier   │    string(units.NumberMultiplier)    │
+	└───────────────────────┴──────────────────────────────────────┘
+## Composite Types
+	┌───────────────────────┬───────────────────────────────────────────────────────────────────────────────┐
+	│      KCL Types        │      KCL OpenAPI Types (format)                                               │
+	├───────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+	│       list            │   type:array, items: itemType                                                 │
+	├───────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+	│       dict            │   type: object, additionalProperties: valueType, x-kcl-dict-key-type: keyType │
+	├───────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+	│      union            │   type: object, x-kcl-union-types: unionTypes                                 │
+	├───────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+	│      schema           │   type: object, properties: propertyTypes, required, x-kcl-type               │
+	├───────────────────────┼───────────────────────────────────────────────────────────────────────────────┤
+	│    nested schema      │   type: object, ref: jsonRefPath                                              │
+	└───────────────────────┴───────────────────────────────────────────────────────────────────────────────┘
+*/
 type KclOpenAPIType struct {
 	Type                 SwaggerTypeName            // object, string, array, integer, number, bool
 	Format               TypeFormat                 // type format
@@ -90,8 +91,9 @@ const oaiV2Ref = "#/definitions/"
 type TypeFormat string
 
 const (
-	Int64 TypeFormat = "int64"
-	Float TypeFormat = "float"
+	Int64            TypeFormat = "int64"
+	Float            TypeFormat = "float"
+	NumberMultiplier TypeFormat = "units.NumberMultiplier"
 )
 
 // KclExtensions defines all the KCL specific extensions patched to OpenAPI
@@ -139,6 +141,12 @@ func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool) string {
 				return tpe.Default
 			}
 			return typInt
+		}
+		if tpe.Format == NumberMultiplier {
+			if tpe.ReadOnly {
+				return tpe.Default
+			}
+			return string(NumberMultiplier)
 		}
 		panic(fmt.Errorf("unexpected KCL OpenAPI type and format: %s(%s)", tpe.Type, tpe.Format))
 	case Number:
@@ -219,6 +227,13 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 	case typStr:
 		t.Type = String
 		return &t
+	case typAny:
+		t.Type = Object
+		return &t
+	case typNumberMultiplier:
+		t.Type = Integer
+		t.Format = NumberMultiplier
+		return &t
 	case typList:
 		t.Type = Array
 		t.Items = GetKclOpenAPIType(from.Item, defs, true)
@@ -237,7 +252,6 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 			t.Ref = refPath(id)
 			return &t
 		}
-
 		// resolve type and add to definitions
 		defs[id] = &t
 		t.Type = Object
@@ -259,7 +273,6 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 		// todo newT.Example = from.Examples
 		// todo newT.KclExtensions.XKclDecorators = from.Decorators
 		// todo externalDocs(see also)
-
 		if nested {
 			return &KclOpenAPIType{
 				Description: from.Description,
@@ -277,9 +290,6 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 		t.KclExtensions = &KclExtensions{
 			XKclUnionTypes: tps,
 		}
-		return &t
-	case typAny:
-		t.Type = Object
 		return &t
 	default:
 		if isLit, basicType, litValue := IsLitType(from); isLit {
@@ -301,6 +311,9 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 			case typStr:
 				t.Type = String
 				return &t
+			case typNumberMultiplier:
+				t.Type = Integer
+				t.Format = NumberMultiplier
 			default:
 				panic(fmt.Errorf("unexpected lit type: %s", from.Type))
 			}

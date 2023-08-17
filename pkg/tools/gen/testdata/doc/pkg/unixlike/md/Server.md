@@ -68,6 +68,10 @@ A Server-level attribute.
 The name of the long-running service.
 See also: kusion_models/core/v1/metadata.k.
 
+**numMultiplier** *required*
+
+`units.NumberMultiplier`
+
 **others** *required*
 
 `any`
@@ -78,7 +82,7 @@ See also: kusion_models/core/v1/metadata.k.
 
 **union** *required*
 
-`"abc" | 123 | True | 1.11 | Container`
+`"abc" | 123 | True | 1.11 | Container | units.NumberMultiplier | 1M`
 
 **union2** *required*
 
