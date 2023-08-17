@@ -82,7 +82,7 @@ name of the person
 	}
 
 	for _, tcase := range tcases {
-		content, err := context.renderContent(tcase.source)
+		content, err := context.renderSchemaDocContent(tcase.source)
 		if err != nil {
 			t.Errorf("render failed, err: %s", err)
 		}

@@ -191,7 +191,11 @@ func (tpe *KclOpenAPIType) isAnyType() bool {
 }
 
 func (tpe *KclOpenAPIType) GetSchemaPkgDir(base string) string {
-	return filepath.Join(append([]string{base}, strings.Split(tpe.KclExtensions.XKclModelType.Import.Package, ".")...)...)
+	return GetPkgDir(base, tpe.KclExtensions.XKclModelType.Import.Package)
+}
+
+func GetPkgDir(base string, pkgName string) string {
+	return filepath.Join(append([]string{base}, strings.Split(pkgName, ".")...)...)
 }
 
 // GetKclOpenAPIType converts the kcl.KclType(the representation of Type in KCL API) to KclOpenAPIType(the representation of Type in KCL Open API)
