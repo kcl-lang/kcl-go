@@ -6,9 +6,9 @@
 
 **metadata** *required*
 
-`any`
+`str`
 
 
 ## Source Files
 
-- [k8s.deployment.Deployment](k8s/deployment/deployment.k)
+- [k8s.Deployment](k8s/deployment.k)

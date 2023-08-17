@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 )
@@ -15,12 +16,19 @@ import (
 //go:embed templates/doc/schemaDoc.gotmpl
 var schemaDocTmpl string
 
+//go:embed templates/doc/packageDoc.gotmpl
+var packageDocTmpl string
+
 var tmpl *template.Template
 
 func init() {
 	var err error
-	// todo: change to nested template files
-	tmpl, err = template.New("doc.md").Funcs(funcMap()).Parse(schemaDocTmpl)
+	tmpl = template.New("").Funcs(funcMap())
+	_, err = tmpl.Parse(schemaDocTmpl)
+	if err != nil {
+		panic(err)
+	}
+	_, err = tmpl.Parse(packageDocTmpl)
 	if err != nil {
 		panic(err)
 	}
@@ -57,12 +65,40 @@ const (
 	Markdown Format = "md"
 )
 
+// KclPackage contains package information of package metadata(such as name, version, description, ...) and exported models(such as schemas)
+type KclPackage struct {
+	Name    string
+	Version string `toml:"version,omitempty"` // kcl package version
+	Schemas []*KclOpenAPIType
+}
+
 func (g *GenContext) render(spec *SwaggerV2Spec) error {
 	// make directory
 	err := os.MkdirAll(g.Target, 0755)
 	if err != nil {
 		return fmt.Errorf("failed to create docs/ directory under the target directory: %s", err)
 	}
+
+	// collect all the packages and schema list that they contain
+	pkgs := make(map[string]*KclPackage)
+
+	for _, schema := range spec.Definitions {
+		pkgName := schema.KclExtensions.XKclModelType.Import.Package
+		if _, ok := pkgs[pkgName]; ok {
+			pkgs[pkgName].Schemas = append(pkgs[pkgName].Schemas, schema)
+		} else {
+			pkgs[pkgName] = &KclPackage{
+				Name: pkgName,
+			}
+			pkgs[pkgName].Schemas = []*KclOpenAPIType{schema}
+		}
+	}
+
+	err = g.renderPackage(pkgs)
+	if err != nil {
+		return err
+	}
+
 	for _, schema := range spec.Definitions {
 		// create package directory if not exist
 		pkgDir := schema.GetSchemaPkgDir(g.Target)
@@ -73,14 +109,14 @@ func (g *GenContext) render(spec *SwaggerV2Spec) error {
 		// get doc file name
 		fileName := fmt.Sprintf("%s.%s", schema.KclExtensions.XKclModelType.Type, g.Format)
 		// render doc content
-		content, err := g.renderContent(schema)
+		content, err := g.renderSchemaDocContent(schema)
 		if err != nil {
 			return err
 		}
 		// write content to file
 		err = os.WriteFile(filepath.Join(pkgDir, fileName), content, 0644)
 		if err != nil {
-			return fmt.Errorf("failed to write file %s in %s: %v", fileName, g.Target, err)
+			return fmt.Errorf("failed to write file %s in %s: %v", fileName, pkgDir, err)
 		}
 	}
 	return nil
@@ -109,12 +145,45 @@ func funcMap() template.FuncMap {
 			// todo: let users specify the source code base path
 			return filepath.Join(tpe.GetSchemaPkgDir(""), tpe.KclExtensions.XKclModelType.Import.Alias)
 		},
+		"sortSchemas": func(schemas []*KclOpenAPIType) []*KclOpenAPIType {
+			sort.Slice(schemas, func(i, j int) bool {
+				return schemas[i].KclExtensions.XKclModelType.Type < schemas[j].KclExtensions.XKclModelType.Type
+			})
+			return schemas
+		},
 	}
 }
 
-func (g *GenContext) renderContent(schema *KclOpenAPIType) ([]byte, error) {
+func (g *GenContext) renderPackage(pkgs map[string]*KclPackage) error {
+	for name, pkg := range pkgs {
+		// create the package directory
+		pkgDir := GetPkgDir(g.Target, name)
+		err := os.MkdirAll(pkgDir, 0755)
+		if err != nil {
+			return fmt.Errorf("failed to create docs/%s directory under the target directory: %s", pkgDir, err)
+		}
+		indexFileName := fmt.Sprintf("%s.%s", "index", g.Format)
+		// render index doc content
+		var contentBuf bytes.Buffer
+		err = tmpl.ExecuteTemplate(&contentBuf, "packageDoc", pkg)
+		if err != nil {
+			return fmt.Errorf("failed to render package %s with template, err: %s", name, err)
+		}
+		if err != nil {
+			return err
+		}
+		// write content to file
+		err = os.WriteFile(filepath.Join(pkgDir, indexFileName), contentBuf.Bytes(), 0644)
+		if err != nil {
+			return fmt.Errorf("failed to write file %s in %s: %v", indexFileName, pkgDir, err)
+		}
+	}
+	return nil
+}
+
+func (g *GenContext) renderSchemaDocContent(schema *KclOpenAPIType) ([]byte, error) {
 	var contentBuf bytes.Buffer
-	err := tmpl.Execute(&contentBuf, schema)
+	err := tmpl.ExecuteTemplate(&contentBuf, "schemaDoc", schema)
 	if err != nil {
 		return nil, fmt.Errorf("failed to render schema type %s.%s with template, err: %s", schema.KclExtensions.XKclModelType.Import.Package, schema.KclExtensions.XKclModelType.Type, err)
 	}

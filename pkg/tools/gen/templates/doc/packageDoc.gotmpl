@@ -1,0 +1,10 @@
+{{- define "packageDoc" -}}
+## Package {{if ne .Name ""}}{{.Name}}{{else}}main{{end}}
+
+### Index
+
+{{range $index, $schema := sortSchemas .Schemas}}- [{{$schema.KclExtensions.XKclModelType.Type}}]({{$schema.KclExtensions.XKclModelType.Type}}.md)
+
+{{end -}}
+
+{{- end}}

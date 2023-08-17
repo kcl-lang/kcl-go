@@ -82,7 +82,7 @@ name of the person
 	}
 
 	for _, tcase := range tcases {
-		content, err := context.renderContent(tcase.source)
+		content, err := context.renderSchemaDocContent(tcase.source)
 		if err != nil {
 			t.Errorf("render failed, err: %s", err)
 		}
@@ -129,6 +129,7 @@ func initTestCases(t *testing.T) []*TestCase {
 	testdataDir := filepath.Join("testdata", "doc")
 	sourcePkgs := []string{
 		"pkg",
+		"reimport",
 	}
 	tcases := make([]*TestCase, len(sourcePkgs))
 

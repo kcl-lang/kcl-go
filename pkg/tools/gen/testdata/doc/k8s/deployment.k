@@ -1,2 +1,2 @@
 schema Deployment:
-    metadata: string
+    metadata: str

@@ -1,3 +1,4 @@
+{{- define "schemaDoc" -}}
 ## Schema {{.KclExtensions.XKclModelType.Type}}
 
 {{.Description}}
@@ -17,3 +18,4 @@
 ## Source Files
 
 - [{{fullTypeName . }}]({{sourcePath .}})
+{{end}}

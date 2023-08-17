@@ -1,4 +1,5 @@
 import k8s.deployment
+import units
 
 schema Server:
     """
@@ -41,8 +42,9 @@ schema Server:
     litBool: True
     litInt: 123
     litFloat: 1.11
-    union: "abc" | 123 | True | 1.11 | Container
+    union: "abc" | 123 | True | 1.11 | Container | units.NumberMultiplier | 1M
     union2: "abc" | "def" = "abc"
     dictAny: {str:}
     listAny: []
     backendWorkload: deployment.Deployment
+    numMultiplier: units.NumberMultiplier = 1M
