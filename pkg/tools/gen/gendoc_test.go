@@ -129,6 +129,7 @@ func initTestCases(t *testing.T) []*TestCase {
 	testdataDir := filepath.Join("testdata", "doc")
 	sourcePkgs := []string{
 		"pkg",
+		"reimport",
 	}
 	tcases := make([]*TestCase, len(sourcePkgs))
 

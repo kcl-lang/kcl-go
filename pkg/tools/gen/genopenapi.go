@@ -84,6 +84,8 @@ const (
 	Bool    SwaggerTypeName = "bool"
 )
 
+const oaiV2Ref = "#/definitions/"
+
 // TypeFormat defines possible values of "format" field in Swagger v2.0 spec
 type TypeFormat string
 
@@ -122,7 +124,8 @@ type XKclDecorators struct {
 // GetKclTypeName get the string representation of a KclOpenAPIType
 func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool) string {
 	if tpe.Ref != "" {
-		return tpe.Ref[strings.LastIndex(tpe.Ref, ".")+1:]
+		schemaId := strings.TrimPrefix(tpe.Ref, oaiV2Ref)
+		return schemaId[strings.LastIndex(schemaId, ".")+1:]
 	}
 	switch tpe.Type {
 	case String:
@@ -239,10 +242,7 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 			t.Properties[name] = GetKclOpenAPIType(fromProp, defs, true)
 		}
 		t.Required = from.Required
-		packageName := from.PkgPath
-		if from.PkgPath == "__main__" {
-			packageName = ""
-		}
+		packageName := PackageName(from)
 		t.KclExtensions = &KclExtensions{
 			XKclModelType: &XKclModelType{
 				Import: &KclModelImportInfo{
@@ -307,9 +307,30 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 	return &t
 }
 
-func SchemaId(t *kcl.KclType) string {
-	return fmt.Sprintf("%s.%s", t.PkgPath, t.SchemaName)
+// PackageName resolves the package name from the PkgPath and the PkgRoot of the type
+func PackageName(t *kcl.KclType) string {
+	// todo: after supporting pkgRoot, refactor the implementation
+	packageName := t.PkgPath
+	if t.PkgPath == "__main__" {
+		packageName = ""
+	}
+	pkgs := strings.Split(t.PkgPath, ".")
+	last := pkgs[len(pkgs)-1]
+	if filepath.Base(filepath.Dir(t.Filename)) == last {
+		return packageName
+	} else {
+		return strings.Join(pkgs[:len(pkgs)-1], ".")
+	}
 }
+
+func SchemaId(t *kcl.KclType) string {
+	pkgName := PackageName(t)
+	if pkgName == "" {
+		return t.SchemaName
+	}
+	return fmt.Sprintf("%s.%s", pkgName, t.SchemaName)
+}
+
 func refPath(id string) string {
-	return fmt.Sprintf("#/definitions/%s", id)
+	return fmt.Sprintf("%s%s", oaiV2Ref, id)
 }
