@@ -202,6 +202,9 @@ func CompareDir(a string, b string) error {
 				)
 			}
 		}
+		if len(linesA) < len(linesB) {
+			return fmt.Errorf("file content different, contains more lines in file %s:%v - %v:\n%s", aPath, len(linesA), len(linesB), strings.Join(linesB[len(linesA):], "\n"))
+		}
 	}
 	return nil
 }
