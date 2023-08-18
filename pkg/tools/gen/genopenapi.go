@@ -279,6 +279,7 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 				Ref:         refPath(id),
 			}
 		} else {
+			t.Description = from.SchemaDoc
 			return &t
 		}
 	case typUnion:
