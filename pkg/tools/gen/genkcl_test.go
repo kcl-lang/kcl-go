@@ -152,6 +152,20 @@ func TestGenKclFromJson(t *testing.T) {
 	}
 }
 
+func TestGenKclFromTerraform(t *testing.T) {
+	input := filepath.Join("testdata", "terraform", "schema.json")
+	expectFilepath := filepath.Join("testdata", "terraform", "expect.k")
+	expect := readFileString(t, expectFilepath)
+
+	var buf bytes.Buffer
+	err := GenKcl(&buf, input, nil, &GenKclOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	result := buf.Bytes()
+	assert2.Equal(t, expect, string(bytes.ReplaceAll(result, []byte("\r\n"), []byte("\n"))))
+}
+
 func readFileString(t testing.TB, p string) (content string) {
 	data, err := os.ReadFile(p)
 	if err != nil {

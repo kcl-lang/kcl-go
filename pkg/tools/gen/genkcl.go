@@ -23,6 +23,7 @@ const (
 	ModeAuto Mode = iota
 	ModeGoStruct
 	ModeJsonSchema
+	ModeTerraformSchema
 )
 
 type kclGenerator struct {
@@ -48,8 +49,6 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		switch {
 		case strings.HasSuffix(filename, ".go"):
 			k.opts.Mode = ModeGoStruct
-		case strings.HasSuffix(filename, ".json"):
-			k.opts.Mode = ModeJsonSchema
 		default:
 			code, err := readSource(filename, src)
 			if err != nil {
@@ -61,6 +60,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 				k.opts.Mode = ModeGoStruct
 			case strings.Contains(codeStr, "$schema"):
 				k.opts.Mode = ModeJsonSchema
+			case strings.Contains(codeStr, "\"provider_schemas\""):
+				k.opts.Mode = ModeTerraformSchema
 			default:
 				return errors.New("failed to detect mode")
 			}
@@ -72,6 +73,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		return k.genSchemaFromGoStruct(w, filename, src)
 	case ModeJsonSchema:
 		return k.genSchemaFromJsonSchema(w, filename, src)
+	case ModeTerraformSchema:
+		return k.genSchemaFromTerraformSchema(w, filename, src)
 	default:
 		return errors.New("unknown mode")
 	}
