@@ -8,6 +8,10 @@
 
 `str`
 
+**podSpec** *required*
+
+`PodSpec`
+
 
 ## Source Files
 

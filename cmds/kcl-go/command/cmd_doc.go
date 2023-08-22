@@ -42,7 +42,7 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 						Name: "file-path",
 						Usage: `Relative or absolute path to the KCL package root when running kcl-doc command from
 	outside of the KCL package root directory.
-	If not specified, docs of all the KCL models under the work directory will be generated.`,
+	If not specified, the current work directory will be used as the KCL package root.`,
 					},
 					&cli.BoolFlag{
 						Name:  "ignore-deprecated",

@@ -1,0 +1,2 @@
+schema Deployment:
+    metadata: str
