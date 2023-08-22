@@ -1,0 +1,93 @@
+{
+    "format_version": "0.2",
+    "provider_schemas": {
+        "registry.terraform.io/aliyun/alicloud": {
+            "provider": {
+                "version": 0,
+                "block": {
+                    "attributes": {},
+                    "block_types": {},
+                    "description_kind": "plain"
+                }
+            },
+            "resource_schemas": {
+                "alicloud_db_instance": {
+                    "version": 0,
+                    "block": {
+                        "attributes": {
+                            "db_instance_type": {
+                                "type": "string",
+                                "description_kind": "plain",
+                                "computed": true
+                            },
+                            "engine": {
+                                "type": "string",
+                                "description_kind": "plain",
+                                "required": true
+                            },
+                            "security_group_ids": {
+                                "type": [
+                                    "set",
+                                    "string"
+                                ],
+                                "description_kind": "plain",
+                                "optional": true,
+                                "computed": true
+                            },
+                            "security_ips": {
+                                "type": [
+                                    "set",
+                                    "string"
+                                ],
+                                "description_kind": "plain",
+                                "optional": true,
+                                "computed": true
+                            },
+                            "tags": {
+                                "type": [
+                                    "map",
+                                    "string"
+                                ],
+                                "description_kind": "plain",
+                                "optional": true
+                            }
+                        },
+                        "block_types": {},
+                        "description_kind": "plain"
+                    }
+                },
+                "alicloud_config_rule": {
+                    "version": 0,
+                    "block": {
+                        "attributes": {
+                            "compliance": {
+                                "type": [
+                                    "list",
+                                    [
+                                        "object",
+                                        {
+                                            "compliance_type": "string",
+                                            "count": "number"
+                                        }
+                                    ]
+                                ],
+                                "description_kind": "plain",
+                                "computed": true
+                            },
+                            "resource_types_scope": {
+                                "type": [
+                                    "list",
+                                    "string"
+                                ],
+                                "description_kind": "plain",
+                                "optional": true,
+                                "computed": true
+                            }
+                        }
+                    }
+                }
+            },
+            "data_source_schemas": {}
+        }
+    }
+}

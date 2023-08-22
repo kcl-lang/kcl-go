@@ -305,7 +305,7 @@ func jsonTypeToKclType(t string) typeInterface {
 	switch t {
 	case "string":
 		return typePrimitive(typStr)
-	case "boolean":
+	case "boolean", "bool":
 		return typePrimitive(typBool)
 	case "integer":
 		return typePrimitive(typInt)
