@@ -4,7 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
-	kcl "kcl-lang.io/kcl-go"
+	kpm "kcl-lang.io/kpm/pkg/api"
 	"os"
 	"path"
 	"path/filepath"
@@ -246,14 +246,12 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 
 // GenDoc generate document files from KCL source files
 func (g *GenContext) GenDoc() error {
-	typeMapping, err := kcl.GetSchemaTypeMapping(g.PackagePath, "", "")
+	pkg, err := kpm.GetKclPackage(g.PackagePath)
 	if err != nil {
-		return fmt.Errorf("parse schema type from file failed: %s", err)
+		return fmt.Errorf("filePath is not a KCL package: %s", err)
 	}
-	if len(typeMapping) == 0 {
-		return fmt.Errorf("no schema found")
-	}
-	spec := g.getSwagger2Spec(typeMapping)
+	spec, err := g.getSwagger2Spec(pkg)
+	//todo: deal err
 	err = g.render(spec)
 	if err != nil {
 		return fmt.Errorf("render doc failed: %s", err)
@@ -261,22 +259,27 @@ func (g *GenContext) GenDoc() error {
 	return nil
 }
 
-func (g *GenContext) getSwagger2Spec(typeMapping map[string]*kcl.KclType) *SwaggerV2Spec {
+func (g *GenContext) getSwagger2Spec(pkg *kpm.KclPackage) (*SwaggerV2Spec, error) {
 	spec := &SwaggerV2Spec{
 		Swagger:     "2.0",
 		Definitions: make(map[string]*KclOpenAPIType),
 		Info: SpecInfo{
-			Title: g.PackagePath,
+			Title:   pkg.GetPkgName(),
+			Version: pkg.GetVersion(),
 		},
 	}
-	for name, t := range typeMapping {
-		id := SchemaId(t)
-		if _, ok := spec.Definitions[id]; ok {
-			// skip if resolved
-			continue
-		}
-		spec.Definitions[id] = GetKclOpenAPIType(t, spec.Definitions, false)
-		fmt.Println(fmt.Sprintf("generate docs for schema %s", name))
+	pkgMapping, err := pkg.GetAllSchemaTypeMapping()
+	if err != nil {
+		return spec, err
 	}
-	return spec
+	// package path -> package
+	for packagePath, p := range pkgMapping {
+		// schema name -> schema type
+		for _, t := range p {
+			id := SchemaId(packagePath, t.KclType)
+			spec.Definitions[id] = GetKclOpenAPIType(packagePath, t.KclType, false)
+			fmt.Println(fmt.Sprintf("generate docs for schema %s", id))
+		}
+	}
+	return spec, nil
 }

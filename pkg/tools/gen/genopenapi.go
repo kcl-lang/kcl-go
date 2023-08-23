@@ -2,6 +2,7 @@ package gen
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -207,7 +208,7 @@ func GetPkgDir(base string, pkgName string) string {
 }
 
 // GetKclOpenAPIType converts the kcl.KclType(the representation of Type in KCL API) to KclOpenAPIType(the representation of Type in KCL Open API)
-func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, nested bool) *KclOpenAPIType {
+func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenAPIType {
 	t := KclOpenAPIType{
 		Description: from.Description,
 		Default:     from.Default,
@@ -236,31 +237,31 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 		return &t
 	case typList:
 		t.Type = Array
-		t.Items = GetKclOpenAPIType(from.Item, defs, true)
+		t.Items = GetKclOpenAPIType(pkgPath, from.Item, true)
 		return &t
 	case typDict:
 		t.Type = Object
-		t.AdditionalProperties = GetKclOpenAPIType(from.Item, defs, true)
+		t.AdditionalProperties = GetKclOpenAPIType(pkgPath, from.Item, true)
 		t.KclExtensions = &KclExtensions{
-			XKclDictKeyType: GetKclOpenAPIType(from.Key, defs, true),
+			XKclDictKeyType: GetKclOpenAPIType(pkgPath, from.Key, true),
 		}
 		return &t
 	case typSchema:
-		id := SchemaId(from)
-		if _, ok := defs[id]; ok {
-			// skip converting if schema existed
+		id := SchemaId(pkgPath, from)
+		if nested {
+			// for nested type reference, just return the ref object
 			t.Ref = refPath(id)
 			return &t
 		}
-		// resolve type and add to definitions
-		defs[id] = &t
+		// resolve schema type
 		t.Type = Object
+		t.Description = from.SchemaDoc
 		t.Properties = make(map[string]*KclOpenAPIType, len(from.Properties))
 		for name, fromProp := range from.Properties {
-			t.Properties[name] = GetKclOpenAPIType(fromProp, defs, true)
+			t.Properties[name] = GetKclOpenAPIType(pkgPath, fromProp, true)
 		}
 		t.Required = from.Required
-		packageName := PackageName(from)
+		packageName := PackageName(pkgPath, from)
 		t.KclExtensions = &KclExtensions{
 			XKclModelType: &XKclModelType{
 				Import: &KclModelImportInfo{
@@ -273,20 +274,12 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 		// todo newT.Example = from.Examples
 		// todo newT.KclExtensions.XKclDecorators = from.Decorators
 		// todo externalDocs(see also)
-		if nested {
-			return &KclOpenAPIType{
-				Description: from.Description,
-				Ref:         refPath(id),
-			}
-		} else {
-			t.Description = from.SchemaDoc
-			return &t
-		}
+		return &t
 	case typUnion:
 		t.Type = Object
 		tps := make([]*KclOpenAPIType, len(from.UnionTypes))
 		for i, unionType := range from.UnionTypes {
-			tps[i] = GetKclOpenAPIType(unionType, defs, true)
+			tps[i] = GetKclOpenAPIType(pkgPath, unionType, true)
 		}
 		t.KclExtensions = &KclExtensions{
 			XKclUnionTypes: tps,
@@ -326,23 +319,34 @@ func GetKclOpenAPIType(from *kcl.KclType, defs map[string]*KclOpenAPIType, neste
 }
 
 // PackageName resolves the package name from the PkgPath and the PkgRoot of the type
-func PackageName(t *kcl.KclType) string {
-	// todo: after supporting pkgRoot, refactor the implementation
-	packageName := t.PkgPath
+func PackageName(pkgPath string, t *kcl.KclType) string {
+	// todo after kpm support the correct pkgPath recursively in KclType, refactor the following logic
+	// pkgPath is the relative path to the package root path
+	// t.PkgPath is the "." joined path from the package root
+
+	// use the resolved pkgPath instead of t.PkgPath if t.PkgPath is __main__
 	if t.PkgPath == "__main__" {
-		packageName = ""
+		// should be resolved by pkgPath
+		if pkgPath == "." {
+			return ""
+		} else {
+
+			return strings.Join(strings.Split(pkgPath, string(os.PathSeparator)), ".")
+		}
 	}
+
+	// use resolved t.PkgPath if t.PkgPath is not __main__
 	pkgs := strings.Split(t.PkgPath, ".")
 	last := pkgs[len(pkgs)-1]
 	if filepath.Base(filepath.Dir(t.Filename)) == last {
-		return packageName
+		return t.PkgPath
 	} else {
 		return strings.Join(pkgs[:len(pkgs)-1], ".")
 	}
 }
 
-func SchemaId(t *kcl.KclType) string {
-	pkgName := PackageName(t)
+func SchemaId(pkgPath string, t *kcl.KclType) string {
+	pkgName := PackageName(pkgPath, t)
 	if pkgName == "" {
 		return t.SchemaName
 	}
