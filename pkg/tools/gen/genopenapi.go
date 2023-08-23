@@ -330,7 +330,6 @@ func PackageName(pkgPath string, t *kcl.KclType) string {
 		if pkgPath == "." {
 			return ""
 		} else {
-
 			return strings.Join(strings.Split(pkgPath, string(os.PathSeparator)), ".")
 		}
 	}
