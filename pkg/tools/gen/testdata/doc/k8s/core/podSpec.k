@@ -1,0 +1,2 @@
+schema PodSpec:
+    image: str

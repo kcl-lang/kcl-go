@@ -132,6 +132,7 @@ func initTestCases(t *testing.T) []*TestCase {
 
 	testdataDir := filepath.Join("testdata", "doc")
 	sourcePkgs := []string{
+		"k8s",
 		"pkg",
 		"reimport",
 	}
