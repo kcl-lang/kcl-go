@@ -67,9 +67,13 @@ const (
 
 // KclPackage contains package information of package metadata(such as name, version, description, ...) and exported models(such as schemas)
 type KclPackage struct {
-	Name    string
-	Version string `toml:"version,omitempty"` // kcl package version
-	Schemas []*KclOpenAPIType
+	Name              string `json:"name,omitempty"`        // kcl package name
+	Version           string `json:"version,omitempty"`     // kcl package version
+	Description       string `json:"description,omitempty"` // summary of the kcl package
+	schemaMapping     map[string]*KclOpenAPIType
+	subPackageMapping map[string]*KclPackage
+	SchemaList        []*KclOpenAPIType `json:"schemaList,omitempty"`     // the schema list sorted by name in the KCL package
+	SubPackageList    []*KclPackage     `json:"subPackageList,omitempty"` // the sub package list sorted by name in the KCL package
 }
 
 func (g *GenContext) render(spec *SwaggerV2Spec) error {
@@ -78,48 +82,78 @@ func (g *GenContext) render(spec *SwaggerV2Spec) error {
 	if err != nil {
 		return fmt.Errorf("failed to create docs/ directory under the target directory: %s", err)
 	}
-
-	// collect all the packages and schema list that they contain
-	pkgs := make(map[string]*KclPackage)
-
-	for _, schema := range spec.Definitions {
-		pkgName := schema.KclExtensions.XKclModelType.Import.Package
-		if _, ok := pkgs[pkgName]; ok {
-			pkgs[pkgName].Schemas = append(pkgs[pkgName].Schemas, schema)
-		} else {
-			pkgs[pkgName] = &KclPackage{
-				Name: pkgName,
-			}
-			pkgs[pkgName].Schemas = []*KclOpenAPIType{schema}
-		}
-	}
-
-	err = g.renderPackage(pkgs)
+	// extract kcl package from swaggerV2 spec
+	rootPkg := spec.toKclPackage()
+	// sort schemas and subpackages by their names
+	rootPkg.sortSchemasAndPkgs()
+	// render the package
+	err = g.renderPackage(rootPkg, g.Target)
 	if err != nil {
 		return err
 	}
-
-	for _, schema := range spec.Definitions {
-		// create package directory if not exist
-		pkgDir := schema.GetSchemaPkgDir(g.Target)
-		err := os.MkdirAll(pkgDir, 0755)
-		if err != nil {
-			return fmt.Errorf("failed to create docs/%s directory under the target directory: %s", pkgDir, err)
-		}
-		// get doc file name
-		fileName := fmt.Sprintf("%s.%s", schema.KclExtensions.XKclModelType.Type, g.Format)
-		// render doc content
-		content, err := g.renderSchemaDocContent(schema)
-		if err != nil {
-			return err
-		}
-		// write content to file
-		err = os.WriteFile(filepath.Join(pkgDir, fileName), content, 0644)
-		if err != nil {
-			return fmt.Errorf("failed to write file %s in %s: %v", fileName, pkgDir, err)
-		}
-	}
 	return nil
+}
+
+// toKclPackage extracts a kcl package and sub packages, schemas from a SwaggerV2 spec
+func (spec SwaggerV2Spec) toKclPackage() *KclPackage {
+	rootPkg := &KclPackage{
+		Name:        spec.Info.Title,
+		Version:     spec.Info.Version,
+		Description: spec.Info.Description,
+	}
+
+	for schemaName, schema := range spec.Definitions {
+		pkgName := schema.KclExtensions.XKclModelType.Import.Package
+		if pkgName == "" {
+			addOrCreateSchema(rootPkg, schemaName, schema)
+			continue
+		}
+		parentPkg := rootPkg
+		subs := strings.Split(pkgName, ".")
+		for _, sub := range subs {
+			if parentPkg.subPackageMapping == nil {
+				parentPkg.subPackageMapping = map[string]*KclPackage{}
+			}
+			if _, ok := parentPkg.subPackageMapping[sub]; !ok {
+				parentPkg.subPackageMapping[sub] = &KclPackage{
+					Name: sub,
+				}
+			}
+			parentPkg = parentPkg.subPackageMapping[sub]
+		}
+
+		addOrCreateSchema(parentPkg, schemaName, schema)
+	}
+	return rootPkg
+}
+
+func (pkg *KclPackage) sortSchemasAndPkgs() {
+	pkg.SubPackageList = sortMapToSlice(pkg.subPackageMapping)
+	pkg.SchemaList = sortMapToSlice(pkg.schemaMapping)
+	for _, sub := range pkg.SubPackageList {
+		sub.sortSchemasAndPkgs()
+	}
+}
+
+func sortMapToSlice[T any](mapping map[string]T) []T {
+	keys := make([]string, 0, len(mapping))
+	for k := range mapping {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	sorted := make([]T, 0, len(mapping))
+	for _, k := range keys {
+		sorted = append(sorted, mapping[k])
+	}
+	return sorted
+}
+
+func addOrCreateSchema(pkg *KclPackage, schemaName string, schema *KclOpenAPIType) {
+	if pkg.schemaMapping == nil {
+		pkg.schemaMapping = map[string]*KclOpenAPIType{schemaName: schema}
+	} else {
+		pkg.schemaMapping[schemaName] = schema
+	}
 }
 
 func funcMap() template.FuncMap {
@@ -145,37 +179,68 @@ func funcMap() template.FuncMap {
 			// todo: let users specify the source code base path
 			return filepath.Join(tpe.GetSchemaPkgDir(""), tpe.KclExtensions.XKclModelType.Import.Alias)
 		},
-		"sortSchemas": func(schemas []*KclOpenAPIType) []*KclOpenAPIType {
-			sort.Slice(schemas, func(i, j int) bool {
-				return schemas[i].KclExtensions.XKclModelType.Type < schemas[j].KclExtensions.XKclModelType.Type
-			})
-			return schemas
+		"index": func(pkg *KclPackage) string {
+			return pkg.getIndexContent(0, "  ", "")
 		},
 	}
 }
 
-func (g *GenContext) renderPackage(pkgs map[string]*KclPackage) error {
-	for name, pkg := range pkgs {
-		// create the package directory
-		pkgDir := GetPkgDir(g.Target, name)
+func (pkg *KclPackage) getPackageIndexContent(level int, indentation string, pkgPath string) string {
+	currentPkgPath := filepath.Join(pkgPath, pkg.Name)
+	currentDocPath := filepath.Join(currentPkgPath, "index.md")
+	return fmt.Sprintf(`%s- [%s](%s)
+%s`, strings.Repeat(indentation, level), pkg.Name, currentDocPath, pkg.getIndexContent(level+1, indentation, currentPkgPath))
+}
+
+func (tpe *KclOpenAPIType) getSchemaIndexContent(level int, indentation string, pkgPath string) string {
+	docPath := filepath.Join(pkgPath, "index.md")
+	if level == 0 {
+		docPath = ""
+	}
+	return fmt.Sprintf(`%s- [%s](%s#schema-%s)
+`, strings.Repeat(indentation, level), tpe.KclExtensions.XKclModelType.Type, docPath, tpe.KclExtensions.XKclModelType.Type)
+}
+
+func (pkg *KclPackage) getIndexContent(level int, indentation string, pkgPath string) string {
+	var content string
+	if len(pkg.SchemaList) > 0 {
+		for _, sch := range pkg.SchemaList {
+			content += sch.getSchemaIndexContent(level, indentation, pkgPath)
+		}
+	}
+	if len(pkg.SubPackageList) > 0 {
+		for _, pkg := range pkg.SubPackageList {
+			content += pkg.getPackageIndexContent(level, indentation, pkgPath)
+		}
+	}
+	return content
+}
+
+func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
+	// render the package's index.md page
+	//fmt.Println(fmt.Sprintf("creating %s/index.md", parentDir))
+	indexFileName := fmt.Sprintf("%s.%s", "index", g.Format)
+	var contentBuf bytes.Buffer
+	err := tmpl.ExecuteTemplate(&contentBuf, "packageDoc", pkg)
+	if err != nil {
+		return fmt.Errorf("failed to render package %s with template, err: %s", pkg.Name, err)
+	}
+	// write content to file
+	err = os.WriteFile(filepath.Join(parentDir, indexFileName), contentBuf.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write file %s in %s: %v", indexFileName, parentDir, err)
+	}
+
+	for _, sub := range pkg.SubPackageList {
+		pkgDir := GetPkgDir(parentDir, sub.Name)
+		//fmt.Println(fmt.Sprintf("creating directory: %s", pkgDir))
 		err := os.MkdirAll(pkgDir, 0755)
 		if err != nil {
 			return fmt.Errorf("failed to create docs/%s directory under the target directory: %s", pkgDir, err)
 		}
-		indexFileName := fmt.Sprintf("%s.%s", "index", g.Format)
-		// render index doc content
-		var contentBuf bytes.Buffer
-		err = tmpl.ExecuteTemplate(&contentBuf, "packageDoc", pkg)
-		if err != nil {
-			return fmt.Errorf("failed to render package %s with template, err: %s", name, err)
-		}
+		err = g.renderPackage(sub, pkgDir)
 		if err != nil {
 			return err
-		}
-		// write content to file
-		err = os.WriteFile(filepath.Join(pkgDir, indexFileName), contentBuf.Bytes(), 0644)
-		if err != nil {
-			return fmt.Errorf("failed to write file %s in %s: %v", indexFileName, pkgDir, err)
 		}
 	}
 	return nil
@@ -251,7 +316,6 @@ func (g *GenContext) GenDoc() error {
 		return fmt.Errorf("filePath is not a KCL package: %s", err)
 	}
 	spec, err := g.getSwagger2Spec(pkg)
-	//todo: deal err
 	err = g.render(spec)
 	if err != nil {
 		return fmt.Errorf("render doc failed: %s", err)
