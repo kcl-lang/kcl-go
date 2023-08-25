@@ -1,18 +1,21 @@
 {{- define "schemaDoc" -}}
-### Schema {{.KclExtensions.XKclModelType.Type}}
-{{if ne .Description ""}}
-{{.Description}}
+
+{{- $Data := index . 0 -}}
+{{- $EscapeHtml := index . 1 -}}
+### Schema {{$Data.KclExtensions.XKclModelType.Type}}
+{{if ne $Data.Description ""}}
+{{escapeHtml $Data.Description $EscapeHtml}}
 {{end}}
 #### Attributes
 
-{{range $name, $property := .Properties}}**{{$name}}**{{if containsString $.Required $name }} *required*{{end}}{{if $property.ReadOnly}} *readOnly*{{end}}
+{{range $name, $property := $Data.Properties}}**{{$name}}**{{if containsString $Data.Required $name }} *required*{{end}}{{if $property.ReadOnly}} *readOnly*{{end}}
 
 `{{kclType $property}}`{{if ne $property.Description ""}}
 
-{{$property.Description}}{{end}}
+{{escapeHtml $property.Description $EscapeHtml}}{{end}}
 
-{{end}}{{if ne .Example ""}}#### Examples
+{{end}}{{if ne $Data.Example ""}}#### Examples
 
-{{.Example}}
+{{$Data.Example}}
 {{end -}}
 {{- end -}}

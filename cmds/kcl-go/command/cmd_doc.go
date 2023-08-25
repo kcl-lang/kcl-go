@@ -58,6 +58,10 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 						Name:  "target",
 						Usage: "If not specified, the current work directory will be used. A docs/ folder will be created under the target directory",
 					},
+					&cli.BoolFlag{
+						Name:  "escape-html",
+						Usage: "whether to escape html symbols when the output format is markdown. Always scape when the output format is html. Default to false",
+					},
 				},
 				Action: func(context *cli.Context) error {
 					opts := gen.GenOpts{
@@ -65,6 +69,7 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 						IgnoreDeprecated: context.Bool("ignore-deprecated"),
 						Format:           context.String("format"),
 						Target:           context.String("target"),
+						EscapeHtml:       context.Bool("escape-html"),
 					}
 
 					genContext, err := opts.ValidateComplete()

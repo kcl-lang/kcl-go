@@ -4,13 +4,15 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
-	kpm "kcl-lang.io/kpm/pkg/api"
+	htmlTmpl "html/template"
 	"os"
 	"path"
 	"path/filepath"
 	"sort"
 	"strings"
 	"text/template"
+
+	kpm "kcl-lang.io/kpm/pkg/api"
 )
 
 //go:embed templates/doc/schemaDoc.gotmpl
@@ -44,6 +46,8 @@ type GenContext struct {
 	Target string
 	// IgnoreDeprecated defines whether to generate documentation for deprecated schemas
 	IgnoreDeprecated bool
+	// EscapeHtml defines whether to escape html symbols when the output format is markdown
+	EscapeHtml bool
 }
 
 // GenOpts is the user interface defines the doc generate options
@@ -56,6 +60,8 @@ type GenOpts struct {
 	Target string
 	// IgnoreDeprecated defines whether to generate documentation for deprecated schemas
 	IgnoreDeprecated bool
+	// EscapeHtml defines whether to escape html symbols when the output format is markdown
+	EscapeHtml bool
 }
 
 type Format string
@@ -175,11 +181,21 @@ func funcMap() template.FuncMap {
 			}
 			return tpe.KclExtensions.XKclModelType.Type
 		},
+		"escapeHtml": func(original string, escapeHtml bool) string {
+			// escape html symbols if needed
+			if escapeHtml {
+				return htmlTmpl.HTMLEscapeString(original)
+			}
+			return original
+		},
+		"arr": func(els ...any) []any {
+			return els
+		},
 		"sourcePath": func(tpe KclOpenAPIType) string {
 			// todo: let users specify the source code base path
 			return filepath.Join(tpe.GetSchemaPkgDir(""), tpe.KclExtensions.XKclModelType.Import.Alias)
 		},
-		"index": func(pkg *KclPackage) string {
+		"indexContent": func(pkg *KclPackage) string {
 			return pkg.getIndexContent(0, "  ", "")
 		},
 	}
@@ -221,7 +237,13 @@ func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
 	//fmt.Println(fmt.Sprintf("creating %s/index.md", parentDir))
 	indexFileName := fmt.Sprintf("%s.%s", "index", g.Format)
 	var contentBuf bytes.Buffer
-	err := tmpl.ExecuteTemplate(&contentBuf, "packageDoc", pkg)
+	err := tmpl.ExecuteTemplate(&contentBuf, "packageDoc", struct {
+		EscapeHtml bool
+		Data       *KclPackage
+	}{
+		EscapeHtml: g.EscapeHtml,
+		Data:       pkg,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to render package %s with template, err: %s", pkg.Name, err)
 	}
@@ -244,15 +266,6 @@ func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
 		}
 	}
 	return nil
-}
-
-func (g *GenContext) renderSchemaDocContent(schema *KclOpenAPIType) ([]byte, error) {
-	var contentBuf bytes.Buffer
-	err := tmpl.ExecuteTemplate(&contentBuf, "schemaDoc", schema)
-	if err != nil {
-		return nil, fmt.Errorf("failed to render schema type %s.%s with template, err: %s", schema.KclExtensions.XKclModelType.Import.Package, schema.KclExtensions.XKclModelType.Type, err)
-	}
-	return contentBuf.Bytes(), nil
 }
 
 func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
@@ -306,6 +319,7 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 			return nil, fmt.Errorf("failed to remove existing content in %s:%s", g.Target, err)
 		}
 	}
+	g.EscapeHtml = opts.EscapeHtml
 	return g, nil
 }
 
