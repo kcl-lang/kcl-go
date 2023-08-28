@@ -59,7 +59,7 @@ Server is the common user interface for long-running services adopting the best 
 `{str:str}`
 
 A Server-level attribute.
-The labels of the long-running service.
+The labels of the long-running service. Contains &lt;key&gt;:&lt;value&gt; pairs.
 See also: kusion_models/core/v1/metadata.k.
 
 **listAny** *required*

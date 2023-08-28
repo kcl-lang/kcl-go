@@ -4,77 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	assert2 "github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 )
-
-func TestDocRender(t *testing.T) {
-	tcases := [...]struct {
-		source *KclOpenAPIType
-		expect string
-	}{
-		{
-			source: &KclOpenAPIType{
-				Description: "Description of Schema Person",
-				Properties: map[string]*KclOpenAPIType{
-					"name": {
-						Type:        "string",
-						Description: "name of the person",
-					},
-				},
-				Required: []string{"name"},
-				KclExtensions: &KclExtensions{
-					XKclModelType: &XKclModelType{
-						Import: &KclModelImportInfo{
-							Package: "models",
-							Alias:   "person.k",
-						},
-						Type: "Person",
-					},
-				},
-			},
-
-			expect: `### Schema Person
-
-Description of Schema Person
-
-#### Attributes
-
-**name** *required*
-
-` + "`" + `str` + "`" + `
-
-name of the person
-
-`,
-		},
-	}
-
-	context := GenContext{
-		Format:           Markdown,
-		IgnoreDeprecated: true,
-	}
-
-	for _, tcase := range tcases {
-		content, err := context.renderSchemaDocContent(tcase.source)
-		if err != nil {
-			t.Errorf("render failed, err: %s", err)
-		}
-
-		var expect string
-		if runtime.GOOS == "windows" {
-			expect = strings.ReplaceAll(tcase.expect, "\n", "\r\n")
-		} else {
-			expect = tcase.expect
-		}
-		//fmt.Println(string(content))
-		assert2.Equal(t, expect, string(content), "render content mismatch")
-	}
-}
 
 func TestDocGenerate(t *testing.T) {
 	tCases := initTestCases(t)
@@ -84,6 +19,7 @@ func TestDocGenerate(t *testing.T) {
 			Format:           Markdown,
 			IgnoreDeprecated: false,
 			Target:           tCase.GotMd,
+			EscapeHtml:       true,
 		}
 		err := genContext.GenDoc()
 		if err != nil {

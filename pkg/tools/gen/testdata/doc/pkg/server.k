@@ -18,7 +18,7 @@ schema Server:
         See also: kusion_models/core/v1/metadata.k.
     labels : {str:str}, optional
         A Server-level attribute.
-        The labels of the long-running service.
+        The labels of the long-running service. Contains <key>:<value> pairs.
         See also: kusion_models/core/v1/metadata.k.
 
     Examples
