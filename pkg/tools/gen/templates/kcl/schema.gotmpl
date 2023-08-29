@@ -1,5 +1,3 @@
-{{ template "header" . }}
-{{ range .Schemas -}}
 schema {{ formatName .Name }}:
     """{{- "\n" }}
     {{- template "document" . }}
@@ -15,5 +13,4 @@ schema {{ formatName .Name }}:
 {{ if .Validations }}
     check:
         {{- template "validator" .Validations }}
-{{- end }}
-{{ end -}}
+{{- end -}}

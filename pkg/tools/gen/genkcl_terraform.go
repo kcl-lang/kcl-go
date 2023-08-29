@@ -86,11 +86,11 @@ func (k *kclGenerator) genSchemaFromTerraformSchema(w io.Writer, filename string
 	})
 
 	// generate kcl schema code
-	kclSch := kclSchema{
+	kclSch := kclFile{
 		Imports: []string{},
 		Schemas: result,
 	}
-	return k.genKclSchema(w, kclSch)
+	return k.genKcl(w, kclSch)
 }
 
 func tfTypeToKclType(t interface{}) typeInterface {

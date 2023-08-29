@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
 	"io"
@@ -9,6 +10,8 @@ import (
 )
 
 var (
+	//go:embed templates/kcl/data.gotmpl
+	dataTmpl string
 	//go:embed templates/kcl/document.gotmpl
 	documentTmpl string
 	//go:embed templates/kcl/header.gotmpl
@@ -17,21 +20,43 @@ var (
 	validatorTmpl string
 	//go:embed templates/kcl/schema.gotmpl
 	schemaTmpl string
+	//go:embed templates/kcl/index.gotmpl
+	indexTmpl string
 )
 
 var funcs = template.FuncMap{
 	"formatType":  formatType,
 	"formatValue": formatValue,
 	"formatName":  formatName,
-	"formatDoc":   formatDoc,
+	"indentLines": indentLines,
+	"isKclData": func(v interface{}) bool {
+		_, ok := v.([]data)
+		return ok
+	},
+	"isArray": func(v interface{}) bool {
+		_, ok := v.([]interface{})
+		return ok
+	},
 }
 
-func (k *kclGenerator) genKclSchema(w io.Writer, s kclSchema) error {
+func (k *kclGenerator) genKcl(w io.Writer, s kclFile) error {
 	tmpl := &template.Template{}
+
+	// add "include" function. It works like "template" but can be used in pipeline.
+	funcs["include"] = func(name string, data interface{}) (string, error) {
+		buf := bytes.NewBuffer(nil)
+		if err := tmpl.ExecuteTemplate(buf, name, data); err != nil {
+			return "", err
+		}
+		return buf.String(), nil
+	}
+
+	tmpl = addTemplate(tmpl, "data", dataTmpl)
 	tmpl = addTemplate(tmpl, "document", documentTmpl)
 	tmpl = addTemplate(tmpl, "header", headerTmpl)
 	tmpl = addTemplate(tmpl, "validator", validatorTmpl)
 	tmpl = addTemplate(tmpl, "schema", schemaTmpl)
+	tmpl = addTemplate(tmpl, "index", indexTmpl)
 	return tmpl.Funcs(funcs).Execute(w, s)
 }
 
@@ -106,7 +131,12 @@ func formatName(name string) string {
 	return name
 }
 
-func formatDoc(doc, indent string) string {
-	doc = strings.Replace(doc, "\r\n", "\n", -1)
-	return indent + strings.Replace(doc, "\n", "\n"+indent, -1)
+func indentLines(s, indent string) string {
+	s = strings.Replace(s, "\r\n", "\n", -1)
+	n := strings.Count(s, "\n")
+	if s[len(s)-1] == '\n' {
+		// ignore last empty line
+		n--
+	}
+	return indent + strings.Replace(s, "\n", "\n"+indent, n)
 }

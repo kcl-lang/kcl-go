@@ -1,0 +1,9 @@
+{{ template "header" . }}
+
+{{ range .Schemas -}}
+{{ template "schema" . }}
+{{ end -}}
+
+{{ range .Data -}}
+{{ template "data" . }}
+{{ end -}}
