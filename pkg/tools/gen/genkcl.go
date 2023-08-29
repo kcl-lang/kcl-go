@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -24,6 +25,7 @@ const (
 	ModeGoStruct
 	ModeJsonSchema
 	ModeTerraformSchema
+	ModeJson
 )
 
 type kclGenerator struct {
@@ -46,25 +48,26 @@ func newKclGenerator(opts *GenKclOptions) *kclGenerator {
 
 func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) error {
 	if k.opts.Mode == ModeAuto {
+		code, err := readSource(filename, src)
+		if err != nil {
+			return err
+		}
+		codeStr := string(code)
+		var i interface{}
 		switch {
-		case strings.HasSuffix(filename, ".go"):
+		case strings.Contains(codeStr, "package "):
 			k.opts.Mode = ModeGoStruct
-		default:
-			code, err := readSource(filename, src)
-			if err != nil {
-				return err
-			}
-			codeStr := string(code)
+		case json.Unmarshal(code, &i) == nil:
 			switch {
-			case strings.Contains(codeStr, "package "):
-				k.opts.Mode = ModeGoStruct
 			case strings.Contains(codeStr, "$schema"):
 				k.opts.Mode = ModeJsonSchema
 			case strings.Contains(codeStr, "\"provider_schemas\""):
 				k.opts.Mode = ModeTerraformSchema
 			default:
-				return errors.New("failed to detect mode")
+				k.opts.Mode = ModeJson
 			}
+		default:
+			return errors.New("failed to detect mode")
 		}
 	}
 
@@ -75,6 +78,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		return k.genSchemaFromJsonSchema(w, filename, src)
 	case ModeTerraformSchema:
 		return k.genSchemaFromTerraformSchema(w, filename, src)
+	case ModeJson:
+		return k.genKclFromJsonData(w, filename, src)
 	default:
 		return errors.New("unknown mode")
 	}

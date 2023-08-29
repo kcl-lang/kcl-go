@@ -1,7 +1,7 @@
 {{- if .Description }}
-    {{- formatDoc .Description "    " }}
+    {{- indentLines .Description "    " }}
 {{- else }}
-    {{- formatDoc .Name "    " }}
+    {{- indentLines .Name "    " }}
 {{- end }}
 
 {{- if .Properties }}
@@ -11,7 +11,7 @@
   {{- range .Properties }}
     {{ formatName .Name }} : {{ formatType .Type }}, {{ if .Required }}required{{ else }}optional{{ end }}
     {{- if .HasDefault }}, default is {{ formatValue .DefaultValue }}{{ end }}
-    {{- if .Description }}{{ "\n" }}{{ formatDoc .Description "        " }}{{ end }}
+    {{- if .Description }}{{ "\n" }}{{ indentLines .Description "        " }}{{ end }}
   {{- end -}}
 
 {{- end -}}

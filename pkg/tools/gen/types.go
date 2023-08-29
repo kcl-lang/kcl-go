@@ -121,11 +121,12 @@ func getSortedFieldNames(fields map[string]*pb.KclType) []string {
 	return ss
 }
 
-// kclSchema is the top-level structure for a kcl schema file.
-// It contains all the imports and schemas in this file.
-type kclSchema struct {
+// kclFile is the top-level structure for a kcl file.
+// It contains all the imports, schemas and data in this file.
+type kclFile struct {
 	Imports []string
 	Schemas []schema
+	Data    []data
 }
 
 // schema is a kcl schema definition.
@@ -167,6 +168,12 @@ type validation struct {
 type indexSignature struct {
 	Alias string
 	Type  typeInterface
+}
+
+// data is a kcl data definition.
+type data struct {
+	Key   string
+	Value interface{}
 }
 
 type typeInterface interface {

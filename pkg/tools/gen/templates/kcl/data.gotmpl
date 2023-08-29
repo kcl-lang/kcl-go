@@ -1,0 +1,24 @@
+{{ formatName .Key }}{{ " = " }}
+    {{- if isKclData .Value }}
+        {{- "{\n" }}
+            {{- range .Value -}}
+            {{- indentLines (include "data" .) "    " }}
+            {{- end }}
+        {{- "}" }}
+    {{- else if isArray .Value }}
+        {{- "[\n" }}
+            {{- range .Value -}}
+                {{- if isKclData . }}
+                    {{- "    {\n" }}
+                        {{- range . -}}
+                        {{- indentLines (include "data" .) "        " }}
+                        {{- end }}
+                    {{- "    }\n" }}
+                {{- else }}
+                    {{- indentLines (formatValue .) "    " }}
+                {{- end }}
+            {{- end }}
+        {{- "]" }}
+    {{- else }}
+    {{- formatValue .Value }}
+    {{- end }}

@@ -48,7 +48,7 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 	if !result.IsSchema {
 		panic("result is not schema")
 	}
-	kclSch := kclSchema{
+	kclSch := kclFile{
 		Imports: []string{},
 		Schemas: []schema{result.schema},
 	}
@@ -62,7 +62,7 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 	}
 
 	// generate kcl schema code
-	return k.genKclSchema(w, kclSch)
+	return k.genKcl(w, kclSch)
 }
 
 func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name string) convertResult {
