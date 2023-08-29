@@ -4,16 +4,13 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 apiVersion = "apps/v1"
-
 kind = "Deployment"
-
 metadata = {
     labels = {
         app = "nginx"
     }
     name = "nginx-deployment"
 }
-
 spec = {
     replicas = 3
     selector = {
@@ -42,4 +39,3 @@ spec = {
         }
     }
 }
-
