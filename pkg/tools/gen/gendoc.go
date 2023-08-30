@@ -203,25 +203,25 @@ func funcMap() template.FuncMap {
 
 func (pkg *KclPackage) getPackageIndexContent(level int, indentation string, pkgPath string) string {
 	currentPkgPath := filepath.Join(pkgPath, pkg.Name)
-	currentDocPath := filepath.Join(currentPkgPath, "index.md")
+	currentDocPath := filepath.Join(currentPkgPath, fmt.Sprintf("%s.md", pkg.Name))
 	return fmt.Sprintf(`%s- [%s](%s)
 %s`, strings.Repeat(indentation, level), pkg.Name, currentDocPath, pkg.getIndexContent(level+1, indentation, currentPkgPath))
 }
 
-func (tpe *KclOpenAPIType) getSchemaIndexContent(level int, indentation string, pkgPath string) string {
-	docPath := filepath.Join(pkgPath, "index.md")
+func (tpe *KclOpenAPIType) getSchemaIndexContent(level int, indentation string, pkgPath string, pkgName string) string {
+	docPath := filepath.Join(pkgPath, fmt.Sprintf("%s.md", pkgName))
 	if level == 0 {
 		docPath = ""
 	}
-	return fmt.Sprintf(`%s- [%s](%s#schema-%s)
-`, strings.Repeat(indentation, level), tpe.KclExtensions.XKclModelType.Type, docPath, tpe.KclExtensions.XKclModelType.Type)
+	return fmt.Sprintf(`%s- [%s](%s#%s)
+`, strings.Repeat(indentation, level), tpe.KclExtensions.XKclModelType.Type, docPath, strings.ToLower(tpe.KclExtensions.XKclModelType.Type))
 }
 
 func (pkg *KclPackage) getIndexContent(level int, indentation string, pkgPath string) string {
 	var content string
 	if len(pkg.SchemaList) > 0 {
 		for _, sch := range pkg.SchemaList {
-			content += sch.getSchemaIndexContent(level, indentation, pkgPath)
+			content += sch.getSchemaIndexContent(level, indentation, pkgPath, pkg.Name)
 		}
 	}
 	if len(pkg.SubPackageList) > 0 {
@@ -235,7 +235,11 @@ func (pkg *KclPackage) getIndexContent(level int, indentation string, pkgPath st
 func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
 	// render the package's index.md page
 	//fmt.Println(fmt.Sprintf("creating %s/index.md", parentDir))
-	indexFileName := fmt.Sprintf("%s.%s", "index", g.Format)
+	pkgName := pkg.Name
+	if pkg.Name == "" {
+		pkgName = "main"
+	}
+	indexFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
 	var contentBuf bytes.Buffer
 	err := tmpl.ExecuteTemplate(&contentBuf, "packageDoc", struct {
 		EscapeHtml bool

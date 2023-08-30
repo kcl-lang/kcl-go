@@ -1,18 +1,18 @@
-# Package main
+# main
 
 ## Index
 
-- [Container](#schema-Container)
-- [Server](#schema-Server)
-- [k8s](k8s/index.md)
-  - [Deployment](k8s/index.md#schema-Deployment)
-  - [core](k8s/core/index.md)
-    - [PodSpec](k8s/core/index.md#schema-PodSpec)
+- [Container](#container)
+- [Server](#server)
+- [k8s](k8s\k8s.md)
+  - [Deployment](k8s\k8s.md#deployment)
+  - [core](k8s\core\core.md)
+    - [PodSpec](k8s\core\core.md#podspec)
 
 
 ## Schemas
 
-### Schema Container
+### Container
 
 Container is the common user interface for long-running services.
 
@@ -24,7 +24,7 @@ Container is the common user interface for long-running services.
 
 The name of the long-running container.
 
-### Schema Server
+### Server
 
 Server is the common user interface for long-running services adopting the best practice of Kubernetes.
 
