@@ -2,7 +2,7 @@
 
 {{- $Data := .Data -}}
 {{- $EscapeHtml := .EscapeHtml -}}
-# Package {{if ne $Data.Name ""}}{{$Data.Name}}{{else}}main{{end}}{{/* the package name should not be empty, issue:  https://github.com/kcl-lang/kpm/issues/171 */}}
+# {{if ne $Data.Name ""}}{{$Data.Name}}{{else}}main{{end}}{{/* the package name should not be empty, issue:  https://github.com/kcl-lang/kpm/issues/171 */}}
 {{if ne $Data.Description ""}}
 ## Overview
 

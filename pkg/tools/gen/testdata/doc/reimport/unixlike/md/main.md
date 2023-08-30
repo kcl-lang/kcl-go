@@ -1,16 +1,16 @@
-# Package main
+# main
 
 ## Index
 
-- [A](#schema-A)
-- [B](#schema-B)
-- [k8s](k8s\index.md)
-  - [Deployment](k8s\index.md#schema-Deployment)
+- [A](#a)
+- [B](#b)
+- [k8s](k8s/k8s.md)
+  - [Deployment](k8s/k8s.md#deployment)
 
 
 ## Schemas
 
-### Schema A
+### A
 
 #### Attributes
 
@@ -18,7 +18,7 @@
 
 `Deployment`
 
-### Schema B
+### B
 
 #### Attributes
 

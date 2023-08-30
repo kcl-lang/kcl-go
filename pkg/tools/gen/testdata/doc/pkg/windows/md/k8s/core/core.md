@@ -1,13 +1,13 @@
-# Package core
+# core
 
 ## Index
 
-- [PodSpec](#schema-PodSpec)
+- [PodSpec](#podspec)
 
 
 ## Schemas
 
-### Schema PodSpec
+### PodSpec
 
 #### Attributes
 

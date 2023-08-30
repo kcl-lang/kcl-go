@@ -1,13 +1,13 @@
-# Package apps
+# apps
 
 ## Index
 
-- [Deployment](#schema-Deployment)
+- [Deployment](#deployment)
 
 
 ## Schemas
 
-### Schema Deployment
+### Deployment
 
 #### Attributes
 

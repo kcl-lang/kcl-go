@@ -1,15 +1,15 @@
-# Package k8s
+# k8s
 
 ## Index
 
-- [Deployment](#schema-Deployment)
-- [core](core/index.md)
-  - [PodSpec](core/index.md#schema-PodSpec)
+- [Deployment](#deployment)
+- [core](core\core.md)
+  - [PodSpec](core\core.md#podspec)
 
 
 ## Schemas
 
-### Schema Deployment
+### Deployment
 
 #### Attributes
 

@@ -2,7 +2,7 @@
 
 {{- $Data := index . 0 -}}
 {{- $EscapeHtml := index . 1 -}}
-### Schema {{$Data.KclExtensions.XKclModelType.Type}}
+### {{$Data.KclExtensions.XKclModelType.Type}}
 {{if ne $Data.Description ""}}
 {{escapeHtml $Data.Description $EscapeHtml}}
 {{end}}

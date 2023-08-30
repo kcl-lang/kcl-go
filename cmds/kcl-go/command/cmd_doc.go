@@ -62,6 +62,10 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 						Name:  "escape-html",
 						Usage: "whether to escape html symbols when the output format is markdown. Always scape when the output format is html. Default to false",
 					},
+					&cli.StringFlag{
+						Name:  "template",
+						Usage: "The template directory based on the KCL package root. If not specified, the built-in templates will be used.",
+					},
 				},
 				Action: func(context *cli.Context) error {
 					opts := gen.GenOpts{
@@ -70,6 +74,7 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 						Format:           context.String("format"),
 						Target:           context.String("target"),
 						EscapeHtml:       context.Bool("escape-html"),
+						TemplateDir:      context.String("template"),
 					}
 
 					genContext, err := opts.ValidateComplete()

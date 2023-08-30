@@ -1,17 +1,17 @@
-# Package core
+# k8s
 
 ## Index
 
-- [PodSpec](#schema-PodSpec)
+- [Deployment](#deployment)
 
 
 ## Schemas
 
-### Schema PodSpec
+### Deployment
 
 #### Attributes
 
-**image** *required*
+**metadata** *required*
 
 `str`
 
