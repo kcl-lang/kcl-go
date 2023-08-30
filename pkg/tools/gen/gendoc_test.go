@@ -99,7 +99,11 @@ func CompareDir(a string, b string) error {
 			return fmt.Errorf("open file failed when compare, file path: %s", bPath)
 		}
 		if fA.IsDir() {
-			return CompareDir(aPath, bPath)
+			err := CompareDir(aPath, bPath)
+			if err != nil {
+				return err
+			}
+			continue
 		}
 		linesA, err := readLines(aPath)
 		if err != nil {
