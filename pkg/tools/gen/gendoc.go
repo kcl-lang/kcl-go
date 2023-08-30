@@ -21,20 +21,10 @@ var schemaDocTmpl string
 //go:embed templates/doc/packageDoc.gotmpl
 var packageDocTmpl string
 
-var tmpl *template.Template
-
-func init() {
-	var err error
-	tmpl = template.New("").Funcs(funcMap())
-	_, err = tmpl.Parse(schemaDocTmpl)
-	if err != nil {
-		panic(err)
-	}
-	_, err = tmpl.Parse(packageDocTmpl)
-	if err != nil {
-		panic(err)
-	}
-}
+const (
+	schemaDocTmplFile  = "schemaDoc.gotmpl"
+	packageDocTmplFile = "packageDoc.gotmpl"
+)
 
 // GenContext defines the context during the generation
 type GenContext struct {
@@ -48,6 +38,12 @@ type GenContext struct {
 	IgnoreDeprecated bool
 	// EscapeHtml defines whether to escape html symbols when the output format is markdown
 	EscapeHtml bool
+	// SchemaDocTmpl defines the content of the schemaDoc template
+	SchemaDocTmpl string
+	// PackageDocTmpl defines the content of the packageDoc template
+	PackageDocTmpl string
+	// Template is the doc render template
+	Template *template.Template
 }
 
 // GenOpts is the user interface defines the doc generate options
@@ -62,6 +58,8 @@ type GenOpts struct {
 	IgnoreDeprecated bool
 	// EscapeHtml defines whether to escape html symbols when the output format is markdown
 	EscapeHtml bool
+	// TemplateDir defines the relative path from the package root to the template directory
+	TemplateDir string
 }
 
 type Format string
@@ -254,7 +252,7 @@ func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
 	}
 	indexFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
 	var contentBuf bytes.Buffer
-	err := tmpl.ExecuteTemplate(&contentBuf, "packageDoc", struct {
+	err := g.Template.ExecuteTemplate(&contentBuf, "packageDoc", struct {
 		EscapeHtml bool
 		Data       *KclPackage
 	}{
@@ -310,6 +308,63 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 	}
 	g.PackagePath = absPath
 
+	// --- template directory ---
+	g.SchemaDocTmpl = schemaDocTmpl
+	g.PackageDocTmpl = packageDocTmpl
+	if opts.TemplateDir != "" {
+		tmplAbsPath := filepath.Join(g.PackagePath, opts.TemplateDir)
+		templatesDirInfo, err := os.Stat(tmplAbsPath)
+		if err != nil {
+			return nil, fmt.Errorf("invalid template directory path: %s. error: %s", opts.TemplateDir, err.Error())
+		}
+		if !templatesDirInfo.IsDir() {
+			return nil, fmt.Errorf("template path is not a directory: %s", opts.TemplateDir)
+		}
+		err = filepath.Walk(tmplAbsPath, func(path string, info os.FileInfo, _ error) error {
+			if info.IsDir() {
+				// skip directories
+				return nil
+			}
+			rel, err := filepath.Rel(tmplAbsPath, path)
+			if err != nil {
+				return err
+			}
+			switch rel {
+			case schemaDocTmplFile:
+				// use custom schema Doc Template file
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return err
+				}
+				g.SchemaDocTmpl = string(content)
+				return nil
+			case packageDocTmplFile:
+				// use custom package Doc Template file
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return err
+				}
+				g.PackageDocTmpl = string(content)
+				return nil
+			default:
+				return fmt.Errorf("unexpected template file: %s", path)
+			}
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+	// parse template
+	g.Template = template.New("").Funcs(funcMap())
+	_, err = g.Template.Parse(g.SchemaDocTmpl)
+	if err != nil {
+		return nil, err
+	}
+	_, err = g.Template.Parse(g.PackageDocTmpl)
+	if err != nil {
+		return nil, err
+	}
+
 	// --- target ---
 	if opts.Target == "" {
 		// complete target output directory
@@ -327,6 +382,7 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 		if !file.IsDir() {
 			return nil, fmt.Errorf("invalid target directory(%s) to output the doc files: not a directory", opts.Target)
 		}
+		g.Target = opts.Target
 	}
 	g.Target = path.Join(g.Target, "docs")
 	if _, err := os.Stat(g.Target); err == nil {

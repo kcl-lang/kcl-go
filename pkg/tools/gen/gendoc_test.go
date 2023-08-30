@@ -91,24 +91,34 @@ func TestIndexContent(t *testing.T) {
 func TestDocGenerate(t *testing.T) {
 	tCases := initTestCases(t)
 	for _, tCase := range tCases {
-		genContext := GenContext{
-			PackagePath:      tCase.PackagePath,
-			Format:           Markdown,
-			IgnoreDeprecated: false,
-			Target:           tCase.GotMd,
-			EscapeHtml:       true,
+		// create target directory
+		err := os.MkdirAll(tCase.GotMd, 0755)
+		if err != nil {
+			t.Fatal(err)
 		}
-		err := genContext.GenDoc()
+		genOpts := GenOpts{
+			Path:             tCase.PackagePath,
+			Format:           string(Markdown),
+			Target:           tCase.GotMd,
+			IgnoreDeprecated: false,
+			EscapeHtml:       true,
+			TemplateDir:      tCase.TmplPath,
+		}
+		genContext, err := genOpts.ValidateComplete()
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = genContext.GenDoc()
 		if err != nil {
 			t.Fatalf("generate failed: %s", err)
 		}
 		// check the content of expected and actual
-		err = CompareDir(tCase.ExpectMd, tCase.GotMd)
+		err = CompareDir(tCase.ExpectMd, filepath.Join(tCase.GotMd, "docs"))
 		if err != nil {
 			t.Fatal(err)
 		}
 		// if test failed, keep generate files for checking
-		os.RemoveAll(genContext.Target)
+		os.RemoveAll(tCase.GotMd)
 	}
 }
 
@@ -127,14 +137,15 @@ func initTestCases(t *testing.T) []*TestCase {
 	tcases := make([]*TestCase, len(sourcePkgs))
 
 	for i, p := range sourcePkgs {
-		resultDir := filepath.Join(cwd, testdataDir, p)
+		packageDir := filepath.Join(cwd, testdataDir, p)
+		var resultDir string
 		if runtime.GOOS == "windows" {
-			resultDir = filepath.Join(resultDir, "windows")
+			resultDir = filepath.Join(packageDir, "windows")
 		} else {
-			resultDir = filepath.Join(resultDir, "unixlike")
+			resultDir = filepath.Join(packageDir, "unixlike")
 		}
 		tcases[i] = &TestCase{
-			PackagePath: filepath.Join(testdataDir, p),
+			PackagePath: packageDir,
 			ExpectMd:    filepath.Join(resultDir, "md"),
 			ExpectHtml:  filepath.Join(resultDir, "html"),
 			GotMd:       filepath.Join(resultDir, "md_got"),
@@ -150,6 +161,7 @@ type TestCase struct {
 	ExpectHtml  string
 	GotMd       string
 	GotHtml     string
+	TmplPath    string
 }
 
 func CompareDir(a string, b string) error {
