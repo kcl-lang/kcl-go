@@ -4,12 +4,89 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	assert2 "github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 )
+
+func TestIndexContent(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		return
+	}
+	rootPkg := KclPackage{
+		Name: "test",
+		SubPackageList: []*KclPackage{
+			{
+				Name: "sub1",
+				SubPackageList: []*KclPackage{
+					{
+						Name: "sub2",
+						SchemaList: []*KclOpenAPIType{
+							{
+								KclExtensions: &KclExtensions{
+									XKclModelType: &XKclModelType{
+										Type: "C",
+									},
+								},
+							},
+						},
+					},
+				},
+				SchemaList: []*KclOpenAPIType{
+					{
+						KclExtensions: &KclExtensions{
+							XKclModelType: &XKclModelType{
+								Type: "B",
+							},
+						},
+					},
+				},
+			},
+		},
+		SchemaList: []*KclOpenAPIType{
+			{
+				KclExtensions: &KclExtensions{
+					XKclModelType: &XKclModelType{
+						Type: "A",
+					},
+				},
+			},
+		},
+	}
+	tCases := []struct {
+		root      KclPackage
+		ignoreDir bool
+		expect    string
+	}{
+		{
+			root:      rootPkg,
+			ignoreDir: false,
+			expect: `- [A](#a)
+- [sub1](sub1/sub1.md)
+  - [B](sub1/sub1.md#b)
+  - [sub2](sub1/sub2/sub2.md)
+    - [C](sub1/sub2/sub2.md#c)
+`,
+		},
+		{
+			root:      rootPkg,
+			ignoreDir: true,
+			expect: `- [A](#a)
+- [sub1](sub1.md)
+  - [B](sub1.md#b)
+  - [sub2](sub2.md)
+    - [C](sub2.md#c)
+`,
+		},
+	}
+	for _, tCase := range tCases {
+		got := tCase.root.getIndexContent(0, "  ", "", tCase.ignoreDir)
+		assert2.Equal(t, tCase.expect, got)
+	}
+}
 
 func TestDocGenerate(t *testing.T) {
 	tCases := initTestCases(t)

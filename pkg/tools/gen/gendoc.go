@@ -196,37 +196,52 @@ func funcMap() template.FuncMap {
 			return filepath.Join(tpe.GetSchemaPkgDir(""), tpe.KclExtensions.XKclModelType.Import.Alias)
 		},
 		"indexContent": func(pkg *KclPackage) string {
-			return pkg.getIndexContent(0, "  ", "")
+			return pkg.getIndexContent(0, "  ", "", false)
+		},
+		"indexContentIgnoreDirPath": func(pkg *KclPackage) string {
+			return pkg.getIndexContent(0, "  ", "", true)
 		},
 	}
 }
 
-func (pkg *KclPackage) getPackageIndexContent(level int, indentation string, pkgPath string) string {
+func (pkg *KclPackage) getPackageIndexContent(level int, indentation string, pkgPath string, ignoreDir bool) string {
 	currentPkgPath := filepath.Join(pkgPath, pkg.Name)
-	currentDocPath := filepath.Join(currentPkgPath, fmt.Sprintf("%s.md", pkg.Name))
+	filename := fmt.Sprintf("%s.md", pkg.Name)
+	currentDocPath := filename
+	if !ignoreDir {
+		// get the full directory path
+		currentDocPath = filepath.Join(currentPkgPath, filename)
+	}
 	return fmt.Sprintf(`%s- [%s](%s)
-%s`, strings.Repeat(indentation, level), pkg.Name, currentDocPath, pkg.getIndexContent(level+1, indentation, currentPkgPath))
+%s`, strings.Repeat(indentation, level), pkg.Name, currentDocPath, pkg.getIndexContent(level+1, indentation, currentPkgPath, ignoreDir))
 }
 
-func (tpe *KclOpenAPIType) getSchemaIndexContent(level int, indentation string, pkgPath string, pkgName string) string {
-	docPath := filepath.Join(pkgPath, fmt.Sprintf("%s.md", pkgName))
+func (tpe *KclOpenAPIType) getSchemaIndexContent(level int, indentation string, pkgPath string, pkgName string, ignoreDir bool) string {
+	filename := fmt.Sprintf("%s.md", pkgName)
+	docPath := filename
+	if !ignoreDir {
+		// get the full directory path
+		docPath = filepath.Join(pkgPath, filename)
+	}
 	if level == 0 {
+		// the schema is defined in current package
 		docPath = ""
 	}
+
 	return fmt.Sprintf(`%s- [%s](%s#%s)
 `, strings.Repeat(indentation, level), tpe.KclExtensions.XKclModelType.Type, docPath, strings.ToLower(tpe.KclExtensions.XKclModelType.Type))
 }
 
-func (pkg *KclPackage) getIndexContent(level int, indentation string, pkgPath string) string {
+func (pkg *KclPackage) getIndexContent(level int, indentation string, pkgPath string, ignoreDir bool) string {
 	var content string
 	if len(pkg.SchemaList) > 0 {
 		for _, sch := range pkg.SchemaList {
-			content += sch.getSchemaIndexContent(level, indentation, pkgPath, pkg.Name)
+			content += sch.getSchemaIndexContent(level, indentation, pkgPath, pkg.Name, ignoreDir)
 		}
 	}
 	if len(pkg.SubPackageList) > 0 {
 		for _, pkg := range pkg.SubPackageList {
-			content += pkg.getPackageIndexContent(level, indentation, pkgPath)
+			content += pkg.getPackageIndexContent(level, indentation, pkgPath, ignoreDir)
 		}
 	}
 	return content
