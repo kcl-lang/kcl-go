@@ -75,10 +75,10 @@ func TestIndexContent(t *testing.T) {
 			root:      rootPkg,
 			ignoreDir: true,
 			expect: `- [A](#a)
-- [sub1](sub1.md)
-  - [B](sub1.md#b)
-  - [sub2](sub2.md)
-    - [C](sub2.md#c)
+- [sub1](sub1)
+  - [B](sub1#b)
+  - [sub2](sub2)
+    - [C](sub2#c)
 `,
 		},
 	}

@@ -206,22 +206,20 @@ func funcMap() template.FuncMap {
 
 func (pkg *KclPackage) getPackageIndexContent(level int, indentation string, pkgPath string, ignoreDir bool) string {
 	currentPkgPath := filepath.Join(pkgPath, pkg.Name)
-	filename := fmt.Sprintf("%s.md", pkg.Name)
-	currentDocPath := filename
+	currentDocPath := pkg.Name
 	if !ignoreDir {
 		// get the full directory path
-		currentDocPath = filepath.Join(currentPkgPath, filename)
+		currentDocPath = filepath.Join(currentPkgPath, fmt.Sprintf("%s.md", pkg.Name))
 	}
 	return fmt.Sprintf(`%s- [%s](%s)
 %s`, strings.Repeat(indentation, level), pkg.Name, currentDocPath, pkg.getIndexContent(level+1, indentation, currentPkgPath, ignoreDir))
 }
 
 func (tpe *KclOpenAPIType) getSchemaIndexContent(level int, indentation string, pkgPath string, pkgName string, ignoreDir bool) string {
-	filename := fmt.Sprintf("%s.md", pkgName)
-	docPath := filename
+	docPath := pkgName
 	if !ignoreDir {
 		// get the full directory path
-		docPath = filepath.Join(pkgPath, filename)
+		docPath = filepath.Join(pkgPath, fmt.Sprintf("%s.md", pkgName))
 	}
 	if level == 0 {
 		// the schema is defined in current package
