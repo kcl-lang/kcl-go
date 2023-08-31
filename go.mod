@@ -19,7 +19,8 @@ require (
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/kcl-artifact-go v0.5.6
+	kcl-lang.io/kcl-artifact-go v0.5.7
+	kcl-lang.io/kpm v0.3.4-0.20230822101040-e37b573d0602
 )
 
 require (
@@ -94,7 +95,6 @@ require (
 	golang.org/x/tools v0.7.0 // indirect
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	kcl-lang.io/kpm v0.3.4-0.20230822101040-e37b573d0602 // indirect
 	oras.land/oras-go v1.2.3 // indirect
 	oras.land/oras-go/v2 v2.0.2 // indirect
 )
