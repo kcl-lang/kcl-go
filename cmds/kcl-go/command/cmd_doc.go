@@ -108,7 +108,7 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 		},
 		Action: func(c *cli.Context) error {
 			if c.NArg() == 0 {
-				_ = cli.ShowCommandHelp(c, c.Command.Name)
+				cli.ShowSubcommandHelpAndExit(c, 1)
 				return nil
 			}
 			arg := c.Args().First()
