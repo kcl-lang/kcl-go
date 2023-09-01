@@ -12,7 +12,7 @@ const version = "v0.0.1"
 
 func NewDocCmd() *cli.Command {
 	return &cli.Command{
-		Hidden: true,
+		Hidden: false,
 		Name:   "doc",
 		Usage:  "show documentation for package or symbol",
 		UsageText: `# Generate document for current package
