@@ -12,7 +12,7 @@ const version = "v0.0.1"
 
 func NewDocCmd() *cli.Command {
 	return &cli.Command{
-		Hidden: true,
+		Hidden: false,
 		Name:   "doc",
 		Usage:  "show documentation for package or symbol",
 		UsageText: `# Generate document for current package
@@ -108,7 +108,7 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 		},
 		Action: func(c *cli.Context) error {
 			if c.NArg() == 0 {
-				_ = cli.ShowCommandHelp(c, c.Command.Name)
+				cli.ShowSubcommandHelpAndExit(c, 1)
 				return nil
 			}
 			arg := c.Args().First()
