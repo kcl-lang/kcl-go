@@ -1,9 +1,8 @@
 package gen
 
 import (
-	"encoding/json"
+	"github.com/goccy/go-yaml"
 	"io"
-	"sort"
 )
 
 func (k *kclGenerator) genKclFromJsonData(w io.Writer, filename string, src interface{}) error {
@@ -11,44 +10,17 @@ func (k *kclGenerator) genKclFromJsonData(w io.Writer, filename string, src inte
 	if err != nil {
 		return err
 	}
-	jsonData := &map[string]interface{}{}
-	if err = json.Unmarshal(code, jsonData); err != nil {
+
+	// as yaml can be viewed as a superset of json,
+	// we can handle json data like yaml.
+	yamlData := &yaml.MapSlice{}
+	if err = yaml.UnmarshalWithOptions(code, yamlData, yaml.UseOrderedMap(), yaml.UseJSONUnmarshaler()); err != nil {
 		return err
 	}
 
-	// convert json data to kcl
-	result := convertKclFromJson(jsonData)
+	// convert to kcl
+	result := convertKclFromYaml(yamlData)
 
 	// generate kcl code
 	return k.genKcl(w, kclFile{Data: result})
-}
-
-func convertKclFromJson(jsonData *map[string]interface{}) []data {
-	var result []data
-	for key, value := range *jsonData {
-		switch value := value.(type) {
-		case map[string]interface{}:
-			result = append(result, data{
-				Key:   key,
-				Value: convertKclFromJson(&value),
-			})
-		case []interface{}:
-			var vals []interface{}
-			for _, v := range value {
-				switch v := v.(type) {
-				case map[string]interface{}:
-					vals = append(vals, convertKclFromJson(&v))
-				default:
-					vals = append(vals, v)
-				}
-			}
-			result = append(result, data{Key: key, Value: vals})
-		default:
-			result = append(result, data{Key: key, Value: value})
-		}
-	}
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].Key < result[j].Key
-	})
-	return result
 }

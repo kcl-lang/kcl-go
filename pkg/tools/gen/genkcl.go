@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/goccy/go-yaml"
 	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
@@ -26,6 +27,7 @@ const (
 	ModeJsonSchema
 	ModeTerraformSchema
 	ModeJson
+	ModeYaml
 )
 
 type kclGenerator struct {
@@ -66,6 +68,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 			default:
 				k.opts.Mode = ModeJson
 			}
+		case yaml.Unmarshal(code, &i) == nil:
+			k.opts.Mode = ModeYaml
 		default:
 			return errors.New("failed to detect mode")
 		}
@@ -80,6 +84,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		return k.genSchemaFromTerraformSchema(w, filename, src)
 	case ModeJson:
 		return k.genKclFromJsonData(w, filename, src)
+	case ModeYaml:
+		return k.genKclFromYaml(w, filename, src)
 	default:
 		return errors.New("unknown mode")
 	}
