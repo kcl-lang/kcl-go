@@ -27,7 +27,7 @@ spec = {
         spec = {
             containers = [
                 {
-                    name = "nginx-container"
+                    name = "nginx"
                     image = "nginx:latest"
                     ports = [
                         {
