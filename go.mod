@@ -20,7 +20,7 @@ require (
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/kcl-artifact-go v0.5.7
+	kcl-lang.io/kcl-artifact-go v0.5.8
 	kcl-lang.io/kpm v0.3.4-0.20230822101040-e37b573d0602
 )
 
