@@ -10,7 +10,9 @@ schema {{ formatName .Name }}:
     	{{- if .IndexSignature.Alias }}{{ formatName .IndexSignature.Alias }}:{{ end }}
     	{{- "...str]: " }}{{ formatType .IndexSignature.Type }}
     {{- end }}
-{{ if .Validations }}
+
+{{- if .Validations }}
+
     check:
         {{- template "validator" .Validations }}
-{{- end -}}
+{{- end }}

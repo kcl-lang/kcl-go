@@ -21,3 +21,4 @@ schema Cronjob:
 
     check:
         regex.match(schedule, r"^(\d+|\*)(/\d+)?(\s+(\d+|\*)(/\d+)?){4}$")
+
