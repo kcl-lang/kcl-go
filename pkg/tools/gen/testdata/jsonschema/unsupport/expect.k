@@ -37,3 +37,4 @@ schema Product:
 
     check:
         price >= 0
+

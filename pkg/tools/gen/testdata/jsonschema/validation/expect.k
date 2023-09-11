@@ -25,3 +25,4 @@ schema Book:
         price >= 0
         quantity < 100
         quantity > 0
+

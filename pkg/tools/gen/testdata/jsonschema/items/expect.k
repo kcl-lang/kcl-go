@@ -20,3 +20,4 @@ schema Book:
         len(authors) <= 5
         len(authors) >= 1
         isunique(authors)
+

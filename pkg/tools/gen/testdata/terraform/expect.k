@@ -9,11 +9,11 @@ schema AlicloudConfigRule:
 
     Attributes
     ----------
-    compliance : [any], optional
+    compliance : [ComplianceItem], optional
     resource_types_scope : [str], optional
     """
 
-    compliance?: [any]
+    compliance?: [ComplianceItem]
     resource_types_scope?: [str]
 
 schema AlicloudDbInstance:
@@ -38,3 +38,17 @@ schema AlicloudDbInstance:
     check:
         isunique(security_group_ids)
         isunique(security_ips)
+
+schema ComplianceItem:
+    """
+    ComplianceItem
+
+    Attributes
+    ----------
+    compliance_type : str, optional
+    count : float, optional
+    """
+
+    compliance_type?: str
+    count?: float
+

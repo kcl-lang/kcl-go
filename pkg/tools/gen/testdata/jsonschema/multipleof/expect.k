@@ -18,3 +18,4 @@ schema Book:
 
     check:
         multiplyof(price, 10)
+
