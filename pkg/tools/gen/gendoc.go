@@ -403,6 +403,9 @@ func (g *GenContext) GenDoc() error {
 		return fmt.Errorf("filePath is not a KCL package: %s", err)
 	}
 	spec, err := g.getSwagger2Spec(pkg)
+	if err != nil {
+		return err
+	}
 	err = g.render(spec)
 	if err != nil {
 		return fmt.Errorf("render doc failed: %s", err)
