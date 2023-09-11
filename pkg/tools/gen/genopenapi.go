@@ -68,7 +68,7 @@ type KclOpenAPIType struct {
 	Required             []string                   // list of required schema property names
 	Items                *KclOpenAPIType            // list item type
 	AdditionalProperties *KclOpenAPIType            // dict value type
-	Example              string                     // example
+	Examples             map[string]KclExample      // examples
 	ExternalDocs         string                     // externalDocs
 	KclExtensions        *KclExtensions             // x-kcl- extensions
 	Ref                  string                     // reference to schema path
@@ -96,6 +96,13 @@ const (
 	Float            TypeFormat = "float"
 	NumberMultiplier TypeFormat = "units.NumberMultiplier"
 )
+
+// KclExample defines the example code snippet of the schema
+type KclExample struct {
+	Summary     string `json:"summary,omitempty"`
+	Description string `json:"description,omitempty"`
+	Value       string `json:"value,omitempty"`
+}
 
 // KclExtensions defines all the KCL specific extensions patched to OpenAPI
 type KclExtensions struct {
@@ -271,7 +278,14 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 				Type: from.SchemaName,
 			},
 		}
-		// todo newT.Example = from.Examples
+		t.Examples = make(map[string]KclExample, len(from.GetExamples()))
+		for name, example := range from.GetExamples() {
+			t.Examples[name] = KclExample{
+				Summary:     example.Summary,
+				Description: example.Description,
+				Value:       example.Value,
+			}
+		}
 		// todo newT.KclExtensions.XKclDecorators = from.Decorators
 		// todo externalDocs(see also)
 		return &t

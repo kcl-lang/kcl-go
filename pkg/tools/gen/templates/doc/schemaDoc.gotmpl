@@ -14,8 +14,13 @@
 
 {{escapeHtml $property.Description $EscapeHtml}}{{end}}
 
-{{end}}{{if ne $Data.Example ""}}#### Examples
+{{end}}{{if ne (len $Data.Examples) 0}}#### Examples
 
-{{$Data.Example}}
+{{range $name, $example := $Data.Examples}}{{if $example.Summary}}**$example.Summary**
+{{end}}{{if $example.Description}}$example.Description
+{{end}}{{if $example.Value}}```
+{{$example.Value}}
+```{{end}}
+{{end}}
 {{end -}}
 {{- end -}}
