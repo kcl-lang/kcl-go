@@ -13,7 +13,8 @@ FROM kcllang/kcl
 
 WORKDIR /app
 
-COPY --from=builder /app/kcl-go .
+RUN mkdir /app/bin
+COPY --from=builder /app/kcl-go ./bin/
 
 ENV PATH="/app/bin:${PATH}"
 ENV LANG=en_US.utf8
