@@ -20,8 +20,8 @@ require (
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/kcl-artifact-go v0.5.8
-	kcl-lang.io/kpm v0.3.4-0.20230822101040-e37b573d0602
+	kcl-lang.io/kcl-artifact-go v0.6.0-alpha.1
+	kcl-lang.io/kpm v0.3.5
 )
 
 require (
@@ -31,8 +31,6 @@ require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
 	github.com/acomagu/bufpipe v1.0.4 // indirect
-	github.com/alexflint/go-arg v1.4.3 // indirect
-	github.com/alexflint/go-scalar v1.1.0 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
