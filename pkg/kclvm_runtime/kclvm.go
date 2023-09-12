@@ -23,7 +23,7 @@ const (
 )
 
 func init() {
-	if os.Getenv(DisableArtifactEnvVar) == "" {
+	if os.Getenv(DisableArtifactEnvVar) == "" && os.Getenv(UseKCLPluginEnvVar) == "" {
 		installKclArtifact()
 	}
 	g_KclvmRoot = findKclvmRoot()
