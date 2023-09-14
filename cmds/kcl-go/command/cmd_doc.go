@@ -80,6 +80,7 @@ kcl-go doc generate --file-path <package path> --target <target directory>`,
 					genContext, err := opts.ValidateComplete()
 					if err != nil {
 						fmt.Println(fmt.Errorf("generate failed: %s", err))
+						return err
 					}
 
 					err = genContext.GenDoc()
