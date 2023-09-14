@@ -76,6 +76,7 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
 	p.router.POST("/api:protorpc/KclvmService.OverrideFile", p.handle_OverrideFile)
 	p.router.POST("/api:protorpc/KclvmService.GetSchemaType", p.handle_GetSchemaType)
+	p.router.POST("/api:protorpc/KclvmService.GetSchemaTypeMapping", p.handle_GetSchemaTypeMapping)
 	p.router.POST("/api:protorpc/KclvmService.ValidateCode", p.handle_ValidateCode)
 }
 
@@ -167,6 +168,13 @@ func (p *restServer) handle_GetSchemaType(w http.ResponseWriter, r *http.Request
 	args := new(gpyrpc.GetSchemaType_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.GetSchemaType(args)
+	})
+}
+
+func (p *restServer) handle_GetSchemaTypeMapping(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.GetSchemaTypeMapping_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.GetSchemaTypeMapping(args)
 	})
 }
 
