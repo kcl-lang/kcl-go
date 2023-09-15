@@ -11,8 +11,6 @@ import (
 	"sort"
 	"strings"
 	"text/template"
-
-	kpm "kcl-lang.io/kpm/pkg/api"
 )
 
 //go:embed templates/doc/schemaDoc.gotmpl
@@ -244,12 +242,11 @@ func (pkg *KclPackage) getIndexContent(level int, indentation string, pkgPath st
 }
 
 func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
-	// render the package's index.md page
-	//fmt.Println(fmt.Sprintf("creating %s/index.md", parentDir))
 	pkgName := pkg.Name
 	if pkg.Name == "" {
 		pkgName = "main"
 	}
+	fmt.Println(fmt.Sprintf("generating doc for package %s", pkgName))
 	indexFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
 	var contentBuf bytes.Buffer
 	err := g.Template.ExecuteTemplate(&contentBuf, "packageDoc", struct {
@@ -398,11 +395,7 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 
 // GenDoc generate document files from KCL source files
 func (g *GenContext) GenDoc() error {
-	pkg, err := kpm.GetKclPackage(g.PackagePath)
-	if err != nil {
-		return fmt.Errorf("filePath is not a KCL package: %s", err)
-	}
-	spec, err := g.getSwagger2Spec(pkg)
+	spec, err := KclPackageToSwaggerV2Spec(g.PackagePath)
 	if err != nil {
 		return err
 	}
@@ -411,29 +404,4 @@ func (g *GenContext) GenDoc() error {
 		return fmt.Errorf("render doc failed: %s", err)
 	}
 	return nil
-}
-
-func (g *GenContext) getSwagger2Spec(pkg *kpm.KclPackage) (*SwaggerV2Spec, error) {
-	spec := &SwaggerV2Spec{
-		Swagger:     "2.0",
-		Definitions: make(map[string]*KclOpenAPIType),
-		Info: SpecInfo{
-			Title:   pkg.GetPkgName(),
-			Version: pkg.GetVersion(),
-		},
-	}
-	pkgMapping, err := pkg.GetAllSchemaTypeMapping()
-	if err != nil {
-		return spec, err
-	}
-	// package path -> package
-	for packagePath, p := range pkgMapping {
-		// schema name -> schema type
-		for _, t := range p {
-			id := SchemaId(packagePath, t.KclType)
-			spec.Definitions[id] = GetKclOpenAPIType(packagePath, t.KclType, false)
-			fmt.Println(fmt.Sprintf("generate docs for schema %s", id))
-		}
-	}
-	return spec, nil
 }

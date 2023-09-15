@@ -2,12 +2,55 @@ package gen
 
 import (
 	"fmt"
+	kpm "kcl-lang.io/kpm/pkg/api"
+
 	"os"
 	"path/filepath"
 	"strings"
 
 	kcl "kcl-lang.io/kcl-go"
 )
+
+// ExportSwaggerV2Spec export swagger v2 spec of a kcl package
+func ExportSwaggerV2Spec(pkgPath string) (string, error) {
+	spec, err := KclPackageToSwaggerV2Spec(pkgPath)
+	if err != nil {
+		return "", err
+	}
+	return jsonString(spec), nil
+}
+
+// KclPackageToSwaggerV2Spec extracts the swagger v2 representation of a kcl package
+func KclPackageToSwaggerV2Spec(pkgPath string) (*SwaggerV2Spec, error) {
+	pkg, err := kpm.GetKclPackage(pkgPath)
+	if err != nil {
+		return nil, fmt.Errorf("filePath is not a KCL package: %s", err)
+	}
+
+	spec := &SwaggerV2Spec{
+		Swagger:     "2.0",
+		Definitions: make(map[string]*KclOpenAPIType),
+		Paths:       map[string]interface{}{},
+		Info: SpecInfo{
+			Title:   pkg.GetPkgName(),
+			Version: pkg.GetVersion(),
+		},
+	}
+	pkgMapping, err := pkg.GetAllSchemaTypeMapping()
+	if err != nil {
+		return spec, err
+	}
+	// package path -> package
+	for packagePath, p := range pkgMapping {
+		// schema name -> schema type
+		for _, t := range p {
+			id := SchemaId(packagePath, t.KclType)
+			spec.Definitions[id] = GetKclOpenAPIType(packagePath, t.KclType, false)
+			fmt.Println(fmt.Sprintf("exporting openAPI spec from schema %s", id))
+		}
+	}
+	return spec, nil
+}
 
 // SwaggerV2Spec defines KCL OpenAPI Spec based on Swagger v2.0
 type SwaggerV2Spec struct {
@@ -21,7 +64,7 @@ type SwaggerV2Spec struct {
 type SpecInfo struct {
 	Title       string `json:"title"`
 	Version     string `json:"version"`
-	Description string `json:"description"`
+	Description string `json:"description,omitempty"`
 }
 
 // KclOpenAPIType defines the KCL representation of SchemaObject field in Swagger v2.0.
@@ -58,20 +101,20 @@ type SpecInfo struct {
 	└───────────────────────┴───────────────────────────────────────────────────────────────────────────────┘
 */
 type KclOpenAPIType struct {
-	Type                 SwaggerTypeName            // object, string, array, integer, number, bool
-	Format               TypeFormat                 // type format
-	Default              string                     // default value
-	Enum                 []string                   // enum values
-	ReadOnly             bool                       // readonly
-	Description          string                     // description
-	Properties           map[string]*KclOpenAPIType // schema properties
-	Required             []string                   // list of required schema property names
-	Items                *KclOpenAPIType            // list item type
-	AdditionalProperties *KclOpenAPIType            // dict value type
-	Examples             map[string]KclExample      // examples
-	ExternalDocs         string                     // externalDocs
-	KclExtensions        *KclExtensions             // x-kcl- extensions
-	Ref                  string                     // reference to schema path
+	Type                 SwaggerTypeName            `json:"type,omitempty"`                 // object, string, array, integer, number, bool
+	Format               TypeFormat                 `json:"format,omitempty"`               // type format
+	Default              string                     `json:"default,omitempty"`              // default value
+	Enum                 []string                   `json:"enum,omitempty"`                 // enum values
+	ReadOnly             bool                       `json:"readOnly,omitempty"`             // readonly
+	Description          string                     `json:"description,omitempty"`          // description
+	Properties           map[string]*KclOpenAPIType `json:"properties,omitempty"`           // schema properties
+	Required             []string                   `json:"required,omitempty"`             // list of required schema property names
+	Items                *KclOpenAPIType            `json:"items,omitempty"`                // list item type
+	AdditionalProperties *KclOpenAPIType            `json:"additionalProperties,omitempty"` // dict value type
+	Examples             map[string]KclExample      `json:"examples,omitempty"`             // examples
+	ExternalDocs         string                     `json:"externalDocs,omitempty"`         // externalDocs
+	Ref                  string                     `json:"ref,omitempty"`                  // reference to schema path
+	*KclExtensions                                  // x-kcl- extensions
 }
 
 // SwaggerTypeName defines possible values of "type" field in Swagger v2.0 spec
