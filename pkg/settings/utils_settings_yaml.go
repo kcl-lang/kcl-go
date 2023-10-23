@@ -29,11 +29,13 @@ type ConfigStruct struct {
 	Overrides    []string `yaml:"overrides"`
 	PathSelector []string `yaml:"path_selector"`
 
-	StrictRangeCheck bool `yaml:"strict_range_check"`
-	DisableNone      bool `yaml:"disable_none"`
-	Verbose          int  `yaml:"verbose"`
-	Debug            bool `yaml:"debug"`
+	StrictRangeCheck bool              `yaml:"strict_range_check"`
+	DisableNone      bool              `yaml:"disable_none"`
+	Verbose          int               `yaml:"verbose"`
+	Debug            bool              `yaml:"debug"`
+	PackageMaps      map[string]string `yaml:"package_maps"`
 }
+
 type KeyValueStruct struct {
 	Key   string      `yaml:"key"`
 	Value interface{} `yaml:"value"`
@@ -172,6 +174,15 @@ func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 			Name:  key,
 			Value: val,
 		})
+	}
+
+	// kcl -E k8s=../vendor/k8s
+	for name, path := range settings.Config.PackageMaps {
+		externalPkg := gpyrpc.CmdExternalPkgSpec{
+			PkgName: name,
+			PkgPath: path,
+		}
+		args.ExternalPkgs = append(args.ExternalPkgs, &externalPkg)
 	}
 
 	return args
