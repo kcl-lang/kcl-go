@@ -177,7 +177,7 @@ type XKclDecorators struct {
 // GetKclTypeName get the string representation of a KclOpenAPIType
 func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool) string {
 	if tpe.Ref != "" {
-		schemaId := strings.TrimPrefix(tpe.Ref, oaiV2Ref)
+		schemaId := Ref2SchemaId(tpe.Ref)
 		return schemaId[strings.LastIndex(schemaId, ".")+1:]
 	}
 	switch tpe.Type {
@@ -300,7 +300,7 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 		id := SchemaId(pkgPath, from)
 		if nested {
 			// for nested type reference, just return the ref object
-			t.Ref = refPath(id)
+			t.Ref = SchemaId2Ref(id)
 			return &t
 		}
 		// resolve schema type
@@ -409,6 +409,10 @@ func SchemaId(pkgPath string, t *kcl.KclType) string {
 	return fmt.Sprintf("%s.%s", pkgName, t.SchemaName)
 }
 
-func refPath(id string) string {
+func SchemaId2Ref(id string) string {
 	return fmt.Sprintf("%s%s", oaiV2Ref, id)
+}
+
+func Ref2SchemaId(ref string) string {
+	return strings.TrimPrefix(ref, oaiV2Ref)
 }
