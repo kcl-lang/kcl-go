@@ -3,6 +3,7 @@
 package validate
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -22,5 +23,23 @@ schema Person:
 	}
 	if !ok {
 		t.Fatalf("expect: %q, got False", "True")
+	}
+}
+
+func TestValidateCodeFail(t *testing.T) {
+	data := `{"k": "value"}`
+	code := `
+schema Person:
+    key: str
+
+    check:
+        "value" in key  # 'key' is required and 'key' must contain "value"
+`
+
+	_, err := ValidateCode(data, code, nil)
+	if err == nil {
+		t.Fatalf("expect validation error")
+	} else if !strings.Contains(err.Error(), "error") {
+		t.Fatalf("expect validation error, got %s", err.Error())
 	}
 }

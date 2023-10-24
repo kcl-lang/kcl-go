@@ -3,6 +3,8 @@
 package validate
 
 import (
+	"errors"
+
 	"kcl-lang.io/kcl-go/pkg/service"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
@@ -28,5 +30,9 @@ func ValidateCode(data, code string, opt *ValidateOptions) (ok bool, err error) 
 	if err != nil {
 		return false, err
 	}
-	return resp.Success, nil
+	var e error = nil
+	if resp.ErrMessage != "" {
+		e = errors.New(resp.ErrMessage)
+	}
+	return resp.Success, e
 }
