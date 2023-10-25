@@ -129,6 +129,9 @@ func WithOverrides(override_list ...string) Option {
 	var overrides []*gpyrpc.CmdOverrideSpec
 	for _, kv := range override_list {
 		idx0 := strings.Index(kv, ":")
+		if idx0 < 0 {
+			idx0 = 0
+		}
 		idx1 := strings.Index(kv, "=")
 		if idx0 >= 0 && idx1 >= 0 && idx0 < idx1 {
 			var pkgpath = kv[:idx0]
