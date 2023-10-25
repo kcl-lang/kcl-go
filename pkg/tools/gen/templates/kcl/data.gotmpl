@@ -15,10 +15,10 @@
                         {{- end }}
                     {{- "    }\n" }}
                 {{- else }}
-                    {{- indentLines (formatValue .) "    " }}
+                    {{- indentLines (formatValue .) "    " }}{{- "\n" }}
                 {{- end }}
             {{- end }}
         {{- "]" }}
     {{- else }}
-    {{- formatValue .Value }}
+    	{{- formatValue .Value }}
     {{- end }}

@@ -1,0 +1,22 @@
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+    hooks:
+        # You may remove this if you don't use go modules.
+        - go mod tidy
+
+# .goreleaser.yml
+builds:
+    - id: "kcl"
+      main: ./kcl.go
+      goos:
+          - darwin
+          - linux
+          - windows
+      goarch:
+          - amd64
+          - arm64
+      env:
+          - CGO_ENABLED=0
+      ldflags:
+          - "-X kcl-lang.io/cli/pkg/version.version={{.Version}}"
