@@ -181,17 +181,40 @@ func TestGenKclFromJson(t *testing.T) {
 }
 
 func TestGenKclFromYaml(t *testing.T) {
-	input := filepath.Join("testdata", "yaml", "input.yaml")
-	expectFilepath := filepath.Join("testdata", "yaml", "expect.k")
-	expect := readFileString(t, expectFilepath)
+	type testCase struct {
+		name   string
+		input  string
+		expect string
+	}
+	var cases []testCase
 
-	var buf bytes.Buffer
-	err := GenKcl(&buf, input, nil, &GenKclOptions{})
+	casesPath := filepath.Join("testdata", "yaml")
+	caseFiles, err := os.ReadDir(casesPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	result := buf.Bytes()
-	assert2.Equal(t, expect, string(bytes.ReplaceAll(result, []byte("\r\n"), []byte("\n"))))
+
+	for _, caseFile := range caseFiles {
+		input := filepath.Join(casesPath, caseFile.Name(), "input.yaml")
+		expectFilepath := filepath.Join(casesPath, caseFile.Name(), "expect.k")
+		cases = append(cases, testCase{
+			name:   caseFile.Name(),
+			input:  input,
+			expect: readFileString(t, expectFilepath),
+		})
+	}
+
+	for _, testcase := range cases {
+		t.Run(testcase.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err := GenKcl(&buf, testcase.input, nil, &GenKclOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			result := buf.Bytes()
+			assert2.Equal(t, testcase.expect, string(bytes.ReplaceAll(result, []byte("\r\n"), []byte("\n"))))
+		})
+	}
 }
 
 func readFileString(t testing.TB, p string) (content string) {
