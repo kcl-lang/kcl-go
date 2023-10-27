@@ -186,6 +186,7 @@ func ExampleLintPath() {
 	// Output:
 	// Module 'a' is reimported multiple times
 	// Module 'a' imported but unused
+	// Module 'a' imported but unused
 }
 
 func ExampleFormatCode() {

@@ -196,6 +196,41 @@ a2 = App {
 	}
 }
 
+func TestWithSelectors(t *testing.T) {
+	const code = `
+schema App:
+	image: str = "default"
+	name: str = "app"
+
+a1 = App {
+	name = "a1-app"
+}
+a2 = App {
+	image = "a2-image"
+	name = "a2-app"
+}
+`
+	const testdata_main_k = "testdata/main_selector.k"
+	kfile, err := os.Create(testdata_main_k)
+	if err != nil {
+		t.Fatal(err)
+	}
+	kfile.Close()
+
+	result, err := kcl.Run(testdata_main_k,
+		kcl.WithCode(code),
+		kcl.WithSelectors("a1"),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if expect, got := "a1-app", result.First().Get("name"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+	os.Remove(testdata_main_k)
+	defer os.Remove(testdata_main_k)
+}
+
 func _BenchmarkRunFilesParallel(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
