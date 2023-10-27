@@ -19,9 +19,13 @@ var schemaDocTmpl string
 //go:embed templates/doc/packageDoc.gotmpl
 var packageDocTmpl string
 
+//go:embed templates/doc/schemaListDoc.gotmpl
+var schemaListDocTmpl string
+
 const (
-	schemaDocTmplFile  = "schemaDoc.gotmpl"
-	packageDocTmplFile = "packageDoc.gotmpl"
+	schemaDocTmplFile     = "schemaDoc.gotmpl"
+	packageDocTmplFile    = "packageDoc.gotmpl"
+	schemaListDocTmplFile = "schemaListDoc.gotmpl"
 )
 
 // GenContext defines the context during the generation
@@ -40,6 +44,8 @@ type GenContext struct {
 	SchemaDocTmpl string
 	// PackageDocTmpl defines the content of the packageDoc template
 	PackageDocTmpl string
+	// SchemaListDocTmpl defines the content of the schemaListDoc template
+	SchemaListDocTmpl string
 	// Template is the doc render template
 	Template *template.Template
 }
@@ -169,7 +175,7 @@ func funcMap() template.FuncMap {
 			return false
 		},
 		"kclType": func(tpe KclOpenAPIType) string {
-			return tpe.GetKclTypeName(false)
+			return tpe.GetKclTypeName(false, true)
 		},
 		"fullTypeName": func(tpe KclOpenAPIType) string {
 			if tpe.KclExtensions.XKclModelType.Import.Package != "" {
@@ -192,50 +198,31 @@ func funcMap() template.FuncMap {
 			return filepath.Join(tpe.GetSchemaPkgDir(""), tpe.KclExtensions.XKclModelType.Import.Alias)
 		},
 		"indexContent": func(pkg *KclPackage) string {
-			return pkg.getIndexContent(0, "  ", "", false)
-		},
-		"indexContentIgnoreDirPath": func(pkg *KclPackage) string {
-			return pkg.getIndexContent(0, "  ", "", true)
+			return pkg.getIndexContent(0, "  ")
 		},
 	}
 }
 
-func (pkg *KclPackage) getPackageIndexContent(level int, indentation string, pkgPath string, ignoreDir bool) string {
-	currentPkgPath := filepath.Join(pkgPath, pkg.Name)
-	currentDocPath := pkg.Name
-	if !ignoreDir {
-		// get the full directory path
-		currentDocPath = filepath.Join(currentPkgPath, fmt.Sprintf("%s.md", pkg.Name))
-	}
-	return fmt.Sprintf(`%s- [%s](%s)
-%s`, strings.Repeat(indentation, level), pkg.Name, currentDocPath, pkg.getIndexContent(level+1, indentation, currentPkgPath, ignoreDir))
+func (pkg *KclPackage) getPackageIndexContent(level int, indentation string) string {
+	return fmt.Sprintf(`%s- %s
+%s`, strings.Repeat(indentation, level), pkg.Name, pkg.getIndexContent(level+1, indentation))
 }
 
-func (tpe *KclOpenAPIType) getSchemaIndexContent(level int, indentation string, pkgPath string, pkgName string, ignoreDir bool) string {
-	docPath := pkgName
-	if !ignoreDir {
-		// get the full directory path
-		docPath = filepath.Join(pkgPath, fmt.Sprintf("%s.md", pkgName))
-	}
-	if level == 0 {
-		// the schema is defined in current package
-		docPath = ""
-	}
-
-	return fmt.Sprintf(`%s- [%s](%s#%s)
-`, strings.Repeat(indentation, level), tpe.KclExtensions.XKclModelType.Type, docPath, strings.ToLower(tpe.KclExtensions.XKclModelType.Type))
+func (tpe *KclOpenAPIType) getSchemaIndexContent(level int, indentation string) string {
+	return fmt.Sprintf(`%s- [%s](#%s)
+`, strings.Repeat(indentation, level), tpe.KclExtensions.XKclModelType.Type, strings.ToLower(tpe.KclExtensions.XKclModelType.Type))
 }
 
-func (pkg *KclPackage) getIndexContent(level int, indentation string, pkgPath string, ignoreDir bool) string {
+func (pkg *KclPackage) getIndexContent(level int, indentation string) string {
 	var content string
 	if len(pkg.SchemaList) > 0 {
 		for _, sch := range pkg.SchemaList {
-			content += sch.getSchemaIndexContent(level, indentation, pkgPath, pkg.Name, ignoreDir)
+			content += sch.getSchemaIndexContent(level, indentation)
 		}
 	}
 	if len(pkg.SubPackageList) > 0 {
 		for _, pkg := range pkg.SubPackageList {
-			content += pkg.getPackageIndexContent(level, indentation, pkgPath, ignoreDir)
+			content += pkg.getPackageIndexContent(level, indentation)
 		}
 	}
 	return content
@@ -247,7 +234,7 @@ func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
 		pkgName = "main"
 	}
 	fmt.Println(fmt.Sprintf("generating doc for package %s", pkgName))
-	indexFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
+	docFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
 	var contentBuf bytes.Buffer
 	err := g.Template.ExecuteTemplate(&contentBuf, "packageDoc", struct {
 		EscapeHtml bool
@@ -260,22 +247,9 @@ func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
 		return fmt.Errorf("failed to render package %s with template, err: %s", pkg.Name, err)
 	}
 	// write content to file
-	err = os.WriteFile(filepath.Join(parentDir, indexFileName), contentBuf.Bytes(), 0644)
+	err = os.WriteFile(filepath.Join(parentDir, docFileName), contentBuf.Bytes(), 0644)
 	if err != nil {
-		return fmt.Errorf("failed to write file %s in %s: %v", indexFileName, parentDir, err)
-	}
-
-	for _, sub := range pkg.SubPackageList {
-		pkgDir := GetPkgDir(parentDir, sub.Name)
-		//fmt.Println(fmt.Sprintf("creating directory: %s", pkgDir))
-		err := os.MkdirAll(pkgDir, 0755)
-		if err != nil {
-			return fmt.Errorf("failed to create docs/%s directory under the target directory: %s", pkgDir, err)
-		}
-		err = g.renderPackage(sub, pkgDir)
-		if err != nil {
-			return err
-		}
+		return fmt.Errorf("failed to write file %s in %s: %v", docFileName, parentDir, err)
 	}
 	return nil
 }
@@ -308,6 +282,7 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 	// --- template directory ---
 	g.SchemaDocTmpl = schemaDocTmpl
 	g.PackageDocTmpl = packageDocTmpl
+	g.SchemaListDocTmpl = schemaListDocTmpl
 	if opts.TemplateDir != "" {
 		tmplAbsPath := filepath.Join(g.PackagePath, opts.TemplateDir)
 		templatesDirInfo, err := os.Stat(tmplAbsPath)
@@ -343,6 +318,14 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 				}
 				g.PackageDocTmpl = string(content)
 				return nil
+			case schemaListDocTmplFile:
+				// use custom schema list Doc Template file
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return err
+				}
+				g.SchemaListDocTmpl = string(content)
+				return nil
 			default:
 				return fmt.Errorf("unexpected template file: %s", path)
 			}
@@ -358,6 +341,10 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 		return nil, err
 	}
 	_, err = g.Template.Parse(g.PackageDocTmpl)
+	if err != nil {
+		return nil, err
+	}
+	_, err = g.Template.Parse(g.SchemaListDocTmpl)
 	if err != nil {
 		return nil, err
 	}

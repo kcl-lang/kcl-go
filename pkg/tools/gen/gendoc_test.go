@@ -7,15 +7,11 @@ import (
 	assert2 "github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 )
 
 func TestIndexContent(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		return
-	}
 	rootPkg := KclPackage{
 		Name: "test",
 		SubPackageList: []*KclPackage{
@@ -57,33 +53,21 @@ func TestIndexContent(t *testing.T) {
 		},
 	}
 	tCases := []struct {
-		root      KclPackage
-		ignoreDir bool
-		expect    string
+		root   KclPackage
+		expect string
 	}{
 		{
-			root:      rootPkg,
-			ignoreDir: false,
+			root: rootPkg,
 			expect: `- [A](#a)
-- [sub1](sub1/sub1.md)
-  - [B](sub1/sub1.md#b)
-  - [sub2](sub1/sub2/sub2.md)
-    - [C](sub1/sub2/sub2.md#c)
-`,
-		},
-		{
-			root:      rootPkg,
-			ignoreDir: true,
-			expect: `- [A](#a)
-- [sub1](sub1)
-  - [B](sub1#b)
-  - [sub2](sub2)
-    - [C](sub2#c)
+- sub1
+  - [B](#b)
+  - sub2
+    - [C](#c)
 `,
 		},
 	}
 	for _, tCase := range tCases {
-		got := tCase.root.getIndexContent(0, "  ", "", tCase.ignoreDir)
+		got := tCase.root.getIndexContent(0, "  ")
 		assert2.Equal(t, tCase.expect, got)
 	}
 }
@@ -138,18 +122,12 @@ func initTestCases(t *testing.T) []*TestCase {
 
 	for i, p := range sourcePkgs {
 		packageDir := filepath.Join(cwd, testdataDir, p)
-		var resultDir string
-		if runtime.GOOS == "windows" {
-			resultDir = filepath.Join(packageDir, "windows")
-		} else {
-			resultDir = filepath.Join(packageDir, "unixlike")
-		}
 		tcases[i] = &TestCase{
 			PackagePath: packageDir,
-			ExpectMd:    filepath.Join(resultDir, "md"),
-			ExpectHtml:  filepath.Join(resultDir, "html"),
-			GotMd:       filepath.Join(resultDir, "md_got"),
-			GotHtml:     filepath.Join(resultDir, "html_got"),
+			ExpectMd:    filepath.Join(packageDir, "md"),
+			ExpectHtml:  filepath.Join(packageDir, "html"),
+			GotMd:       filepath.Join(packageDir, "md_got"),
+			GotHtml:     filepath.Join(packageDir, "html_got"),
 		}
 	}
 	return tcases
