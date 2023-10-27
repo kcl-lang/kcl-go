@@ -175,10 +175,15 @@ type XKclDecorators struct {
 }
 
 // GetKclTypeName get the string representation of a KclOpenAPIType
-func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool) string {
+func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool, addLink bool) string {
 	if tpe.Ref != "" {
 		schemaId := Ref2SchemaId(tpe.Ref)
-		return schemaId[strings.LastIndex(schemaId, ".")+1:]
+		schemaName := schemaId[strings.LastIndex(schemaId, ".")+1:]
+		if addLink {
+			return fmt.Sprintf("[%s](#%s)", schemaName, strings.ToLower(schemaName))
+		} else {
+			return schemaName
+		}
 	}
 	switch tpe.Type {
 	case String:
@@ -214,20 +219,20 @@ func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool) string {
 		}
 		return typBool
 	case Array:
-		return fmt.Sprintf("[%s]", tpe.Items.GetKclTypeName(true))
+		return fmt.Sprintf("[%s]", tpe.Items.GetKclTypeName(true, addLink))
 	case Object:
 		if tpe.AdditionalProperties != nil {
 			// dict type
 			if tpe.KclExtensions.XKclDictKeyType.isAnyType() && tpe.AdditionalProperties.isAnyType() {
 				return "{}"
 			}
-			return fmt.Sprintf("{%s:%s}", tpe.KclExtensions.XKclDictKeyType.GetKclTypeName(true), tpe.AdditionalProperties.GetKclTypeName(true))
+			return fmt.Sprintf("{%s:%s}", tpe.KclExtensions.XKclDictKeyType.GetKclTypeName(true, addLink), tpe.AdditionalProperties.GetKclTypeName(true, addLink))
 		}
 		if tpe.KclExtensions != nil && len(tpe.KclExtensions.XKclUnionTypes) > 0 {
 			// union type
 			tpes := make([]string, len(tpe.KclExtensions.XKclUnionTypes))
 			for i, unionType := range tpe.KclExtensions.XKclUnionTypes {
-				tpes[i] = unionType.GetKclTypeName(true)
+				tpes[i] = unionType.GetKclTypeName(true, addLink)
 			}
 			return strings.Join(tpes, " | ")
 		}

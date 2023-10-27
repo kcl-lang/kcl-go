@@ -1,0 +1,13 @@
+{{- define "schemaListDoc" -}}
+
+{{- $Data := index . 0 -}}
+{{- $EscapeHtml := index . 1 -}}
+{{- if $Data.SchemaList }}{{range $i, $schema := $Data.SchemaList }}{{template "schemaDoc" (arr $schema $EscapeHtml) }}
+{{- end -}}
+{{- end -}}
+
+{{- if $Data.SubPackageList}}{{range $i, $pkg := $Data.SubPackageList }}{{template "schemaListDoc" (arr $pkg $EscapeHtml) }}
+{{- end -}}
+{{- end -}}
+
+{{- end -}}
