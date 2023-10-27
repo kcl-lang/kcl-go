@@ -8,12 +8,9 @@
 {{end}}
 #### Attributes
 
-{{range $name, $property := $Data.Properties}}**{{$name}}**{{if containsString $Data.Required $name }} *required*{{end}}{{if $property.ReadOnly}} *readOnly*{{end}}
-
-{{kclType $property}}{{if ne $property.Description ""}}
-
-{{escapeHtml $property.Description $EscapeHtml}}{{end}}
-
+| name | type | description | default value |
+| --- | --- | --- | --- |
+{{range $name, $property := $Data.Properties}}|**{{$name}}**{{if containsString $Data.Required $name }} `required`{{end}}{{if $property.ReadOnly}} `readOnly`{{end}}|{{kclType $property $EscapeHtml}}|{{if ne $property.Description ""}}{{escapeHtml $property.Description $EscapeHtml}}{{end}}|{{$property.Default}}|
 {{end}}{{if ne (len $Data.Examples) 0}}#### Examples
 
 {{range $name, $example := $Data.Examples}}{{if $example.Summary}}**$example.Summary**

@@ -2,6 +2,7 @@ package gen
 
 import (
 	"fmt"
+	htmlTmpl "html/template"
 	kpm "kcl-lang.io/kpm/pkg/api"
 
 	"os"
@@ -175,7 +176,7 @@ type XKclDecorators struct {
 }
 
 // GetKclTypeName get the string representation of a KclOpenAPIType
-func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool, addLink bool) string {
+func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool, addLink bool, escapeHtml bool) string {
 	if tpe.Ref != "" {
 		schemaId := Ref2SchemaId(tpe.Ref)
 		schemaName := schemaId[strings.LastIndex(schemaId, ".")+1:]
@@ -219,22 +220,26 @@ func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool, addLink bool) string {
 		}
 		return typBool
 	case Array:
-		return fmt.Sprintf("[%s]", tpe.Items.GetKclTypeName(true, addLink))
+		return fmt.Sprintf("[%s]", tpe.Items.GetKclTypeName(true, addLink, escapeHtml))
 	case Object:
 		if tpe.AdditionalProperties != nil {
 			// dict type
 			if tpe.KclExtensions.XKclDictKeyType.isAnyType() && tpe.AdditionalProperties.isAnyType() {
 				return "{}"
 			}
-			return fmt.Sprintf("{%s:%s}", tpe.KclExtensions.XKclDictKeyType.GetKclTypeName(true, addLink), tpe.AdditionalProperties.GetKclTypeName(true, addLink))
+			return fmt.Sprintf("{%s:%s}", tpe.KclExtensions.XKclDictKeyType.GetKclTypeName(true, addLink, escapeHtml), tpe.AdditionalProperties.GetKclTypeName(true, addLink, escapeHtml))
 		}
 		if tpe.KclExtensions != nil && len(tpe.KclExtensions.XKclUnionTypes) > 0 {
 			// union type
 			tpes := make([]string, len(tpe.KclExtensions.XKclUnionTypes))
 			for i, unionType := range tpe.KclExtensions.XKclUnionTypes {
-				tpes[i] = unionType.GetKclTypeName(true, addLink)
+				tpes[i] = unionType.GetKclTypeName(true, addLink, escapeHtml)
 			}
-			return strings.Join(tpes, " | ")
+			if escapeHtml {
+				return strings.Join(tpes, htmlTmpl.HTMLEscapeString(" \\| "))
+			} else {
+				return strings.Join(tpes, " | ")
+			}
 		}
 		if tpe.isAnyType() {
 			if omitAny {
