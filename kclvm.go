@@ -91,6 +91,9 @@ func WithOptions(key_value_list ...string) Option { return kcl.WithOptions(key_v
 // WithOverrides returns a Option which hold a override list.
 func WithOverrides(override_list ...string) Option { return kcl.WithOverrides(override_list...) }
 
+// WithSelectors returns a Option which hold a path selector list.
+func WithSelectors(selectors ...string) Option { return kcl.WithSelectors(selectors...) }
+
 // WithSettings returns a Option which hold a settings file.
 func WithSettings(filename string) Option { return kcl.WithSettings(filename) }
 

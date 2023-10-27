@@ -149,6 +149,13 @@ func WithOverrides(override_list ...string) Option {
 	return *opt
 }
 
+// kcl -S path.to.field
+func WithSelectors(selectors ...string) Option {
+	var opt = NewOption()
+	opt.PathSelector = selectors
+	return *opt
+}
+
 func WithPrintOverridesAST(printOverrideAst bool) Option {
 	var opt = NewOption()
 	opt.PrintOverrideAst = printOverrideAst
@@ -217,6 +224,10 @@ func (p *Option) Merge(opts ...Option) *Option {
 		}
 		if len(opt.Overrides) > 0 {
 			p.Overrides = append(p.Overrides, opt.Overrides...)
+		}
+
+		if len(opt.PathSelector) > 0 {
+			p.PathSelector = append(p.PathSelector, opt.PathSelector...)
 		}
 
 		if opt.DisableYamlResult {
