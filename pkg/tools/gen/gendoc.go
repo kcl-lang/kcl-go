@@ -174,8 +174,8 @@ func funcMap() template.FuncMap {
 			}
 			return false
 		},
-		"kclType": func(tpe KclOpenAPIType) string {
-			return tpe.GetKclTypeName(false, true)
+		"kclType": func(tpe KclOpenAPIType, escapeHtml bool) string {
+			return tpe.GetKclTypeName(false, true, escapeHtml)
 		},
 		"fullTypeName": func(tpe KclOpenAPIType) string {
 			if tpe.KclExtensions.XKclModelType.Import.Package != "" {
@@ -186,8 +186,11 @@ func funcMap() template.FuncMap {
 		"escapeHtml": func(original string, escapeHtml bool) string {
 			// escape html symbols if needed
 			if escapeHtml {
-				return htmlTmpl.HTMLEscapeString(original)
+				original = htmlTmpl.HTMLEscapeString(original)
 			}
+			original = strings.Replace(original, "|", "\\|", -1)
+			original = strings.Replace(original, "\n", "<br />", -1)
+			original = strings.Replace(original, "&#34;", "\"", -1)
 			return original
 		},
 		"arr": func(els ...any) []any {
