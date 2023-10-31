@@ -247,11 +247,12 @@ func (p *Option) Merge(opts ...Option) *Option {
 		if opt.Verbose > 0 {
 			p.Verbose = opt.Verbose
 		}
-
+		if opt.CompileOnly {
+			p.CompileOnly = opt.CompileOnly
+		}
 		if opt.Debug != 0 {
 			p.Debug = opt.Debug
 		}
-
 		if opt.SortKeys {
 			p.SortKeys = opt.SortKeys
 		}
