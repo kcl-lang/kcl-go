@@ -124,3 +124,19 @@ func (p *KclvmServiceClient) LoadSettingsFiles(args *gpyrpc.LoadSettingsFiles_Ar
 	})
 	return
 }
+
+func (p *KclvmServiceClient) Rename(args *gpyrpc.Rename_Args) (resp *gpyrpc.Rename_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).Rename(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
+func (p *KclvmServiceClient) RenameCode(args *gpyrpc.RenameCode_Args) (resp *gpyrpc.RenameCode_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).RenameCode(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}

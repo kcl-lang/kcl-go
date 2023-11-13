@@ -70,3 +70,9 @@ func (p *_KclvmServiceImpl) ListDepFiles(ctx context.Context, args *gpyrpc.ListD
 func (p *_KclvmServiceImpl) LoadSettingsFiles(ctx context.Context, args *gpyrpc.LoadSettingsFiles_Args) (*gpyrpc.LoadSettingsFiles_Result, error) {
 	return p.c.LoadSettingsFiles(args)
 }
+func (p *_KclvmServiceImpl) Rename(ctx context.Context, args *gpyrpc.Rename_Args) (*gpyrpc.Rename_Result, error) {
+	return p.c.Rename(args)
+}
+func (p *_KclvmServiceImpl) RenameCode(ctx context.Context, args *gpyrpc.RenameCode_Args) (*gpyrpc.RenameCode_Result, error) {
+	return p.c.RenameCode(args)
+}

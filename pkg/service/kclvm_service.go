@@ -14,4 +14,6 @@ type KclvmService interface {
 	ValidateCode(in *gpyrpc.ValidateCode_Args) (out *gpyrpc.ValidateCode_Result, err error)
 	ListDepFiles(in *gpyrpc.ListDepFiles_Args) (out *gpyrpc.ListDepFiles_Result, err error)
 	LoadSettingsFiles(in *gpyrpc.LoadSettingsFiles_Args) (out *gpyrpc.LoadSettingsFiles_Result, err error)
+	Rename(in *gpyrpc.Rename_Args) (out *gpyrpc.Rename_Result, err error)
+	RenameCode(in *gpyrpc.RenameCode_Args) (out *gpyrpc.RenameCode_Result, err error)
 }
