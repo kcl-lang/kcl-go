@@ -198,3 +198,17 @@ func (p *restServer) handle_LoadSettingsFiles(w http.ResponseWriter, r *http.Req
 		return p.c.LoadSettingsFiles(args)
 	})
 }
+
+func (p *restServer) handle_Rename(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.Rename_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.Rename(args)
+	})
+}
+
+func (p *restServer) handle_RenameCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.RenameCode_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.RenameCode(args)
+	})
+}
