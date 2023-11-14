@@ -154,7 +154,8 @@ a2 = App {
 	result, err = kcl.Run(testdata_main_k,
 		kcl.WithCode(code),
 		kcl.WithOverrides(":a1.image=\"new-a1-image\""),
-		kcl.WithOverrides("__main__:a2.image=\"new-a2-image:v123\""),
+		kcl.WithOverrides("a2.image=\"new-a2-image:v123\""),
+		kcl.WithOverrides("a2.name-"),
 		kcl.WithPrintOverridesAST(true),
 	)
 	if err != nil {
@@ -165,6 +166,9 @@ a2 = App {
 		t.Fatalf("expect = %v, got = %v", expect, got)
 	}
 	if expect, got := "new-a2-image:v123", result.First().Get("a2.image"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+	if expect, got := "app", result.First().Get("a2.name"); expect != got {
 		t.Fatalf("expect = %v, got = %v", expect, got)
 	}
 
@@ -183,10 +187,7 @@ a1 = App {
     image = "new-a1-image"
 }
 
-a2 = App {
-    image = "new-a2-image:v123"
-    name = "a2-app"
-}`)
+a2 = App {image = "new-a2-image:v123"}`)
 
 	got := strings.TrimSpace(string(data))
 	got = strings.ReplaceAll(got, "\r\n", "\n")

@@ -11,6 +11,7 @@ import (
 
 	"kcl-lang.io/kcl-go/pkg/settings"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/kcl-go/pkg/tools/override"
 )
 
 type Option struct {
@@ -125,28 +126,32 @@ func WithOptions(key_value_list ...string) Option {
 }
 
 // kcl -O pkgpath:path.to.field=field_value
+// kcl -O pkgpath.path.to.field-
 func WithOverrides(override_list ...string) Option {
 	var overrides []*gpyrpc.CmdOverrideSpec
-	for _, kv := range override_list {
-		idx0 := strings.Index(kv, ":")
-		if idx0 < 0 {
-			idx0 = 0
-		}
-		idx1 := strings.Index(kv, "=")
-		if idx0 >= 0 && idx1 >= 0 && idx0 < idx1 {
-			var pkgpath = kv[:idx0]
-			var field_path = kv[idx0+1 : idx1]
-			var field_value = kv[idx1+1:]
-			overrides = append(overrides, &gpyrpc.CmdOverrideSpec{
-				Pkgpath:    pkgpath,
-				FieldPath:  field_path,
-				FieldValue: field_value,
-			})
-		}
+	for _, spec := range override_list {
+		o, _ := override.ParseOverrideSpec(spec)
+		overrides = append(overrides, o)
 	}
 	var opt = NewOption()
 	opt.Overrides = overrides
 	return *opt
+}
+
+// kcl -O pkgpath:path.to.field=field_value
+// kcl -O pkgpath.path.to.field-
+func WithOverridesError(override_list ...string) (Option, error) {
+	var overrides []*gpyrpc.CmdOverrideSpec
+	var opt = NewOption()
+	for _, spec := range override_list {
+		o, err := override.ParseOverrideSpec(spec)
+		if err != nil {
+			return *opt, err
+		}
+		overrides = append(overrides, o)
+	}
+	opt.Overrides = overrides
+	return *opt, nil
 }
 
 // kcl -S path.to.field
