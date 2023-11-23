@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/urfave/cli/v2"
 
-	"kcl-lang.io/kcl-go"
+	kclvm "kcl-lang.io/kcl-go"
 	"kcl-lang.io/kcl-go/pkg/kcl"
 )
 
@@ -99,7 +98,6 @@ func NewRunCmd() *cli.Command {
 				fmt.Println("======== args end ========")
 			}
 
-			start := time.Now()
 			result, err := kcl.RunFiles(
 				c.Args().Slice(),
 				kcl.WithOptions(c.StringSlice("argument")...),
@@ -107,13 +105,6 @@ func NewRunCmd() *cli.Command {
 				kcl.WithSettings(c.String("setting")),
 				kcl.WithSortKeys(c.Bool("sort-keys")),
 			)
-
-			if c.Bool("debug") {
-				fmt.Println("======== EscapedTime begin ========")
-				fmt.Println("Python:", result.GetPyEscapedTime())
-				fmt.Println("Golang:", time.Since(start).Seconds())
-				fmt.Println("======== EscapedTime end ========")
-			}
 
 			if err != nil {
 				fmt.Print(err)

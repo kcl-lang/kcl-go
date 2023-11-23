@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"kcl-lang.io/kcl-go/pkg/logger"
 	"kcl-lang.io/kcl-go/pkg/settings"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 	"kcl-lang.io/kcl-go/pkg/tools/override"
@@ -16,7 +17,8 @@ import (
 
 type Option struct {
 	*gpyrpc.ExecProgram_Args
-	Err error
+	logger logger.Logger
+	Err    error
 }
 
 // NewOption returns a new Option.
@@ -32,6 +34,10 @@ func (p *Option) JSONString() string {
 		return ""
 	}
 	return string(x)
+}
+
+func (p *Option) GetLogger() logger.Logger {
+	return p.logger
 }
 
 func ParseArgs(pathList []string, opts ...Option) (Option, error) {
@@ -71,6 +77,12 @@ func ParseArgs(pathList []string, opts ...Option) (Option, error) {
 	}
 
 	return *args, nil
+}
+
+func WithLogger(l logger.Logger) Option {
+	var opt = NewOption()
+	opt.logger = l
+	return *opt
 }
 
 func WithWorkDir(s string) Option {

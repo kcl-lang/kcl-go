@@ -101,6 +101,14 @@ func (p *KclvmServiceClient) GetSchemaTypeMapping(args *gpyrpc.GetSchemaTypeMapp
 	return
 }
 
+func (p *KclvmServiceClient) GetFullSchemaType(args *gpyrpc.GetFullSchemaType_Args) (resp *gpyrpc.GetSchemaType_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).GetFullSchemaType(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
 func (p *KclvmServiceClient) ValidateCode(args *gpyrpc.ValidateCode_Args) (resp *gpyrpc.ValidateCode_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).ValidateCode(args)
@@ -136,6 +144,14 @@ func (p *KclvmServiceClient) Rename(args *gpyrpc.Rename_Args) (resp *gpyrpc.Rena
 func (p *KclvmServiceClient) RenameCode(args *gpyrpc.RenameCode_Args) (resp *gpyrpc.RenameCode_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).RenameCode(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
+func (p *KclvmServiceClient) Test(args *gpyrpc.Test_Args) (resp *gpyrpc.Test_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).Test(args)
 		err = p.wrapErr(err, stderr)
 	})
 	return

@@ -219,11 +219,13 @@ type PROTORPC_KclvmService interface {
 	OverrideFile(in *OverrideFile_Args, out *OverrideFile_Result) error
 	GetSchemaType(in *GetSchemaType_Args, out *GetSchemaType_Result) error
 	GetSchemaTypeMapping(in *GetSchemaTypeMapping_Args, out *GetSchemaTypeMapping_Result) error
+	GetFullSchemaType(in *GetFullSchemaType_Args, out *GetSchemaType_Result) error
 	ValidateCode(in *ValidateCode_Args, out *ValidateCode_Result) error
 	ListDepFiles(in *ListDepFiles_Args, out *ListDepFiles_Result) error
 	LoadSettingsFiles(in *LoadSettingsFiles_Args, out *LoadSettingsFiles_Result) error
 	Rename(in *Rename_Args, out *Rename_Result) error
 	RenameCode(in *RenameCode_Args, out *RenameCode_Result) error
+	Test(in *Test_Args, out *Test_Result) error
 }
 
 // PROTORPC_AcceptKclvmServiceClient accepts connections on the listener and serves requests
@@ -616,6 +618,45 @@ func (c *PROTORPC_KclvmServiceClient) AsyncGetSchemaTypeMapping(in *GetSchemaTyp
 	)
 }
 
+func (c *PROTORPC_KclvmServiceClient) GetFullSchemaType(in *GetFullSchemaType_Args) (out *GetSchemaType_Result, err error) {
+	if in == nil {
+		in = new(GetFullSchemaType_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(GetSchemaType_Result)
+	if err = c.Call("KclvmService.GetFullSchemaType", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncGetFullSchemaType(in *GetFullSchemaType_Args, out *GetSchemaType_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(GetFullSchemaType_Args)
+	}
+	return c.Go(
+		"KclvmService.GetFullSchemaType",
+		in, out,
+		done,
+	)
+}
+
 func (c *PROTORPC_KclvmServiceClient) ValidateCode(in *ValidateCode_Args) (out *ValidateCode_Result, err error) {
 	if in == nil {
 		in = new(ValidateCode_Args)
@@ -806,6 +847,45 @@ func (c *PROTORPC_KclvmServiceClient) AsyncRenameCode(in *RenameCode_Args, out *
 	}
 	return c.Go(
 		"KclvmService.RenameCode",
+		in, out,
+		done,
+	)
+}
+
+func (c *PROTORPC_KclvmServiceClient) Test(in *Test_Args) (out *Test_Result, err error) {
+	if in == nil {
+		in = new(Test_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Test_Result)
+	if err = c.Call("KclvmService.Test", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncTest(in *Test_Args, out *Test_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(Test_Args)
+	}
+	return c.Go(
+		"KclvmService.Test",
 		in, out,
 		done,
 	)
