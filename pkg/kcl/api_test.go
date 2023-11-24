@@ -43,8 +43,6 @@ f = 1.5
 	tAssert(t, result.Len() > 0)
 	tAssert(t, result.First().Get("name") == "kcl")
 
-	_ = result.GetPyEscapedTime()
-
 	var s string
 	var i int
 	var f float64

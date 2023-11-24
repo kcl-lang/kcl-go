@@ -5,6 +5,7 @@ package kcl
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -22,7 +23,6 @@ type KCLResultList struct {
 	list            []KCLResult
 	raw_json_result string
 	raw_yaml_result string
-	escaped_time    string
 }
 
 func (p *KCLResultList) Len() int {
@@ -63,10 +63,6 @@ func (p *KCLResultList) GetRawJsonResult() string {
 }
 func (p *KCLResultList) GetRawYamlResult() string {
 	return p.raw_yaml_result
-}
-
-func (p *KCLResultList) GetPyEscapedTime() string {
-	return p.escaped_time
 }
 
 type KCLResult map[string]interface{}
@@ -228,6 +224,14 @@ func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 	if err != nil {
 		return nil, err
 	}
+	// Output log message
+	logger := args.GetLogger()
+	if logger != nil && resp.LogMessage != "" {
+		logger.Info(resp.LogMessage)
+	}
+	if resp.ErrMessage != "" {
+		return nil, errors.New(resp.ErrMessage)
+	}
 
 	var result KCLResultList
 	if strings.TrimSpace(resp.JsonResult) == "" {
@@ -250,6 +254,5 @@ func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 
 	result.raw_json_result = resp.JsonResult
 	result.raw_yaml_result = resp.YamlResult
-	result.escaped_time = resp.EscapedTime
 	return &result, nil
 }

@@ -77,7 +77,11 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/KclvmService.OverrideFile", p.handle_OverrideFile)
 	p.router.POST("/api:protorpc/KclvmService.GetSchemaType", p.handle_GetSchemaType)
 	p.router.POST("/api:protorpc/KclvmService.GetSchemaTypeMapping", p.handle_GetSchemaTypeMapping)
+	p.router.POST("/api:protorpc/KclvmService.GetFullSchemaType", p.handle_GetFullSchemaType)
 	p.router.POST("/api:protorpc/KclvmService.ValidateCode", p.handle_ValidateCode)
+	p.router.POST("/api:protorpc/KclvmService.Rename", p.handle_Rename)
+	p.router.POST("/api:protorpc/KclvmService.RenameCode", p.handle_RenameCode)
+	p.router.POST("/api:protorpc/KclvmService.Test", p.handle_Test)
 }
 
 func (p *restServer) handle(
@@ -178,6 +182,13 @@ func (p *restServer) handle_GetSchemaTypeMapping(w http.ResponseWriter, r *http.
 	})
 }
 
+func (p *restServer) handle_GetFullSchemaType(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.GetFullSchemaType_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.GetFullSchemaType(args)
+	})
+}
+
 func (p *restServer) handle_ValidateCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	args := new(gpyrpc.ValidateCode_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
@@ -210,5 +221,12 @@ func (p *restServer) handle_RenameCode(w http.ResponseWriter, r *http.Request, p
 	args := new(gpyrpc.RenameCode_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.RenameCode(args)
+	})
+}
+
+func (p *restServer) handle_Test(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.Test_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.Test(args)
 	})
 }

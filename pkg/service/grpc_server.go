@@ -61,6 +61,9 @@ func (p *_KclvmServiceImpl) GetSchemaType(ctx context.Context, args *gpyrpc.GetS
 func (p *_KclvmServiceImpl) GetSchemaTypeMapping(ctx context.Context, args *gpyrpc.GetSchemaTypeMapping_Args) (*gpyrpc.GetSchemaTypeMapping_Result, error) {
 	return p.c.GetSchemaTypeMapping(args)
 }
+func (p *_KclvmServiceImpl) GetFullSchemaType(ctx context.Context, args *gpyrpc.GetFullSchemaType_Args) (*gpyrpc.GetSchemaType_Result, error) {
+	return p.c.GetFullSchemaType(args)
+}
 func (p *_KclvmServiceImpl) ValidateCode(ctx context.Context, args *gpyrpc.ValidateCode_Args) (*gpyrpc.ValidateCode_Result, error) {
 	return p.c.ValidateCode(args)
 }
@@ -75,4 +78,7 @@ func (p *_KclvmServiceImpl) Rename(ctx context.Context, args *gpyrpc.Rename_Args
 }
 func (p *_KclvmServiceImpl) RenameCode(ctx context.Context, args *gpyrpc.RenameCode_Args) (*gpyrpc.RenameCode_Result, error) {
 	return p.c.RenameCode(args)
+}
+func (p *_KclvmServiceImpl) Test(ctx context.Context, args *gpyrpc.Test_Args) (*gpyrpc.Test_Result, error) {
+	return p.c.Test(args)
 }
