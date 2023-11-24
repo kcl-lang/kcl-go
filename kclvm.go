@@ -37,6 +37,7 @@ import (
 	"kcl-lang.io/kcl-go/pkg/tools/lint"
 	"kcl-lang.io/kcl-go/pkg/tools/list"
 	"kcl-lang.io/kcl-go/pkg/tools/override"
+	"kcl-lang.io/kcl-go/pkg/tools/testing"
 	"kcl-lang.io/kcl-go/pkg/tools/validate"
 )
 
@@ -45,6 +46,9 @@ type (
 	ListDepsOptions    = list.DepOptions
 	ListDepFilesOption = list.Option
 	ValidateOptions    = validate.ValidateOptions
+	TestOptions        = testing.TestOptions
+	TestCaseInfo       = testing.TestCaseInfo
+	TestResult         = testing.TestResult
 	KCLResult          = kcl.KCLResult
 	KCLResultList      = kcl.KCLResultList
 
@@ -170,6 +174,11 @@ func OverrideFile(file string, specs, importPaths []string) (bool, error) {
 // ValidateCode validate data match code
 func ValidateCode(data, code string, opt *ValidateOptions) (ok bool, err error) {
 	return validate.ValidateCode(data, code, opt)
+}
+
+// Test calls the test tool to run uni tests in packages.
+func Test(testOpts *TestOptions, opts ...Option) (TestResult, error) {
+	return testing.Test(testOpts, opts...)
 }
 
 // GetSchemaType returns schema types from a kcl file or code.
