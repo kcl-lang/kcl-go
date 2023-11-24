@@ -464,6 +464,18 @@ func TestListDepFiles(t *testing.T) {
 	}
 }
 
+func TestTestAPI(t *testing.T) {
+	result, err := kcl.Test(&kcl.TestOptions{
+		PkgList: []string{"./testdata/test_module/..."},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, len(result.Info), 2)
+	assert2.Equal(t, result.Info[0].ErrMessage, "")
+	assert2.Equal(t, strings.Contains(result.Info[1].ErrMessage, "Error"), true, result.Info[1].ErrMessage)
+}
+
 func TestWithExternalpkg(t *testing.T) {
 	absPath1, err := filepath.Abs("./testdata_external/external_1/")
 	assert2.Equal(t, nil, err)
