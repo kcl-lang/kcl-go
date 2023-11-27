@@ -17,9 +17,10 @@ const (
 )
 
 const (
-	KclvmAbiVersion         KclvmVersionType = KclvmVersionType_v0_7_0_beta_1
-	KclvmVersionType_latest                  = KclvmVersionType_v0_7_0_beta_1
+	KclvmAbiVersion         KclvmVersionType = KclvmVersionType_v0_7_0_beta_2
+	KclvmVersionType_latest                  = KclvmVersionType_v0_7_0_beta_2
 
+	KclvmVersionType_v0_7_0_beta_2  KclvmVersionType = "v0.7.0-beta.2"
 	KclvmVersionType_v0_7_0_beta_1  KclvmVersionType = "v0.7.0-beta.1"
 	KclvmVersionType_v0_7_0_alpha_2 KclvmVersionType = "v0.7.0-alpha.2"
 	KclvmVersionType_v0_7_0_alpha_1 KclvmVersionType = "v0.7.0-alpha.1"
