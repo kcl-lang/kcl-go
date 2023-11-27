@@ -50,6 +50,7 @@ func ParseArgs(pathList []string, opts ...Option) (Option, error) {
 			tmpOptList = append(tmpOptList, WithSettings(s))
 		case isDir(s):
 			tmpOptList = append(tmpOptList, WithWorkDir(s))
+			tmpOptList = append(tmpOptList, WithKFilenames(s))
 		default:
 			tmpOptList = append(tmpOptList, WithKFilenames(s))
 		}
@@ -70,10 +71,6 @@ func ParseArgs(pathList []string, opts ...Option) (Option, error) {
 				}
 			}
 		}
-	}
-
-	if len(args.KFilenameList) == 0 {
-		return Option{}, fmt.Errorf("kcl.Run: no kcl file")
 	}
 
 	return *args, nil

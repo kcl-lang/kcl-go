@@ -4,10 +4,12 @@ package kcl
 
 import (
 	"fmt"
+	"path/filepath"
 	"reflect"
 	"sort"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"kcl-lang.io/kcl-go/pkg/tools/list"
 )
 
@@ -101,4 +103,17 @@ func TestListUpstreamFiles(t *testing.T) {
 	if !reflect.DeepEqual(deps, expect) {
 		t.Fatalf("\nexpect = %v\ngot    = %v", expect, deps)
 	}
+}
+
+func TestGetFullSchemaType(t *testing.T) {
+	testPath := filepath.Join(".", "testdata", "get_schema_ty")
+	tys, err := GetFullSchemaType(
+		[]string{filepath.Join(testPath, "aaa")},
+		"",
+		WithExternalPkgs(fmt.Sprintf("bbb=%s", filepath.Join(testPath, "bbb"))),
+	)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, len(tys), 1)
+	assert.Equal(t, tys[0].Filename, filepath.Join("testdata", "get_schema_ty", "bbb", "main.k"))
+	assert.Equal(t, tys[0].SchemaName, "B")
 }
