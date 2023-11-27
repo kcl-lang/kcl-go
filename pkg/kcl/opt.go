@@ -5,11 +5,11 @@ package kcl
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"kcl-lang.io/kcl-go/pkg/logger"
 	"kcl-lang.io/kcl-go/pkg/settings"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 	"kcl-lang.io/kcl-go/pkg/tools/override"
@@ -17,7 +17,7 @@ import (
 
 type Option struct {
 	*gpyrpc.ExecProgram_Args
-	logger logger.Logger
+	logger io.Writer
 	Err    error
 }
 
@@ -36,7 +36,7 @@ func (p *Option) JSONString() string {
 	return string(x)
 }
 
-func (p *Option) GetLogger() logger.Logger {
+func (p *Option) GetLogger() io.Writer {
 	return p.logger
 }
 
@@ -79,7 +79,7 @@ func ParseArgs(pathList []string, opts ...Option) (Option, error) {
 	return *args, nil
 }
 
-func WithLogger(l logger.Logger) Option {
+func WithLogger(l io.Writer) Option {
 	var opt = NewOption()
 	opt.logger = l
 	return *opt
@@ -279,6 +279,7 @@ func (p *Option) Merge(opts ...Option) *Option {
 		if opt.ExternalPkgs != nil {
 			p.ExternalPkgs = append(p.ExternalPkgs, opt.ExternalPkgs...)
 		}
+		p.logger = opt.logger
 	}
 	return p
 }
