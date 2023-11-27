@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 	"text/template"
 )
@@ -124,9 +125,14 @@ var kclKeywords = map[string]struct{}{
 	"rule":      {},
 }
 
+var validNameRegexp = regexp.MustCompile(`\$?^[a-zA-Z_][a-zA-Z0-9_]*$`)
+
 func formatName(name string) string {
 	if _, ok := kclKeywords[name]; ok {
 		return fmt.Sprintf("$%s", name)
+	}
+	if !validNameRegexp.MatchString(name) {
+		return fmt.Sprintf(`"%s"`, name)
 	}
 	return name
 }
