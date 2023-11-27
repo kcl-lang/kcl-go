@@ -279,7 +279,9 @@ func (p *Option) Merge(opts ...Option) *Option {
 		if opt.ExternalPkgs != nil {
 			p.ExternalPkgs = append(p.ExternalPkgs, opt.ExternalPkgs...)
 		}
-		p.logger = opt.logger
+		if opt.logger != nil {
+			p.logger = opt.logger
+		}
 	}
 	return p
 }

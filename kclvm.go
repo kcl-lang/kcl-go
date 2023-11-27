@@ -31,6 +31,8 @@ KCL Go SDK
 package kclvm
 
 import (
+	"io"
+
 	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
 	"kcl-lang.io/kcl-go/pkg/tools/format"
@@ -120,6 +122,11 @@ func WithPrintOverridesAST(printOverridesAST bool) Option {
 // WithSortKeys returns a Option which hold a sortKeys switch.
 func WithSortKeys(sortKeys bool) Option {
 	return kcl.WithSortKeys(sortKeys)
+}
+
+// WithLogger returns a Option which hold a logger.
+func WithLogger(l io.Writer) Option {
+	return kcl.WithLogger(l)
 }
 
 // FormatCode returns the formatted code.

@@ -3,6 +3,7 @@
 package kclvm_test
 
 import (
+	"bytes"
 	"flag"
 	"os"
 	"path/filepath"
@@ -488,4 +489,18 @@ func TestWithExternalpkg(t *testing.T) {
 	}
 	assert2.Equal(t, "[{\"a\": \"Hello External_1 World!\", \"b\": \"Hello External_2 World!\"}]", result.GetRawJsonResult())
 	assert2.Equal(t, "a: Hello External_1 World!\nb: Hello External_2 World!", result.GetRawYamlResult())
+}
+
+func TestWithLogger(t *testing.T) {
+	file, err := filepath.Abs("./testdata/test_print/main.k")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	result, err := kcl.Run(file, kcl.WithLogger(&buf))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, "hello: world", result.GetRawYamlResult())
+	assert2.Equal(t, "Hello world\n", buf.String())
 }
