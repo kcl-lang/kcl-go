@@ -227,7 +227,10 @@ func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 	// Output log message
 	logger := args.GetLogger()
 	if logger != nil && resp.LogMessage != "" {
-		logger.Info(resp.LogMessage)
+		_, err := logger.Write([]byte(resp.LogMessage))
+		if err != nil {
+			return nil, err
+		}
 	}
 	if resp.ErrMessage != "" {
 		return nil, errors.New(resp.ErrMessage)
