@@ -28,6 +28,11 @@ test:
 fmt:
 	go fmt ./...
 
+gen-doc:
+	go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest
+	gomarkdoc --output api.md .
+	mv api.md docs
+
 # ----------------
 # Docker
 # ----------------
