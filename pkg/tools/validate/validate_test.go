@@ -7,6 +7,25 @@ import (
 	"testing"
 )
 
+func TestValidate(t *testing.T) {
+	ok, err := Validate("./test_data/data.json", "./test_data/schema.k", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatalf("expect: %q, got False", "True")
+	}
+}
+
+func TestValidateFailed(t *testing.T) {
+	ok, err := Validate("./test_data/data-failed.json", "./test_data/schema.k", nil)
+	if ok == false && err != nil && strings.Contains(err.Error(), "expected [int], got [int(1) | int(2) | int(3) | str()]") {
+		// Test Pass
+	} else {
+		t.Fatalf("expect: error, got (%v, %v)", ok, err)
+	}
+}
+
 func TestValidateCode(t *testing.T) {
 	data := `{"key": "value"}`
 	code := `
