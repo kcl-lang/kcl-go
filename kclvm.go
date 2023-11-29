@@ -178,9 +178,15 @@ func OverrideFile(file string, specs, importPaths []string) (bool, error) {
 	return override.OverrideFile(file, specs, importPaths)
 }
 
-// ValidateCode validate data match code
-func ValidateCode(data, code string, opt *ValidateOptions) (ok bool, err error) {
-	return validate.ValidateCode(data, code, opt)
+// ValidateCode validate data string match code string
+func ValidateCode(data, code string, opts *ValidateOptions) (ok bool, err error) {
+	return validate.ValidateCode(data, code, opts)
+}
+
+// Validate validates the given data file against the specified
+// schema file with the provided options.
+func Validate(dataFile, schemaFile string, opts *ValidateOptions) (ok bool, err error) {
+	return validate.Validate(dataFile, schemaFile, opts)
 }
 
 // Test calls the test tool to run uni tests in packages.
