@@ -200,7 +200,7 @@ func GetSchemaType(file, code, schemaName string) ([]*gpyrpc.KclType, error) {
 }
 
 func GetFullSchemaType(pathList []string, schemaName string, opts ...Option) ([]*gpyrpc.KclType, error) {
-
+	opts = append(opts, *NewOption().Merge(WithKFilenames(pathList...)))
 	args, err := ParseArgs(pathList, opts...)
 	if err != nil {
 		return nil, err
