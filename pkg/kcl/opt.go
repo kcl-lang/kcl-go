@@ -76,6 +76,7 @@ func ParseArgs(pathList []string, opts ...Option) (Option, error) {
 	if len(args.KFilenameList) == 0 {
 		return Option{}, fmt.Errorf("kcl.Run: no kcl file")
 	}
+
 	return *args, nil
 }
 
