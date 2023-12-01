@@ -21,7 +21,7 @@ require (
 	google.golang.org/protobuf v1.30.0
 	gopkg.in/yaml.v3 v3.0.1
 	kcl-lang.io/kcl-artifact-go v0.7.0-beta.2
-	kcl-lang.io/kpm v0.4.1
+	kcl-lang.io/kpm v0.4.2
 )
 
 require (
