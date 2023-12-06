@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/gofrs/flock"
-	artifact "kcl-lang.io/kcl-artifact-go"
 	"kcl-lang.io/kcl-go/pkg/logger"
 	"kcl-lang.io/kcl-go/pkg/path"
+	"kcl-lang.io/lib"
 )
 
 const (
@@ -49,11 +49,10 @@ func installKclArtifact() {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}
 	// Install lib
-	err = artifact.InstallKclvm(path)
+	err = lib.InstallKclvm(path)
 	if err != nil {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}
-	artifact.CleanInstall()
 }
 
 var (
