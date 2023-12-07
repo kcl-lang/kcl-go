@@ -68,6 +68,7 @@ func initRuntime(maxProc int) {
 		if err != nil || resp.Value != args.Value {
 			fmt.Println("Init kcl runtime failed, path: ", MustGetKclvmPath())
 			fmt.Println(tip)
+			fmt.Printf("If not, you can run `rm -r %s/bin` to fix this issue\n", MustGetKclvmPath())
 			panic(err)
 		}
 	}
