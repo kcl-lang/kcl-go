@@ -1,8 +1,10 @@
 package gen
 
 import (
-	"github.com/goccy/go-yaml"
+	"bytes"
 	"io"
+
+	"github.com/goccy/go-yaml"
 )
 
 func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interface{}) error {
@@ -10,6 +12,8 @@ func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interfac
 	if err != nil {
 		return err
 	}
+
+	code = bytes.ReplaceAll(code, []byte("\r\n"), []byte("\n"))
 
 	yamlData := &yaml.MapSlice{}
 	if err = yaml.UnmarshalWithOptions(code, yamlData, yaml.UseOrderedMap()); err != nil {
