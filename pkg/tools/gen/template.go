@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 )
@@ -76,7 +77,15 @@ func formatValue(v interface{}) string {
 	}
 	switch value := v.(type) {
 	case string:
-		return fmt.Sprintf("\"%s\"", value)
+		if isStringEscaped(value) {
+			if value[len(value)-1] == '"' {
+				// if the string ends with '"' then we need to add a space after the closing triple quote
+				return fmt.Sprintf(`r"""%s """`, value)
+			} else {
+				return fmt.Sprintf(`r"""%s"""`, value)
+			}
+		}
+		return fmt.Sprintf(`"%s"`, value)
 	case bool:
 		if value {
 			return "True"
@@ -139,10 +148,35 @@ func formatName(name string) string {
 
 func indentLines(s, indent string) string {
 	s = strings.Replace(s, "\r\n", "\n", -1)
-	n := strings.Count(s, "\n")
-	if s[len(s)-1] == '\n' {
-		// ignore last empty line
-		n--
+	var b strings.Builder
+	raw := false
+	for i, line := range strings.Split(s, "\n") {
+		if i != 0 {
+			b.WriteString("\n")
+		}
+		if line == "" {
+			continue
+		}
+
+		if raw {
+			if strings.HasSuffix(line, `"""`) {
+				raw = false
+			}
+			b.WriteString(line)
+			continue
+		} else {
+			if strings.Contains(line, `r"""`) && !strings.HasSuffix(line, `"""`) {
+				raw = true
+			}
+		}
+
+		b.WriteString(indent)
+		b.WriteString(line)
 	}
-	return indent + strings.Replace(s, "\n", "\n"+indent, n)
+	return b.String()
+}
+
+func isStringEscaped(s string) bool {
+	_, err := strconv.Unquote(`"` + s + `"`)
+	return err != nil || strings.Contains(s, "$")
 }
