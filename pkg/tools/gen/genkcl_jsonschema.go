@@ -6,6 +6,7 @@ import (
 	"io"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/iancoleman/strcase"
@@ -16,6 +17,7 @@ import (
 type convertContext struct {
 	imports   map[string]struct{}
 	resultMap map[string]convertResult
+	paths     []string
 }
 
 type convertResult struct {
@@ -42,8 +44,9 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 	ctx := convertContext{
 		resultMap: make(map[string]convertResult),
 		imports:   make(map[string]struct{}),
+		paths:     []string{},
 	}
-	result := convertSchemaFromJsonSchema(ctx, js,
+	result := convertSchemaFromJsonSchema(&ctx, js,
 		strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename)))
 	if !result.IsSchema {
 		panic("result is not schema")
@@ -65,7 +68,7 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 	return k.genKcl(w, kclSch)
 }
 
-func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name string) convertResult {
+func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name string) convertResult {
 	// in jsonschema, type is one of True, False and Object
 	// we only convert Object type
 	if s.SchemaType != jsonschema.SchemaTypeObject {
@@ -84,6 +87,7 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 		name = "MyType"
 	}
 	result := convertResult{IsSchema: false, Name: name}
+	ctx.paths = append(ctx.paths, name)
 
 	isArray := false
 	typeList := typeUnion{}
@@ -113,10 +117,11 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 				logger.GetLogger().Warningf("unsupported multiple items: %#v", v)
 				break
 			}
-			for _, i := range v.Schemas {
-				item := convertSchemaFromJsonSchema(ctx, i, "items")
+			for i, val := range v.Schemas {
+				item := convertSchemaFromJsonSchema(ctx, val, "items"+strconv.Itoa(i))
 				if item.IsSchema {
-					typeList.Items = append(typeList.Items, typeCustom{Name: item.Name})
+					ctx.resultMap[item.schema.Name] = item
+					typeList.Items = append(typeList.Items, typeCustom{Name: item.schema.Name})
 				} else {
 					typeList.Items = append(typeList.Items, item.Type)
 				}
@@ -132,14 +137,12 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 				propSch := convertSchemaFromJsonSchema(ctx, val, key)
 				_, propSch.Required = required[key]
 				if propSch.IsSchema {
-					propSch.Name = strcase.ToCamel(key)
-					ctx.resultMap[propSch.Name] = propSch
+					ctx.resultMap[propSch.schema.Name] = propSch
 				}
-				propSch.Name = strcase.ToSnake(key)
 				result.Properties = append(result.Properties, propSch.property)
 				if !propSch.IsSchema {
 					for _, validate := range propSch.Validations {
-						validate.Name = propSch.Name
+						validate.Name = propSch.property.Name
 						result.Validations = append(result.Validations, validate)
 					}
 				}
@@ -174,6 +177,8 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			typeName := strcase.ToCamel(v.Reference[strings.LastIndex(v.Reference, "/")+1:])
 			typeList.Items = []typeInterface{typeCustom{Name: typeName}}
 		case *jsonschema.Defs:
+			paths := ctx.paths
+			ctx.paths = []string{}
 			for key, val := range *v {
 				sch := convertSchemaFromJsonSchema(ctx, val, key)
 				if !sch.IsSchema {
@@ -192,6 +197,7 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 				}
 				ctx.resultMap[key] = sch
 			}
+			ctx.paths = paths
 		case *jsonschema.AdditionalProperties:
 			switch v.SchemaType {
 			case jsonschema.SchemaTypeObject:
@@ -270,7 +276,13 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 	}
 
 	if result.IsSchema {
-		result.Type = typeCustom{Name: strcase.ToCamel(name)}
+		var s strings.Builder
+		for _, p := range ctx.paths {
+			s.WriteString(strcase.ToCamel(p))
+		}
+		result.schema.Name = s.String()
+		result.schema.Description = result.Description
+		result.Type = typeCustom{Name: strcase.ToCamel(result.schema.Name)}
 		if len(result.Properties) == 0 && !result.HasIndexSignature {
 			result.HasIndexSignature = true
 			result.IndexSignature = indexSignature{Type: typePrimitive(typAny)}
@@ -286,10 +298,9 @@ func convertSchemaFromJsonSchema(ctx convertContext, s *jsonschema.Schema, name 
 			result.Type = typePrimitive(typAny)
 		}
 	}
-	result.schema.Name = strcase.ToCamel(result.Name)
-	result.schema.Description = result.Description
 	result.property.Name = strcase.ToSnake(result.Name)
 	result.property.Description = result.Description
+	ctx.paths = ctx.paths[:len(ctx.paths)-1]
 	return result
 }
 

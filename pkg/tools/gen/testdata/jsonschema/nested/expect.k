@@ -10,15 +10,15 @@ schema Book:
     Attributes
     ----------
     title : str, optional
-    author : Author, optional
+    author : BookAuthor, optional
     """
 
     title?: str
-    author?: Author
+    author?: BookAuthor
 
-schema Author:
+schema BookAuthor:
     """
-    Author
+    BookAuthor
 
     Attributes
     ----------
