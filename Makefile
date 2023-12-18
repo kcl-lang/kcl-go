@@ -16,9 +16,6 @@ RUN_IN_DOCKER+=-v ~/.gitconfig:/root/.gitconfig
 RUN_IN_DOCKER+=-v ${PWD}:/root/kcl
 RUN_IN_DOCKER+=-w /root/kcl ${BUILD_IMAGE}
 
-default:
-	go run ./cmds/kcl-go run hello.k
-
 clean:
 	-rm -rf ./_build
 

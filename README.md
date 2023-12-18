@@ -18,24 +18,9 @@ You can use KCL to
 + Mutating or validating Kubernetes resources with [cloud-native configuration tool plugins](https://kcl-lang.io/docs/user_docs/guides/working-with-k8s/).
 + Used as a platform engineering programming language to deliver modern applications with [Kusion Stack](https://kusionstack.io).
 
-## Building
+## Building & Testing
 
 - [Install Go 1.19+](https://go.dev/dl/)
-
-```bash
-go run ./cmds/kcl-go run hello.k
-name: kcl
-age: 1
-two: 2
-x0:
-  name: kcl
-  age: 1
-x1:
-  name: kcl
-  age: 101
-```
-
-## Testing
 
 ```bash
 go test ./...
