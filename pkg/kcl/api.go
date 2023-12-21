@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/chai2010/jsonv"
@@ -20,9 +21,99 @@ import (
 type KclType = gpyrpc.KclType
 
 type KCLResultList struct {
-	list            []KCLResult
+	// When the list is empty, the result is the raw result.
+	list []KCLResult
+	// The result is the raw result whose type is not []KCLResult.
+	result          interface{}
 	raw_json_result string
 	raw_yaml_result string
+}
+
+// ToString returns the result as string.
+func (p *KCLResultList) ToString() (string, error) {
+	if p == nil || p.result == nil {
+		return "", fmt.Errorf("result is nil")
+	}
+	var resS string
+	err := p.ToType(&resS)
+	if err != nil {
+		return "", err
+	}
+	return resS, nil
+}
+
+// ToBool returns the result as bool.
+func (p *KCLResultList) ToBool() (*bool, error) {
+	if p == nil || p.result == nil {
+		return nil, fmt.Errorf("result is nil")
+	}
+	var resB bool
+	err := p.ToType(&resB)
+	if err != nil {
+		return nil, err
+	}
+	return &resB, nil
+}
+
+// ToMap returns the result as map[string]interface{}.
+func (p *KCLResultList) ToMap() (map[string]interface{}, error) {
+	if p == nil || p.result == nil {
+		return nil, fmt.Errorf("result is nil")
+	}
+	var resMap map[string]interface{}
+	err := p.ToType(&resMap)
+	if err != nil {
+		return nil, err
+	}
+	return resMap, nil
+}
+
+// ToFloat64 returns the result as float64.
+func (p *KCLResultList) ToFloat64() (*float64, error) {
+	if p == nil || p.result == nil {
+		return nil, fmt.Errorf("result is nil")
+	}
+	var resF float64
+	err := p.ToType(&resF)
+	if err != nil {
+		return nil, err
+	}
+	return &resF, nil
+}
+
+// ToList returns the result as []interface{}.
+func (p *KCLResultList) ToList() ([]interface{}, error) {
+	if p == nil || p.result == nil {
+		return nil, fmt.Errorf("result is nil")
+	}
+	var resList []interface{}
+	err := p.ToType(&resList)
+	if err != nil {
+		return nil, err
+	}
+	return resList, nil
+}
+
+// ToType returns the result as target type.
+func (p *KCLResultList) ToType(target interface{}) error {
+	if p == nil || p.result == nil {
+		return fmt.Errorf("result is nil")
+	}
+
+	srcVal := reflect.ValueOf(p.result)
+	targetVal := reflect.ValueOf(target)
+
+	if targetVal.Kind() != reflect.Ptr || targetVal.IsNil() {
+		return fmt.Errorf("failed to convert result to %T", target)
+	}
+
+	if srcVal.Type() != targetVal.Elem().Type() {
+		return fmt.Errorf("failed to convert result to %T: type mismatch", target)
+	}
+
+	targetVal.Elem().Set(srcVal)
+
+	return nil
 }
 
 func (p *KCLResultList) Len() int {
@@ -262,13 +353,17 @@ func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 	}
 
 	var mList []map[string]interface{}
-	if err := json.Unmarshal([]byte(resp.JsonResult), &mList); err != nil {
-		return nil, err
-	}
-	if len(mList) == 0 {
-		return nil, fmt.Errorf("kcl.Run: invalid result: %s", resp.JsonResult)
-	}
 
+	if err := json.Unmarshal([]byte(resp.JsonResult), &mList); err != nil {
+		err = nil
+		if err := json.Unmarshal([]byte(resp.JsonResult), &result.result); err != nil {
+			return nil, err
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	result.list = make([]KCLResult, 0, len(mList))
 	for _, m := range mList {
 		if len(m) != 0 {
 			result.list = append(result.list, m)
