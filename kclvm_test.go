@@ -233,6 +233,48 @@ a2 = App {
 	defer os.Remove(testdata_main_k)
 }
 
+func TestWithSelectorsReturnString(t *testing.T) {
+	const code = `
+schema Person:
+    labels: {str:str}
+
+alice = Person {
+    "labels": {"skin": "yellow"}
+}
+`
+	const testdata_main_k = "testdata/main_selector.k"
+	kfile, err := os.Create(testdata_main_k)
+	if err != nil {
+		t.Fatal(err)
+	}
+	kfile.Close()
+
+	result, err := kcl.Run(testdata_main_k,
+		kcl.WithCode(code),
+		kcl.WithSelectors("alice.labels.skin"),
+	)
+	assert2.Equal(t, err, nil)
+	resInStr, err := result.ToString()
+	assert2.Equal(t, err, nil)
+	assert2.Equal(t, resInStr, "yellow")
+
+	resInBool, err := result.ToBool()
+	assert2.Equal(t, err.Error(), "failed to convert result to *bool: type mismatch")
+	assert2.Equal(t, resInBool, (*bool)(nil))
+	resInF64, err := result.ToFloat64()
+	assert2.Equal(t, err.Error(), "failed to convert result to *float64: type mismatch")
+	assert2.Equal(t, resInF64, (*float64)(nil))
+	resInList, err := result.ToList()
+	assert2.Equal(t, err.Error(), "failed to convert result to *[]interface {}: type mismatch")
+	assert2.Equal(t, resInList, []interface{}(nil))
+	resInMap, err := result.ToMap()
+	assert2.Equal(t, err.Error(), "failed to convert result to *map[string]interface {}: type mismatch")
+	assert2.Equal(t, resInMap, map[string]interface{}(map[string]interface{}(nil)))
+
+	os.Remove(testdata_main_k)
+	defer os.Remove(testdata_main_k)
+}
+
 func _BenchmarkRunFilesParallel(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
