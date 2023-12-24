@@ -105,7 +105,8 @@ x1 = Person {
 - [func ListDownStreamFiles\(workDir string, opt \*ListDepsOptions\) \(\[\]string, error\)](<#ListDownStreamFiles>)
 - [func ListUpStreamFiles\(workDir string, opt \*ListDepsOptions\) \(deps \[\]string, err error\)](<#ListUpStreamFiles>)
 - [func OverrideFile\(file string, specs, importPaths \[\]string\) \(bool, error\)](<#OverrideFile>)
-- [func ValidateCode\(data, code string, opt \*ValidateOptions\) \(ok bool, err error\)](<#ValidateCode>)
+- [func Validate\(dataFile, schemaFile string, opts \*ValidateOptions\) \(ok bool, err error\)](<#Validate>)
+- [func ValidateCode\(data, code string, opts \*ValidateOptions\) \(ok bool, err error\)](<#ValidateCode>)
 - [type KCLResult](<#KCLResult>)
 - [type KCLResultList](<#KCLResultList>)
   - [func MustRun\(path string, opts ...Option\) \*KCLResultList](<#MustRun>)
@@ -226,7 +227,7 @@ func main() {
 </details>
 
 <a name="GetSchemaTypeMapping"></a>
-## func [GetSchemaTypeMapping](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L221>)
+## func [GetSchemaTypeMapping](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L227>)
 
 ```go
 func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*KclType, error)
@@ -363,14 +364,23 @@ When the pkgpath is '__main__', it can be omitted.
 
 importPaths. List of import statements that need to be added
 
+<a name="Validate"></a>
+## func [Validate](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L188>)
+
+```go
+func Validate(dataFile, schemaFile string, opts *ValidateOptions) (ok bool, err error)
+```
+
+Validate validates the given data file against the specified schema file with the provided options.
+
 <a name="ValidateCode"></a>
 ## func [ValidateCode](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L182>)
 
 ```go
-func ValidateCode(data, code string, opt *ValidateOptions) (ok bool, err error)
+func ValidateCode(data, code string, opts *ValidateOptions) (ok bool, err error)
 ```
 
-ValidateCode validate data match code
+ValidateCode validate data string match code string
 
 <a name="KCLResult"></a>
 ## type [KCLResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L54>)
@@ -721,7 +731,7 @@ type KclType = kcl.KclType
 ```
 
 <a name="GetSchemaType"></a>
-### func [GetSchemaType](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L204>)
+### func [GetSchemaType](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L210>)
 
 ```go
 func GetSchemaType(file, code, schemaName string) ([]*KclType, error)
@@ -961,7 +971,7 @@ type TestResult = testing.TestResult
 ```
 
 <a name="Test"></a>
-### func [Test](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L187>)
+### func [Test](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L193>)
 
 ```go
 func Test(testOpts *TestOptions, opts ...Option) (TestResult, error)
