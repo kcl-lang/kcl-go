@@ -3,6 +3,8 @@ package gen
 import (
 	"fmt"
 	htmlTmpl "html/template"
+
+	"github.com/getkin/kin-openapi/openapi3"
 	kpm "kcl-lang.io/kpm/pkg/api"
 
 	"os"
@@ -12,17 +14,62 @@ import (
 	kcl "kcl-lang.io/kcl-go"
 )
 
-// ExportSwaggerV2Spec export swagger v2 spec of a kcl package
-func ExportSwaggerV2Spec(pkgPath string) (string, error) {
-	spec, err := KclPackageToSwaggerV2Spec(pkgPath)
+const (
+	ExtensionKclType        = "x-kcl-type"
+	ExtensionKclDecorators  = "x-kcl-decorators"
+	ExtensionKclUnionTypes  = "x-kcl-union-types"
+	ExtensionKclDictKeyType = "x-kcl-dict-key-type"
+)
+
+// ExportOpenAPIV3Spec exports open api v3 spec of a kcl package
+func ExportOpenAPIV3Spec(pkgPath string) (*openapi3.T, error) {
+	s, err := ExportSwaggerV2Spec(pkgPath)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return jsonString(spec), nil
+	return SwaggerV2TotOpenAPIV3Spec(s), nil
 }
 
-// KclPackageToSwaggerV2Spec extracts the swagger v2 representation of a kcl package
-func KclPackageToSwaggerV2Spec(pkgPath string) (*SwaggerV2Spec, error) {
+// ExportOpenAPITypeToSchema exports open api v3 schema ref from the kcl type.
+func ExportOpenAPITypeToSchema(ty *KclOpenAPIType) *openapi3.SchemaRef {
+	s := &openapi3.SchemaRef{
+		Value: &openapi3.Schema{
+			Type:        string(ty.Type),
+			Format:      string(ty.Format),
+			Default:     ty.Default,
+			Enum:        ty.GetAnyEnum(),
+			ReadOnly:    ty.ReadOnly,
+			Description: ty.Description,
+			Properties:  make(openapi3.Schemas),
+			Required:    ty.Required,
+			Extensions:  ty.GetExtensionsMapping(),
+		},
+		Ref: ty.Ref,
+	}
+	for i, t := range ty.Properties {
+		s.Value.Properties[i] = ExportOpenAPITypeToSchema(t)
+	}
+	if ty.Items != nil {
+		s.Value.Items = ExportOpenAPITypeToSchema(ty.Items)
+	}
+	if ty.AdditionalProperties != nil {
+		s.Value.AdditionalProperties = openapi3.AdditionalProperties{
+			Schema: ExportOpenAPITypeToSchema(ty.AdditionalProperties),
+		}
+	}
+	if ty.Examples != nil && len(ty.Examples) > 0 {
+		s.Value.Example = ty.Examples
+	}
+	if len(ty.ExternalDocs) > 0 {
+		s.Value.ExternalDocs = &openapi3.ExternalDocs{
+			Description: ty.ExternalDocs,
+		}
+	}
+	return s
+}
+
+// ExportSwaggerV2Spec extracts the swagger v2 representation of a kcl package
+func ExportSwaggerV2Spec(pkgPath string) (*SwaggerV2Spec, error) {
 	pkg, err := kpm.GetKclPackage(pkgPath)
 	if err != nil {
 		return nil, fmt.Errorf("filePath is not a KCL package: %s", err)
@@ -47,10 +94,39 @@ func KclPackageToSwaggerV2Spec(pkgPath string) (*SwaggerV2Spec, error) {
 		for _, t := range p {
 			id := SchemaId(packagePath, t.KclType)
 			spec.Definitions[id] = GetKclOpenAPIType(packagePath, t.KclType, false)
-			fmt.Println(fmt.Sprintf("exporting openAPI spec from schema %s", id))
+			fmt.Printf("exporting openAPI spec from schema %s\n", id)
 		}
 	}
 	return spec, nil
+}
+
+// SwaggerV2TotOpenAPIV3Spec converts swagger v2 spec to open api v3 spec.
+func SwaggerV2TotOpenAPIV3Spec(s *SwaggerV2Spec) *openapi3.T {
+	t := &openapi3.T{
+		OpenAPI: "3.0",
+		Info: &openapi3.Info{
+			Title:       s.Info.Title,
+			Description: s.Info.Description,
+			Version:     s.Info.Version,
+		},
+		Paths: &openapi3.Paths{},
+		Components: &openapi3.Components{
+			Schemas: make(openapi3.Schemas),
+		},
+	}
+	for i, d := range s.Definitions {
+		t.Components.Schemas[i] = ExportOpenAPITypeToSchema(d)
+	}
+	return t
+}
+
+// ExportSwaggerV2SpecString exports swagger v2 spec of a kcl package
+func ExportSwaggerV2SpecString(pkgPath string) (string, error) {
+	spec, err := ExportSwaggerV2Spec(pkgPath)
+	if err != nil {
+		return "", err
+	}
+	return jsonString(spec), nil
 }
 
 // SwaggerV2Spec defines KCL OpenAPI Spec based on Swagger v2.0
@@ -151,7 +227,7 @@ type KclExample struct {
 // KclExtensions defines all the KCL specific extensions patched to OpenAPI
 type KclExtensions struct {
 	XKclModelType   *XKclModelType    `json:"x-kcl-type,omitempty"`
-	XKclDecorators  *XKclDecorators   `json:"x-kcl-decorators,omitempty"`
+	XKclDecorators  XKclDecorators    `json:"x-kcl-decorators,omitempty"`
 	XKclUnionTypes  []*KclOpenAPIType `json:"x-kcl-union-types,omitempty"`
 	XKclDictKeyType *KclOpenAPIType   `json:"x-kcl-dict-key-type,omitempty"` // dict key type
 }
@@ -169,10 +245,13 @@ type KclModelImportInfo struct {
 }
 
 // XKclDecorators defines the `x-kcl-decorators` extension
-type XKclDecorators struct {
-	Name      string
-	Arguments []string
-	Keywords  map[string]string
+type XKclDecorators []*XKclDecorator
+
+// XKclDecorator definition
+type XKclDecorator struct {
+	Name      string            `json:"name,omitempty"`
+	Arguments []string          `json:"arguments,omitempty"`
+	Keywords  map[string]string `json:"keywords,omitempty"`
 }
 
 // GetKclTypeName get the string representation of a KclOpenAPIType
@@ -263,6 +342,33 @@ func (tpe *KclOpenAPIType) GetSchemaPkgDir(base string) string {
 	return GetPkgDir(base, tpe.KclExtensions.XKclModelType.Import.Package)
 }
 
+func (tpe *KclOpenAPIType) GetExtensionsMapping() map[string]interface{} {
+	m := make(map[string]interface{})
+	if tpe.KclExtensions != nil {
+		if tpe.XKclModelType != nil {
+			m[ExtensionKclType] = tpe.XKclModelType
+		}
+		if tpe.XKclDecorators != nil {
+			m[ExtensionKclDecorators] = tpe.XKclDecorators
+		}
+		if tpe.XKclUnionTypes != nil {
+			m[ExtensionKclUnionTypes] = tpe.XKclUnionTypes
+		}
+		if tpe.XKclDictKeyType != nil {
+			m[ExtensionKclDictKeyType] = tpe.XKclDictKeyType
+		}
+	}
+	return m
+}
+
+func (tpe *KclOpenAPIType) GetAnyEnum() []interface{} {
+	e := make([]interface{}, 0)
+	for _, v := range tpe.Enum {
+		e = append(e, v)
+	}
+	return e
+}
+
 func GetPkgDir(base string, pkgName string) string {
 	return filepath.Join(append([]string{base}, strings.Split(pkgName, ".")...)...)
 }
@@ -272,6 +378,20 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 	t := KclOpenAPIType{
 		Description: from.Description,
 		Default:     from.Default,
+	}
+	// Get decorators
+	decorators := from.GetDecorators()
+	if len(decorators) > 0 {
+		t.KclExtensions = &KclExtensions{
+			XKclDecorators: make(XKclDecorators, 0),
+		}
+	}
+	for _, d := range decorators {
+		t.KclExtensions.XKclDecorators = append(t.KclExtensions.XKclDecorators, &XKclDecorator{
+			Name:      d.Name,
+			Arguments: d.Arguments,
+			Keywords:  d.Keywords,
+		})
 	}
 	switch from.Type {
 	case typInt:
@@ -302,8 +422,13 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 	case typDict:
 		t.Type = Object
 		t.AdditionalProperties = GetKclOpenAPIType(pkgPath, from.Item, true)
-		t.KclExtensions = &KclExtensions{
-			XKclDictKeyType: GetKclOpenAPIType(pkgPath, from.Key, true),
+		ty := GetKclOpenAPIType(pkgPath, from.Key, true)
+		if t.KclExtensions == nil {
+			t.KclExtensions = &KclExtensions{
+				XKclDictKeyType: ty,
+			}
+		} else {
+			t.KclExtensions.XKclDictKeyType = ty
 		}
 		return &t
 	case typSchema:
@@ -322,14 +447,19 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 		}
 		t.Required = from.Required
 		packageName := PackageName(pkgPath, from)
-		t.KclExtensions = &KclExtensions{
-			XKclModelType: &XKclModelType{
-				Import: &KclModelImportInfo{
-					Package: packageName,
-					Alias:   filepath.Base(from.Filename),
-				},
-				Type: from.SchemaName,
+		ty := &XKclModelType{
+			Import: &KclModelImportInfo{
+				Package: packageName,
+				Alias:   filepath.Base(from.Filename),
 			},
+			Type: from.SchemaName,
+		}
+		if t.KclExtensions == nil {
+			t.KclExtensions = &KclExtensions{
+				XKclModelType: ty,
+			}
+		} else {
+			t.KclExtensions.XKclModelType = ty
 		}
 		t.Examples = make(map[string]KclExample, len(from.GetExamples()))
 		for name, example := range from.GetExamples() {
@@ -339,7 +469,6 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 				Value:       example.Value,
 			}
 		}
-		// todo newT.KclExtensions.XKclDecorators = from.Decorators
 		// todo externalDocs(see also)
 		return &t
 	case typUnion:
@@ -348,8 +477,12 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 		for i, unionType := range from.UnionTypes {
 			tps[i] = GetKclOpenAPIType(pkgPath, unionType, true)
 		}
-		t.KclExtensions = &KclExtensions{
-			XKclUnionTypes: tps,
+		if t.KclExtensions == nil {
+			t.KclExtensions = &KclExtensions{
+				XKclUnionTypes: tps,
+			}
+		} else {
+			t.KclExtensions.XKclUnionTypes = tps
 		}
 		return &t
 	default:
@@ -382,12 +515,10 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 		}
 		panic(fmt.Errorf("unexpected KCL type: %s", from.Type))
 	}
-	return &t
 }
 
 // PackageName resolves the package name from the PkgPath and the PkgRoot of the type
 func PackageName(pkgPath string, t *kcl.KclType) string {
-	// todo after kpm support the correct pkgPath recursively in KclType, refactor the following logic
 	// pkgPath is the relative path to the package root path
 	// t.PkgPath is the "." joined path from the package root
 
