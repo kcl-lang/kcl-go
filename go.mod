@@ -1,6 +1,6 @@
 module kcl-lang.io/kcl-go
 
-go 1.19
+go 1.21
 
 require (
 	github.com/chai2010/jsonv v1.1.3
