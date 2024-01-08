@@ -11,6 +11,8 @@ import (
 	"sort"
 	"strings"
 	"text/template"
+
+	"github.com/yuin/goldmark"
 )
 
 //go:embed templates/doc/schemaDoc.gotmpl
@@ -71,6 +73,7 @@ type Format string
 const (
 	Html     Format = "html"
 	Markdown Format = "md"
+	OpenAPI  Format = "openapi"
 )
 
 // KclPackage contains package information of package metadata(such as name, version, description, ...) and exported models(such as schemas)
@@ -90,12 +93,8 @@ func (g *GenContext) render(spec *SwaggerV2Spec) error {
 	if err != nil {
 		return fmt.Errorf("failed to create docs/ directory under the target directory: %s", err)
 	}
-	// extract kcl package from swaggerV2 spec
-	rootPkg := spec.toKclPackage()
-	// sort schemas and subpackages by their names
-	rootPkg.sortSchemasAndPkgs()
 	// render the package
-	err = g.renderPackage(rootPkg, g.Target)
+	err = g.renderPackage(spec, g.Target)
 	if err != nil {
 		return err
 	}
@@ -231,28 +230,72 @@ func (pkg *KclPackage) getIndexContent(level int, indentation string) string {
 	return content
 }
 
-func (g *GenContext) renderPackage(pkg *KclPackage, parentDir string) error {
+func (g *GenContext) renderPackage(spec *SwaggerV2Spec, parentDir string) error {
+	// extract kcl package from swaggerV2 spec
+	pkg := spec.toKclPackage()
+	// sort schemas and subpackages by their names
+	pkg.sortSchemasAndPkgs()
 	pkgName := pkg.Name
 	if pkg.Name == "" {
 		pkgName = "main"
 	}
-	fmt.Println(fmt.Sprintf("generating doc for package %s", pkgName))
-	docFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
-	var contentBuf bytes.Buffer
-	err := g.Template.ExecuteTemplate(&contentBuf, "packageDoc", struct {
-		EscapeHtml bool
-		Data       *KclPackage
-	}{
-		EscapeHtml: g.EscapeHtml,
-		Data:       pkg,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to render package %s with template, err: %s", pkg.Name, err)
-	}
-	// write content to file
-	err = os.WriteFile(filepath.Join(parentDir, docFileName), contentBuf.Bytes(), 0644)
-	if err != nil {
-		return fmt.Errorf("failed to write file %s in %s: %v", docFileName, parentDir, err)
+	fmt.Printf("generating doc for package %s\n", pkgName)
+	// --- format ---
+	switch strings.ToLower(string(g.Format)) {
+	case string(Markdown):
+		docFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
+		var buf bytes.Buffer
+		err := g.Template.ExecuteTemplate(&buf, "packageDoc", struct {
+			EscapeHtml bool
+			Data       *KclPackage
+		}{
+			EscapeHtml: g.EscapeHtml,
+			Data:       pkg,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to render package %s with template, err: %s", pkg.Name, err)
+		}
+		// write content to file
+		err = os.WriteFile(filepath.Join(parentDir, docFileName), buf.Bytes(), 0644)
+		if err != nil {
+			return fmt.Errorf("failed to write file %s in %s: %v", docFileName, parentDir, err)
+		}
+	case string(Html):
+		var mdBuf bytes.Buffer
+		err := g.Template.ExecuteTemplate(&mdBuf, "packageDoc", struct {
+			EscapeHtml bool
+			Data       *KclPackage
+		}{
+			EscapeHtml: g.EscapeHtml,
+			Data:       pkg,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to render package %s with template, err: %s", pkg.Name, err)
+		}
+		var htmlBuf bytes.Buffer
+		if err := goldmark.Convert(mdBuf.Bytes(), &htmlBuf); err != nil {
+			panic(err)
+		}
+		docFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
+		// write content to file
+		err = os.WriteFile(filepath.Join(parentDir, docFileName), htmlBuf.Bytes(), 0644)
+		if err != nil {
+			return fmt.Errorf("failed to write file %s in %s: %v", docFileName, parentDir, err)
+		}
+	case string(OpenAPI):
+		docFileName := fmt.Sprintf("%s.%s", pkgName, "json")
+		spec := SwaggerV2TotOpenAPIV3Spec(spec)
+		json, err := spec.MarshalJSON()
+		if err != nil {
+			return err
+		}
+		// write content to file
+		err = os.WriteFile(filepath.Join(parentDir, docFileName), json, 0644)
+		if err != nil {
+			return fmt.Errorf("failed to write file %s in %s: %v", docFileName, parentDir, err)
+		}
+	default:
+		return fmt.Errorf("invalid generate format. Allow values: %s", []Format{Markdown, Html, OpenAPI})
 	}
 	return nil
 }
@@ -263,12 +306,12 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 	switch strings.ToLower(opts.Format) {
 	case string(Markdown):
 		g.Format = Markdown
-		break
 	case string(Html):
 		g.Format = Html
-		break
+	case string(OpenAPI):
+		g.Format = OpenAPI
 	default:
-		return nil, fmt.Errorf("invalid generate format. Allow values: %s", []Format{Markdown, Html})
+		return nil, fmt.Errorf("invalid generate format. Allow values: %s", []Format{Markdown, Html, OpenAPI})
 	}
 
 	// --- package path ---
@@ -374,7 +417,7 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 	g.Target = path.Join(g.Target, "docs")
 	if _, err := os.Stat(g.Target); err == nil {
 		// check and warn if the docs directory already exists
-		fmt.Println(fmt.Sprintf("[Warn] path %s exists, all the content will be overwritten", g.Target))
+		fmt.Printf("[Warn] path %s exists, all the content will be overwritten\n", g.Target)
 		if err := os.RemoveAll(g.Target); err != nil {
 			return nil, fmt.Errorf("failed to remove existing content in %s:%s", g.Target, err)
 		}
@@ -385,7 +428,7 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 
 // GenDoc generate document files from KCL source files
 func (g *GenContext) GenDoc() error {
-	spec, err := KclPackageToSwaggerV2Spec(g.PackagePath)
+	spec, err := ExportSwaggerV2Spec(g.PackagePath)
 	if err != nil {
 		return err
 	}
