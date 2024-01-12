@@ -1,4 +1,4 @@
-// Copyright 2021 The KCL Authors. All rights reserved.
+// Copyright The KCL Authors. All rights reserved.
 
 package kclvm_test
 
@@ -520,9 +520,9 @@ func TestTestAPI(t *testing.T) {
 }
 
 func TestWithExternalpkg(t *testing.T) {
-	absPath1, err := filepath.Abs("./testdata_external/external_1/")
+	absPath1, err := filepath.Abs("./testdata/external/external_1/")
 	assert2.Equal(t, nil, err)
-	absPath2, err := filepath.Abs("./testdata_external/external_2/")
+	absPath2, err := filepath.Abs("./testdata/external/external_2/")
 	assert2.Equal(t, nil, err)
 	opt := kcl.WithExternalPkgs("external_1="+absPath1, "external_2="+absPath2)
 	result, err := kcl.Run("./testdata/import-external/main.k", opt)

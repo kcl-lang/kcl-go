@@ -1,4 +1,4 @@
-// Copyright 2021 The KCL Authors. All rights reserved.
+// Copyright The KCL Authors. All rights reserved.
 
 package service
 
@@ -48,6 +48,22 @@ func (p *KclvmServiceClient) Ping(args *gpyrpc.Ping_Args) (resp *gpyrpc.Ping_Res
 func (p *KclvmServiceClient) ExecProgram(args *gpyrpc.ExecProgram_Args) (resp *gpyrpc.ExecProgram_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).ExecProgram(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
+func (p *KclvmServiceClient) ParseFile(args *gpyrpc.ParseFile_Args) (resp *gpyrpc.ParseFile_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).ParseFile(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
+func (p *KclvmServiceClient) ParseProgram(args *gpyrpc.ParseProgram_Args) (resp *gpyrpc.ParseProgram_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).ParseProgram(args)
 		err = p.wrapErr(err, stderr)
 	})
 	return

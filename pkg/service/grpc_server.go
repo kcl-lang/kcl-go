@@ -1,4 +1,4 @@
-// Copyright 2021 The KCL Authors. All rights reserved.
+// Copyright The KCL Authors. All rights reserved.
 
 package service
 
@@ -42,6 +42,12 @@ func (p *_KclvmServiceImpl) Ping(ctx context.Context, args *gpyrpc.Ping_Args) (*
 }
 func (p *_KclvmServiceImpl) ExecProgram(ctx context.Context, args *gpyrpc.ExecProgram_Args) (*gpyrpc.ExecProgram_Result, error) {
 	return p.c.ExecProgram(args)
+}
+func (p *_KclvmServiceImpl) ParseFile(ctx context.Context, args *gpyrpc.ParseFile_Args) (*gpyrpc.ParseFile_Result, error) {
+	return p.c.ParseFile(args)
+}
+func (p *_KclvmServiceImpl) ParseProgram(ctx context.Context, args *gpyrpc.ParseProgram_Args) (*gpyrpc.ParseProgram_Result, error) {
+	return p.c.ParseProgram(args)
 }
 func (p *_KclvmServiceImpl) FormatCode(ctx context.Context, args *gpyrpc.FormatCode_Args) (*gpyrpc.FormatCode_Result, error) {
 	return p.c.FormatCode(args)
