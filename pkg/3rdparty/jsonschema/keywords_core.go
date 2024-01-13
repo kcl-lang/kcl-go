@@ -228,6 +228,14 @@ func NewRef() Keyword {
 	return new(Ref)
 }
 
+// ResolveRef attempts to resolve the reference and return the resolved schema
+func (r *Ref) ResolveRef(rootSchema *Schema) *Schema {
+	if r.resolved == nil {
+		r._resolveRef(context.Background(), NewValidationState(rootSchema))
+	}
+	return r.resolved
+}
+
 // ValidateKeyword implements the Keyword interface for Ref
 func (r *Ref) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
 	schemaDebug("[Ref] Validating")

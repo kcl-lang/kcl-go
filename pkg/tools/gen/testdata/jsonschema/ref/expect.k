@@ -10,28 +10,28 @@ schema Customer:
     Attributes
     ----------
     name : str, optional
-    address : Address, optional
+    address : CustomerAddress, optional
     """
 
     name?: str
-    address?: Address
+    address?: CustomerAddress
 
-schema Address:
+schema CustomerAddress:
     r"""
-    Address
+    CustomerAddress
 
     Attributes
     ----------
     city : str, optional
-    state : State, optional
+    state : CustomerAddressState, optional
     """
 
     city?: str
-    state?: State
+    state?: CustomerAddressState
 
-schema State:
+schema CustomerAddressState:
     r"""
-    State
+    CustomerAddressState
 
     Attributes
     ----------

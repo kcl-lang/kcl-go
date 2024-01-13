@@ -1,11 +1,11 @@
 package gen
 
 import (
-	"context"
 	"encoding/json"
 	"io"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -15,9 +15,10 @@ import (
 )
 
 type convertContext struct {
-	imports   map[string]struct{}
-	resultMap map[string]convertResult
-	paths     []string
+	rootSchema *jsonschema.Schema
+	imports    map[string]struct{}
+	resultMap  map[string]convertResult
+	paths      []string
 }
 
 type convertResult struct {
@@ -37,14 +38,13 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 	if err = js.UnmarshalJSON(code); err != nil {
 		return err
 	}
-	// use Validate to trigger the evaluation of json schema
-	js.Validate(context.Background(), nil)
 
 	// convert json schema to kcl schema
 	ctx := convertContext{
-		resultMap: make(map[string]convertResult),
-		imports:   make(map[string]struct{}),
-		paths:     []string{},
+		rootSchema: js,
+		resultMap:  make(map[string]convertResult),
+		imports:    make(map[string]struct{}),
+		paths:      []string{},
 	}
 	result := convertSchemaFromJsonSchema(&ctx, js,
 		strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename)))
@@ -91,7 +91,8 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 	isArray := false
 	typeList := typeUnion{}
 	required := make(map[string]struct{})
-	for _, k := range s.OrderedKeywords {
+	for i := 0; i < len(s.OrderedKeywords); i++ {
+		k := s.OrderedKeywords[i]
 		switch v := s.Keywords[k].(type) {
 		case *jsonschema.Title:
 		case *jsonschema.Comment:
@@ -172,31 +173,23 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			typeList.Items = []typeInterface{typeValue{Value: unmarshalledVal}}
 			result.HasDefault = true
 			result.DefaultValue = unmarshalledVal
-		case *jsonschema.Ref:
-			typeName := strcase.ToCamel(v.Reference[strings.LastIndex(v.Reference, "/")+1:])
-			typeList.Items = []typeInterface{typeCustom{Name: typeName}}
 		case *jsonschema.Defs:
-			paths := ctx.paths
-			ctx.paths = []string{}
-			for key, val := range *v {
-				sch := convertSchemaFromJsonSchema(ctx, val, key)
-				if !sch.IsSchema {
-					logger.GetLogger().Warningf("unsupported defining non-object: %s", key)
-					sch = convertResult{
-						IsSchema: true,
-						Name:     key,
-						schema: schema{
-							Name:              strcase.ToCamel(key),
-							HasIndexSignature: true,
-							IndexSignature: indexSignature{
-								Type: typePrimitive(typAny),
-							},
-						},
-					}
-				}
-				ctx.resultMap[key] = sch
+		case *jsonschema.Ref:
+			refSch := v.ResolveRef(ctx.rootSchema)
+			if refSch == nil || refSch.OrderedKeywords == nil {
+				logger.GetLogger().Warningf("failed to resolve ref: %s", v.Reference)
 			}
-			ctx.paths = paths
+			for _, key := range refSch.OrderedKeywords {
+				if _, ok := s.Keywords[key]; ok {
+					logger.GetLogger().Warningf("keyword %s already exists when resolving ref %s", key, v.Reference)
+					continue
+				}
+				s.OrderedKeywords = append(s.OrderedKeywords, key)
+				s.Keywords[key] = refSch.Keywords[key]
+			}
+			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
+				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
+			})
 		case *jsonschema.AdditionalProperties:
 			switch v.SchemaType {
 			case jsonschema.SchemaTypeObject:

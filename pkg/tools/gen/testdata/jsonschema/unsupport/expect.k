@@ -14,27 +14,3 @@ schema Shop:
     """
 
     products?: any
-
-schema Clothing:
-    r"""
-    Clothing
-    """
-
-    [...str]: any
-
-schema Product:
-    r"""
-    Product
-
-    Attributes
-    ----------
-    name : str, optional
-    price : float, optional
-    """
-
-    name?: str
-    price?: float
-
-    check:
-        price >= 0
-
