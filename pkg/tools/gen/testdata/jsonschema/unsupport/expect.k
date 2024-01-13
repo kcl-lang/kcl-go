@@ -10,7 +10,8 @@ schema Shop:
 
     Attributes
     ----------
-    products : any, optional
+    products : any | [any] | "empty", optional
     """
 
-    products?: any
+    products?: any | [any] | "empty"
+

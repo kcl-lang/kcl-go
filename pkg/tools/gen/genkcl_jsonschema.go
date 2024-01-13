@@ -262,6 +262,16 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			result.Validations = append(result.Validations, validation{
 				MaxLength: (*int)(v),
 			})
+		case *jsonschema.OneOf:
+			for i, val := range *v {
+				item := convertSchemaFromJsonSchema(ctx, val, "oneOf"+strconv.Itoa(i))
+				if item.IsSchema {
+					ctx.resultMap[item.schema.Name] = item
+					typeList.Items = append(typeList.Items, typeCustom{Name: item.schema.Name})
+				} else {
+					typeList.Items = append(typeList.Items, item.Type)
+				}
+			}
 		default:
 			logger.GetLogger().Warningf("unknown Keyword: %s", k)
 		}

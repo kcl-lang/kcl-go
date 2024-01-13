@@ -1,0 +1,48 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://example.com/schemas/book.json",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"author": {
+			"$comment": "oneOf for types",
+			"oneOf": [
+				{
+					"type": "string"
+				},
+				{
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				{
+					"type": "integer"
+				}
+			]
+		},
+		"category": {
+			"$comment": "oneOf for objects",
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"properties": {
+						"title": {
+							"type": "string"
+						}
+					}
+				}
+			]
+		}
+	}
+}
