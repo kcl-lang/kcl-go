@@ -24,7 +24,9 @@ func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interfac
 	result := convertKclFromYaml(yamlData)
 
 	// generate kcl code
-	return k.genKcl(w, kclFile{Data: result})
+	return k.genKcl(w, kclFile{Config: []config{
+		{Data: result},
+	}})
 }
 
 func convertKclFromYaml(yamlData *yaml.MapSlice) []data {

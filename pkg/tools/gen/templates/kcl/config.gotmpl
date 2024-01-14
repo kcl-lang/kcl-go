@@ -1,0 +1,5 @@
+{{- if .Var }}{{ formatName .Var }}{{- if .IsUnion }}{{ " : " }}{{- else }}{{ " = " }}{{- end }}{{- end }}{{- if .Name }}{{ formatName .Name }}{{- end }}{{- if .Data }}{{- "{\n" }}
+{{- range .Data -}}
+{{- indentLines (include "data"  .) "    " }}
+{{- end -}}
+{{- "}" }}{{- else }}{}{{- end }}
