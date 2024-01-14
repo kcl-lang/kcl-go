@@ -50,19 +50,3 @@ n = Name {name = "name"}` // Sample KCL source code
 		t.Errorf("Expected Assign Node AST JSON with io.Reader source")
 	}
 }
-
-// BenchmarkParseFileASTJson 对 ParseFileASTJson 进行性能测试。
-// 它不会在普通的测试运行中执行，需要使用 "go test -bench=." 来运行。
-func BenchmarkParseFileASTJson(b *testing.B) {
-	src := "def foo(): pass" // 示例 KCL 源代码
-
-	// 运行之前重置计时器
-	b.ResetTimer()
-
-	for i := 0; i < b.N; i++ {
-		_, err := ParseFileASTJson("", src)
-		if err != nil {
-			b.Fatal(err)
-		}
-	}
-}
