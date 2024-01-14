@@ -1,4 +1,4 @@
-// Copyright 2021 The KCL Authors. All rights reserved.
+// Copyright The KCL Authors. All rights reserved.
 
 package service
 
@@ -60,6 +60,8 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
 	p.router.GET("/api:protorpc/KclvmService.ExecProgram", p.handle_ExecProgram)
+	p.router.GET("/api:protorpc/KclvmService.ParseFile", p.handle_ParseFile)
+	p.router.GET("/api:protorpc/KclvmService.ParseProgram", p.handle_ParseProgram)
 	p.router.GET("/api:protorpc/KclvmService.FormatCode", p.handle_FormatCode)
 	p.router.GET("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
 	p.router.GET("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
@@ -71,6 +73,8 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
 	p.router.POST("/api:protorpc/KclvmService.ExecProgram", p.handle_ExecProgram)
+	p.router.POST("/api:protorpc/KclvmService.ParseFile", p.handle_ParseFile)
+	p.router.POST("/api:protorpc/KclvmService.ParseProgram", p.handle_ParseProgram)
 	p.router.POST("/api:protorpc/KclvmService.FormatCode", p.handle_FormatCode)
 	p.router.POST("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
 	p.router.POST("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
@@ -137,6 +141,20 @@ func (p *restServer) handle_ExecProgram(w http.ResponseWriter, r *http.Request, 
 	var args = new(gpyrpc.ExecProgram_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.ExecProgram(args)
+	})
+}
+
+func (p *restServer) handle_ParseFile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var args = new(gpyrpc.ParseFile_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.ParseFile(args)
+	})
+}
+
+func (p *restServer) handle_ParseProgram(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var args = new(gpyrpc.ParseProgram_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.ParseProgram(args)
 	})
 }
 
