@@ -12,6 +12,8 @@ import (
 )
 
 var (
+	//go:embed templates/kcl/config.gotmpl
+	configTmpl string
 	//go:embed templates/kcl/data.gotmpl
 	dataTmpl string
 	//go:embed templates/kcl/document.gotmpl
@@ -53,6 +55,7 @@ func (k *kclGenerator) genKcl(w io.Writer, s kclFile) error {
 		return buf.String(), nil
 	}
 
+	tmpl = addTemplate(tmpl, "config", configTmpl)
 	tmpl = addTemplate(tmpl, "data", dataTmpl)
 	tmpl = addTemplate(tmpl, "document", documentTmpl)
 	tmpl = addTemplate(tmpl, "header", headerTmpl)

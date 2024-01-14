@@ -1,8 +1,9 @@
 package gen
 
 import (
-	"github.com/goccy/go-yaml"
 	"io"
+
+	"github.com/goccy/go-yaml"
 )
 
 func (k *kclGenerator) genKclFromJsonData(w io.Writer, filename string, src interface{}) error {
@@ -22,5 +23,7 @@ func (k *kclGenerator) genKclFromJsonData(w io.Writer, filename string, src inte
 	result := convertKclFromYaml(yamlData)
 
 	// generate kcl code
-	return k.genKcl(w, kclFile{Data: result})
+	return k.genKcl(w, kclFile{Config: []config{
+		{Data: result},
+	}})
 }

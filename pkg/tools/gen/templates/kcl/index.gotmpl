@@ -7,3 +7,7 @@
 {{ range .Data -}}
 {{ template "data" . -}}
 {{ end -}}
+
+{{ range .Config -}}
+{{ template "config" . -}}
+{{ end -}}
