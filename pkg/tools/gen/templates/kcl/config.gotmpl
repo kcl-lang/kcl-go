@@ -1,29 +1,5 @@
 {{- if .Var }}{{ formatName .Var }}{{- if .IsUnion }}{{ " : " }}{{- else }}{{ " = " }}{{- end }}{{- end }}{{- if .Name }}{{ formatName .Name }}{{- end }}{{- if .Data }}{{- "{\n" }}
 {{- range .Data -}}
-{{- "    " }}{{ formatName .Key }}{{ " = " }}
-    {{- if isKclData .Value }}
-        {{- "{\n" }}
-            {{- range .Value -}}
-            {{- indentLines (include "data" .) "        " }}
-            {{- end }}
-        {{- "    }" }}
-    {{- else if isArray .Value }}
-        {{- "[\n" }}
-            {{- range .Value -}}
-                {{- if isKclData . }}
-                    {{- "        {\n" }}
-                        {{- range . -}}
-                        {{- indentLines (include "data" .) "            " }}
-                        {{- end }}
-                    {{- "        }\n" }}
-                {{- else }}
-                    {{- indentLines (formatValue .) "        " }}{{- "\n" }}
-                {{- end }}
-            {{- end }}
-        {{- "    ]" }}
-    {{- else }}
-    	{{- formatValue .Value }}
-    {{- end }}
-    {{- "\n" }}
+{{- indentLines (include "data"  .) "    " }}
 {{- end -}}
 {{- "}" }}{{- else }}{}{{- end }}
