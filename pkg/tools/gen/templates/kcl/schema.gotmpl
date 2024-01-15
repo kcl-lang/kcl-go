@@ -7,8 +7,8 @@ schema {{ formatName .Name }}:
     {{ formatName .Name }}{{ if not .Required }}?{{ end }}: {{ formatType .Type }}{{ if .HasDefault }} = {{ formatValue .DefaultValue }}{{ end }}
     {{- end }}
     {{- if .HasIndexSignature }}{{- "\n    [" }}
-    	{{- if .IndexSignature.Alias }}{{ formatName .IndexSignature.Alias }}:{{ end }}
-    	{{- "...str]: " }}{{ formatType .IndexSignature.Type }}
+    	{{- if .IndexSignature.Alias }}{{ formatName .IndexSignature.Alias }}: {{ else }}...{{ end }}
+    	{{- "str]: " }}{{ formatType .IndexSignature.Type }}
     {{- end }}
 
 {{- if .Validations }}

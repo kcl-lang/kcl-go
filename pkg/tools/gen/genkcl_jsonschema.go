@@ -147,6 +147,38 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 					}
 				}
 			}
+		case *jsonschema.PatternProperties:
+			result.IsSchema = true
+			canConvert := true
+			if result.HasIndexSignature {
+				canConvert = false
+				logger.GetLogger().Warningf("failed to convert patternProperties: already has index signature.")
+			}
+			if len(*v) != 1 {
+				canConvert = false
+				logger.GetLogger().Warningf("unsupported multiple patternProperties.")
+			}
+			result.HasIndexSignature = true
+			result.IndexSignature = indexSignature{
+				Type: typePrimitive(typAny),
+			}
+			for _, prop := range *v {
+				val := prop.Schema
+				propSch := convertSchemaFromJsonSchema(ctx, val, "patternProperties")
+				if propSch.IsSchema {
+					ctx.resultMap[propSch.schema.Name] = propSch
+				}
+				if canConvert {
+					result.IndexSignature = indexSignature{
+						Alias: "key",
+						Type:  propSch.property.Type,
+					}
+					result.Validations = append(result.Validations, validation{
+						Name:  "key",
+						Regex: prop.Re,
+					})
+				}
+			}
 		case *jsonschema.Default:
 			result.HasDefault = true
 			result.DefaultValue = v.Data

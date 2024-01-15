@@ -214,15 +214,15 @@ func NewPatternProperties() Keyword {
 }
 
 type patternSchema struct {
-	key    string
-	re     *regexp.Regexp
-	schema *Schema
+	Key    string
+	Re     *regexp.Regexp
+	Schema *Schema
 }
 
 // Register implements the Keyword interface for PatternProperties
 func (p *PatternProperties) Register(uri string, registry *SchemaRegistry) {
 	for _, v := range *p {
-		v.schema.Register(uri, registry)
+		v.Schema.Register(uri, registry)
 	}
 }
 
@@ -239,13 +239,13 @@ func (p *PatternProperties) Resolve(pointer jptr.Pointer, uri string) *Schema {
 	patProp := &patternSchema{}
 
 	for _, v := range *p {
-		if v.key == *current {
+		if v.Key == *current {
 			patProp = &v
 			break
 		}
 	}
 
-	return patProp.schema.Resolve(pointer.Tail(), uri)
+	return patProp.Schema.Resolve(pointer.Tail(), uri)
 }
 
 // ValidateKeyword implements the Keyword interface for PatternProperties
@@ -254,7 +254,7 @@ func (p PatternProperties) ValidateKeyword(ctx context.Context, currentState *Va
 	if obj, ok := data.(map[string]interface{}); ok {
 		for key, val := range obj {
 			for _, ptn := range p {
-				if ptn.re.Match([]byte(key)) {
+				if ptn.Re.Match([]byte(key)) {
 					currentState.SetEvaluatedKey(key)
 					subState := currentState.NewSubState()
 					subState.DescendBase("patternProperties", key)
@@ -262,7 +262,7 @@ func (p PatternProperties) ValidateKeyword(ctx context.Context, currentState *Va
 					subState.DescendInstance(key)
 
 					subState.Errs = &[]KeyError{}
-					ptn.schema.ValidateKeyword(ctx, subState, val)
+					ptn.Schema.ValidateKeyword(ctx, subState, val)
 					currentState.AddSubErrors(*subState.Errs...)
 
 					if subState.IsValid() {
@@ -277,8 +277,8 @@ func (p PatternProperties) ValidateKeyword(ctx context.Context, currentState *Va
 // JSONProp implements the JSONPather for PatternProperties
 func (p PatternProperties) JSONProp(name string) interface{} {
 	for _, pp := range p {
-		if pp.key == name {
-			return pp.schema
+		if pp.Key == name {
+			return pp.Schema
 		}
 	}
 	return nil
@@ -288,7 +288,7 @@ func (p PatternProperties) JSONProp(name string) interface{} {
 func (p PatternProperties) JSONChildren() (res map[string]JSONPather) {
 	res = map[string]JSONPather{}
 	for i, pp := range p {
-		res[strconv.Itoa(i)] = pp.schema
+		res[strconv.Itoa(i)] = pp.Schema
 	}
 	return
 }
@@ -308,9 +308,9 @@ func (p *PatternProperties) UnmarshalJSON(data []byte) error {
 			return fmt.Errorf("invalid pattern: %s: %s", key, err.Error())
 		}
 		ptn[i] = patternSchema{
-			key:    key,
-			re:     re,
-			schema: sch,
+			Key:    key,
+			Re:     re,
+			Schema: sch,
 		}
 		i++
 	}
@@ -323,7 +323,7 @@ func (p *PatternProperties) UnmarshalJSON(data []byte) error {
 func (p PatternProperties) MarshalJSON() ([]byte, error) {
 	obj := map[string]interface{}{}
 	for _, prop := range p {
-		obj[prop.key] = prop.schema
+		obj[prop.Key] = prop.Schema
 	}
 	return json.Marshal(obj)
 }
