@@ -5,7 +5,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 import regex
 
 schema Cronjob:
-    """
+    r"""
     Cronjob
 
     Attributes
