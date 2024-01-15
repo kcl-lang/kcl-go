@@ -107,7 +107,7 @@ func formatValue(v interface{}) string {
 		var s strings.Builder
 		for i, item := range value {
 			if i != 0 {
-				s.WriteString(" ")
+				s.WriteString(", ")
 			}
 			s.WriteString(formatValue(item))
 		}

@@ -763,12 +763,12 @@ schema WorkflowOnOneOf2BranchProtectionRule:
 
     Attributes
     ----------
-    types : ["created" | "edited" | "deleted"], optional, default is ["created" "edited" "deleted"]
+    types : ["created" | "edited" | "deleted"], optional, default is ["created", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "edited" | "deleted"] = ["created" "edited" "deleted"]
+    types?: ["created" | "edited" | "deleted"] = ["created", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -787,12 +787,12 @@ schema WorkflowOnOneOf2CheckRun:
 
     Attributes
     ----------
-    types : ["created" | "rerequested" | "completed" | "requested_action"], optional, default is ["created" "rerequested" "completed" "requested_action"]
+    types : ["created" | "rerequested" | "completed" | "requested_action"], optional, default is ["created", "rerequested", "completed", "requested_action"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "rerequested" | "completed" | "requested_action"] = ["created" "rerequested" "completed" "requested_action"]
+    types?: ["created" | "rerequested" | "completed" | "requested_action"] = ["created", "rerequested", "completed", "requested_action"]
     [...str]: any
 
     check:
@@ -811,12 +811,12 @@ schema WorkflowOnOneOf2CheckSuite:
 
     Attributes
     ----------
-    types : ["completed" | "requested" | "rerequested"], optional, default is ["completed" "requested" "rerequested"]
+    types : ["completed" | "requested" | "rerequested"], optional, default is ["completed", "requested", "rerequested"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["completed" | "requested" | "rerequested"] = ["completed" "requested" "rerequested"]
+    types?: ["completed" | "requested" | "rerequested"] = ["completed", "requested", "rerequested"]
     [...str]: any
 
     check:
@@ -863,12 +863,12 @@ schema WorkflowOnOneOf2Discussion:
 
     Attributes
     ----------
-    types : ["created" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "category_changed" | "answered" | "unanswered"], optional, default is ["created" "edited" "deleted" "transferred" "pinned" "unpinned" "labeled" "unlabeled" "locked" "unlocked" "category_changed" "answered" "unanswered"]
+    types : ["created" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "category_changed" | "answered" | "unanswered"], optional, default is ["created", "edited", "deleted", "transferred", "pinned", "unpinned", "labeled", "unlabeled", "locked", "unlocked", "category_changed", "answered", "unanswered"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "category_changed" | "answered" | "unanswered"] = ["created" "edited" "deleted" "transferred" "pinned" "unpinned" "labeled" "unlabeled" "locked" "unlocked" "category_changed" "answered" "unanswered"]
+    types?: ["created" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "category_changed" | "answered" | "unanswered"] = ["created", "edited", "deleted", "transferred", "pinned", "unpinned", "labeled", "unlabeled", "locked", "unlocked", "category_changed", "answered", "unanswered"]
     [...str]: any
 
     check:
@@ -880,12 +880,12 @@ schema WorkflowOnOneOf2DiscussionComment:
 
     Attributes
     ----------
-    types : ["created" | "edited" | "deleted"], optional, default is ["created" "edited" "deleted"]
+    types : ["created" | "edited" | "deleted"], optional, default is ["created", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "edited" | "deleted"] = ["created" "edited" "deleted"]
+    types?: ["created" | "edited" | "deleted"] = ["created", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -925,12 +925,12 @@ schema WorkflowOnOneOf2IssueComment:
 
     Attributes
     ----------
-    types : ["created" | "edited" | "deleted"], optional, default is ["created" "edited" "deleted"]
+    types : ["created" | "edited" | "deleted"], optional, default is ["created", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "edited" | "deleted"] = ["created" "edited" "deleted"]
+    types?: ["created" | "edited" | "deleted"] = ["created", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -949,12 +949,12 @@ schema WorkflowOnOneOf2Issues:
 
     Attributes
     ----------
-    types : ["opened" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "closed" | "reopened" | "assigned" | "unassigned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "milestoned" | "demilestoned"], optional, default is ["opened" "edited" "deleted" "transferred" "pinned" "unpinned" "closed" "reopened" "assigned" "unassigned" "labeled" "unlabeled" "locked" "unlocked" "milestoned" "demilestoned"]
+    types : ["opened" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "closed" | "reopened" | "assigned" | "unassigned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "milestoned" | "demilestoned"], optional, default is ["opened", "edited", "deleted", "transferred", "pinned", "unpinned", "closed", "reopened", "assigned", "unassigned", "labeled", "unlabeled", "locked", "unlocked", "milestoned", "demilestoned"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["opened" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "closed" | "reopened" | "assigned" | "unassigned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "milestoned" | "demilestoned"] = ["opened" "edited" "deleted" "transferred" "pinned" "unpinned" "closed" "reopened" "assigned" "unassigned" "labeled" "unlabeled" "locked" "unlocked" "milestoned" "demilestoned"]
+    types?: ["opened" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "closed" | "reopened" | "assigned" | "unassigned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "milestoned" | "demilestoned"] = ["opened", "edited", "deleted", "transferred", "pinned", "unpinned", "closed", "reopened", "assigned", "unassigned", "labeled", "unlabeled", "locked", "unlocked", "milestoned", "demilestoned"]
     [...str]: any
 
     check:
@@ -973,12 +973,12 @@ schema WorkflowOnOneOf2Label:
 
     Attributes
     ----------
-    types : ["created" | "edited" | "deleted"], optional, default is ["created" "edited" "deleted"]
+    types : ["created" | "edited" | "deleted"], optional, default is ["created", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "edited" | "deleted"] = ["created" "edited" "deleted"]
+    types?: ["created" | "edited" | "deleted"] = ["created", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -997,12 +997,12 @@ schema WorkflowOnOneOf2Member:
 
     Attributes
     ----------
-    types : ["added" | "edited" | "deleted"], optional, default is ["added" "edited" "deleted"]
+    types : ["added" | "edited" | "deleted"], optional, default is ["added", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["added" | "edited" | "deleted"] = ["added" "edited" "deleted"]
+    types?: ["added" | "edited" | "deleted"] = ["added", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -1021,12 +1021,12 @@ schema WorkflowOnOneOf2Milestone:
 
     Attributes
     ----------
-    types : ["created" | "closed" | "opened" | "edited" | "deleted"], optional, default is ["created" "closed" "opened" "edited" "deleted"]
+    types : ["created" | "closed" | "opened" | "edited" | "deleted"], optional, default is ["created", "closed", "opened", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "closed" | "opened" | "edited" | "deleted"] = ["created" "closed" "opened" "edited" "deleted"]
+    types?: ["created" | "closed" | "opened" | "edited" | "deleted"] = ["created", "closed", "opened", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -1052,12 +1052,12 @@ schema WorkflowOnOneOf2Project:
 
     Attributes
     ----------
-    types : ["created" | "updated" | "closed" | "reopened" | "edited" | "deleted"], optional, default is ["created" "updated" "closed" "reopened" "edited" "deleted"]
+    types : ["created" | "updated" | "closed" | "reopened" | "edited" | "deleted"], optional, default is ["created", "updated", "closed", "reopened", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "updated" | "closed" | "reopened" | "edited" | "deleted"] = ["created" "updated" "closed" "reopened" "edited" "deleted"]
+    types?: ["created" | "updated" | "closed" | "reopened" | "edited" | "deleted"] = ["created", "updated", "closed", "reopened", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -1069,12 +1069,12 @@ schema WorkflowOnOneOf2ProjectCard:
 
     Attributes
     ----------
-    types : ["created" | "moved" | "converted" | "edited" | "deleted"], optional, default is ["created" "moved" "converted" "edited" "deleted"]
+    types : ["created" | "moved" | "converted" | "edited" | "deleted"], optional, default is ["created", "moved", "converted", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "moved" | "converted" | "edited" | "deleted"] = ["created" "moved" "converted" "edited" "deleted"]
+    types?: ["created" | "moved" | "converted" | "edited" | "deleted"] = ["created", "moved", "converted", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -1093,12 +1093,12 @@ schema WorkflowOnOneOf2ProjectColumn:
 
     Attributes
     ----------
-    types : ["created" | "updated" | "moved" | "deleted"], optional, default is ["created" "updated" "moved" "deleted"]
+    types : ["created" | "updated" | "moved" | "deleted"], optional, default is ["created", "updated", "moved", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "updated" | "moved" | "deleted"] = ["created" "updated" "moved" "deleted"]
+    types?: ["created" | "updated" | "moved" | "deleted"] = ["created", "updated", "moved", "deleted"]
     [...str]: any
 
     check:
@@ -1135,7 +1135,7 @@ schema WorkflowOnOneOf2PullRequest:
 
     Attributes
     ----------
-    types : ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"], optional, default is ["opened" "synchronize" "reopened"]
+    types : ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"], optional, default is ["opened", "synchronize", "reopened"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     branches : [str], optional
@@ -1192,7 +1192,7 @@ schema WorkflowOnOneOf2PullRequest:
         - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
     """
 
-    types?: ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"] = ["opened" "synchronize" "reopened"]
+    types?: ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"] = ["opened", "synchronize", "reopened"]
     branches?: [str]
     branches_ignore?: [str]
     tags?: [str]
@@ -1228,12 +1228,12 @@ schema WorkflowOnOneOf2PullRequestReview:
 
     Attributes
     ----------
-    types : ["submitted" | "edited" | "dismissed"], optional, default is ["submitted" "edited" "dismissed"]
+    types : ["submitted" | "edited" | "dismissed"], optional, default is ["submitted", "edited", "dismissed"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["submitted" | "edited" | "dismissed"] = ["submitted" "edited" "dismissed"]
+    types?: ["submitted" | "edited" | "dismissed"] = ["submitted", "edited", "dismissed"]
     [...str]: any
 
     check:
@@ -1249,12 +1249,12 @@ schema WorkflowOnOneOf2PullRequestReviewComment:
 
     Attributes
     ----------
-    types : ["created" | "edited" | "deleted"], optional, default is ["created" "edited" "deleted"]
+    types : ["created" | "edited" | "deleted"], optional, default is ["created", "edited", "deleted"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["created" | "edited" | "deleted"] = ["created" "edited" "deleted"]
+    types?: ["created" | "edited" | "deleted"] = ["created", "edited", "deleted"]
     [...str]: any
 
     check:
@@ -1280,7 +1280,7 @@ schema WorkflowOnOneOf2PullRequestTarget:
 
     Attributes
     ----------
-    types : ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"], optional, default is ["opened" "synchronize" "reopened"]
+    types : ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"], optional, default is ["opened", "synchronize", "reopened"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     branches : [str | str], optional
@@ -1337,7 +1337,7 @@ schema WorkflowOnOneOf2PullRequestTarget:
         - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
     """
 
-    types?: ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"] = ["opened" "synchronize" "reopened"]
+    types?: ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"] = ["opened", "synchronize", "reopened"]
     branches?: [str | str]
     branches_ignore?: [str | str]
     tags?: [str | str]
@@ -1454,12 +1454,12 @@ schema WorkflowOnOneOf2RegistryPackage:
 
     Attributes
     ----------
-    types : ["published" | "updated"], optional, default is ["published" "updated"]
+    types : ["published" | "updated"], optional, default is ["published", "updated"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["published" | "updated"] = ["published" "updated"]
+    types?: ["published" | "updated"] = ["published", "updated"]
     [...str]: any
 
     check:
@@ -1478,12 +1478,12 @@ schema WorkflowOnOneOf2Release:
 
     Attributes
     ----------
-    types : ["published" | "unpublished" | "created" | "edited" | "deleted" | "prereleased" | "released"], optional, default is ["published" "unpublished" "created" "edited" "deleted" "prereleased" "released"]
+    types : ["published" | "unpublished" | "created" | "edited" | "deleted" | "prereleased" | "released"], optional, default is ["published", "unpublished", "created", "edited", "deleted", "prereleased", "released"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     """
 
-    types?: ["published" | "unpublished" | "created" | "edited" | "deleted" | "prereleased" | "released"] = ["published" "unpublished" "created" "edited" "deleted" "prereleased" "released"]
+    types?: ["published" | "unpublished" | "created" | "edited" | "deleted" | "prereleased" | "released"] = ["published", "unpublished", "created", "edited", "deleted", "prereleased", "released"]
     [...str]: any
 
     check:
@@ -1663,13 +1663,13 @@ schema WorkflowOnOneOf2WorkflowRun:
 
     Attributes
     ----------
-    types : ["requested" | "completed"], optional, default is ["requested" "completed"]
+    types : ["requested" | "completed"], optional, default is ["requested", "completed"]
         Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
         You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
     workflows : [str], optional
     """
 
-    types?: ["requested" | "completed"] = ["requested" "completed"]
+    types?: ["requested" | "completed"] = ["requested", "completed"]
     workflows?: [str]
     [...str]: any
 
