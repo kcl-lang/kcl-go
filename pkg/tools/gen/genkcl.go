@@ -57,8 +57,6 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		codeStr := string(code)
 		var i interface{}
 		switch {
-		case strings.Contains(codeStr, "package "):
-			k.opts.Mode = ModeGoStruct
 		case json.Unmarshal(code, &i) == nil:
 			switch {
 			case strings.Contains(codeStr, "$schema"):
@@ -70,6 +68,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 			}
 		case yaml.Unmarshal(code, &i) == nil:
 			k.opts.Mode = ModeYaml
+		case strings.Contains(codeStr, "package "):
+			k.opts.Mode = ModeGoStruct
 		default:
 			return errors.New("failed to detect mode")
 		}
