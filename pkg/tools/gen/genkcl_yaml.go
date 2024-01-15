@@ -12,17 +12,11 @@ func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interfac
 	if err != nil {
 		return err
 	}
-
-	code = bytes.ReplaceAll(code, []byte("\r\n"), []byte("\n"))
-
-	yamlData := &yaml.MapSlice{}
-	if err = yaml.UnmarshalWithOptions(code, yamlData, yaml.UseOrderedMap()); err != nil {
+	// convert yaml data to kcl
+	result, err := convertKclFromYamlString(code)
+	if err != nil {
 		return err
 	}
-
-	// convert yaml data to kcl
-	result := convertKclFromYaml(yamlData)
-
 	// generate kcl code
 	return k.genKcl(w, kclFile{Config: []config{
 		{Data: result},
@@ -58,4 +52,16 @@ func convertKclFromYaml(yamlData *yaml.MapSlice) []data {
 		}
 	}
 	return result
+}
+
+func convertKclFromYamlString(data []byte) ([]data, error) {
+	data = bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
+
+	yamlData := &yaml.MapSlice{}
+	if err := yaml.UnmarshalWithOptions(data, yamlData, yaml.UseOrderedMap()); err != nil {
+		return nil, err
+	}
+
+	// convert yaml data to kcl
+	return convertKclFromYaml(yamlData), nil
 }

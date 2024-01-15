@@ -125,13 +125,30 @@ func getSortedFieldNames(fields map[string]*pb.KclType) []string {
 // It contains all the imports, schemas and data in this file.
 type kclFile struct {
 	// Import statements.
-	Imports []string
+	Imports []kImport
 	// Schema definitions.
 	Schemas []schema
 	// Top Level data definitions.
 	Data []data
 	// [k =] [T]v configurations, k and T is optional.
 	Config []config
+}
+
+type kImport struct {
+	PkgPath string
+	Alias   string
+}
+
+func (i *kImport) PkgName() string {
+	if len(i.Alias) > 0 {
+		return i.Alias
+	}
+	pkgNames := strings.Split(i.PkgPath, ".")
+	return pkgNames[len(pkgNames)-1]
+}
+
+func (i *kImport) Validate() bool {
+	return len(i.PkgPath) > 0
 }
 
 // schema is a kcl schema definition.
@@ -166,6 +183,7 @@ type validation struct {
 	Regex            *regexp.Regexp
 	MultiplyOf       *int
 	Unique           bool
+	AllOf            []*validation
 }
 
 // indexSignature is a kcl schema index signature definition.
