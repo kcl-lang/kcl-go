@@ -21,14 +21,14 @@ schema BookAuthors:
     BookAuthors
     """
 
-    [key: str]: BookAuthorsPatternProperties
+    [key: str]: BookAuthorsPatternProperties0
 
     check:
         regex.match(key, r"^[a-zA-Z]+$")
 
-schema BookAuthorsPatternProperties:
+schema BookAuthorsPatternProperties0:
     r"""
-    BookAuthorsPatternProperties
+    BookAuthorsPatternProperties0
 
     Attributes
     ----------

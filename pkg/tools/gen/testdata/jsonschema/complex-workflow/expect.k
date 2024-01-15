@@ -93,12 +93,12 @@ schema WorkflowJobs:
     You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
     """
 
-    [key: str]: WorkflowJobsPatternPropertiesOneOf0 | WorkflowJobsPatternPropertiesOneOf1
+    [key: str]: WorkflowJobsPatternProperties0OneOf0 | WorkflowJobsPatternProperties0OneOf1
 
     check:
         regex.match(key, r"^[_a-zA-Z][a-zA-Z0-9_-]*$")
 
-schema WorkflowJobsPatternPropertiesOneOf0:
+schema WorkflowJobsPatternProperties0OneOf0:
     r"""
     Each job must have an id to associate with the job. The key job_id is a string and its value is a map of the job's configuration data. You must replace <job_id> with a string that is unique to the jobs object. The <job_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
 
@@ -108,39 +108,39 @@ schema WorkflowJobsPatternPropertiesOneOf0:
         The name of the job displayed on GitHub.
     needs : [str] | str, optional
         Identifies any jobs that must complete successfully before this job will run. It can be a string or array of strings. If a job fails, all jobs that need it are skipped unless the jobs use a conditional statement that causes the job to continue.
-    permissions : "read-all" | "write-all" | WorkflowJobsPatternPropertiesOneOf0PermissionsOneOf1, optional
+    permissions : "read-all" | "write-all" | WorkflowJobsPatternProperties0OneOf0PermissionsOneOf1, optional
         You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
     runs_on : "macos-10.15" | "macos-11" | "macos-12" | "macos-latest" | "self-hosted" | "ubuntu-18.04" | "ubuntu-20.04" | "ubuntu-22.04" | "ubuntu-latest" | "windows-2016" | "windows-2019" | "windows-2022" | "windows-latest" | any | str, required
         The type of machine to run the job on. The machine can be either a GitHub-hosted runner, or a self-hosted runner.
-    environment : str | WorkflowJobsPatternPropertiesOneOf0EnvironmentOneOf1, optional
+    environment : str | WorkflowJobsPatternProperties0OneOf0EnvironmentOneOf1, optional
         The environment that the job references.
-    outputs : WorkflowJobsPatternPropertiesOneOf0Outputs, optional
+    outputs : WorkflowJobsPatternProperties0OneOf0Outputs, optional
         A map of outputs for a job. Job outputs are available to all downstream jobs that depend on this job.
-    env : WorkflowJobsPatternPropertiesOneOf0EnvOneOf0 | str, optional
+    env : WorkflowJobsPatternProperties0OneOf0EnvOneOf0 | str, optional
         A map of environment variables that are available to all steps in the job.
-    defaults : WorkflowJobsPatternPropertiesOneOf0Defaults, optional
+    defaults : WorkflowJobsPatternProperties0OneOf0Defaults, optional
         A map of default settings that will apply to all steps in the job.
     $if : str, optional
         You can use the if conditional to prevent a job from running unless a condition is met. You can use any supported context and expression to create a conditional.
         Expressions in an if conditional do not require the ${{ }} syntax. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
-    steps : [WorkflowJobsPatternPropertiesOneOf0StepsItems0], optional
+    steps : [WorkflowJobsPatternProperties0OneOf0StepsItems0], optional
         A job contains a sequence of tasks called steps. Steps can run commands, run setup tasks, or run an action in your repository, a public repository, or an action published in a Docker registry. Not all steps run actions, but all actions run as a step. Each step runs in its own process in the virtual environment and has access to the workspace and filesystem. Because steps run in their own process, changes to environment variables are not preserved between steps. GitHub provides built-in steps to set up and complete a job.
 
     timeout_minutes : float, optional, default is 360
         The maximum number of minutes to let a workflow run before GitHub automatically cancels it. Default: 360
-    strategy : WorkflowJobsPatternPropertiesOneOf0Strategy, optional
+    strategy : WorkflowJobsPatternProperties0OneOf0Strategy, optional
         A strategy creates a build matrix for your jobs. You can define different variations of an environment to run each job in.
     continue_on_error : bool | str, optional
         Prevents a workflow run from failing when a job fails. Set to true to allow a workflow run to pass when this job fails.
-    container : str | WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1, optional
+    container : str | WorkflowJobsPatternProperties0OneOf0ContainerOneOf1, optional
         A container to run any steps in a job that don't already specify a container. If you have steps that use both script and container actions, the container actions will run as sibling containers on the same network with the same volume mounts.
         If you do not set a container, all steps will run directly on the host specified by runs-on unless a step refers to an action configured to run in a container.
-    services : WorkflowJobsPatternPropertiesOneOf0Services, optional
+    services : WorkflowJobsPatternProperties0OneOf0Services, optional
         Additional containers to host services for a job in a workflow. These are useful for creating databases or cache services like redis. The runner on the virtual machine will automatically create a network and manage the life cycle of the service containers.
         When you use a service container for a job or your step uses container actions, you don't need to set port information to access the service. Docker automatically exposes all ports between containers on the same network.
         When both the job and the action run in a container, you can directly reference the container by its hostname. The hostname is automatically mapped to the service name.
         When a step does not use a container action, you must access the service using localhost and bind the ports.
-    concurrency : str | WorkflowJobsPatternPropertiesOneOf0ConcurrencyOneOf1, optional
+    concurrency : str | WorkflowJobsPatternProperties0OneOf0ConcurrencyOneOf1, optional
         Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
         You can also specify concurrency at the workflow level. 
         When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
@@ -148,27 +148,27 @@ schema WorkflowJobsPatternPropertiesOneOf0:
 
     name?: str
     needs?: [str] | str
-    permissions?: "read-all" | "write-all" | WorkflowJobsPatternPropertiesOneOf0PermissionsOneOf1
+    permissions?: "read-all" | "write-all" | WorkflowJobsPatternProperties0OneOf0PermissionsOneOf1
     runs_on: "macos-10.15" | "macos-11" | "macos-12" | "macos-latest" | "self-hosted" | "ubuntu-18.04" | "ubuntu-20.04" | "ubuntu-22.04" | "ubuntu-latest" | "windows-2016" | "windows-2019" | "windows-2022" | "windows-latest" | any | str
-    environment?: str | WorkflowJobsPatternPropertiesOneOf0EnvironmentOneOf1
-    outputs?: WorkflowJobsPatternPropertiesOneOf0Outputs
-    env?: WorkflowJobsPatternPropertiesOneOf0EnvOneOf0 | str
-    defaults?: WorkflowJobsPatternPropertiesOneOf0Defaults
+    environment?: str | WorkflowJobsPatternProperties0OneOf0EnvironmentOneOf1
+    outputs?: WorkflowJobsPatternProperties0OneOf0Outputs
+    env?: WorkflowJobsPatternProperties0OneOf0EnvOneOf0 | str
+    defaults?: WorkflowJobsPatternProperties0OneOf0Defaults
     $if?: str
-    steps?: [WorkflowJobsPatternPropertiesOneOf0StepsItems0]
+    steps?: [WorkflowJobsPatternProperties0OneOf0StepsItems0]
     timeout_minutes?: float = 360
-    strategy?: WorkflowJobsPatternPropertiesOneOf0Strategy
+    strategy?: WorkflowJobsPatternProperties0OneOf0Strategy
     continue_on_error?: bool | str
-    container?: str | WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1
-    services?: WorkflowJobsPatternPropertiesOneOf0Services
-    concurrency?: str | WorkflowJobsPatternPropertiesOneOf0ConcurrencyOneOf1
+    container?: str | WorkflowJobsPatternProperties0OneOf0ContainerOneOf1
+    services?: WorkflowJobsPatternProperties0OneOf0Services
+    concurrency?: str | WorkflowJobsPatternProperties0OneOf0ConcurrencyOneOf1
 
     check:
         len(steps) >= 1
 
-schema WorkflowJobsPatternPropertiesOneOf0ConcurrencyOneOf1:
+schema WorkflowJobsPatternProperties0OneOf0ConcurrencyOneOf1:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0ConcurrencyOneOf1
+    WorkflowJobsPatternProperties0OneOf0ConcurrencyOneOf1
 
     Attributes
     ----------
@@ -181,17 +181,17 @@ schema WorkflowJobsPatternPropertiesOneOf0ConcurrencyOneOf1:
     group: str
     cancel_in_progress?: bool | str
 
-schema WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1:
+schema WorkflowJobsPatternProperties0OneOf0ContainerOneOf1:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1
+    WorkflowJobsPatternProperties0OneOf0ContainerOneOf1
 
     Attributes
     ----------
     image : str, required
         The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
-    credentials : WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1Credentials, optional
+    credentials : WorkflowJobsPatternProperties0OneOf0ContainerOneOf1Credentials, optional
         If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
-    env : WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1EnvOneOf0 | str, optional
+    env : WorkflowJobsPatternProperties0OneOf0ContainerOneOf1EnvOneOf0 | str, optional
         Sets an array of environment variables in the container.
     ports : [float | str], optional
         Sets an array of ports to expose on the container.
@@ -204,8 +204,8 @@ schema WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1:
     """
 
     image: str
-    credentials?: WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1Credentials
-    env?: WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1EnvOneOf0 | str
+    credentials?: WorkflowJobsPatternProperties0OneOf0ContainerOneOf1Credentials
+    env?: WorkflowJobsPatternProperties0OneOf0ContainerOneOf1EnvOneOf0 | str
     ports?: [float | str]
     volumes?: [str]
     options?: str
@@ -214,7 +214,7 @@ schema WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1:
         len(ports) >= 1
         len(volumes) >= 1
 
-schema WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1Credentials:
+schema WorkflowJobsPatternProperties0OneOf0ContainerOneOf1Credentials:
     r"""
     If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
 
@@ -227,27 +227,27 @@ schema WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1Credentials:
     username?: str
     password?: str
 
-schema WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1EnvOneOf0:
+schema WorkflowJobsPatternProperties0OneOf0ContainerOneOf1EnvOneOf0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0ContainerOneOf1EnvOneOf0
+    WorkflowJobsPatternProperties0OneOf0ContainerOneOf1EnvOneOf0
     """
 
     [...str]: str | float | bool
 
-schema WorkflowJobsPatternPropertiesOneOf0Defaults:
+schema WorkflowJobsPatternProperties0OneOf0Defaults:
     r"""
     A map of default settings that will apply to all steps in the job.
 
     Attributes
     ----------
-    run : WorkflowJobsPatternPropertiesOneOf0DefaultsRun, optional
+    run : WorkflowJobsPatternProperties0OneOf0DefaultsRun, optional
     """
 
-    run?: WorkflowJobsPatternPropertiesOneOf0DefaultsRun
+    run?: WorkflowJobsPatternProperties0OneOf0DefaultsRun
 
-schema WorkflowJobsPatternPropertiesOneOf0DefaultsRun:
+schema WorkflowJobsPatternProperties0OneOf0DefaultsRun:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0DefaultsRun
+    WorkflowJobsPatternProperties0OneOf0DefaultsRun
 
     Attributes
     ----------
@@ -260,14 +260,14 @@ schema WorkflowJobsPatternPropertiesOneOf0DefaultsRun:
     shell?: any
     working_directory?: str
 
-schema WorkflowJobsPatternPropertiesOneOf0EnvOneOf0:
+schema WorkflowJobsPatternProperties0OneOf0EnvOneOf0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0EnvOneOf0
+    WorkflowJobsPatternProperties0OneOf0EnvOneOf0
     """
 
     [...str]: str | float | bool
 
-schema WorkflowJobsPatternPropertiesOneOf0EnvironmentOneOf1:
+schema WorkflowJobsPatternProperties0OneOf0EnvironmentOneOf1:
     r"""
     The environment that the job references
 
@@ -282,16 +282,16 @@ schema WorkflowJobsPatternPropertiesOneOf0EnvironmentOneOf1:
     name: str
     url?: str
 
-schema WorkflowJobsPatternPropertiesOneOf0Outputs:
+schema WorkflowJobsPatternProperties0OneOf0Outputs:
     r"""
     A map of outputs for a job. Job outputs are available to all downstream jobs that depend on this job.
     """
 
     [...str]: str
 
-schema WorkflowJobsPatternPropertiesOneOf0PermissionsOneOf1:
+schema WorkflowJobsPatternProperties0OneOf0PermissionsOneOf1:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0PermissionsOneOf1
+    WorkflowJobsPatternProperties0OneOf0PermissionsOneOf1
 
     Attributes
     ----------
@@ -324,7 +324,7 @@ schema WorkflowJobsPatternPropertiesOneOf0PermissionsOneOf1:
     security_events?: "read" | "write" | "none"
     statuses?: "read" | "write" | "none"
 
-schema WorkflowJobsPatternPropertiesOneOf0Services:
+schema WorkflowJobsPatternProperties0OneOf0Services:
     r"""
     Additional containers to host services for a job in a workflow. These are useful for creating databases or cache services like redis. The runner on the virtual machine will automatically create a network and manage the life cycle of the service containers.
     When you use a service container for a job or your step uses container actions, you don't need to set port information to access the service. Docker automatically exposes all ports between containers on the same network.
@@ -332,19 +332,19 @@ schema WorkflowJobsPatternPropertiesOneOf0Services:
     When a step does not use a container action, you must access the service using localhost and bind the ports.
     """
 
-    [...str]: WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalProperties
+    [...str]: WorkflowJobsPatternProperties0OneOf0ServicesAdditionalProperties
 
-schema WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalProperties:
+schema WorkflowJobsPatternProperties0OneOf0ServicesAdditionalProperties:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalProperties
+    WorkflowJobsPatternProperties0OneOf0ServicesAdditionalProperties
 
     Attributes
     ----------
     image : str, required
         The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
-    credentials : WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalPropertiesCredentials, optional
+    credentials : WorkflowJobsPatternProperties0OneOf0ServicesAdditionalPropertiesCredentials, optional
         If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
-    env : WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalPropertiesEnvOneOf0 | str, optional
+    env : WorkflowJobsPatternProperties0OneOf0ServicesAdditionalPropertiesEnvOneOf0 | str, optional
         Sets an array of environment variables in the container.
     ports : [float | str], optional
         Sets an array of ports to expose on the container.
@@ -357,8 +357,8 @@ schema WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalProperties:
     """
 
     image: str
-    credentials?: WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalPropertiesCredentials
-    env?: WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalPropertiesEnvOneOf0 | str
+    credentials?: WorkflowJobsPatternProperties0OneOf0ServicesAdditionalPropertiesCredentials
+    env?: WorkflowJobsPatternProperties0OneOf0ServicesAdditionalPropertiesEnvOneOf0 | str
     ports?: [float | str]
     volumes?: [str]
     options?: str
@@ -367,7 +367,7 @@ schema WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalProperties:
         len(ports) >= 1
         len(volumes) >= 1
 
-schema WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalPropertiesCredentials:
+schema WorkflowJobsPatternProperties0OneOf0ServicesAdditionalPropertiesCredentials:
     r"""
     If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
 
@@ -380,16 +380,16 @@ schema WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalPropertiesCredential
     username?: str
     password?: str
 
-schema WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalPropertiesEnvOneOf0:
+schema WorkflowJobsPatternProperties0OneOf0ServicesAdditionalPropertiesEnvOneOf0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0ServicesAdditionalPropertiesEnvOneOf0
+    WorkflowJobsPatternProperties0OneOf0ServicesAdditionalPropertiesEnvOneOf0
     """
 
     [...str]: str | float | bool
 
-schema WorkflowJobsPatternPropertiesOneOf0StepsItems0:
+schema WorkflowJobsPatternProperties0OneOf0StepsItems0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0StepsItems0
+    WorkflowJobsPatternProperties0OneOf0StepsItems0
 
     Attributes
     ----------
@@ -416,9 +416,9 @@ schema WorkflowJobsPatternPropertiesOneOf0StepsItems0:
         Using the working-directory keyword, you can specify the working directory of where to run the command.
     shell : any, optional
         You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-    with : WorkflowJobsPatternPropertiesOneOf0StepsItems0WithOneOf0 | str | WorkflowJobsPatternPropertiesOneOf0StepsItems0With, optional
+    with : WorkflowJobsPatternProperties0OneOf0StepsItems0WithOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StepsItems0With, optional
         A map of the input parameters defined by the action. Each input parameter is a key/value pair. Input parameters are set as environment variables. The variable is prefixed with INPUT_ and converted to upper case.
-    env : WorkflowJobsPatternPropertiesOneOf0StepsItems0EnvOneOf0 | str, optional
+    env : WorkflowJobsPatternProperties0OneOf0StepsItems0EnvOneOf0 | str, optional
         Sets environment variables for steps to use in the virtual environment. You can also set environment variables for the entire workflow or a job.
     continue_on_error : bool | str, optional, default is False
         Prevents a job from failing when a step fails. Set to true to allow a job to pass when this step fails.
@@ -433,19 +433,19 @@ schema WorkflowJobsPatternPropertiesOneOf0StepsItems0:
     run?: str
     working_directory?: str
     shell?: any
-    with?: WorkflowJobsPatternPropertiesOneOf0StepsItems0WithOneOf0 | str | WorkflowJobsPatternPropertiesOneOf0StepsItems0With
-    env?: WorkflowJobsPatternPropertiesOneOf0StepsItems0EnvOneOf0 | str
+    with?: WorkflowJobsPatternProperties0OneOf0StepsItems0WithOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StepsItems0With
+    env?: WorkflowJobsPatternProperties0OneOf0StepsItems0EnvOneOf0 | str
     continue_on_error?: bool | str = False
     timeout_minutes?: float
 
-schema WorkflowJobsPatternPropertiesOneOf0StepsItems0EnvOneOf0:
+schema WorkflowJobsPatternProperties0OneOf0StepsItems0EnvOneOf0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0StepsItems0EnvOneOf0
+    WorkflowJobsPatternProperties0OneOf0StepsItems0EnvOneOf0
     """
 
     [...str]: str | float | bool
 
-schema WorkflowJobsPatternPropertiesOneOf0StepsItems0With:
+schema WorkflowJobsPatternProperties0OneOf0StepsItems0With:
     r"""
     A map of the input parameters defined by the action. Each input parameter is a key/value pair. Input parameters are set as environment variables. The variable is prefixed with INPUT_ and converted to upper case.
 
@@ -458,20 +458,20 @@ schema WorkflowJobsPatternPropertiesOneOf0StepsItems0With:
     args?: str
     entrypoint?: str
 
-schema WorkflowJobsPatternPropertiesOneOf0StepsItems0WithOneOf0:
+schema WorkflowJobsPatternProperties0OneOf0StepsItems0WithOneOf0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0StepsItems0WithOneOf0
+    WorkflowJobsPatternProperties0OneOf0StepsItems0WithOneOf0
     """
 
     [...str]: str | float | bool
 
-schema WorkflowJobsPatternPropertiesOneOf0Strategy:
+schema WorkflowJobsPatternProperties0OneOf0Strategy:
     r"""
     A strategy creates a build matrix for your jobs. You can define different variations of an environment to run each job in.
 
     Attributes
     ----------
-    matrix : WorkflowJobsPatternPropertiesOneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternPropertiesOneOf0StrategyMatrix, required
+    matrix : WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StrategyMatrix, required
         A build matrix is a set of different configurations of the virtual environment. For example you might run a job against more than one supported version of a language, operating system, or tool. Each configuration is a copy of the job that runs and reports a status.
         You can specify a matrix by supplying an array for the configuration options. For example, if the GitHub virtual environment supports Node.js versions 6, 8, and 10 you could specify an array of those versions in the matrix.
         When you define a matrix of operating systems, you must set the required runs-on keyword to the operating system of the current job, rather than hard-coding the operating system name. To access the operating system name, you can use the matrix.os context parameter to set runs-on. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
@@ -481,48 +481,48 @@ schema WorkflowJobsPatternPropertiesOneOf0Strategy:
         The maximum number of jobs that can run simultaneously when using a matrix job strategy. By default, GitHub will maximize the number of jobs run in parallel depending on the available runners on GitHub-hosted virtual machines.
     """
 
-    matrix: WorkflowJobsPatternPropertiesOneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternPropertiesOneOf0StrategyMatrix
+    matrix: WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StrategyMatrix
     fail_fast?: bool = True
     max_parallel?: float
 
-schema WorkflowJobsPatternPropertiesOneOf0StrategyMatrix:
+schema WorkflowJobsPatternProperties0OneOf0StrategyMatrix:
     r"""
     A build matrix is a set of different configurations of the virtual environment. For example you might run a job against more than one supported version of a language, operating system, or tool. Each configuration is a copy of the job that runs and reports a status.
     You can specify a matrix by supplying an array for the configuration options. For example, if the GitHub virtual environment supports Node.js versions 6, 8, and 10 you could specify an array of those versions in the matrix.
     When you define a matrix of operating systems, you must set the required runs-on keyword to the operating system of the current job, rather than hard-coding the operating system name. To access the operating system name, you can use the matrix.os context parameter to set runs-on. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
     """
 
-    [...str]: [str | float | bool | WorkflowJobsPatternPropertiesOneOf0StrategyMatrixAdditionalPropertiesOneOf0Items0OneOf3 | [any]] | str
+    [...str]: [str | float | bool | WorkflowJobsPatternProperties0OneOf0StrategyMatrixAdditionalPropertiesOneOf0Items0OneOf3 | [any]] | str
 
-schema WorkflowJobsPatternPropertiesOneOf0StrategyMatrixAdditionalPropertiesOneOf0Items0OneOf3:
+schema WorkflowJobsPatternProperties0OneOf0StrategyMatrixAdditionalPropertiesOneOf0Items0OneOf3:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0StrategyMatrixAdditionalPropertiesOneOf0Items0OneOf3
+    WorkflowJobsPatternProperties0OneOf0StrategyMatrixAdditionalPropertiesOneOf0Items0OneOf3
     """
 
     [...str]: any
 
-schema WorkflowJobsPatternPropertiesOneOf0StrategyMatrixOneOf0:
+schema WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0StrategyMatrixOneOf0
+    WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0
     """
 
     [...str]: any
 
-schema WorkflowJobsPatternPropertiesOneOf0StrategyMatrixPatternPropertiesItems0:
+schema WorkflowJobsPatternProperties0OneOf0StrategyMatrixPatternProperties0Items0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0StrategyMatrixPatternPropertiesItems0
+    WorkflowJobsPatternProperties0OneOf0StrategyMatrixPatternProperties0Items0
     """
 
-    [...str]: str | float | bool | WorkflowJobsPatternPropertiesOneOf0StrategyMatrixPatternPropertiesItems0AdditionalPropertiesOneOf3 | [any]
+    [...str]: str | float | bool | WorkflowJobsPatternProperties0OneOf0StrategyMatrixPatternProperties0Items0AdditionalPropertiesOneOf3 | [any]
 
-schema WorkflowJobsPatternPropertiesOneOf0StrategyMatrixPatternPropertiesItems0AdditionalPropertiesOneOf3:
+schema WorkflowJobsPatternProperties0OneOf0StrategyMatrixPatternProperties0Items0AdditionalPropertiesOneOf3:
     r"""
-    WorkflowJobsPatternPropertiesOneOf0StrategyMatrixPatternPropertiesItems0AdditionalPropertiesOneOf3
+    WorkflowJobsPatternProperties0OneOf0StrategyMatrixPatternProperties0Items0AdditionalPropertiesOneOf3
     """
 
     [...str]: str | float | bool | any | [str | float | bool | any | any]
 
-schema WorkflowJobsPatternPropertiesOneOf1:
+schema WorkflowJobsPatternProperties0OneOf1:
     r"""
     Each job must have an id to associate with the job. The key job_id is a string and its value is a map of the job's configuration data. You must replace <job_id> with a string that is unique to the jobs object. The <job_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
 
@@ -532,17 +532,17 @@ schema WorkflowJobsPatternPropertiesOneOf1:
         The name of the job displayed on GitHub.
     needs : [str] | str, optional
         Identifies any jobs that must complete successfully before this job will run. It can be a string or array of strings. If a job fails, all jobs that need it are skipped unless the jobs use a conditional statement that causes the job to continue.
-    permissions : WorkflowJobsPatternPropertiesOneOf1Permissions, optional
+    permissions : WorkflowJobsPatternProperties0OneOf1Permissions, optional
     $if : str, optional
         You can use the if conditional to prevent a job from running unless a condition is met. You can use any supported context and expression to create a conditional.
         Expressions in an if conditional do not require the ${{ }} syntax. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
     uses : str, required
         The location and version of a reusable workflow file to run as a job, of the form './{path/to}/{localfile}.yml' or '{owner}/{repo}/{path}/{filename}@{ref}'. {ref} can be a SHA, a release tag, or a branch name. Using the commit SHA is the safest for stability and security.
-    with : WorkflowJobsPatternPropertiesOneOf1WithOneOf0 | str, optional
+    with : WorkflowJobsPatternProperties0OneOf1WithOneOf0 | str, optional
         A map of inputs that are passed to the called workflow. Any inputs that you pass must match the input specifications defined in the called workflow. Unlike 'jobs.<job_id>.steps[*].with', the inputs you pass with 'jobs.<job_id>.with' are not be available as environment variables in the called workflow. Instead, you can reference the inputs by using the inputs context.
-    secrets : WorkflowJobsPatternPropertiesOneOf1SecretsOneOf0OneOf0 | str | "inherit", optional
+    secrets : WorkflowJobsPatternProperties0OneOf1SecretsOneOf0OneOf0 | str | "inherit", optional
         When a job is used to call a reusable workflow, you can use 'secrets' to provide a map of secrets that are passed to the called workflow. Any secrets that you pass must match the names defined in the called workflow.
-    concurrency : str | WorkflowJobsPatternPropertiesOneOf1ConcurrencyOneOf1, optional
+    concurrency : str | WorkflowJobsPatternProperties0OneOf1ConcurrencyOneOf1, optional
         Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
         You can also specify concurrency at the workflow level. 
         When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
@@ -550,19 +550,19 @@ schema WorkflowJobsPatternPropertiesOneOf1:
 
     name?: str
     needs?: [str] | str
-    permissions?: WorkflowJobsPatternPropertiesOneOf1Permissions
+    permissions?: WorkflowJobsPatternProperties0OneOf1Permissions
     $if?: str
     uses: str
-    with?: WorkflowJobsPatternPropertiesOneOf1WithOneOf0 | str
-    secrets?: WorkflowJobsPatternPropertiesOneOf1SecretsOneOf0OneOf0 | str | "inherit"
-    concurrency?: str | WorkflowJobsPatternPropertiesOneOf1ConcurrencyOneOf1
+    with?: WorkflowJobsPatternProperties0OneOf1WithOneOf0 | str
+    secrets?: WorkflowJobsPatternProperties0OneOf1SecretsOneOf0OneOf0 | str | "inherit"
+    concurrency?: str | WorkflowJobsPatternProperties0OneOf1ConcurrencyOneOf1
 
     check:
         regex.match(uses, r"^(.+/)+(.+)\.(ya?ml)(@.+)?$")
 
-schema WorkflowJobsPatternPropertiesOneOf1ConcurrencyOneOf1:
+schema WorkflowJobsPatternProperties0OneOf1ConcurrencyOneOf1:
     r"""
-    WorkflowJobsPatternPropertiesOneOf1ConcurrencyOneOf1
+    WorkflowJobsPatternProperties0OneOf1ConcurrencyOneOf1
 
     Attributes
     ----------
@@ -575,9 +575,9 @@ schema WorkflowJobsPatternPropertiesOneOf1ConcurrencyOneOf1:
     group: str
     cancel_in_progress?: bool | str
 
-schema WorkflowJobsPatternPropertiesOneOf1Permissions:
+schema WorkflowJobsPatternProperties0OneOf1Permissions:
     r"""
-    WorkflowJobsPatternPropertiesOneOf1Permissions
+    WorkflowJobsPatternProperties0OneOf1Permissions
 
     Attributes
     ----------
@@ -610,16 +610,16 @@ schema WorkflowJobsPatternPropertiesOneOf1Permissions:
     security_events?: "read" | "write" | "none"
     statuses?: "read" | "write" | "none"
 
-schema WorkflowJobsPatternPropertiesOneOf1SecretsOneOf0OneOf0:
+schema WorkflowJobsPatternProperties0OneOf1SecretsOneOf0OneOf0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf1SecretsOneOf0OneOf0
+    WorkflowJobsPatternProperties0OneOf1SecretsOneOf0OneOf0
     """
 
     [...str]: str | float | bool
 
-schema WorkflowJobsPatternPropertiesOneOf1WithOneOf0:
+schema WorkflowJobsPatternProperties0OneOf1WithOneOf0:
     r"""
-    WorkflowJobsPatternPropertiesOneOf1WithOneOf0
+    WorkflowJobsPatternProperties0OneOf1WithOneOf0
     """
 
     [...str]: str | float | bool
@@ -1551,12 +1551,12 @@ schema WorkflowOnOneOf2WorkflowCallInputs:
     When using the workflow_call keyword, you can optionally specify inputs that are passed to the called workflow from the caller workflow.
     """
 
-    [key: str]: WorkflowOnOneOf2WorkflowCallInputsPatternProperties
+    [key: str]: WorkflowOnOneOf2WorkflowCallInputsPatternProperties0
 
     check:
         regex.match(key, r"^[_a-zA-Z][a-zA-Z0-9_-]*$")
 
-schema WorkflowOnOneOf2WorkflowCallInputsPatternProperties:
+schema WorkflowOnOneOf2WorkflowCallInputsPatternProperties0:
     r"""
     A string identifier to associate with the input. The value of <input_id> is a map of the input's metadata. The <input_id> must be a unique identifier within the inputs object. The <input_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
 
@@ -1585,12 +1585,12 @@ schema WorkflowOnOneOf2WorkflowCallSecrets:
     A map of the secrets that can be used in the called workflow. Within the called workflow, you can use the secrets context to refer to a secret.
     """
 
-    [key: str]: WorkflowOnOneOf2WorkflowCallSecretsPatternProperties
+    [key: str]: WorkflowOnOneOf2WorkflowCallSecretsPatternProperties0
 
     check:
         regex.match(key, r"^[_a-zA-Z][a-zA-Z0-9_-]*$")
 
-schema WorkflowOnOneOf2WorkflowCallSecretsPatternProperties:
+schema WorkflowOnOneOf2WorkflowCallSecretsPatternProperties0:
     r"""
     A string identifier to associate with the secret.
 
@@ -1622,12 +1622,12 @@ schema WorkflowOnOneOf2WorkflowDispatchInputs:
     Input parameters allow you to specify data that the action expects to use during runtime. GitHub stores input parameters as environment variables. Input ids with uppercase letters are converted to lowercase during runtime. We recommended using lowercase input ids.
     """
 
-    [key: str]: WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties
+    [key: str]: WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties0
 
     check:
         regex.match(key, r"^[_a-zA-Z][a-zA-Z0-9_-]*$")
 
-schema WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties:
+schema WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties0:
     r"""
     A string identifier to associate with the input. The value of <input_id> is a map of the input's metadata. The <input_id> must be a unique identifier within the inputs object. The <input_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
 

@@ -177,9 +177,9 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			result.IndexSignature = indexSignature{
 				Type: typePrimitive(typAny),
 			}
-			for _, prop := range *v {
+			for i, prop := range *v {
 				val := prop.Schema
-				propSch := convertSchemaFromJsonSchema(ctx, val, "patternProperties")
+				propSch := convertSchemaFromJsonSchema(ctx, val, "patternProperties" + strconv.Itoa(i))
 				if propSch.IsSchema {
 					ctx.resultMap[propSch.schema.Name] = propSch
 				}

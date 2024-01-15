@@ -23,9 +23,9 @@ schema BookAuthors:
 
     [...str]: any
 
-schema BookAuthorsPatternProperties:
+schema BookAuthorsPatternProperties0:
     r"""
-    BookAuthorsPatternProperties
+    BookAuthorsPatternProperties0
 
     Attributes
     ----------
@@ -35,4 +35,15 @@ schema BookAuthorsPatternProperties:
 
     first_name?: str
     last_name?: str
+
+schema BookAuthorsPatternProperties1:
+    r"""
+    BookAuthorsPatternProperties1
+
+    Attributes
+    ----------
+    name : str, optional
+    """
+
+    name?: str
 
