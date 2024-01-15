@@ -272,6 +272,40 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 					typeList.Items = append(typeList.Items, item.Type)
 				}
 			}
+		case *jsonschema.AllOf:
+			schs := *v
+			for i := 0; i < len(schs); i++ {
+				sch := schs[i]
+				for _, key := range sch.OrderedKeywords {
+					if _, ok := s.Keywords[key]; !ok {
+						s.OrderedKeywords = append(s.OrderedKeywords, key)
+						s.Keywords[key] = sch.Keywords[key]
+					} else {
+						switch v := sch.Keywords[key].(type) {
+						case *jsonschema.Type:
+						case *jsonschema.Ref:
+							refSch := v.ResolveRef(ctx.rootSchema)
+							if refSch == nil || refSch.OrderedKeywords == nil {
+								logger.GetLogger().Warningf("failed to resolve ref: %s", v.Reference)
+							}
+							schs = append(schs, refSch)
+						case *jsonschema.Properties:
+							props := *s.Keywords[key].(*jsonschema.Properties)
+							props = append(props, *v...)
+							s.Keywords[key] = &props
+						case *jsonschema.Required:
+							reqs := *s.Keywords[key].(*jsonschema.Required)
+							reqs = append(reqs, *v...)
+							s.Keywords[key] = &reqs
+						default:
+							logger.GetLogger().Warningf("failed to merge allOf: unsupported keyword %s", key)
+						}
+					}
+				}
+			}
+			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
+				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
+			})
 		default:
 			logger.GetLogger().Warningf("unknown Keyword: %s", k)
 		}

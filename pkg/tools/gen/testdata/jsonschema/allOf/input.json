@@ -13,7 +13,10 @@
           "type": "number",
           "minimum": 0
         }
-      }
+      },
+      "required": [
+        "name"
+      ]
     },
     "clothing": {
       "allOf": [
@@ -29,7 +32,10 @@
             "material": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "type"
+          ]
         }
       ]
     }
