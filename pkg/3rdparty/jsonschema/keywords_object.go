@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	orderedmap "github.com/wk8/go-ordered-map/v2"
 	"regexp"
+	"sort"
 	"strconv"
+
+	orderedmap "github.com/wk8/go-ordered-map/v2"
 
 	jptr "github.com/qri-io/jsonpointer"
 )
@@ -315,6 +317,9 @@ func (p *PatternProperties) UnmarshalJSON(data []byte) error {
 		i++
 	}
 
+	sort.Slice(ptn, func(i, j int) bool {
+		return ptn[i].Key < ptn[j].Key
+	})
 	*p = ptn
 	return nil
 }
