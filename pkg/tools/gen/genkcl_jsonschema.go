@@ -52,11 +52,10 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 		panic("result is not schema")
 	}
 	kclSch := kclFile{
-		Imports: []string{},
 		Schemas: []schema{result.schema},
 	}
 	for _, imp := range getSortedKeys(ctx.imports) {
-		kclSch.Imports = append(kclSch.Imports, imp)
+		kclSch.Imports = append(kclSch.Imports, kImport{PkgPath: imp})
 	}
 	for _, key := range getSortedKeys(ctx.resultMap) {
 		if ctx.resultMap[key].IsSchema {

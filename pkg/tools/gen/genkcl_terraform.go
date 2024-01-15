@@ -2,12 +2,13 @@ package gen
 
 import (
 	"encoding/json"
-	"github.com/iancoleman/strcase"
 	"io"
-	"kcl-lang.io/kcl-go/pkg/logger"
 	"reflect"
 	"sort"
 	"strconv"
+
+	"github.com/iancoleman/strcase"
+	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
 type tfSchema struct {
@@ -74,7 +75,6 @@ func (k *kclGenerator) genSchemaFromTerraformSchema(w io.Writer, filename string
 
 	// generate kcl schema code
 	kclSch := kclFile{
-		Imports: []string{},
 		Schemas: result,
 	}
 	return k.genKcl(w, kclSch)
