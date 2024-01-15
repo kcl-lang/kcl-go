@@ -1,11 +1,12 @@
 package gen
 
 import (
-	"context"
 	"encoding/json"
 	"io"
 	"path/filepath"
+	"reflect"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -15,9 +16,13 @@ import (
 )
 
 type convertContext struct {
-	imports   map[string]struct{}
-	resultMap map[string]convertResult
-	paths     []string
+	rootSchema *jsonschema.Schema
+	imports    map[string]struct{}
+	resultMap  map[string]convertResult
+	paths      []string
+	// pathObjects is used to avoid infinite loop when converting recursive schema
+	// TODO: support recursive schema
+	pathObjects []*jsonschema.Schema
 }
 
 type convertResult struct {
@@ -37,14 +42,14 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 	if err = js.UnmarshalJSON(code); err != nil {
 		return err
 	}
-	// use Validate to trigger the evaluation of json schema
-	js.Validate(context.Background(), nil)
 
 	// convert json schema to kcl schema
 	ctx := convertContext{
-		resultMap: make(map[string]convertResult),
-		imports:   make(map[string]struct{}),
-		paths:     []string{},
+		rootSchema:  js,
+		resultMap:   make(map[string]convertResult),
+		imports:     make(map[string]struct{}),
+		paths:       []string{},
+		pathObjects: []*jsonschema.Schema{},
 	}
 	result := convertSchemaFromJsonSchema(&ctx, js,
 		strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename)))
@@ -86,12 +91,22 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 		name = "MyType"
 	}
 	result := convertResult{IsSchema: false, Name: name}
+	if objectExists(ctx.pathObjects, s) {
+		result.Type = typePrimitive(typAny)
+		return result
+	}
 	ctx.paths = append(ctx.paths, name)
+	ctx.pathObjects = append(ctx.pathObjects, s)
+	defer func() {
+		ctx.paths = ctx.paths[:len(ctx.paths)-1]
+		ctx.pathObjects = ctx.pathObjects[:len(ctx.pathObjects)-1]
+	}()
 
 	isArray := false
 	typeList := typeUnion{}
 	required := make(map[string]struct{})
-	for _, k := range s.OrderedKeywords {
+	for i := 0; i < len(s.OrderedKeywords); i++ {
+		k := s.OrderedKeywords[i]
 		switch v := s.Keywords[k].(type) {
 		case *jsonschema.Title:
 		case *jsonschema.Comment:
@@ -130,6 +145,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 				required[key] = struct{}{}
 			}
 		case *jsonschema.Properties:
+			result.IsSchema = true
 			for _, prop := range *v {
 				key := prop.Key
 				val := prop.Value
@@ -143,6 +159,38 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 					for _, validate := range propSch.Validations {
 						validate.Name = propSch.property.Name
 						result.Validations = append(result.Validations, validate)
+					}
+				}
+			}
+		case *jsonschema.PatternProperties:
+			result.IsSchema = true
+			canConvert := true
+			if result.HasIndexSignature {
+				canConvert = false
+				logger.GetLogger().Warningf("failed to convert patternProperties: already has index signature.")
+			}
+			if len(*v) != 1 {
+				canConvert = false
+				logger.GetLogger().Warningf("unsupported multiple patternProperties.")
+			}
+			result.HasIndexSignature = true
+			result.IndexSignature = indexSignature{
+				Type: typePrimitive(typAny),
+			}
+			for i, prop := range *v {
+				val := prop.Schema
+				propSch := convertSchemaFromJsonSchema(ctx, val, "patternProperties" + strconv.Itoa(i))
+				if propSch.IsSchema {
+					ctx.resultMap[propSch.schema.Name] = propSch
+				}
+				if canConvert {
+					result.IndexSignature = indexSignature{
+						Alias: "key",
+						Type:  propSch.property.Type,
+						validation: &validation{
+							Name:  "key",
+							Regex: prop.Re,
+						},
 					}
 				}
 			}
@@ -172,35 +220,62 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			typeList.Items = []typeInterface{typeValue{Value: unmarshalledVal}}
 			result.HasDefault = true
 			result.DefaultValue = unmarshalledVal
-		case *jsonschema.Ref:
-			typeName := strcase.ToCamel(v.Reference[strings.LastIndex(v.Reference, "/")+1:])
-			typeList.Items = []typeInterface{typeCustom{Name: typeName}}
 		case *jsonschema.Defs:
-			paths := ctx.paths
-			ctx.paths = []string{}
-			for key, val := range *v {
-				sch := convertSchemaFromJsonSchema(ctx, val, key)
-				if !sch.IsSchema {
-					logger.GetLogger().Warningf("unsupported defining non-object: %s", key)
-					sch = convertResult{
-						IsSchema: true,
-						Name:     key,
-						schema: schema{
-							Name:              strcase.ToCamel(key),
-							HasIndexSignature: true,
-							IndexSignature: indexSignature{
-								Type: typePrimitive(typAny),
-							},
-						},
+		case *jsonschema.Ref:
+			refSch := v.ResolveRef(ctx.rootSchema)
+			if refSch == nil || refSch.OrderedKeywords == nil {
+				logger.GetLogger().Warningf("failed to resolve ref: %s", v.Reference)
+				continue
+			}
+			schs := []*jsonschema.Schema{refSch}
+			for i := 0; i < len(schs); i++ {
+				sch := schs[i]
+				for _, key := range sch.OrderedKeywords {
+					if _, ok := s.Keywords[key]; !ok {
+						s.OrderedKeywords = append(s.OrderedKeywords, key)
+						s.Keywords[key] = sch.Keywords[key]
+					} else {
+						switch v := sch.Keywords[key].(type) {
+						case *jsonschema.Type:
+						case *jsonschema.Description:
+						case *jsonschema.Comment:
+						case *jsonschema.Ref:
+							refSch := v.ResolveRef(ctx.rootSchema)
+							if refSch == nil || refSch.OrderedKeywords == nil {
+								logger.GetLogger().Warningf("failed to resolve ref: %s.", v.Reference)
+								continue
+							}
+							schs = append(schs, refSch)
+						case *jsonschema.Properties:
+							props := *s.Keywords[key].(*jsonschema.Properties)
+							props = append(props, *v...)
+							s.Keywords[key] = &props
+						case *jsonschema.Required:
+							reqs := *s.Keywords[key].(*jsonschema.Required)
+							reqs = append(reqs, *v...)
+							s.Keywords[key] = &reqs
+						case *jsonschema.Items:
+							items := *s.Keywords[key].(*jsonschema.Items)
+							items.Schemas = append(items.Schemas, v.Schemas...)
+							s.Keywords[key] = &items
+						case *jsonschema.MinItems:
+						case *jsonschema.Pattern:
+						default:
+							logger.GetLogger().Warningf("failed to merge ref: unsupported keyword %s. Paths: %s", key, strings.Join(ctx.paths, "/"))
+						}
 					}
 				}
-				ctx.resultMap[key] = sch
 			}
-			ctx.paths = paths
+			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
+				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
+			})
 		case *jsonschema.AdditionalProperties:
 			switch v.SchemaType {
 			case jsonschema.SchemaTypeObject:
 				sch := convertSchemaFromJsonSchema(ctx, (*jsonschema.Schema)(v), "additionalProperties")
+				if sch.IsSchema {
+					ctx.resultMap[sch.schema.Name] = sch
+				}
 				result.HasIndexSignature = true
 				result.IndexSignature = indexSignature{
 					Type: sch.Type,
@@ -211,7 +286,6 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 					Type: typePrimitive(typAny),
 				}
 			case jsonschema.SchemaTypeFalse:
-				result.HasIndexSignature = false
 			}
 		case *jsonschema.Minimum:
 			result.Validations = append(result.Validations, validation{
@@ -269,6 +343,51 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			result.Validations = append(result.Validations, validation{
 				MaxLength: (*int)(v),
 			})
+		case *jsonschema.OneOf:
+			for i, val := range *v {
+				item := convertSchemaFromJsonSchema(ctx, val, "oneOf"+strconv.Itoa(i))
+				if item.IsSchema {
+					ctx.resultMap[item.schema.Name] = item
+					typeList.Items = append(typeList.Items, typeCustom{Name: item.schema.Name})
+				} else {
+					typeList.Items = append(typeList.Items, item.Type)
+				}
+			}
+		case *jsonschema.AllOf:
+			schs := *v
+			for i := 0; i < len(schs); i++ {
+				sch := schs[i]
+				for _, key := range sch.OrderedKeywords {
+					if _, ok := s.Keywords[key]; !ok {
+						s.OrderedKeywords = append(s.OrderedKeywords, key)
+						s.Keywords[key] = sch.Keywords[key]
+					} else {
+						switch v := sch.Keywords[key].(type) {
+						case *jsonschema.Type:
+						case *jsonschema.Ref:
+							refSch := v.ResolveRef(ctx.rootSchema)
+							if refSch == nil || refSch.OrderedKeywords == nil {
+								logger.GetLogger().Warningf("failed to resolve ref: %s", v.Reference)
+								continue
+							}
+							schs = append(schs, refSch)
+						case *jsonschema.Properties:
+							props := *s.Keywords[key].(*jsonschema.Properties)
+							props = append(props, *v...)
+							s.Keywords[key] = &props
+						case *jsonschema.Required:
+							reqs := *s.Keywords[key].(*jsonschema.Required)
+							reqs = append(reqs, *v...)
+							s.Keywords[key] = &reqs
+						default:
+							logger.GetLogger().Warningf("failed to merge allOf: unsupported keyword %s", key)
+						}
+					}
+				}
+			}
+			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
+				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
+			})
 		default:
 			logger.GetLogger().Warningf("unknown Keyword: %s", k)
 		}
@@ -281,25 +400,27 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 		}
 		result.schema.Name = s.String()
 		result.schema.Description = result.Description
-		result.Type = typeCustom{Name: strcase.ToCamel(result.schema.Name)}
+		typeList.Items = append(typeList.Items, typeCustom{Name: result.schema.Name})
 		if len(result.Properties) == 0 && !result.HasIndexSignature {
 			result.HasIndexSignature = true
 			result.IndexSignature = indexSignature{Type: typePrimitive(typAny)}
 		}
-	} else {
-		if len(typeList.Items) != 0 {
-			if isArray {
-				result.Type = typeArray{Items: typeList}
-			} else {
-				result.Type = typeList
-			}
+	}
+	if len(typeList.Items) != 0 {
+		if isArray {
+			result.Type = typeArray{Items: typeList}
 		} else {
-			result.Type = typePrimitive(typAny)
+			result.Type = typeList
 		}
+	} else {
+		result.Type = typePrimitive(typAny)
+	}
+
+	if result.HasIndexSignature && result.IndexSignature.validation != nil {
+		result.Validations = append(result.Validations, *result.IndexSignature.validation)
 	}
 	result.property.Name = strcase.ToSnake(result.Name)
 	result.property.Description = result.Description
-	ctx.paths = ctx.paths[:len(ctx.paths)-1]
 	return result
 }
 
@@ -325,4 +446,13 @@ func jsonTypeToKclType(t string) typeInterface {
 		logger.GetLogger().Warningf("unknown type: %s", t)
 		return typePrimitive(typStr)
 	}
+}
+
+func objectExists(objs []*jsonschema.Schema, obj *jsonschema.Schema) bool {
+	for _, o := range objs {
+		if reflect.DeepEqual(o, obj) {
+			return true
+		}
+	}
+	return false
 }

@@ -48,6 +48,8 @@ func LoadDraft2019_09() {
 	RegisterKeyword("oneOf", NewOneOf)
 	RegisterKeyword("not", NewNot)
 
+	SetKeywordOrder("allOf", -1)
+
 	// object Keywords
 	RegisterKeyword("properties", NewProperties)
 	RegisterKeyword("patternProperties", NewPatternProperties)

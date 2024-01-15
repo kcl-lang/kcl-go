@@ -103,6 +103,15 @@ func formatValue(v interface{}) string {
 			s.WriteString(fmt.Sprintf("%s: %s", formatValue(key), formatValue(value[key])))
 		}
 		return "{" + s.String() + "}"
+	case []interface{}:
+		var s strings.Builder
+		for i, item := range value {
+			if i != 0 {
+				s.WriteString(", ")
+			}
+			s.WriteString(formatValue(item))
+		}
+		return "[" + s.String() + "]"
 	default:
 		return fmt.Sprintf("%v", value)
 	}
