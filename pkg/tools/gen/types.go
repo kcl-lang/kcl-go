@@ -189,8 +189,9 @@ type validation struct {
 // indexSignature is a kcl schema index signature definition.
 // It can be used to construct a dict with type.
 type indexSignature struct {
-	Alias string
-	Type  typeInterface
+	Alias      string
+	Type       typeInterface
+	validation *validation
 }
 
 // data is a kcl data definition.

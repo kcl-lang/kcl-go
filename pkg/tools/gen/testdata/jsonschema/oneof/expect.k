@@ -4,7 +4,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema Book:
-    """
+    r"""
     Book
 
     Attributes
@@ -19,7 +19,7 @@ schema Book:
     category?: BookCategoryOneOf0 | BookCategoryOneOf1
 
 schema BookCategoryOneOf0:
-    """
+    r"""
     BookCategoryOneOf0
 
     Attributes
@@ -30,7 +30,7 @@ schema BookCategoryOneOf0:
     name?: str
 
 schema BookCategoryOneOf1:
-    """
+    r"""
     BookCategoryOneOf1
 
     Attributes

@@ -65,7 +65,6 @@ func LoadDraft2019_09() {
 	SetKeywordOrder("properties", 2)
 	SetKeywordOrder("additionalProperties", 3)
 	SetKeywordOrder("unevaluatedProperties", 4)
-	SetKeywordOrder("patternProperties", 5)
 
 	// array Keywords
 	RegisterKeyword("items", NewItems)

@@ -16,7 +16,7 @@ schema Shop:
     products?: ShopProductsOneOf0 | [ShopProductsOneOf1Items0] | "empty"
 
 schema ShopProductsOneOf0:
-    """
+    r"""
     ShopProductsOneOf0
 
     Attributes
@@ -36,7 +36,7 @@ schema ShopProductsOneOf0:
         price >= 0
 
 schema ShopProductsOneOf1Items0:
-    """
+    r"""
     ShopProductsOneOf1Items0
 
     Attributes
