@@ -4,7 +4,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema MyOrder:
-    """
+    r"""
     Schema for representing an order information.
     It contains the order number, list of items and the current status.
 

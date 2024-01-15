@@ -4,7 +4,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema MonacoManifestSchema:
-    """
+    r"""
     MonacoManifestSchema
 
     Attributes
@@ -22,7 +22,7 @@ schema MonacoManifestSchema:
     environment_groups: [MonacoManifestSchemaEnvironmentGroupsItems0]
 
 schema MonacoManifestSchemaEnvironmentGroupsItems0:
-    """
+    r"""
     MonacoManifestSchemaEnvironmentGroupsItems0
 
     Attributes
@@ -37,7 +37,7 @@ schema MonacoManifestSchemaEnvironmentGroupsItems0:
     environments?: [MonacoManifestSchemaEnvironmentGroupsItems0EnvironmentsItems0]
 
 schema MonacoManifestSchemaEnvironmentGroupsItems0EnvironmentsItems0:
-    """
+    r"""
     MonacoManifestSchemaEnvironmentGroupsItems0EnvironmentsItems0
 
     Attributes
@@ -52,7 +52,7 @@ schema MonacoManifestSchemaEnvironmentGroupsItems0EnvironmentsItems0:
     url?: MonacoManifestSchemaEnvironmentGroupsItems0EnvironmentsItems0Url
 
 schema MonacoManifestSchemaEnvironmentGroupsItems0EnvironmentsItems0Url:
-    """
+    r"""
     The URL of this environment
 
     Attributes
@@ -67,7 +67,7 @@ schema MonacoManifestSchemaEnvironmentGroupsItems0EnvironmentsItems0Url:
     value?: str
 
 schema MonacoManifestSchemaProjectsItems0:
-    """
+    r"""
     MonacoManifestSchemaProjectsItems0
 
     Attributes

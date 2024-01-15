@@ -4,7 +4,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema Book:
-    """
+    r"""
     Book
 
     Attributes

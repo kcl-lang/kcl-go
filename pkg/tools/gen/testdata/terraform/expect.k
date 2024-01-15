@@ -4,7 +4,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema AlicloudConfigRule:
-    """
+    r"""
     AlicloudConfigRule
 
     Attributes
@@ -17,7 +17,7 @@ schema AlicloudConfigRule:
     resource_types_scope?: [str]
 
 schema AlicloudDbInstance:
-    """
+    r"""
     AlicloudDbInstance
 
     Attributes
@@ -40,7 +40,7 @@ schema AlicloudDbInstance:
         isunique(security_ips)
 
 schema ComplianceItem:
-    """
+    r"""
     ComplianceItem
 
     Attributes

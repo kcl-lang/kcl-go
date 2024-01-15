@@ -4,7 +4,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema Ethernet:
-    """
+    r"""
     Ethernet
 
     Attributes
@@ -17,7 +17,7 @@ schema Ethernet:
     socket?: EthernetSocket = {"HTTP": 80, "HTTPS": 443}
 
 schema EthernetSocket:
-    """
+    r"""
     EthernetSocket
     """
 

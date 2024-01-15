@@ -4,7 +4,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema Customer:
-    """
+    r"""
     Customer
 
     Attributes
@@ -17,7 +17,7 @@ schema Customer:
     address?: Address
 
 schema Address:
-    """
+    r"""
     Address
 
     Attributes
@@ -30,7 +30,7 @@ schema Address:
     state?: State
 
 schema State:
-    """
+    r"""
     State
 
     Attributes

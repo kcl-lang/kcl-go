@@ -4,7 +4,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 """
 
 schema Shop:
-    """
+    r"""
     Schema for representing a shop information.
     In this test case, we use some logic keywords like "oneOf" that can't be directly converted at the moment. To make it still work, we'll convert it into "any" type.
 
@@ -16,14 +16,14 @@ schema Shop:
     products?: any
 
 schema Clothing:
-    """
+    r"""
     Clothing
     """
 
     [...str]: any
 
 schema Product:
-    """
+    r"""
     Product
 
     Attributes
