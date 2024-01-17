@@ -179,7 +179,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			}
 			for i, prop := range *v {
 				val := prop.Schema
-				propSch := convertSchemaFromJsonSchema(ctx, val, "patternProperties" + strconv.Itoa(i))
+				propSch := convertSchemaFromJsonSchema(ctx, val, "patternProperties"+strconv.Itoa(i))
 				if propSch.IsSchema {
 					ctx.resultMap[propSch.schema.Name] = propSch
 				}

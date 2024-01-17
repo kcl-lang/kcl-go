@@ -127,7 +127,7 @@ func (k *kclGenerator) parserGoStructFieldTag(tag string) (string, string, error
 	tagMap := make(map[string]string, 0)
 	sp := strings.Split(tag, "`")
 	if len(sp) == 1 {
-		return "", "", errors.New("this field not found tag string like `` !")
+		return "", "", errors.New("this field not found tag string like ``")
 	}
 	value, ok := k.Lookup(sp[1], "kcl")
 	if !ok {

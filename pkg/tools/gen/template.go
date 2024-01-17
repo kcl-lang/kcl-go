@@ -37,6 +37,10 @@ var funcs = template.FuncMap{
 		_, ok := v.([]data)
 		return ok
 	},
+	"isKclConfig": func(v interface{}) bool {
+		_, ok := v.(config)
+		return ok
+	},
 	"isArray": func(v interface{}) bool {
 		_, ok := v.([]interface{})
 		return ok
@@ -94,15 +98,18 @@ func formatValue(v interface{}) string {
 			return "True"
 		}
 		return "False"
+	case map[string]bool:
+		return formatMap(value)
+	case map[string]float32:
+		return formatMap(value)
+	case map[string]float64:
+		return formatMap(value)
+	case map[string]int:
+		return formatMap(value)
+	case map[string]string:
+		return formatMap(value)
 	case map[string]interface{}:
-		var s strings.Builder
-		for _, key := range getSortedKeys(value) {
-			if s.Len() != 0 {
-				s.WriteString(", ")
-			}
-			s.WriteString(fmt.Sprintf("%s: %s", formatValue(key), formatValue(value[key])))
-		}
-		return "{" + s.String() + "}"
+		return formatMap(value)
 	case []interface{}:
 		var s strings.Builder
 		for i, item := range value {
@@ -115,6 +122,17 @@ func formatValue(v interface{}) string {
 	default:
 		return fmt.Sprintf("%v", value)
 	}
+}
+
+func formatMap[V any](value map[string]V) string {
+	var s strings.Builder
+	for _, key := range getSortedKeys(value) {
+		if s.Len() != 0 {
+			s.WriteString(", ")
+		}
+		s.WriteString(fmt.Sprintf("%s: %s", formatValue(key), formatValue(value[key])))
+	}
+	return "{" + s.String() + "}"
 }
 
 var kclKeywords = map[string]struct{}{
