@@ -219,6 +219,8 @@ func TestGenKclFromYaml(t *testing.T) {
 	}
 }
 
+type TestData = data
+
 func TestGenKclFromJsonAndImports(t *testing.T) {
 	file := kclFile{}
 	g := &kclGenerator{}
@@ -240,12 +242,46 @@ func TestGenKclFromJsonAndImports(t *testing.T) {
 	}
 	file.Imports = append(file.Imports, importStmt)
 	configSchemaName := strings.Join([]string{importStmt.PkgName(), "AppConfiguration"}, ".")
-	// Add configurations
+	// Add the configuration `app1` at top level.
 	file.Config = append(file.Config, config{
 		Data:    data,
 		IsUnion: true,
 		Var:     "app1",
 		Name:    configSchemaName,
+	})
+	// Add the configuration `app2` at top level with more data configs.
+	data = append(data, TestData{
+		Key: "labels",
+		Value: config{
+			Name: "Labels",
+			Data: []TestData{{
+				Key:   "app",
+				Value: "nginx",
+			}},
+		},
+	})
+	data = append(data, TestData{
+		Key: "annotations",
+		Value: config{
+			Data: []TestData{{
+				Key: "app1",
+				Value: map[string]any{
+					"app": "nginx",
+				},
+			}, {
+				Key: "app2",
+				Value: config{
+					Name: "Annotation",
+					Data: []TestData{{
+						Key: "app1",
+						Value: map[string]string{
+							"app": "nginx",
+						},
+					},
+					},
+				},
+			}},
+		},
 	})
 	file.Config = append(file.Config, config{
 		Data:    data,
@@ -279,6 +315,15 @@ app2: ac.AppConfiguration {
             }
         }
         replicas = 2
+    }
+    labels = Labels {
+        app = "nginx"
+    }
+    annotations = {
+        app1 = {"app": "nginx"}
+        app2 = Annotation {
+            app1 = {"app": "nginx"}
+        }
     }
 }
 `)

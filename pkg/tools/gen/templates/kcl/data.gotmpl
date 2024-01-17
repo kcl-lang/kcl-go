@@ -1,10 +1,11 @@
 {{ formatName .Key }}{{ " = " }}
-    {{- if isKclData .Value }}
+    {{- if isKclConfig .Value }}{{ template "config" .Value -}}
+    {{- else if isKclData .Value }}
         {{- "{\n" }}
             {{- range .Value -}}
             {{- indentLines (include "data" .) "    " }}
             {{- end }}
-        {{- "}" }}
+        {{- "}\n" }}
     {{- else if isArray .Value }}
         {{- "[\n" }}
             {{- range .Value -}}
@@ -18,7 +19,7 @@
                     {{- indentLines (formatValue .) "    " }}{{- "\n" }}
                 {{- end }}
             {{- end }}
-        {{- "]" }}
+        {{- "]\n" }}
     {{- else }}
-    	{{- formatValue .Value }}
+    	{{- formatValue .Value }}{{- "\n" }}
     {{- end }}
