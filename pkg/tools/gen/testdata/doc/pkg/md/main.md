@@ -19,6 +19,7 @@ Container is the common user interface for long-running services.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
+|**image** `required`|str|||
 |**name** `required`|str|The name of the long-running container.||
 ### Server
 
@@ -40,7 +41,7 @@ Server is the common user interface for long-running services adopting the best 
 |**litFloat** `required` `readOnly`|1.11||1.11|
 |**litInt** `required` `readOnly`|123||123|
 |**litStr** `required` `readOnly`|"abc"||"abc"|
-|**mainContainer** `required`|[Container](#container)|||
+|**mainContainer** `required`|[Container](#container)||Container {<br />    name = "main"<br />    image = "image"<br />}|
 |**name** `required`|str|A Server-level attribute.<br />The name of the long-running service.<br />See also: kusion_models/core/v1/metadata.k.||
 |**numMultiplier** `required`|units.NumberMultiplier||1M|
 |**others** `required`|any|||

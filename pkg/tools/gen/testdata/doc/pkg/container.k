@@ -8,3 +8,4 @@ schema Container:
         The name of the long-running container.
     """
     name: str
+    image: str

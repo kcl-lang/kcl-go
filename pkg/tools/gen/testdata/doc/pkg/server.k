@@ -35,7 +35,10 @@ schema Server:
     age: int
     height: float
     port: int | str
-    mainContainer: Container
+    mainContainer: Container = Container {
+        name = "main"
+        image = "image"
+    }
     antiSelf: bool
     others: any
     litStr: "abc"
