@@ -1,19 +1,14 @@
-// Copyright 2023 The KCL Authors. All rights reserved.
-
-// Run CGO Mode:
-// KCLVM_SERVICE_CLIENT_HANDLER=native KCLVM_PLUGIN_DEBUG=1 go run -tags=kclvm_service_capi .
-
 package main
 
 import (
 	"fmt"
 
-	"kcl-lang.io/kcl-go"
+	kcl "kcl-lang.io/kcl-go"
 	_ "kcl-lang.io/kcl-go/pkg/kcl_plugin/hello_plugin"
 )
 
 func main() {
-	yaml := kclvm.MustRun("kubernetes.k", kclvm.WithCode(k_code)).GetRawYamlResult()
+	yaml := kcl.MustRun("kubernetes.k", kcl.WithCode(k_code)).GetRawYamlResult()
 	fmt.Println(yaml)
 }
 
