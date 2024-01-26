@@ -69,6 +69,14 @@ func (p *KclvmServiceClient) ParseProgram(args *gpyrpc.ParseProgram_Args) (resp 
 	return
 }
 
+func (p *KclvmServiceClient) LoadPackage(args *gpyrpc.LoadPackage_Args) (resp *gpyrpc.LoadPackage_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).LoadPackage(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
 func (p *KclvmServiceClient) FormatCode(args *gpyrpc.FormatCode_Args) (resp *gpyrpc.FormatCode_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).FormatCode(args)

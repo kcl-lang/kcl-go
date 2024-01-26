@@ -1,4 +1,4 @@
-// Copyright 2023 The KCL Authors. All rights reserved.
+// Copyright The KCL Authors. All rights reserved.
 //
 // This file defines the request parameters and return structure of the KCL RPC server.
 
@@ -62,6 +62,7 @@ service KclvmService {
 
 	rpc ParseFile(ParseFile_Args) returns(ParseFile_Result);
 	rpc ParseProgram(ParseProgram_Args) returns(ParseProgram_Result);
+	rpc LoadPackage(LoadPackage_Args) returns(LoadPackage_Result);
 
 	rpc FormatCode(FormatCode_Args) returns(FormatCode_Result);
 	rpc FormatPath(FormatPath_Args) returns(FormatPath_Result);
@@ -115,9 +116,58 @@ message ParseProgram_Args {
 }
 
 message ParseProgram_Result {
-	string ast_json = 1;          // JSON string value
-	repeated string paths = 2;   // Return the files in the order they should be compiled
+	string ast_json = 1;            // JSON string value
+	repeated string paths = 2;      // Returns the files in the order they should be compiled
 	repeated Error errors = 3;     // Parse errors
+}
+
+message LoadPackage_Args {
+	ParseProgram_Args parse_args = 1;
+	bool resolve_ast = 2;
+	bool load_builtin = 3;
+	bool with_ast_index = 4;
+}
+
+message LoadPackage_Result {
+	string program = 1;          // JSON string value
+	repeated string paths = 2;   // Returns the files in the order they should be compiled
+	repeated Error parse_errors = 3;     // Parse errors
+	repeated Error type_errors = 4;      // Type errors
+	map<string, Scope> scopes = 5;    // Map key is the ScopeIndex json string.
+	map<string, Symbol> symbols = 6;  // Map key is the SymbolIndex json string.
+	map<string, SymbolIndex> node_symbol_map = 7;  // Map key is the AST index UUID string.
+	map<string, string> symbol_node_map = 8;       // Map key is the SymbolIndex json string.
+	map<string, SymbolIndex> fully_qualified_name_map = 9;  // Map key is the fully_qualified_name e.g. `pkg.Name`
+	map<string, ScopeIndex> pkg_scope_map = 10;      // Map key is the package path.
+}
+
+message Symbol {
+	KclType ty = 1;
+	string name = 2;
+	SymbolIndex owner = 3;
+	SymbolIndex def = 4;
+	repeated SymbolIndex attrs = 5;
+	bool is_global = 6;
+}
+
+message Scope {
+	string kind = 1;
+	ScopeIndex parent = 2;
+	SymbolIndex owner = 3;
+	repeated ScopeIndex children = 4;
+	repeated SymbolIndex defs = 5;
+}
+
+message SymbolIndex {
+	uint64 i = 1;
+	uint64 g = 2;
+	string kind = 3;
+}
+
+message ScopeIndex {
+	uint64 i = 1;
+	uint64 g = 2;
+	string kind = 3;
 }
 
 message ExecProgram_Args {
@@ -280,7 +330,7 @@ message LoadSettingsFiles_Result {
 }
 
 message CliConfig {
-    repeated string files = 1;
+	repeated string files = 1;
 	string output = 2;
 	repeated string overrides = 3;
 	repeated string path_selector = 4;
@@ -303,14 +353,14 @@ message KeyValuePair {
 // ---------------------------------------------------------------------------------
 
 message Rename_Args {
-    string package_root = 1;              // the file path to the package root
-    string symbol_path = 2;               // the path to the target symbol to be renamed. The symbol path should conform to format: `<pkgpath>:<field_path>` When the pkgpath is '__main__', `<pkgpath>:` can be omitted.
-    repeated string file_paths = 3;       // the paths to the source code files
-    string new_name = 4;                  // the new name of the symbol
+	string package_root = 1;              // the file path to the package root
+	string symbol_path = 2;               // the path to the target symbol to be renamed. The symbol path should conform to format: `<pkgpath>:<field_path>` When the pkgpath is '__main__', `<pkgpath>:` can be omitted.
+	repeated string file_paths = 3;       // the paths to the source code files
+	string new_name = 4;                  // the new name of the symbol
 }
 
 message Rename_Result {
-    repeated string changed_files = 1;    // the file paths got changed
+	repeated string changed_files = 1;    // the file paths got changed
 }
 
 // ---------------------------------------------------------------------------------
@@ -319,14 +369,14 @@ message Rename_Result {
 // ---------------------------------------------------------------------------------
 
 message RenameCode_Args {
-    string package_root = 1;              // the file path to the package root
-    string symbol_path = 2;               // the path to the target symbol to be renamed. The symbol path should conform to format: `<pkgpath>:<field_path>` When the pkgpath is '__main__', `<pkgpath>:` can be omitted.
-    map<string, string> source_codes = 3; // the source code. a <filename>:<code> map
-    string new_name = 4;                  // the new name of the symbol
+	string package_root = 1;              // the file path to the package root
+	string symbol_path = 2;               // the path to the target symbol to be renamed. The symbol path should conform to format: `<pkgpath>:<field_path>` When the pkgpath is '__main__', `<pkgpath>:` can be omitted.
+	map<string, string> source_codes = 3; // the source code. a <filename>:<code> map
+	string new_name = 4;                  // the new name of the symbol
 }
 
 message RenameCode_Result {
-    map<string, string> changed_codes = 1; // the changed code. a <filename>:<code> map
+	map<string, string> changed_codes = 1; // the changed code. a <filename>:<code> map
 }
 
 // ---------------------------------------------------------------------------------

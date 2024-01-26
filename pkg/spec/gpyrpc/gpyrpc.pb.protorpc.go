@@ -214,6 +214,7 @@ type PROTORPC_KclvmService interface {
 	Ping(in *Ping_Args, out *Ping_Result) error
 	ExecProgram(in *ExecProgram_Args, out *ExecProgram_Result) error
 	ParseProgram(in *ParseProgram_Args, out *ParseProgram_Result) error
+	LoadPackage(in *LoadPackage_Args, out *LoadPackage_Result) error
 	FormatCode(in *FormatCode_Args, out *FormatCode_Result) error
 	FormatPath(in *FormatPath_Args, out *FormatPath_Result) error
 	LintPath(in *LintPath_Args, out *LintPath_Result) error
@@ -458,6 +459,45 @@ func (c *PROTORPC_KclvmServiceClient) AsyncParseProgram(in *ParseProgram_Args, o
 	}
 	return c.Go(
 		"KclvmService.ParseProgram",
+		in, out,
+		done,
+	)
+}
+
+func (c *PROTORPC_KclvmServiceClient) LoadPackage(in *LoadPackage_Args) (out *LoadPackage_Result, err error) {
+	if in == nil {
+		in = new(LoadPackage_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(LoadPackage_Result)
+	if err = c.Call("KclvmService.LoadPackage", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncLoadPackage(in *LoadPackage_Args, out *LoadPackage_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(LoadPackage_Args)
+	}
+	return c.Go(
+		"KclvmService.LoadPackage",
 		in, out,
 		done,
 	)
