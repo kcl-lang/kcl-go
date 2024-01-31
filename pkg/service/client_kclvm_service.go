@@ -53,6 +53,22 @@ func (p *KclvmServiceClient) ExecProgram(args *gpyrpc.ExecProgram_Args) (resp *g
 	return
 }
 
+func (p *KclvmServiceClient) BuildProgram(args *gpyrpc.BuildProgram_Args) (resp *gpyrpc.BuildProgram_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).BuildProgram(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
+func (p *KclvmServiceClient) ExecArtifact(args *gpyrpc.ExecArtifact_Args) (resp *gpyrpc.ExecProgram_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).ExecArtifact(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
 func (p *KclvmServiceClient) ParseFile(args *gpyrpc.ParseFile_Args) (resp *gpyrpc.ParseFile_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).ParseFile(args)

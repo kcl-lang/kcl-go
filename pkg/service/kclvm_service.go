@@ -5,6 +5,8 @@ import "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 type KclvmService interface {
 	Ping(in *gpyrpc.Ping_Args) (out *gpyrpc.Ping_Result, err error)
 	ExecProgram(in *gpyrpc.ExecProgram_Args) (out *gpyrpc.ExecProgram_Result, err error)
+	BuildProgram(in *gpyrpc.BuildProgram_Args) (out *gpyrpc.BuildProgram_Result, err error)
+	ExecArtifact(in *gpyrpc.ExecArtifact_Args) (out *gpyrpc.ExecProgram_Result, err error)
 	ParseFile(in *gpyrpc.ParseFile_Args) (out *gpyrpc.ParseFile_Result, err error)
 	ParseProgram(in *gpyrpc.ParseProgram_Args) (out *gpyrpc.ParseProgram_Result, err error)
 	LoadPackage(in *gpyrpc.LoadPackage_Args) (out *gpyrpc.LoadPackage_Result, err error)

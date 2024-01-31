@@ -213,6 +213,8 @@ func PROTORPC_DialBuiltinServiceTimeout(network, addr string, timeout time.Durat
 type PROTORPC_KclvmService interface {
 	Ping(in *Ping_Args, out *Ping_Result) error
 	ExecProgram(in *ExecProgram_Args, out *ExecProgram_Result) error
+	BuildProgram(in *BuildProgram_Args, out *BuildProgram_Result) error
+	ExecArtifact(in *ExecArtifact_Args, out *ExecProgram_Result) error
 	ParseProgram(in *ParseProgram_Args, out *ParseProgram_Result) error
 	LoadPackage(in *LoadPackage_Args, out *LoadPackage_Result) error
 	FormatCode(in *FormatCode_Args, out *FormatCode_Result) error
@@ -381,6 +383,84 @@ func (c *PROTORPC_KclvmServiceClient) AsyncExecProgram(in *ExecProgram_Args, out
 	}
 	return c.Go(
 		"KclvmService.ExecProgram",
+		in, out,
+		done,
+	)
+}
+
+func (c *PROTORPC_KclvmServiceClient) BuildProgram(in *BuildProgram_Args) (out *BuildProgram_Result, err error) {
+	if in == nil {
+		in = new(BuildProgram_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(BuildProgram_Result)
+	if err = c.Call("KclvmService.BuildProgram", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncBuildProgram(in *BuildProgram_Args, out *BuildProgram_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(BuildProgram_Args)
+	}
+	return c.Go(
+		"KclvmService.BuildProgram",
+		in, out,
+		done,
+	)
+}
+
+func (c *PROTORPC_KclvmServiceClient) ExecArtifact(in *ExecArtifact_Args) (out *ExecProgram_Result, err error) {
+	if in == nil {
+		in = new(ExecArtifact_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(ExecProgram_Result)
+	if err = c.Call("KclvmService.ExecArtifact", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncExecArtifact(in *ExecArtifact_Args, out *ExecProgram_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(ExecArtifact_Args)
+	}
+	return c.Go(
+		"KclvmService.ExecArtifact",
 		in, out,
 		done,
 	)
