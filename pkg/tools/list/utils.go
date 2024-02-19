@@ -6,6 +6,7 @@ import "strings"
 var standardSystemModules = []string{
 	"collection",
 	"net",
+	"manifests",
 	"math",
 	"datetime",
 	"regex",
@@ -13,9 +14,8 @@ var standardSystemModules = []string{
 	"json",
 	"crypto",
 	"base64",
-	"testing",
 	"units",
-	"manifests",
+	"file",
 }
 
 func isBuiltinPkg(pkgpath string) bool {
