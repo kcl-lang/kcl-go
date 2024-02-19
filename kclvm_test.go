@@ -67,7 +67,7 @@ func TestRunFiles(t *testing.T) {
 	}
 }
 
-func TestIndlu(t *testing.T) {
+func TestWithTypePath(t *testing.T) {
 	const code = `
 schema App:
 	image: str = "default"
@@ -81,14 +81,28 @@ a2 = App {
 	name = "a2-app"
 }
 `
-	const testdata_main_k = "testdata/main_include_schema_type_path.k"
-	kfile, err := os.Create(testdata_main_k)
+	const testdata_main_k = "test.k"
+	result, err := kcl.Run(testdata_main_k,
+		kcl.WithCode(code),
+		kcl.WithFullTypePath(true),
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	kfile.Close()
+	if expect, got := "__main__.App", result.First().Get("a1._type"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+	if expect, got := "__main__.App", result.First().Get("a2._type"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+	if expect, got := "default", result.First().Get("a1.image"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
+	if expect, got := "a2-image", result.First().Get("a2.image"); expect != got {
+		t.Fatalf("expect = %v, got = %v", expect, got)
+	}
 
-	result, err := kcl.Run(testdata_main_k,
+	result, err = kcl.Run(testdata_main_k,
 		kcl.WithCode(code),
 		kcl.WithIncludeSchemaTypePath(true),
 	)
@@ -101,15 +115,6 @@ a2 = App {
 	if expect, got := "App", result.First().Get("a2._type"); expect != got {
 		t.Fatalf("expect = %v, got = %v", expect, got)
 	}
-	if expect, got := "default", result.First().Get("a1.image"); expect != got {
-		t.Fatalf("expect = %v, got = %v", expect, got)
-	}
-	if expect, got := "a2-image", result.First().Get("a2.image"); expect != got {
-		t.Fatalf("expect = %v, got = %v", expect, got)
-	}
-
-	os.Remove(testdata_main_k)
-	defer os.Remove(testdata_main_k)
 }
 
 func TestWithOverrides(t *testing.T) {

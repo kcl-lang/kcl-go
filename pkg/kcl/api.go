@@ -325,6 +325,12 @@ func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*gpyrpc.Kcl
 }
 
 func run(pathList []string, opts ...Option) (*KCLResultList, error) {
+	return runWithHooks(pathList, []Hook{
+		&typeAttributeHook{},
+	}, opts...)
+}
+
+func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultList, error) {
 	args, err := ParseArgs(pathList, opts...)
 	if err != nil {
 		return nil, err
@@ -334,6 +340,9 @@ func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 	resp, err := client.ExecProgram(args.ExecProgram_Args)
 	if err != nil {
 		return nil, err
+	}
+	for _, hook := range hooks {
+		hook.Do(&args, resp)
 	}
 	// Output log message
 	logger := args.GetLogger()
