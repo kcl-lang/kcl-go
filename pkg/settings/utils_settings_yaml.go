@@ -30,11 +30,14 @@ type ConfigStruct struct {
 	Overrides    []string `yaml:"overrides"`
 	PathSelector []string `yaml:"path_selector"`
 
-	StrictRangeCheck bool              `yaml:"strict_range_check"`
-	DisableNone      bool              `yaml:"disable_none"`
-	Verbose          int               `yaml:"verbose"`
-	Debug            bool              `yaml:"debug"`
-	PackageMaps      map[string]string `yaml:"package_maps"`
+	StrictRangeCheck      bool              `yaml:"strict_range_check"`
+	DisableNone           bool              `yaml:"disable_none"`
+	Verbose               int               `yaml:"verbose"`
+	Debug                 bool              `yaml:"debug"`
+	PackageMaps           map[string]string `yaml:"package_maps"`
+	SortKeys              bool              `yaml:"sort_keys"`
+	ShowHidden            bool              `yaml:"show_hidden"`
+	IncludeSchemaTypePath bool              `yaml:"include_schema_type_path"`
 }
 
 type KeyValueStruct struct {
@@ -96,10 +99,13 @@ func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 		DisableYamlResult: false,
 		PrintOverrideAst:  false,
 
-		StrictRangeCheck: settings.Config.StrictRangeCheck,
-		DisableNone:      settings.Config.DisableNone,
-		Verbose:          int32(settings.Config.Verbose),
-		Debug:            0,
+		StrictRangeCheck:      settings.Config.StrictRangeCheck,
+		DisableNone:           settings.Config.DisableNone,
+		Verbose:               int32(settings.Config.Verbose),
+		Debug:                 0,
+		SortKeys:              settings.Config.SortKeys,
+		ShowHidden:            settings.Config.ShowHidden,
+		IncludeSchemaTypePath: settings.Config.IncludeSchemaTypePath,
 	}
 	if settings.Config.Debug {
 		args.Debug = 1

@@ -214,6 +214,13 @@ func WithSortKeys(sortKeys bool) Option {
 	return *opt
 }
 
+// kcl -H --show_hidden
+func WithShowHidden(showHidden bool) Option {
+	var opt = NewOption()
+	opt.ShowHidden = showHidden
+	return *opt
+}
+
 // Merge will merge all options into one.
 func (p *Option) Merge(opts ...Option) *Option {
 	for _, opt := range opts {
@@ -272,6 +279,9 @@ func (p *Option) Merge(opts ...Option) *Option {
 		}
 		if opt.SortKeys {
 			p.SortKeys = opt.SortKeys
+		}
+		if opt.ShowHidden {
+			p.ShowHidden = opt.ShowHidden
 		}
 		if opt.IncludeSchemaTypePath {
 			p.IncludeSchemaTypePath = opt.IncludeSchemaTypePath

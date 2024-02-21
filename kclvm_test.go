@@ -533,6 +533,35 @@ func TestWithExternalpkg(t *testing.T) {
 	assert2.Equal(t, "a: Hello External_1 World!\nb: Hello External_2 World!", result.GetRawYamlResult())
 }
 
+func TestWithSortKeys(t *testing.T) {
+	file, err := filepath.Abs("./testdata/test_plan/main.k")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := kcl.Run(file, kcl.WithSortKeys(true))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, "a: 2\nb: 1", result.GetRawYamlResult())
+}
+
+func TestWithShowHidden(t *testing.T) {
+	file, err := filepath.Abs("./testdata/test_plan/main.k")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := kcl.Run(file, kcl.WithShowHidden(true))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, "b: 1\na: 2\n_c: 3", result.GetRawYamlResult())
+	result, err = kcl.Run(file, kcl.WithShowHidden(true), kcl.WithSortKeys(true))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, "_c: 3\na: 2\nb: 1", result.GetRawYamlResult())
+}
+
 func TestWithLogger(t *testing.T) {
 	file, err := filepath.Abs("./testdata/test_print/main.k")
 	if err != nil {

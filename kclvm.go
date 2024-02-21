@@ -119,9 +119,14 @@ func WithPrintOverridesAST(printOverridesAST bool) Option {
 	return kcl.WithPrintOverridesAST(printOverridesAST)
 }
 
-// WithSortKeys returns a Option which hold a sortKeys switch.
+// WithSortKeys returns a Option which holds a sortKeys switch.
 func WithSortKeys(sortKeys bool) Option {
 	return kcl.WithSortKeys(sortKeys)
+}
+
+// WithShowHidden returns a Option which holds a showHidden switch.
+func WithShowHidden(sortKeys bool) Option {
+	return kcl.WithShowHidden(sortKeys)
 }
 
 // WithLogger returns a Option which hold a logger.
