@@ -125,8 +125,8 @@ func WithSortKeys(sortKeys bool) Option {
 }
 
 // WithShowHidden returns a Option which holds a showHidden switch.
-func WithShowHidden(sortKeys bool) Option {
-	return kcl.WithShowHidden(sortKeys)
+func WithShowHidden(showHidden bool) Option {
+	return kcl.WithShowHidden(showHidden)
 }
 
 // WithLogger returns a Option which hold a logger.
