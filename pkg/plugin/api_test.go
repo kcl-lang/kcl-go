@@ -1,6 +1,6 @@
 // Copyright 2023 The KCL Authors. All rights reserved.
 
-package kcl_plugin
+package plugin
 
 import (
 	"strings"

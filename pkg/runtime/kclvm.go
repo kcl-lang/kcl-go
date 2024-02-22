@@ -1,6 +1,6 @@
 // Copyright The KCL Authors. All rights reserved.
 
-package kclvm_runtime
+package runtime
 
 import (
 	"context"

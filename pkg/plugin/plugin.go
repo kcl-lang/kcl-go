@@ -3,20 +3,20 @@
 //go:build cgo
 // +build cgo
 
-package kcl_plugin
+package plugin
 
 /*
 #include <stdint.h>
 #include <stdlib.h>
 
-extern char* kclvm_go_capi_InvokeJsonProxy(
+extern char* kcl_go_capi_InvokeJsonProxy(
     char* method,
     char* args_json,
     char* kwargs_json
 );
 
-static uint64_t kclvm_go_capi_getInvokeJsonProxyPtr() {
-	return (uint64_t)(kclvm_go_capi_InvokeJsonProxy);
+static uint64_t kcl_go_capi_getInvokeJsonProxyPtr() {
+	return (uint64_t)(kcl_go_capi_InvokeJsonProxy);
 }
 */
 import "C"
@@ -28,8 +28,8 @@ import (
 
 const CgoEnabled = true
 
-//export kclvm_go_capi_InvokeJsonProxy
-func kclvm_go_capi_InvokeJsonProxy(_method, _args_json, _kwargs_json *C.char) (result_json *C.char) {
+//export kcl_go_capi_InvokeJsonProxy
+func kcl_go_capi_InvokeJsonProxy(_method, _args_json, _kwargs_json *C.char) (result_json *C.char) {
 	var method, args_json, kwargs_json string
 
 	if _method != nil {
@@ -46,8 +46,8 @@ func kclvm_go_capi_InvokeJsonProxy(_method, _args_json, _kwargs_json *C.char) (r
 	return c_String_new(result)
 }
 
-func GetInvokeJsonProxyPtr() uintptr {
-	ptr := uintptr(C.kclvm_go_capi_getInvokeJsonProxyPtr())
+func GetInvokeJsonProxyPtr() uint64 {
+	ptr := uint64(C.kcl_go_capi_getInvokeJsonProxyPtr())
 	return ptr
 }
 
@@ -101,8 +101,7 @@ func _Invoke(method, args_json, kwargs_json string) (result_json string) {
 	// get method
 	methodSpec, found := GetMethodSpec(method)
 	if !found {
-		// try python plugin
-		return py_callPluginMethod(method, args_json, kwargs_json)
+		return JSONError(fmt.Errorf("invalid method: %s, not found", method))
 	}
 
 	// call plugin method

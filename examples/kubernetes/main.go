@@ -4,15 +4,14 @@ import (
 	"fmt"
 
 	kcl "kcl-lang.io/kcl-go"
-	_ "kcl-lang.io/kcl-go/pkg/kcl_plugin/hello_plugin"
 )
 
 func main() {
-	yaml := kcl.MustRun("kubernetes.k", kcl.WithCode(k_code)).GetRawYamlResult()
+	yaml := kcl.MustRun("kubernetes.k", kcl.WithCode(code)).GetRawYamlResult()
 	fmt.Println(yaml)
 }
 
-const k_code = `
+const code = `
 apiVersion = "apps/v1"
 kind = "Deployment"
 metadata = {

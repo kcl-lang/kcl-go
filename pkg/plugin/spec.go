@@ -1,6 +1,6 @@
 // Copyright 2023 The KCL Authors. All rights reserved.
 
-package kcl_plugin
+package plugin
 
 import (
 	"encoding/json"
@@ -11,6 +11,7 @@ import (
 // KCL Plugin object
 type Plugin struct {
 	Name      string
+	Version   string
 	ResetFunc func()
 	MethodMap map[string]MethodSpec
 }
