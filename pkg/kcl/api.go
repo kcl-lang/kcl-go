@@ -368,14 +368,22 @@ func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultLis
 		if err := json.Unmarshal([]byte(resp.JsonResult), &result.result); err != nil {
 			return nil, err
 		}
-		if err != nil {
-			return nil, err
-		}
 	}
-	result.list = make([]KCLResult, 0, len(mList))
-	for _, m := range mList {
-		if len(m) != 0 {
+
+	// Store raw result to KCLResult
+	if len(mList) == 0 && result.result != nil {
+		// Scalar or map result
+		m, err := result.ToMap()
+		if err == nil {
 			result.list = append(result.list, m)
+		}
+	} else {
+		// Stream result
+		result.list = make([]KCLResult, 0, len(mList))
+		for _, m := range mList {
+			if len(m) != 0 {
+				result.list = append(result.list, m)
+			}
 		}
 	}
 

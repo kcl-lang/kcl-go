@@ -27,26 +27,33 @@ func (t *typeAttributeHook) Do(o *Option, r *gpyrpc.ExecProgram_Result) error {
 func resultTypeAttributeHook(r *gpyrpc.ExecProgram_Result) error {
 	// Modify the _type fields
 	var data []map[string]interface{}
+	var mapData map[string]interface{}
 	// Unmarshal the JSON string into a Node
 	err := json.Unmarshal([]byte(r.JsonResult), &data)
 	if err != nil {
-		return nil
+		err := json.Unmarshal([]byte(r.JsonResult), &mapData)
+		if err != nil {
+			return nil
+		}
 	}
 	// Modify the _type fields
-	modifyTypeList(data)
+	if data != nil {
+		modifyTypeList(data)
+		marshal(r, data)
+	} else if mapData != nil {
+		modifyType(mapData)
+		marshal(r, mapData)
+	}
+	return nil
+}
+
+func marshal(r *gpyrpc.ExecProgram_Result, value interface{}) {
 	// Marshal the modified Node back to YAML
-	yamlOutput, err := yaml.Marshal(&data)
-	if err != nil {
-		return nil
-	}
+	yamlOutput, _ := yaml.Marshal(value)
 	// Marshal the modified Node back to JSON
-	jsonOutput, err := json.Marshal(&data)
-	if err != nil {
-		return nil
-	}
+	jsonOutput, _ := json.Marshal(&value)
 	r.JsonResult = string(jsonOutput)
 	r.YamlResult = string(yamlOutput)
-	return nil
 }
 
 func modifyTypeList(dataList []map[string]interface{}) {
