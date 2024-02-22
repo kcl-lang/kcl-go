@@ -4,6 +4,7 @@
 package kcl
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -350,14 +351,12 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 		return &result, nil
 	}
 
-	result.raw_yaml_result = resp.YamlResult
-
 	var mList []map[string]interface{}
 
-	if len(documents) == 1 {
-		if err := json.Unmarshal([]byte(resp.JsonResult), &mList); err != nil {
+	for _, d := range documents {
+		if err := yaml.Unmarshal([]byte(d), &mList); err != nil {
 			err = nil
-			if err := json.Unmarshal([]byte(resp.JsonResult), &result.result); err != nil {
+			if err := yaml.Unmarshal([]byte(d), &result.result); err != nil {
 				return nil, err
 			}
 		}
@@ -377,38 +376,14 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 				}
 			}
 		}
-		result.raw_json_result = resp.JsonResult
-	} else {
-		for _, d := range documents {
-			if err := yaml.Unmarshal([]byte(d), &mList); err != nil {
-				err = nil
-				if err := yaml.Unmarshal([]byte(d), &result.result); err != nil {
-					return nil, err
-				}
-			}
-			// Store raw result to KCLResult
-			if len(mList) == 0 && result.result != nil {
-				// Scalar or map result
-				m, err := result.ToMap()
-				if err == nil {
-					result.list = append(result.list, m)
-				}
-			} else {
-				// Stream result
-				result.list = make([]KCLResult, 0, len(mList))
-				for _, m := range mList {
-					if len(m) != 0 {
-						result.list = append(result.list, m)
-					}
-				}
-			}
-		}
-		data, err := json.Marshal(result.list)
-		if err != nil {
-			return &result, nil
-		}
-		result.raw_json_result = string(data)
 	}
+	buffer := bytes.NewBuffer(nil)
+	encoder := json.NewEncoder(buffer)
+	for _, m := range result.list {
+		encoder.Encode(m)
+	}
+	result.raw_json_result = buffer.String()
+	result.raw_yaml_result = resp.YamlResult
 	return &result, nil
 }
 
