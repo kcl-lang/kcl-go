@@ -34,7 +34,7 @@ import (
 	"io"
 
 	"kcl-lang.io/kcl-go/pkg/kcl"
-	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/runtime"
 	"kcl-lang.io/kcl-go/pkg/tools/format"
 	"kcl-lang.io/kcl-go/pkg/tools/lint"
 	"kcl-lang.io/kcl-go/pkg/tools/list"
@@ -59,12 +59,12 @@ type (
 
 // InitKclvmPath init kclvm path.
 func InitKclvmPath(kclvmRoot string) {
-	kclvm_runtime.InitKclvmRoot(kclvmRoot)
+	runtime.InitKclvmRoot(kclvmRoot)
 }
 
 // InitKclvmRuntime init kclvm process.
 func InitKclvmRuntime(n int) {
-	kclvm_runtime.InitRuntime(n)
+	runtime.InitRuntime(n)
 }
 
 // MustRun is like Run but panics if return any error.

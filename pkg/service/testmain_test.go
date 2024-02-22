@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/runtime"
 )
 
 const tEnvNumCpu = "KCLVM_GO_API_TEST_NUM_CPU"
@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 	if s := os.Getenv(tEnvNumCpu); s != "" {
 		if x, err := strconv.Atoi(s); err == nil {
 			fmt.Println("TestMain: nWorker =", x)
-			kclvm_runtime.InitRuntime(x)
+			runtime.InitRuntime(x)
 		}
 	}
 

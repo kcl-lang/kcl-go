@@ -8,6 +8,12 @@ import (
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
+var (
+	DefaultHooks Hooks = []Hook{
+		&typeAttributeHook{},
+	}
+)
+
 type Hook interface {
 	Do(o *Option, r *gpyrpc.ExecProgram_Result) error
 }

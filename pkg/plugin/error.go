@@ -1,17 +1,18 @@
 // Copyright 2023 The KCL Authors. All rights reserved.
 
-package kcl_plugin
+package plugin
 
 import (
 	"encoding/json"
 )
 
 type PanicInfo struct {
-	X__kcl_PanicInfo__ bool `json:"__kcl_PanicInfo__"`
+	IsPanic bool `json:"__kcl_PanicInfo__"`
 
-	RustFile string `json:"rust_file,omitempty"`
-	RustLine int    `json:"rust_line,omitempty"`
-	RustCol  int    `json:"rust_col,omitempty"`
+	BackTrace []BacktraceFrame `json:"backtrace,omitempty"`
+	RustFile  string           `json:"rust_file,omitempty"`
+	RustLine  int              `json:"rust_line,omitempty"`
+	RustCol   int              `json:"rust_col,omitempty"`
 
 	KclPkgPath string `json:"kcl_pkgpath,omitempty"`
 	KclFile    string `json:"kcl_file,omitempty"`
@@ -30,14 +31,21 @@ type PanicInfo struct {
 	IsWarning   string `json:"is_warning,omitempty"`
 }
 
+type BacktraceFrame struct {
+	File string `json:"file,omitempty"`
+	Func string `json:"func,omitempty"`
+	Line int    `json:"line,omitempty"`
+	Col  int    `json:"col,omitempty"`
+}
+
 func JSONError(err error) string {
 	if x, ok := err.(*PanicInfo); ok {
 		return x.JSONError()
 	}
 	if err != nil {
 		x := &PanicInfo{
-			X__kcl_PanicInfo__: true,
-			Message:            err.Error(),
+			IsPanic: true,
+			Message: err.Error(),
 		}
 		return x.JSONError()
 	}
@@ -45,7 +53,7 @@ func JSONError(err error) string {
 }
 
 func (p *PanicInfo) JSONError() string {
-	p.X__kcl_PanicInfo__ = true
+	p.IsPanic = true
 	d, _ := json.Marshal(p)
 	return string(d)
 }

@@ -3,13 +3,13 @@
 package service
 
 import (
-	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/runtime"
 )
 
-type BuiltinServiceClient = kclvm_runtime.BuiltinServiceClient
+type BuiltinServiceClient = runtime.BuiltinServiceClient
 
 func NewBuiltinServiceClient() *BuiltinServiceClient {
 	return &BuiltinServiceClient{
-		Runtime: kclvm_runtime.GetRuntime(),
+		Runtime: runtime.GetRuntime(),
 	}
 }

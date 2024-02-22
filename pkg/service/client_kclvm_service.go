@@ -7,19 +7,19 @@ import (
 	"io"
 	"net/rpc"
 
-	"kcl-lang.io/kcl-go/pkg/kclvm_runtime"
+	"kcl-lang.io/kcl-go/pkg/runtime"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 type KclvmServiceClient struct {
-	Runtime   *kclvm_runtime.Runtime
-	pyRuntime *kclvm_runtime.Runtime
+	Runtime   *runtime.Runtime
+	pyRuntime *runtime.Runtime
 }
 
 func NewKclvmServiceClient() *KclvmServiceClient {
 	c := &KclvmServiceClient{
-		Runtime:   kclvm_runtime.GetRuntime(),
-		pyRuntime: kclvm_runtime.GetPyRuntime(),
+		Runtime:   runtime.GetRuntime(),
+		pyRuntime: runtime.GetPyRuntime(),
 	}
 	return c
 }

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"reflect"
 	"strings"
 
@@ -324,28 +325,10 @@ func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*gpyrpc.Kcl
 	return resp.SchemaTypeMapping, nil
 }
 
-func run(pathList []string, opts ...Option) (*KCLResultList, error) {
-	return runWithHooks(pathList, []Hook{
-		&typeAttributeHook{},
-	}, opts...)
-}
-
-func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultList, error) {
-	args, err := ParseArgs(pathList, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	client := service.NewKclvmServiceClient()
-	resp, err := client.ExecProgram(args.ExecProgram_Args)
-	if err != nil {
-		return nil, err
-	}
+func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io.Writer, hooks Hooks) (*KCLResultList, error) {
 	for _, hook := range hooks {
-		hook.Do(&args, resp)
+		hook.Do(o, resp)
 	}
-	// Output log message
-	logger := args.GetLogger()
 	if logger != nil && resp.LogMessage != "" {
 		_, err := logger.Write([]byte(resp.LogMessage))
 		if err != nil {
@@ -390,4 +373,22 @@ func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultLis
 	result.raw_json_result = resp.JsonResult
 	result.raw_yaml_result = resp.YamlResult
 	return &result, nil
+}
+
+func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultList, error) {
+	args, err := ParseArgs(pathList, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	client := service.NewKclvmServiceClient()
+	resp, err := client.ExecProgram(args.ExecProgram_Args)
+	if err != nil {
+		return nil, err
+	}
+	return ExecResultToKCLResult(&args, resp, args.GetLogger(), hooks)
+}
+
+func run(pathList []string, opts ...Option) (*KCLResultList, error) {
+	return runWithHooks(pathList, DefaultHooks, opts...)
 }
