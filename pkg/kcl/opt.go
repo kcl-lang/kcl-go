@@ -17,8 +17,9 @@ import (
 
 type Option struct {
 	*gpyrpc.ExecProgram_Args
-	logger io.Writer
-	Err    error
+	logger       io.Writer
+	fullTypePath bool
+	Err          error
 }
 
 // NewOption returns a new Option.
@@ -207,10 +208,27 @@ func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option {
 	return *opt
 }
 
+// WithIncludeSchemaTypePath returns a Option which hold a include schema type path switch.
+func WithFullTypePath(fullTypePath bool) Option {
+	var opt = NewOption()
+	opt.fullTypePath = fullTypePath
+	if fullTypePath {
+		opt.IncludeSchemaTypePath = fullTypePath
+	}
+	return *opt
+}
+
 // kcl -k --sort_keys
 func WithSortKeys(sortKeys bool) Option {
 	var opt = NewOption()
 	opt.SortKeys = sortKeys
+	return *opt
+}
+
+// kcl -H --show_hidden
+func WithShowHidden(showHidden bool) Option {
+	var opt = NewOption()
+	opt.ShowHidden = showHidden
 	return *opt
 }
 
@@ -273,8 +291,14 @@ func (p *Option) Merge(opts ...Option) *Option {
 		if opt.SortKeys {
 			p.SortKeys = opt.SortKeys
 		}
+		if opt.ShowHidden {
+			p.ShowHidden = opt.ShowHidden
+		}
 		if opt.IncludeSchemaTypePath {
 			p.IncludeSchemaTypePath = opt.IncludeSchemaTypePath
+		}
+		if opt.fullTypePath {
+			p.fullTypePath = opt.fullTypePath
 		}
 		if opt.ExternalPkgs != nil {
 			p.ExternalPkgs = append(p.ExternalPkgs, opt.ExternalPkgs...)

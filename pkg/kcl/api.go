@@ -325,6 +325,12 @@ func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*gpyrpc.Kcl
 }
 
 func run(pathList []string, opts ...Option) (*KCLResultList, error) {
+	return runWithHooks(pathList, []Hook{
+		&typeAttributeHook{},
+	}, opts...)
+}
+
+func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultList, error) {
 	args, err := ParseArgs(pathList, opts...)
 	if err != nil {
 		return nil, err
@@ -334,6 +340,9 @@ func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 	resp, err := client.ExecProgram(args.ExecProgram_Args)
 	if err != nil {
 		return nil, err
+	}
+	for _, hook := range hooks {
+		hook.Do(&args, resp)
 	}
 	// Output log message
 	logger := args.GetLogger()
@@ -359,14 +368,22 @@ func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 		if err := json.Unmarshal([]byte(resp.JsonResult), &result.result); err != nil {
 			return nil, err
 		}
-		if err != nil {
-			return nil, err
-		}
 	}
-	result.list = make([]KCLResult, 0, len(mList))
-	for _, m := range mList {
-		if len(m) != 0 {
+
+	// Store raw result to KCLResult
+	if len(mList) == 0 && result.result != nil {
+		// Scalar or map result
+		m, err := result.ToMap()
+		if err == nil {
 			result.list = append(result.list, m)
+		}
+	} else {
+		// Stream result
+		result.list = make([]KCLResult, 0, len(mList))
+		for _, m := range mList {
+			if len(m) != 0 {
+				result.list = append(result.list, m)
+			}
 		}
 	}
 

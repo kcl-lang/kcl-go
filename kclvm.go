@@ -114,14 +114,24 @@ func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option {
 	return kcl.WithIncludeSchemaTypePath(includeSchemaTypePath)
 }
 
+// WithFullTypePath returns a Option which hold a include full type string in the `_type` attribute.
+func WithFullTypePath(fullTypePath bool) Option {
+	return kcl.WithFullTypePath(fullTypePath)
+}
+
 // WithPrintOverridesAST returns a Option which hold a printOverridesAST switch.
 func WithPrintOverridesAST(printOverridesAST bool) Option {
 	return kcl.WithPrintOverridesAST(printOverridesAST)
 }
 
-// WithSortKeys returns a Option which hold a sortKeys switch.
+// WithSortKeys returns a Option which holds a sortKeys switch.
 func WithSortKeys(sortKeys bool) Option {
 	return kcl.WithSortKeys(sortKeys)
+}
+
+// WithShowHidden returns a Option which holds a showHidden switch.
+func WithShowHidden(showHidden bool) Option {
+	return kcl.WithShowHidden(showHidden)
 }
 
 // WithLogger returns a Option which hold a logger.
