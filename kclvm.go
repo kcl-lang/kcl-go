@@ -114,6 +114,11 @@ func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option {
 	return kcl.WithIncludeSchemaTypePath(includeSchemaTypePath)
 }
 
+// WithFullTypePath returns a Option which hold a include full type string in the `_type` attribute.
+func WithFullTypePath(fullTypePath bool) Option {
+	return kcl.WithFullTypePath(fullTypePath)
+}
+
 // WithPrintOverridesAST returns a Option which hold a printOverridesAST switch.
 func WithPrintOverridesAST(printOverridesAST bool) Option {
 	return kcl.WithPrintOverridesAST(printOverridesAST)
