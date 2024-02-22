@@ -68,11 +68,20 @@ func TestRunFiles(t *testing.T) {
 }
 
 func TestStreamResult(t *testing.T) {
-	file, err := filepath.Abs("./testdata/stream/main.k")
+	file, err := filepath.Abs("./testdata/stream/one_stream.k")
 	if err != nil {
 		t.Fatal(err)
 	}
 	result, err := kcl.Run(file, kcl.WithSortKeys(true))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, "a: 1", result.GetRawYamlResult())
+	file, err = filepath.Abs("./testdata/stream/two_stream.k")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err = kcl.Run(file, kcl.WithSortKeys(true))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -546,7 +555,7 @@ func TestWithExternalpkg(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert2.Equal(t, "{\"a\": \"Hello External_1 World!\", \"b\": \"Hello External_2 World!\"}", result.GetRawJsonResult())
+	assert2.Equal(t, "{\"a\":\"Hello External_1 World!\",\"b\":\"Hello External_2 World!\"}\n", result.GetRawJsonResult())
 	assert2.Equal(t, "a: Hello External_1 World!\nb: Hello External_2 World!", result.GetRawYamlResult())
 }
 
