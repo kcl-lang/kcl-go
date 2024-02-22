@@ -67,6 +67,18 @@ func TestRunFiles(t *testing.T) {
 	}
 }
 
+func TestStreamResult(t *testing.T) {
+	file, err := filepath.Abs("./testdata/stream/main.k")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := kcl.Run(file, kcl.WithSortKeys(true))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, "a: 1\n---\nb: 2", result.GetRawYamlResult())
+}
+
 func TestWithTypePath(t *testing.T) {
 	const code = `
 schema App:

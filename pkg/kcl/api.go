@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/chai2010/jsonv"
@@ -344,34 +345,70 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 		return &result, nil
 	}
 
+	documents, err := splitDocuments(resp.YamlResult)
+	if err != nil {
+		return &result, nil
+	}
+
+	result.raw_yaml_result = resp.YamlResult
+
 	var mList []map[string]interface{}
 
-	if err := json.Unmarshal([]byte(resp.JsonResult), &mList); err != nil {
-		err = nil
-		if err := json.Unmarshal([]byte(resp.JsonResult), &result.result); err != nil {
-			return nil, err
-		}
-	}
-
-	// Store raw result to KCLResult
-	if len(mList) == 0 && result.result != nil {
-		// Scalar or map result
-		m, err := result.ToMap()
-		if err == nil {
-			result.list = append(result.list, m)
-		}
-	} else {
-		// Stream result
-		result.list = make([]KCLResult, 0, len(mList))
-		for _, m := range mList {
-			if len(m) != 0 {
-				result.list = append(result.list, m)
+	if len(documents) == 1 {
+		if err := json.Unmarshal([]byte(resp.JsonResult), &mList); err != nil {
+			err = nil
+			if err := json.Unmarshal([]byte(resp.JsonResult), &result.result); err != nil {
+				return nil, err
 			}
 		}
+		// Store raw result to KCLResult
+		if len(mList) == 0 && result.result != nil {
+			// Scalar or map result
+			m, err := result.ToMap()
+			if err == nil {
+				result.list = append(result.list, m)
+			}
+		} else {
+			// Stream result
+			result.list = make([]KCLResult, 0, len(mList))
+			for _, m := range mList {
+				if len(m) != 0 {
+					result.list = append(result.list, m)
+				}
+			}
+		}
+		result.raw_json_result = resp.JsonResult
+	} else {
+		for _, d := range documents {
+			if err := yaml.Unmarshal([]byte(d), &mList); err != nil {
+				err = nil
+				if err := yaml.Unmarshal([]byte(d), &result.result); err != nil {
+					return nil, err
+				}
+			}
+			// Store raw result to KCLResult
+			if len(mList) == 0 && result.result != nil {
+				// Scalar or map result
+				m, err := result.ToMap()
+				if err == nil {
+					result.list = append(result.list, m)
+				}
+			} else {
+				// Stream result
+				result.list = make([]KCLResult, 0, len(mList))
+				for _, m := range mList {
+					if len(m) != 0 {
+						result.list = append(result.list, m)
+					}
+				}
+			}
+		}
+		data, err := json.Marshal(result.list)
+		if err != nil {
+			return &result, nil
+		}
+		result.raw_json_result = string(data)
 	}
-
-	result.raw_json_result = resp.JsonResult
-	result.raw_yaml_result = resp.YamlResult
 	return &result, nil
 }
 
@@ -391,4 +428,33 @@ func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultLis
 
 func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 	return runWithHooks(pathList, DefaultHooks, opts...)
+}
+
+// splitDocuments returns a slice of all documents contained in a YAML string. Multiple documents can be divided by the
+// YAML document separator (---). It allows for white space and comments to be after the separator on the same line,
+// but will return an error if anything else is on the line.
+func splitDocuments(s string) ([]string, error) {
+	docs := make([]string, 0)
+	if len(s) > 0 {
+		// The YAML document separator is any line that starts with ---
+		yamlSeparatorRegexp := regexp.MustCompile(`\n---.*\n`)
+
+		// Find all separators, check them for invalid content, and append each document to docs
+		separatorLocations := yamlSeparatorRegexp.FindAllStringIndex(s, -1)
+		prev := 0
+		for i := range separatorLocations {
+			loc := separatorLocations[i]
+			separator := s[loc[0]:loc[1]]
+			// If the next non-whitespace character on the line following the separator is not a comment, return an error
+			trimmedContentAfterSeparator := strings.TrimSpace(separator[4:])
+			if len(trimmedContentAfterSeparator) > 0 && trimmedContentAfterSeparator[0] != '#' {
+				return nil, fmt.Errorf("invalid document separator: %s", strings.TrimSpace(separator))
+			}
+
+			docs = append(docs, s[prev:loc[0]])
+			prev = loc[1]
+		}
+		docs = append(docs, s[prev:])
+	}
+	return docs, nil
 }
