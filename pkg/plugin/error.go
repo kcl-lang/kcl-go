@@ -16,6 +16,7 @@ type PanicInfo struct {
 
 	KclPkgPath string `json:"kcl_pkgpath,omitempty"`
 	KclFile    string `json:"kcl_file,omitempty"`
+	KCLFunc    string `json:"kcl_func,omitempty"`
 	KclLine    int    `json:"kcl_line,omitempty"`
 	KclCol     int    `json:"kcl_col,omitempty"`
 	KclArgMsg  string `json:"kcl_arg_msg,omitempty"`
