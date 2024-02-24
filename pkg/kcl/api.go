@@ -25,16 +25,14 @@ type KclType = gpyrpc.KclType
 
 type KCLResultList struct {
 	// When the list is empty, the result is the raw result.
-	list []KCLResult
-	// The result is the raw result whose type is not []KCLResult.
-	result          interface{}
+	list            []KCLResult
 	raw_json_result string
 	raw_yaml_result string
 }
 
 // ToString returns the result as string.
 func (p *KCLResultList) ToString() (string, error) {
-	if p == nil || p.result == nil {
+	if p.list == nil && len(p.list) == 0 {
 		return "", fmt.Errorf("result is nil")
 	}
 	var resS string
@@ -47,7 +45,7 @@ func (p *KCLResultList) ToString() (string, error) {
 
 // ToBool returns the result as bool.
 func (p *KCLResultList) ToBool() (*bool, error) {
-	if p == nil || p.result == nil {
+	if p.list == nil && len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resB bool
@@ -60,7 +58,7 @@ func (p *KCLResultList) ToBool() (*bool, error) {
 
 // ToMap returns the result as map[string]interface{}.
 func (p *KCLResultList) ToMap() (map[string]interface{}, error) {
-	if p == nil || p.result == nil {
+	if p.list == nil && len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resMap map[string]interface{}
@@ -73,7 +71,7 @@ func (p *KCLResultList) ToMap() (map[string]interface{}, error) {
 
 // ToFloat64 returns the result as float64.
 func (p *KCLResultList) ToFloat64() (*float64, error) {
-	if p == nil || p.result == nil {
+	if p.list == nil && len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resF float64
@@ -86,7 +84,7 @@ func (p *KCLResultList) ToFloat64() (*float64, error) {
 
 // ToList returns the result as []interface{}.
 func (p *KCLResultList) ToList() ([]interface{}, error) {
-	if p == nil || p.result == nil {
+	if p.list == nil && len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resList []interface{}
@@ -99,11 +97,11 @@ func (p *KCLResultList) ToList() ([]interface{}, error) {
 
 // ToType returns the result as target type.
 func (p *KCLResultList) ToType(target interface{}) error {
-	if p == nil || p.result == nil {
+	if p.list == nil && len(p.list) == 0 {
 		return fmt.Errorf("result is nil")
 	}
 
-	srcVal := reflect.ValueOf(p.result)
+	srcVal := reflect.ValueOf(p.list[0].result)
 	targetVal := reflect.ValueOf(target)
 
 	if targetVal.Kind() != reflect.Ptr || targetVal.IsNil() {
@@ -123,7 +121,7 @@ func (p *KCLResultList) Len() int {
 	return len(p.list)
 }
 
-func (p *KCLResultList) Get(i int) KCLResult {
+func (p *KCLResultList) Get(i int) *KCLResult {
 	if i == 0 {
 		return p.First()
 	}
@@ -131,19 +129,19 @@ func (p *KCLResultList) Get(i int) KCLResult {
 		return p.Tail()
 	}
 	if i >= 0 && i < p.Len() {
-		return p.list[i]
+		return &p.list[i]
 	}
 	return nil
 }
-func (p *KCLResultList) First() KCLResult {
+func (p *KCLResultList) First() *KCLResult {
 	if p.Len() > 0 {
-		return p.list[0]
+		return &p.list[0]
 	}
 	return nil
 }
-func (p *KCLResultList) Tail() KCLResult {
+func (p *KCLResultList) Tail() *KCLResult {
 	if p.Len() > 0 {
-		return p.list[len(p.list)-1]
+		return &p.list[len(p.list)-1]
 	}
 	return nil
 }
@@ -159,20 +157,21 @@ func (p *KCLResultList) GetRawYamlResult() string {
 	return p.raw_yaml_result
 }
 
-type KCLResult map[string]interface{}
+type KCLResult struct {
+	result any
+}
 
-func (m KCLResult) Get(key string, target ...interface{}) interface{} {
+func (m *KCLResult) Get(key string, target ...interface{}) interface{} {
 	ss := strings.Split(key, ".")
 	if len(ss) == 0 {
 		return nil
 	}
-
 	var subKeys []interface{}
 	for _, x := range ss[1:] {
 		subKeys = append(subKeys, x)
 	}
 
-	rv := jsonv.Get((map[string]interface{})(m), ss[0], subKeys...)
+	rv := jsonv.Get(m.result, ss[0], subKeys...)
 	if len(target) == 0 {
 		return rv
 	}
@@ -186,7 +185,7 @@ func (m KCLResult) Get(key string, target ...interface{}) interface{} {
 	return rv
 }
 
-func (m KCLResult) GetValue(key string, target ...interface{}) (value interface{}, err error) {
+func (m *KCLResult) GetValue(key string, target ...interface{}) (value interface{}, err error) {
 	ss := strings.Split(key, ".")
 	if len(ss) == 0 {
 		return nil, nil
@@ -197,7 +196,7 @@ func (m KCLResult) GetValue(key string, target ...interface{}) (value interface{
 		subKeys = append(subKeys, x)
 	}
 
-	rv, err := jsonv.GetValue((map[string]interface{})(m), ss[0], subKeys...)
+	rv, err := jsonv.GetValue(m.result, ss[0], subKeys...)
 	if err != nil {
 		return nil, err
 	}
@@ -242,15 +241,15 @@ func (m KCLResult) GetValue(key string, target ...interface{}) (value interface{
 	}
 }
 
-func (m KCLResult) YAMLString() string {
-	out, _ := yaml.Marshal(m)
+func (m *KCLResult) YAMLString() string {
+	out, _ := yaml.Marshal(m.result)
 	return string(out)
 }
 
-func (m KCLResult) JSONString() string {
+func (m *KCLResult) JSONString() string {
 	var prefix = ""
 	var indent = "    "
-	x, _ := json.MarshalIndent(m, prefix, indent)
+	x, _ := json.MarshalIndent(m.result, prefix, indent)
 	return string(x)
 }
 
@@ -351,36 +350,19 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 		return &result, nil
 	}
 
-	var mList []map[string]interface{}
-
 	for _, d := range documents {
-		if err := yaml.Unmarshal([]byte(d), &mList); err != nil {
-			err = nil
-			if err := yaml.Unmarshal([]byte(d), &result.result); err != nil {
-				return nil, err
-			}
+		var m any
+		if err := yaml.Unmarshal([]byte(d), &m); err != nil {
+			return nil, err
 		}
-		// Store raw result to KCLResult
-		if len(mList) == 0 && result.result != nil {
-			// Scalar or map result
-			m, err := result.ToMap()
-			if err == nil {
-				result.list = append(result.list, m)
-			}
-		} else {
-			// Stream result
-			result.list = make([]KCLResult, 0, len(mList))
-			for _, m := range mList {
-				if len(m) != 0 {
-					result.list = append(result.list, m)
-				}
-			}
-		}
+		result.list = append(result.list, KCLResult{
+			result: m,
+		})
 	}
 	buffer := bytes.NewBuffer(nil)
 	encoder := json.NewEncoder(buffer)
 	for _, m := range result.list {
-		encoder.Encode(m)
+		encoder.Encode(m.result)
 	}
 	result.raw_json_result = buffer.String()
 	result.raw_yaml_result = resp.YamlResult
