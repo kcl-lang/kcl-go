@@ -107,3 +107,23 @@ func (c *NativeServiceClient) ExecProgram(in *gpyrpc.ExecProgram_Args) (*gpyrpc.
 
 	return out, err
 }
+
+func (c *NativeServiceClient) BuildProgram(in *gpyrpc.BuildProgram_Args) (*gpyrpc.BuildProgram_Result, error) {
+	if in == nil {
+		in = new(gpyrpc.BuildProgram_Args)
+	}
+	out := new(gpyrpc.BuildProgram_Result)
+	err := c.cApiCall("KclvmService.BuildProgram", in, out)
+
+	return out, err
+}
+
+func (c *NativeServiceClient) ExecArtifact(in *gpyrpc.ExecArtifact_Args) (*gpyrpc.ExecProgram_Result, error) {
+	if in == nil {
+		in = new(gpyrpc.ExecArtifact_Args)
+	}
+	out := new(gpyrpc.ExecProgram_Result)
+	err := c.cApiCall("KclvmService.ExecArtifact", in, out)
+
+	return out, err
+}
