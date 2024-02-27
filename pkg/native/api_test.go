@@ -15,7 +15,7 @@ import (
 func TestNativeRun(t *testing.T) {
 	// TODO: windows support
 	if runtime.GOOS != "windows" {
-		yaml := MustRun("main.k", kcl.WithCode(code)).GetRawYamlResult()
+		yaml := MustRun("main.k", kcl.WithCode(code), kcl.WithOptions("a=1", "b=2")).GetRawYamlResult()
 		fmt.Println(yaml)
 	}
 }
