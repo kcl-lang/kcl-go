@@ -21,8 +21,8 @@ require (
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/kpm v0.7.0
-	kcl-lang.io/lib v0.8.0-alpha.3
+	kcl-lang.io/kpm v0.8.0-beta.1
+	kcl-lang.io/lib v0.8.0-beta.1
 )
 
 require (
@@ -47,6 +47,7 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-metrics v0.0.1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
+	github.com/dominikbraun/graph v0.23.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
