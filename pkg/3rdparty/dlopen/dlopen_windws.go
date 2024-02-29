@@ -16,8 +16,8 @@ var ErrSoNotFound = errors.New("unable to open a handle to the library")
 
 // LibHandle represents an open handle to a library (.so)
 type LibHandle struct {
-	Handle  *syscall.DLL
-	Libname string
+	Handle  syscall.Handle
+	LibName string
 }
 
 func GetHandle(libs []string) (*LibHandle, error) {
@@ -25,22 +25,27 @@ func GetHandle(libs []string) (*LibHandle, error) {
 		return nil, ErrSoNotFound
 	}
 	name := libs[0]
-	dll, err := syscall.LoadDLL(name)
+	dll, err := syscall.LoadLibrary(name)
 	if err != nil {
 		return nil, err
 	}
 	return &LibHandle{
 		Handle:  dll,
-		Libname: name,
+		LibName: name,
 	}, nil
 }
 
 // GetSymbolPointer takes a symbol name and returns a pointer to the symbol.
 func (l *LibHandle) GetSymbolPointer(symbol string) (unsafe.Pointer, error) {
-	panic("unsupported feature on windows")
+	proc, err := syscall.GetProcAddress(l.Handle, symbol)
+	if err != nil {
+		return nil, err
+	}
+	return unsafe.Pointer(proc), nil
 }
 
 // Close closes a LibHandle.
 func (l *LibHandle) Close() error {
-	panic("unsupported feature on windows")
+	_ = syscall.FreeLibrary(l.Handle)
+	return nil
 }

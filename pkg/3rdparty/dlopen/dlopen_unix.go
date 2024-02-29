@@ -34,7 +34,7 @@ var ErrSoNotFound = errors.New("unable to open a handle to the library")
 // LibHandle represents an open handle to a library (.so)
 type LibHandle struct {
 	Handle  unsafe.Pointer
-	Libname string
+	LibName string
 }
 
 // GetHandle tries to get a handle to a library (.so), attempting to access it
@@ -49,7 +49,7 @@ func GetHandle(libs []string) (*LibHandle, error) {
 		if handle != nil {
 			h := &LibHandle{
 				Handle:  handle,
-				Libname: name,
+				LibName: name,
 			}
 			return h, nil
 		}
@@ -78,7 +78,7 @@ func (l *LibHandle) Close() error {
 	C.dlclose(l.Handle)
 	e := C.dlerror()
 	if e != nil {
-		return fmt.Errorf("error closing %v: %v", l.Libname, errors.New(C.GoString(e)))
+		return fmt.Errorf("error closing %v: %v", l.LibName, errors.New(C.GoString(e)))
 	}
 
 	return nil
