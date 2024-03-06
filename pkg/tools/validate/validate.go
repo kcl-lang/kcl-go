@@ -45,17 +45,40 @@ func Validate(dataFile, schemaFile string, opts *ValidateOptions) (ok bool, err 
 	return resp.Success, e
 }
 
-func ValidateCode(data, code string, opt *ValidateOptions) (ok bool, err error) {
-	if opt == nil {
-		opt = &ValidateOptions{}
+func ValidateCode(data, code string, opts *ValidateOptions) (ok bool, err error) {
+	if opts == nil {
+		opts = &ValidateOptions{}
 	}
 	client := service.NewKclvmServiceClient()
 	resp, err := client.ValidateCode(&gpyrpc.ValidateCode_Args{
 		Data:          data,
 		Code:          code,
-		Schema:        opt.Schema,
-		AttributeName: opt.AttributeName,
-		Format:        opt.Format,
+		Schema:        opts.Schema,
+		AttributeName: opts.AttributeName,
+		Format:        opts.Format,
+	})
+	if err != nil {
+		return false, err
+	}
+	var e error = nil
+	if resp.ErrMessage != "" {
+		e = errors.New(resp.ErrMessage)
+	}
+	return resp.Success, e
+}
+
+func ValidateCodeFile(dataFile, data, code string, opts *ValidateOptions) (ok bool, err error) {
+	if opts == nil {
+		opts = &ValidateOptions{}
+	}
+	client := service.NewKclvmServiceClient()
+	resp, err := client.ValidateCode(&gpyrpc.ValidateCode_Args{
+		Datafile:      dataFile,
+		Data:          data,
+		Code:          code,
+		Schema:        opts.Schema,
+		AttributeName: opts.AttributeName,
+		Format:        opts.Format,
 	})
 	if err != nil {
 		return false, err
