@@ -8,7 +8,7 @@ require (
 	github.com/getkin/kin-openapi v0.123.0
 	github.com/goccy/go-yaml v1.11.3
 	github.com/gofrs/flock v0.8.1
-	github.com/golang/protobuf v1.5.3
+	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/julienschmidt/httprouter v1.3.0
@@ -19,7 +19,7 @@ require (
 	github.com/wk8/go-ordered-map/v2 v2.1.8
 	github.com/yuin/goldmark v1.7.0
 	google.golang.org/grpc v1.62.0
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 	gopkg.in/yaml.v3 v3.0.1
 	kcl-lang.io/kpm v0.8.0
 	kcl-lang.io/lib v0.8.0
