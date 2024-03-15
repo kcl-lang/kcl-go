@@ -7,6 +7,7 @@ syntax = "proto3";
 package gpyrpc;
 
 option go_package = "kcl-lang.io/kcl-go/pkg/spec/gpyrpc;gpyrpc";
+
 // kcl main.k -E pkg_name=pkg_path
 message CmdExternalPkgSpec {
 	string pkg_name = 1;
@@ -63,6 +64,7 @@ service KclvmService {
 	rpc ParseFile(ParseFile_Args) returns(ParseFile_Result);
 	rpc ParseProgram(ParseProgram_Args) returns(ParseProgram_Result);
 	rpc LoadPackage(LoadPackage_Args) returns(LoadPackage_Result);
+	rpc ListOptions(ParseProgram_Args) returns(ListOptions_Result);
 
 	rpc FormatCode(FormatCode_Args) returns(FormatCode_Result);
 	rpc FormatPath(FormatPath_Args) returns(FormatPath_Result);
@@ -139,6 +141,18 @@ message LoadPackage_Result {
 	map<string, string> symbol_node_map = 8;       // Map key is the SymbolIndex json string.
 	map<string, SymbolIndex> fully_qualified_name_map = 9;  // Map key is the fully_qualified_name e.g. `pkg.Name`
 	map<string, ScopeIndex> pkg_scope_map = 10;      // Map key is the package path.
+}
+
+message ListOptions_Result {
+	repeated OptionHelp options = 2;   // Returns the files in the order they should be compiled
+}
+
+message OptionHelp {
+    string name = 1;
+    string type = 2;
+    bool required = 3;
+    string default_value = 4;
+    string help = 5;
 }
 
 message Symbol {
