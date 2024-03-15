@@ -64,6 +64,7 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/KclvmService.ExecArtifact", p.handle_ExecArtifact)
 	p.router.GET("/api:protorpc/KclvmService.ParseFile", p.handle_ParseFile)
 	p.router.GET("/api:protorpc/KclvmService.ParseProgram", p.handle_ParseProgram)
+	p.router.GET("/api:protorpc/KclvmService.ListOptions", p.handle_ListOptions)
 	p.router.GET("/api:protorpc/KclvmService.LoadPackage", p.handle_LoadPackage)
 	p.router.GET("/api:protorpc/KclvmService.FormatCode", p.handle_FormatCode)
 	p.router.GET("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
@@ -80,6 +81,7 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/KclvmService.ExecArtifact", p.handle_ExecArtifact)
 	p.router.POST("/api:protorpc/KclvmService.ParseFile", p.handle_ParseFile)
 	p.router.POST("/api:protorpc/KclvmService.ParseProgram", p.handle_ParseProgram)
+	p.router.POST("/api:protorpc/KclvmService.ListOptions", p.handle_ListOptions)
 	p.router.POST("/api:protorpc/KclvmService.LoadPackage", p.handle_LoadPackage)
 	p.router.POST("/api:protorpc/KclvmService.FormatCode", p.handle_FormatCode)
 	p.router.POST("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
@@ -175,6 +177,13 @@ func (p *restServer) handle_ParseProgram(w http.ResponseWriter, r *http.Request,
 	var args = new(gpyrpc.ParseProgram_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.ParseProgram(args)
+	})
+}
+
+func (p *restServer) handle_ListOptions(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var args = new(gpyrpc.ParseProgram_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.ListOptions(args)
 	})
 }
 

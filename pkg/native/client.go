@@ -127,6 +127,10 @@ func (c *NativeServiceClient) ParseProgram(in *gpyrpc.ParseProgram_Args) (*gpyrp
 	return cApiCall[*gpyrpc.ParseProgram_Args, *gpyrpc.ParseProgram_Result](c, "KclvmService.ParseProgram", in)
 }
 
+func (c *NativeServiceClient) ListOptions(in *gpyrpc.ParseProgram_Args) (*gpyrpc.ListOptions_Result, error) {
+	return cApiCall[*gpyrpc.ParseProgram_Args, *gpyrpc.ListOptions_Result](c, "KclvmService.ListOptions", in)
+}
+
 func (c *NativeServiceClient) LoadPackage(in *gpyrpc.LoadPackage_Args) (*gpyrpc.LoadPackage_Result, error) {
 	return cApiCall[*gpyrpc.LoadPackage_Args, *gpyrpc.LoadPackage_Result](c, "KclvmService.LoadPackage", in)
 }
