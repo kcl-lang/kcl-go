@@ -27,7 +27,7 @@ func ExportOpenAPIV3Spec(pkgPath string) (*openapi3.T, error) {
 	if err != nil {
 		return nil, err
 	}
-	return SwaggerV2TotOpenAPIV3Spec(s), nil
+	return SwaggerV2ToOpenAPIV3Spec(s), nil
 }
 
 // ExportOpenAPITypeToSchema exports open api v3 schema ref from the kcl type.
@@ -100,8 +100,8 @@ func ExportSwaggerV2Spec(pkgPath string) (*SwaggerV2Spec, error) {
 	return spec, nil
 }
 
-// SwaggerV2TotOpenAPIV3Spec converts swagger v2 spec to open api v3 spec.
-func SwaggerV2TotOpenAPIV3Spec(s *SwaggerV2Spec) *openapi3.T {
+// SwaggerV2ToOpenAPIV3Spec converts swagger v2 spec to open api v3 spec.
+func SwaggerV2ToOpenAPIV3Spec(s *SwaggerV2Spec) *openapi3.T {
 	t := &openapi3.T{
 		OpenAPI: "3.0",
 		Info: &openapi3.Info{

@@ -284,7 +284,7 @@ func (g *GenContext) renderPackage(spec *SwaggerV2Spec, parentDir string) error 
 		}
 	case string(OpenAPI):
 		docFileName := fmt.Sprintf("%s.%s", pkgName, "json")
-		spec := SwaggerV2TotOpenAPIV3Spec(spec)
+		spec := SwaggerV2ToOpenAPIV3Spec(spec)
 		json, err := spec.MarshalJSON()
 		if err != nil {
 			return err
