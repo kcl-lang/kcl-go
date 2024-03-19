@@ -16,12 +16,8 @@ package path
 import (
 	"os"
 	"path/filepath"
-)
 
-const (
-	// LibHomeEnvVar is the environment variable used by kcl
-	// for the lib install directory. When no value is set a default is used.
-	LibHomeEnvVar = "KCL_LIB_HOME"
+	"kcl-lang.io/kcl-go/pkg/env"
 )
 
 // lazypath is an lazy-loaded path buffer for the XDG base directory specification.
@@ -45,5 +41,5 @@ func (l lazypath) path(envVar string, defaultFn func() string, elem ...string) s
 // libPath defines the base directory relative to which user specific non-essential data files
 // should be stored.
 func (l lazypath) libPath(elem ...string) string {
-	return l.path(LibHomeEnvVar, libHome, filepath.Join(elem...))
+	return l.path(env.GetLibHome(), libHome, filepath.Join(elem...))
 }

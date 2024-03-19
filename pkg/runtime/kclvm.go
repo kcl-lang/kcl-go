@@ -13,20 +13,24 @@ import (
 	"time"
 
 	"github.com/gofrs/flock"
+	"kcl-lang.io/kcl-go/pkg/env"
 	"kcl-lang.io/kcl-go/pkg/logger"
 	"kcl-lang.io/kcl-go/pkg/path"
 	"kcl-lang.io/lib"
 )
 
-const (
-	DisableArtifactEnvVar = "KCL_GO_DISABLE_ARTIFACT"
-)
-
 func init() {
-	if os.Getenv(DisableArtifactEnvVar) == "" && os.Getenv(UseKCLPluginEnvVar) == "" {
+	if !env.GetDisableInstallArtifact() {
 		installKclArtifact()
 	}
-	g_KclvmRoot = findKclvmRoot()
+	if env.GetDisableUseArtifactInPath() {
+		// Must use the artifact installed by kcl-go
+		// Get the install lib path.
+		g_KclvmRoot = findInstalledArtifactRoot()
+	} else {
+		// Get kclvm root path in PATH
+		g_KclvmRoot = findKclvmRoot()
+	}
 }
 
 func installKclArtifact() {
@@ -111,4 +115,8 @@ func findKclvmRoot() string {
 		}
 	}
 	return ""
+}
+
+func findInstalledArtifactRoot() string {
+	return filepath.Join(path.LibPath(), "bin")
 }
