@@ -4,8 +4,6 @@ package runtime
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"runtime"
 	"sync"
 
@@ -13,10 +11,9 @@ import (
 )
 
 var (
-	Debug              bool
-	rpcRuntime         *Runtime
-	once               sync.Once
-	UseKCLPluginEnvVar = "KCL_GO_USE_PLUGIN"
+	Debug      bool
+	rpcRuntime *Runtime
+	once       sync.Once
 )
 
 const tip = "Tip: Have you used a binary version of KCL in your PATH that is not consistent with the KCL Go SDK? You can upgrade or reduce the KCL version or delete the KCL in your PATH"
@@ -47,14 +44,7 @@ func initRuntime(maxProc int) {
 		panic(ErrKclvmRootNotFound)
 	}
 
-	if os.Getenv(UseKCLPluginEnvVar) != "" {
-		os.Setenv("PYTHONHOME", "")
-		os.Setenv("PYTHONPATH", filepath.Join(g_KclvmRoot, "lib", "site-packages"))
-		rpcRuntime = NewRuntime(int(maxProc), MustGetKclvmPath(), "-m", "kclvm.program.rpc-server")
-	} else {
-		rpcRuntime = NewRuntime(int(maxProc), "kclvm_cli", "server")
-	}
-
+	rpcRuntime = NewRuntime(int(maxProc), "kclvm_cli", "server")
 	rpcRuntime.Start()
 
 	client := &BuiltinServiceClient{

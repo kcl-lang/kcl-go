@@ -7,6 +7,7 @@ import (
 
 	"kcl-lang.io/kcl-go/pkg/3rdparty/dlopen"
 	kcl_runtime "kcl-lang.io/kcl-go/pkg/runtime"
+	"kcl-lang.io/kcl-go/pkg/utils"
 )
 
 const libName = "kclvm_cli_cdylib"
@@ -24,6 +25,10 @@ func loadServiceNativeLib() *dlopen.LibHandle {
 	}
 
 	libPath := filepath.Join(root, "bin", fullLibName)
+	if !utils.FileExists(libPath) {
+		libPath = filepath.Join(root, "lib", fullLibName)
+	}
+
 	libPaths = append(libPaths, libPath)
 
 	h, err := dlopen.GetHandle(libPaths)
