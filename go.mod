@@ -21,8 +21,8 @@ require (
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.33.0
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/kpm v0.8.1
-	kcl-lang.io/lib v0.8.1
+	kcl-lang.io/kpm v0.8.2
+	kcl-lang.io/lib v0.8.2-0.20240316075714-96abc9c42324
 )
 
 require (

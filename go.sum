@@ -1293,10 +1293,10 @@ honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWh
 honnef.co/go/tools v0.0.1-2019.2.3/go.mod h1:a3bituU0lyd329TUQxRnasdCoJDkEUEAqEt0JzvZhAg=
 honnef.co/go/tools v0.0.1-2020.1.3/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9vFzvIQ3k=
 honnef.co/go/tools v0.0.1-2020.1.4/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9vFzvIQ3k=
-kcl-lang.io/kpm v0.8.1 h1:vJNRhlDSfD6bFAPGeRxHKbu3Ml9LesuMbMwGy/rH7/8=
-kcl-lang.io/kpm v0.8.1/go.mod h1:3atE1tEbsSPaAuKslkADH1HTDi7SMWlDWllmuk2XsBA=
-kcl-lang.io/lib v0.8.1 h1:MBDPvLE3wSEqdOoKJqCMUv5maWL3SKubBNU8ZPVirmo=
-kcl-lang.io/lib v0.8.1/go.mod h1:ubsalGXxJaa5II/EsHmsI/tL2EluYHIcW+BwzQPt+uY=
+kcl-lang.io/kpm v0.8.2 h1:pAqde163PF3JXl0tRRjYLSXkT7i73ykHnygpVu1FhH8=
+kcl-lang.io/kpm v0.8.2/go.mod h1:3atE1tEbsSPaAuKslkADH1HTDi7SMWlDWllmuk2XsBA=
+kcl-lang.io/lib v0.8.2-0.20240316075714-96abc9c42324 h1:Xtx8Yb15GDDiyQOhlRywRmHS981bpdywBkCBmBYyQXE=
+kcl-lang.io/lib v0.8.2-0.20240316075714-96abc9c42324/go.mod h1:ubsalGXxJaa5II/EsHmsI/tL2EluYHIcW+BwzQPt+uY=
 oras.land/oras-go v1.2.3 h1:v8PJl+gEAntI1pJ/LCrDgsuk+1PKVavVEPsYIHFE5uY=
 oras.land/oras-go v1.2.3/go.mod h1:M/uaPdYklze0Vf3AakfarnpoEckvw0ESbRdN8Z1vdJg=
 oras.land/oras-go/v2 v2.3.0 h1:lqX1aXdN+DAmDTKjiDyvq85cIaI4RkIKp/PghWlAGIU=
