@@ -3,6 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/kcl-lang/kcl-go?status.svg)](https://godoc.org/github.com/kcl-lang/kcl-go)
 [![Coverage Status](https://coveralls.io/repos/github/kcl-lang/kcl-go/badge.svg)](https://coveralls.io/github/kcl-lang/kcl-go)
 [![license](https://img.shields.io/github/license/kcl-lang/kcl-go.svg)](https://github.com/kcl-lang/kcl-go/blob/master/LICENSE)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkcl-lang%2Fkcl-go.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkcl-lang%2Fkcl-go?ref=badge_shield)
 
 [KCL](https://github.com/kcl-lang/kcl) is an open-source, constraint-based record and functional language that enhances the writing of complex configurations, including those for cloud-native scenarios. With its advanced programming language technology and practices, KCL is dedicated to promoting better modularity, scalability, and stability for configurations. It enables simpler logic writing and offers ease of automation APIs and integration with homegrown systems.
 
@@ -130,3 +131,6 @@ See the [KCL website](https://kcl-lang.io)
 ## License
 
 Apache License Version 2.0
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkcl-lang%2Fkcl-go.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkcl-lang%2Fkcl-go?ref=badge_large)
