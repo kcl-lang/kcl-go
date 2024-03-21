@@ -219,6 +219,43 @@ func TestGenKclFromYaml(t *testing.T) {
 	}
 }
 
+func TestGenKclFromMutiResourceYaml(t *testing.T) {
+	type testCase struct {
+		name   string
+		input  string
+		expect string
+	}
+	var cases []testCase
+
+	casesPath := filepath.Join("testdata", "yaml2")
+	caseFiles, err := os.ReadDir(casesPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, caseFile := range caseFiles {
+		input := filepath.Join(casesPath, caseFile.Name(), "input.yaml")
+		expectFilepath := filepath.Join(casesPath, caseFile.Name(), "expect.k")
+		cases = append(cases, testCase{
+			name:   caseFile.Name(),
+			input:  input,
+			expect: readFileString(t, expectFilepath),
+		})
+	}
+
+	for _, testcase := range cases {
+		t.Run(testcase.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err := GenKcl(&buf, testcase.input, nil, &GenKclOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			result := buf.Bytes()
+			assert2.Equal(t, testcase.expect, string(bytes.ReplaceAll(result, []byte("\r\n"), []byte("\n"))))
+		})
+	}
+}
+
 type TestData = data
 
 func TestGenKclFromJsonAndImports(t *testing.T) {

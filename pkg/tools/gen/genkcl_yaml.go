@@ -2,9 +2,9 @@ package gen
 
 import (
 	"bytes"
-	"io"
-
 	"github.com/goccy/go-yaml"
+	"io"
+	"strings"
 )
 
 func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interface{}) error {
@@ -54,14 +54,18 @@ func convertKclFromYaml(yamlData *yaml.MapSlice) []data {
 	return result
 }
 
-func convertKclFromYamlString(data []byte) ([]data, error) {
-	data = bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
-
-	yamlData := &yaml.MapSlice{}
-	if err := yaml.UnmarshalWithOptions(data, yamlData, yaml.UseOrderedMap()); err != nil {
-		return nil, err
+func convertKclFromYamlString(byteData []byte) ([]data, error) {
+	byteData = bytes.ReplaceAll(byteData, []byte("\r\n"), []byte("\n"))
+	var result []data
+	// split yaml with ‘---’
+	for _, item := range strings.Split(string(byteData), "---") {
+		yamlData := &yaml.MapSlice{}
+		if err := yaml.UnmarshalWithOptions([]byte(item), yamlData, yaml.UseOrderedMap()); err != nil {
+			return nil, err
+		}
+		// convert yaml data to kcl
+		d := convertKclFromYaml(yamlData)
+		result = append(result, d...)
 	}
-
-	// convert yaml data to kcl
-	return convertKclFromYaml(yamlData), nil
+	return result, nil
 }
