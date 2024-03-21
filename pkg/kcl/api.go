@@ -69,6 +69,19 @@ func (p *KCLResultList) ToMap() (map[string]interface{}, error) {
 	return resMap, nil
 }
 
+// ToInt returns the result as int.
+func (p *KCLResultList) ToInt() (*int, error) {
+	if p.list == nil && len(p.list) == 0 {
+		return nil, fmt.Errorf("result is nil")
+	}
+	var resI int
+	err := p.ToType(&resI)
+	if err != nil {
+		return nil, err
+	}
+	return &resI, nil
+}
+
 // ToFloat64 returns the result as float64.
 func (p *KCLResultList) ToFloat64() (*float64, error) {
 	if p.list == nil && len(p.list) == 0 {
@@ -157,8 +170,94 @@ func (p *KCLResultList) GetRawYamlResult() string {
 	return p.raw_yaml_result
 }
 
+// KCLResult denotes the result for the Run API.
 type KCLResult struct {
 	result any
+}
+
+// NewResult constructs a KCLResult using the value
+func NewResult(value any) KCLResult {
+	return KCLResult{
+		result: value,
+	}
+}
+
+// ToString returns the result as string.
+func (p *KCLResult) ToString() (string, error) {
+	var resS string
+	err := p.ToType(&resS)
+	if err != nil {
+		return "", err
+	}
+	return resS, nil
+}
+
+// ToBool returns the result as bool.
+func (p *KCLResult) ToBool() (*bool, error) {
+	var resB bool
+	err := p.ToType(&resB)
+	if err != nil {
+		return nil, err
+	}
+	return &resB, nil
+}
+
+// ToMap returns the result as map[string]interface{}.
+func (p *KCLResult) ToMap() (map[string]interface{}, error) {
+	var resMap map[string]interface{}
+	err := p.ToType(&resMap)
+	if err != nil {
+		return nil, err
+	}
+	return resMap, nil
+}
+
+// ToInt returns the result as int.
+func (p *KCLResult) ToInt() (*int, error) {
+	var resI int
+	err := p.ToType(&resI)
+	if err != nil {
+		return nil, err
+	}
+	return &resI, nil
+}
+
+// ToFloat64 returns the result as float64.
+func (p *KCLResult) ToFloat64() (*float64, error) {
+	var resF float64
+	err := p.ToType(&resF)
+	if err != nil {
+		return nil, err
+	}
+	return &resF, nil
+}
+
+// ToList returns the result as []interface{}.
+func (p *KCLResult) ToList() ([]interface{}, error) {
+	var resList []interface{}
+	err := p.ToType(&resList)
+	if err != nil {
+		return nil, err
+	}
+	return resList, nil
+}
+
+// ToType returns the result as target type.
+func (p *KCLResult) ToType(target interface{}) error {
+	srcVal := reflect.ValueOf(p.result)
+	targetVal := reflect.ValueOf(target)
+
+	if targetVal.Kind() != reflect.Ptr || targetVal.IsNil() {
+		return fmt.Errorf("failed to convert result to %T", target)
+	}
+
+	if srcVal.Type() != targetVal.Elem().Type() {
+		return fmt.Errorf("failed to convert result to %T: type mismatch", target)
+	}
+
+	targetVal.Elem().Set(srcVal)
+
+	return nil
 }
 
 func (m *KCLResult) Get(key string, target ...interface{}) interface{} {

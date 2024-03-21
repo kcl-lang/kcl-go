@@ -17,6 +17,23 @@ var _ = fmt.Sprint
 
 const case_path = "../../testdata/main.k"
 
+func TestKCLResultMap(t *testing.T) {
+	var data = map[string]interface{}{
+		"key1": "value1",
+		"key2": "value2",
+	}
+	result := NewResult(data)
+	m, _ := result.ToMap()
+	tAssert(t, m["key1"] == "value1", m)
+	tAssert(t, m["key2"] == "value2", m)
+}
+
+func TestKCLResultInt(t *testing.T) {
+	result := NewResult(1)
+	m, _ := result.ToInt()
+	tAssert(t, *m == 1)
+}
+
 func TestRun_kcl_yaml(t *testing.T) {
 	const s = "../../testdata/app0/kcl.yaml"
 	_, err := RunFiles([]string{s})
