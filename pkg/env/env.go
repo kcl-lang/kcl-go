@@ -10,6 +10,12 @@ var (
 	once sync.Once
 	mu   sync.Mutex
 	env  *EnvSettings
+	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.libHome=/path/to/lib"
+	libHome string
+	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.disableInstallArtifact=true"
+	disableInstallArtifact bool
+	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.disableArtifactInPath=true"
+	disableArtifactInPath bool
 )
 
 // EnvSettings represents environment settings for the KCL Go SDK.
@@ -23,9 +29,9 @@ type EnvSettings struct {
 func instance() *EnvSettings {
 	once.Do(func() {
 		env = &EnvSettings{
-			LibHome:                  os.Getenv("KCL_LIB_HOME"),
-			DisableInstallArtifact:   envBoolOr("KCL_GO_DISABLE_INSTALL_ARTIFACT", false),
-			DisableUseArtifactInPath: envBoolOr("KCL_GO_DISABLE_ARTIFACT_IN_PATH", false),
+			LibHome:                  envOr(os.Getenv("KCL_LIB_HOME"), libHome),
+			DisableInstallArtifact:   envBoolOr("KCL_GO_DISABLE_INSTALL_ARTIFACT", disableInstallArtifact),
+			DisableUseArtifactInPath: envBoolOr("KCL_GO_DISABLE_ARTIFACT_IN_PATH", disableArtifactInPath),
 		}
 	})
 	return env
