@@ -13,9 +13,9 @@ var (
 	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.libHome=/path/to/lib"
 	libHome string
 	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.disableInstallArtifact=true"
-	disableInstallArtifact bool
+	disableInstallArtifact string
 	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.disableArtifactInPath=true"
-	disableArtifactInPath bool
+	disableArtifactInPath string
 )
 
 // EnvSettings represents environment settings for the KCL Go SDK.
@@ -30,8 +30,8 @@ func instance() *EnvSettings {
 	once.Do(func() {
 		env = &EnvSettings{
 			LibHome:                  envOr(os.Getenv("KCL_LIB_HOME"), libHome),
-			DisableInstallArtifact:   envBoolOr("KCL_GO_DISABLE_INSTALL_ARTIFACT", disableInstallArtifact),
-			DisableUseArtifactInPath: envBoolOr("KCL_GO_DISABLE_ARTIFACT_IN_PATH", disableArtifactInPath),
+			DisableInstallArtifact:   envBoolOrString("KCL_GO_DISABLE_INSTALL_ARTIFACT", disableInstallArtifact),
+			DisableUseArtifactInPath: envBoolOrString("KCL_GO_DISABLE_ARTIFACT_IN_PATH", disableArtifactInPath),
 		}
 	})
 	return env
@@ -94,4 +94,12 @@ func envBoolOr(name string, def bool) bool {
 		return def
 	}
 	return ret
+}
+
+// envBoolOrString returns the boolean value of the specified environment variable,
+// or the default string value if it does not exist.
+func envBoolOrString(name string, def string) bool {
+	var ret bool
+	ret, _ = strconv.ParseBool(def)
+	return envBoolOr(name, ret)
 }
