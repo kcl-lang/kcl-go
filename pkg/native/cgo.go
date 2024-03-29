@@ -23,10 +23,10 @@ void kclvm_service_free_string(void *f,const char * res) {
 	free_string = (void (*)(const char *))f;
 	return free_string(res);
 }
-const char* kclvm_service_call(void *f,kclvm_service* c,const char * method,const char * args){
-	const char* (*service_call)(kclvm_service*,const char *,const char *);
-	service_call = (const char* (*)(kclvm_service*,const char *,const char *))f;
-	return service_call(c,method,args);
+const char* kclvm_service_call_with_length(void *f,kclvm_service* c,const char * method,const char * args,size_t * result_len){
+	const char* (*service_call_with_length)(kclvm_service*,const char *,const char *,size_t *);
+	service_call_with_length = (const char* (*)(kclvm_service*,const char *,const char *,size_t *))f;
+	return service_call_with_length(c,method,args,result_len);
 }
 */
 import "C"
@@ -75,8 +75,8 @@ func KclvmServiceFreeString(str *C.char) {
 
 // KclvmServiceCall calls kclvm service by c api
 // args should be serialized as protobuf byte stream
-func KclvmServiceCall(serv *C.kclvm_service, method *C.char, args *C.char) *C.char {
-	const fnName = "kclvm_service_call"
+func KclvmServiceCall(serv *C.kclvm_service, method *C.char, args *C.char) (*C.char, C.size_t) {
+	const fnName = "kclvm_service_call_with_length"
 
 	serviceCall, err := lib.GetSymbolPointer(fnName)
 
@@ -84,5 +84,7 @@ func KclvmServiceCall(serv *C.kclvm_service, method *C.char, args *C.char) *C.ch
 		panic(err)
 	}
 
-	return C.kclvm_service_call(serviceCall, serv, method, args)
+	var size C.size_t
+	buf := C.kclvm_service_call_with_length(serviceCall, serv, method, args, &size)
+	return buf, size
 }

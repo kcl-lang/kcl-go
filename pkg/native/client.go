@@ -10,6 +10,7 @@ typedef struct kclvm_service kclvm_service;
 */
 import "C"
 import (
+	"bytes"
 	"errors"
 	"runtime"
 	"strings"
@@ -84,20 +85,20 @@ func cApiCall[I interface {
 
 	defer C.free(unsafe.Pointer(cIn))
 
-	cOut := KclvmServiceCall(c.client, cCallName, cIn)
+	cOut, cOutSize := KclvmServiceCall(c.client, cCallName, cIn)
 
 	defer KclvmServiceFreeString(cOut)
 
-	msg := C.GoString(cOut)
+	msg := C.GoBytes(unsafe.Pointer(cOut), C.int(cOutSize))
 
-	if strings.HasPrefix(msg, "ERROR:") {
-		return nil, errors.New(strings.TrimPrefix(msg, "ERROR:"))
+	if bytes.HasPrefix(msg, []byte("ERROR:")) {
+		return nil, errors.New(strings.TrimPrefix(string(msg), "ERROR:"))
 	}
 
 	var out O = new(TO)
-	err = proto.Unmarshal([]byte(msg), out)
+	err = proto.Unmarshal(msg, out)
 	if err != nil {
-		return nil, errors.New(msg)
+		return nil, errors.New(string(msg))
 	}
 
 	return out, nil
