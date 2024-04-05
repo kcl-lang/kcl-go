@@ -84,11 +84,37 @@ func TestExecArtifactWithPlugin(t *testing.T) {
 	}
 }
 
+func TestBuildProgramError(t *testing.T) {
+	src := `
+a = 1
+  b = 2
+`
+	output := path.Join(t.TempDir(), "example")
+	client := NewNativeServiceClient()
+	// BuildProgram
+	buildResult, err := client.BuildProgram(&gpyrpc.BuildProgram_Args{
+		ExecArgs: &gpyrpc.ExecProgram_Args{
+			KFilenameList: []string{"main.k"},
+			KCodeList:     []string{src},
+		},
+		Output: output,
+	})
+	if err == nil {
+		t.Errorf("The BuildProgram should return compilation failure reason")
+	}
+	if !strings.Contains(err.Error(), "InvalidSyntax") {
+		t.Errorf("Unexpected error message: %q", err.Error())
+	}
+	if buildResult != nil {
+		t.Errorf("The BuildProgram should return nil if compilation fails")
+	}
+}
+
 func TestParseFile(t *testing.T) {
 	// Example: Test with string source
 	src := `schema Name:
     name: str
-	
+
 n = Name {name = "name"}` // Sample KCL source code
 	astJson, err := ParseFileASTJson("", src)
 	if err != nil {

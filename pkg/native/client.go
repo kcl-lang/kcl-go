@@ -89,6 +89,11 @@ func cApiCall[I interface {
 
 	defer KclvmServiceFreeString(cOut)
 
+	if cOutSize == C.SIZE_MAX {
+		msg := C.GoString(cOut)
+		return nil, errors.New(strings.TrimPrefix(string(msg), "ERROR:"))
+	}
+
 	msg := C.GoBytes(unsafe.Pointer(cOut), C.int(cOutSize))
 
 	if bytes.HasPrefix(msg, []byte("ERROR:")) {
