@@ -32,9 +32,10 @@ func ExportOpenAPIV3Spec(pkgPath string) (*openapi3.T, error) {
 
 // ExportOpenAPITypeToSchema exports open api v3 schema ref from the kcl type.
 func ExportOpenAPITypeToSchema(ty *KclOpenAPIType) *openapi3.SchemaRef {
+	types := openapi3.Types([]string{string(ty.Type)})
 	s := &openapi3.SchemaRef{
 		Value: &openapi3.Schema{
-			Type:        string(ty.Type),
+			Type:        &types,
 			Format:      string(ty.Format),
 			Default:     ty.Default,
 			Enum:        ty.GetAnyEnum(),
