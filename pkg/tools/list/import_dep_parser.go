@@ -443,12 +443,13 @@ func parseImport(code string) []string {
 // suppose the filepath is a.b.c.k, and the import path is:
 // 1. an absolute import path d.e, the result will be: d/e
 // 2. a relative import path ..d.e, the result will be: a/d/e
-func fixImportPath(filepath, importPath string) string {
+func fixImportPath(path, importPath string) string {
 	if !strings.HasPrefix(importPath, ".") {
 		return strings.Replace(importPath, ".", "/", -1)
 	}
+	filepath.Join()
 
-	pkgpath := filepath
+	pkgpath := path
 	if strings.HasSuffix(pkgpath, ".k") {
 		pkgpath = pathpkg.Dir(pkgpath)
 	}
@@ -474,10 +475,15 @@ func fixImportPath(filepath, importPath string) string {
 
 	var ss = strings.Split(pkgpath, "/")
 	// if the relative path is invalid as it imports a path that's out of the program root, fix it to a path just under the program root
-	if (dotCount - 1) > len(ss) {
-		dotCount = len(ss) + 1
+	if (dotCount - 1) < len(ss) {
+		// for relative import path, fix it to an absolute path
+		importParts := append(ss[:len(ss)-(dotCount-1)], importPath)
+		return strings.Join(importParts, "/")
+	} else {
+		// Use the relative filepath with ".."
+		for i := 0; i < dotCount-1; i++ {
+			pkgpath = pkgpath + "/.."
+		}
+		return pkgpath + "/" + importPath
 	}
-	// for relative import path, fix it to an absolute path
-	importParts := append(ss[:len(ss)-(dotCount-1)], importPath)
-	return strings.Join(importParts, "/")
 }
