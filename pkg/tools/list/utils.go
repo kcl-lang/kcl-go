@@ -16,6 +16,7 @@ var standardSystemModules = []string{
 	"base64",
 	"units",
 	"file",
+	"template",
 }
 
 func isBuiltinPkg(pkgpath string) bool {
