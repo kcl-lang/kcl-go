@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/BurntSushi/toml"
 	"gopkg.in/yaml.v3"
 )
 
@@ -20,27 +21,53 @@ var _ = fmt.Sprint
 const KCL_MOD_PATH_ENV = "${KCL_MOD}"
 
 const (
+	Default_KclMod      = "kcl.mod"
 	Default_KclYaml     = "kcl.yaml"
 	Default_ProjectYaml = "project.yaml"
 )
 
 type Option struct {
-	KclYaml     string // default: Default_KclYaml
-	ProjectYaml string // default: Default_ProjectYaml
-	FlagAll     bool
-	UseAbsPath  bool
+	KclMod                 string // default: Default_kclMod
+	KclYaml                string // default: Default_KclYaml
+	ProjectYaml            string // default: Default_ProjectYaml
+	FlagAll                bool
+	UseAbsPath             bool
+	ExcludeExternalPackage bool
+	ExcludeBuiltin         bool
+	IgnoreImportError      bool
 }
 
 func (p *Option) merge(other *Option) {
+	if other.KclMod != "" {
+		p.KclMod = other.KclMod
+	}
 	if other.KclYaml != "" {
 		p.KclYaml = other.KclYaml
 	}
 	if other.ProjectYaml != "" {
 		p.ProjectYaml = other.ProjectYaml
 	}
+	if other.FlagAll {
+		p.FlagAll = true
+	}
+	if other.UseAbsPath {
+		p.UseAbsPath = true
+	}
+	if other.ExcludeExternalPackage {
+		p.ExcludeExternalPackage = true
+	}
+	if other.ExcludeBuiltin {
+		p.ExcludeBuiltin = true
+	}
+	if other.IgnoreImportError {
+		p.IgnoreImportError = true
+	}
 }
 
 func (p *Option) adjust() {
+	if p.KclMod == "" {
+		p.KclMod = Default_KclMod
+	}
 	if p.KclYaml == "" {
 		p.KclYaml = Default_KclYaml
 	}
@@ -239,6 +266,11 @@ func (p *DepParser) checkPkgColor(pkgpath string) color {
 	if isBuiltinPkg(pkgpath) || isPluginPkg(pkgpath) {
 		return black
 	}
+	if p.opt.ExcludeExternalPackage {
+		if isExternalPkg(p.vfs, pkgpath) {
+			return black
+		}
+	}
 
 	if c := p.touchedFilesDag[pkgpath]; c != white {
 		return c
@@ -274,9 +306,24 @@ func (p *DepParser) getProjectYamlDir(pkgpath string) string {
 	return ""
 }
 
-func (p *DepParser) isProjectYamlDir(pkgpath string) bool {
-	if fi, _ := fs.Stat(p.vfs, pathpkg.Join(pkgpath, p.opt.ProjectYaml)); fi != nil && !fi.IsDir() {
-		return true
+func isExternalPkg(vfs fs.FS, pkgpath string) bool {
+	// Read the kcl.mod file
+	modFileContent, err := fs.ReadFile(vfs, Default_KclMod)
+	if err != nil {
+		return false
+	}
+	// Parse the TOML content
+	var modFileData map[string]interface{}
+	if err := toml.Unmarshal([]byte(modFileContent), &modFileData); err != nil {
+		return false
+	}
+	// Extract dependency information
+	if deps, ok := modFileData["dependencies"].(map[string]interface{}); ok {
+		for dep := range deps {
+			if strings.HasPrefix(pkgpath, dep) || strings.HasPrefix(pkgpath, strings.Replace(dep, "-", "_", -1)) {
+				return true
+			}
+		}
 	}
 	return false
 }
@@ -420,6 +467,12 @@ func (p *DepParser) loadImportMap(path string, import_map map[string][]string) e
 		return nil
 	}
 
+	if p.opt.ExcludeExternalPackage {
+		if isExternalPkg(p.vfs, pkgpath) {
+			return nil
+		}
+	}
+
 	if _, ok := import_map[pkgpath]; ok {
 		return nil
 	}
@@ -524,7 +577,7 @@ func loadKFileList(vfs fs.FS, path string, opt Option) ([]string, error) {
 			}
 		}
 
-		if len(settings.Config.Files) > 0 {
+		if len(settings.Config.Files) > 0 || opt.IgnoreImportError {
 			return settings.Config.Files, nil
 		} else {
 			return nil, fmt.Errorf("no kcl file")
@@ -553,23 +606,9 @@ func loadKFileList(vfs fs.FS, path string, opt Option) ([]string, error) {
 		k_files = append(k_files, pathpkg.Join(path, info.Name()))
 	}
 
-	if len(k_files) == 0 {
+	if len(k_files) > 0 || opt.IgnoreImportError {
+		return k_files, nil
+	} else {
 		return nil, fmt.Errorf("no kcl file")
 	}
-
-	return k_files, nil
-}
-
-// kcl_cli_configs:
-//
-//	file:
-//	  - ../../../../base/pkg/kusion_models/app_configuration/sofa/sofa_app_configuration_render.k
-//	  - ../../../../base/pkg/kusion_models/app_configuration/metadata_render.k
-//	  - ../../../../base/pkg/kusion_models/app_configuration/deploy_topology_render.k
-//	  - ../base/base.k
-//	  - main.k
-//	  - ../../../../base/pkg/kusion_models/app_configuration/sofa/sofa_app_configuration_backend.k
-//	disable_none: true
-func fixKclYamlFilePath(dir, filepath string) string {
-	return pathpkg.Join(dir, filepath)
 }

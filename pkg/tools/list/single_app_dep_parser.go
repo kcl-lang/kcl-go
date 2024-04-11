@@ -103,6 +103,11 @@ func (p *SingleAppDepParser) scanAppFiles(pkgpath string) error {
 	if isBuiltinPkg(pkgpath) || isPluginPkg(pkgpath) {
 		return nil
 	}
+	if p.opt.ExcludeExternalPackage {
+		if isExternalPkg(p.vfs, pkgpath) {
+			return nil
+		}
+	}
 
 	if _, ok := p.pkgFilesMap[pkgpath]; ok {
 		return nil

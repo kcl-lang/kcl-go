@@ -35,6 +35,36 @@ func ListDepFiles(workDir string, opt *Option) (files []string, err error) {
 	return files, nil
 }
 
+// ListDepPackages return the depend package path from the given path. It will scan and parse the applications within the workdir,
+// then list depend package of the applications.
+func ListDepPackages(workDir string, opt *Option) (pkgs []string, err error) {
+	if opt == nil {
+		opt = &Option{}
+	}
+
+	pkgroot, pkgpath, err := FindPkgInfo(workDir)
+	if err != nil {
+		return nil, err
+	}
+
+	depParser := NewSingleAppDepParser(pkgroot, *opt)
+
+	appPkgs, err := depParser.GetAppPkgs(pkgpath, opt.FlagAll)
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range appPkgs {
+		if opt.ExcludeBuiltin && isBuiltinPkg(p) {
+			continue
+		}
+		if opt.ExcludeExternalPackage && isExternalPkg(depParser.vfs, p) {
+			continue
+		}
+		pkgs = append(pkgs, p)
+	}
+	return
+}
+
 // ListUpStreamFiles returns a list of the UpStream dependent packages/files from the given path list.
 //
 // # Usage Caution

@@ -32,6 +32,29 @@ func TestListDepFiles(t *testing.T) {
 	}
 }
 
+func TestListDepPackages(t *testing.T) {
+	files, err := ListDepPackages("./testdata/module_with_external/", &Option{
+		ExcludeExternalPackage: true,
+		ExcludeBuiltin:         true,
+		IgnoreImportError:      true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expect := []string{
+		"pkg1",
+		"pkg2",
+	}
+
+	sort.Strings(files)
+	sort.Strings(expect)
+
+	if !reflect.DeepEqual(files, expect) {
+		t.Fatalf("\nexpect = %v\ngot    = %v", expect, files)
+	}
+}
+
 func TestListDepFiles_failed(t *testing.T) {
 	_, err := ListDepFiles("../../../testdata/app0-failed", nil)
 	if err == nil {
