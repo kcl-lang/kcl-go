@@ -103,6 +103,11 @@ func (p *SingleAppDepParser) scanAppFiles(pkgpath string) error {
 	if isBuiltinPkg(pkgpath) || isPluginPkg(pkgpath) {
 		return nil
 	}
+	if p.opt.ExcludeExternalPackage {
+		if isExternalPkg(p.vfs, pkgpath) {
+			return nil
+		}
+	}
 
 	if _, ok := p.pkgFilesMap[pkgpath]; ok {
 		return nil
@@ -120,7 +125,7 @@ func (p *SingleAppDepParser) scanAppFiles(pkgpath string) error {
 	for _, file := range k_files {
 		src, err := fs.ReadFile(p.vfs, file)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		for _, import_path := range parseImport(string(src)) {
