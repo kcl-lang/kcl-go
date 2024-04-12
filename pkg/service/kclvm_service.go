@@ -10,6 +10,7 @@ type KclvmService interface {
 	ParseFile(in *gpyrpc.ParseFile_Args) (out *gpyrpc.ParseFile_Result, err error)
 	ParseProgram(in *gpyrpc.ParseProgram_Args) (out *gpyrpc.ParseProgram_Result, err error)
 	ListOptions(in *gpyrpc.ParseProgram_Args) (out *gpyrpc.ListOptions_Result, err error)
+	ListVariables(in *gpyrpc.ListVariables_Args) (out *gpyrpc.ListVariables_Result, err error)
 	LoadPackage(in *gpyrpc.LoadPackage_Args) (out *gpyrpc.LoadPackage_Result, err error)
 	FormatCode(in *gpyrpc.FormatCode_Args) (out *gpyrpc.FormatCode_Result, err error)
 	FormatPath(in *gpyrpc.FormatPath_Args) (out *gpyrpc.FormatPath_Result, err error)

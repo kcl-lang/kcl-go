@@ -58,6 +58,9 @@ func (p *_KclvmServiceImpl) ParseProgram(ctx context.Context, args *gpyrpc.Parse
 func (p *_KclvmServiceImpl) ListOptions(ctx context.Context, args *gpyrpc.ParseProgram_Args) (*gpyrpc.ListOptions_Result, error) {
 	return p.c.ListOptions(args)
 }
+func (p *_KclvmServiceImpl) ListVariables(ctx context.Context, args *gpyrpc.ListVariables_Args) (*gpyrpc.ListVariables_Result, error) {
+	return p.c.ListVariables(args)
+}
 func (p *_KclvmServiceImpl) LoadPackage(ctx context.Context, args *gpyrpc.LoadPackage_Args) (*gpyrpc.LoadPackage_Result, error) {
 	return p.c.LoadPackage(args)
 }

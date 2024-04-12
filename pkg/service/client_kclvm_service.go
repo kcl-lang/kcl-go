@@ -93,6 +93,14 @@ func (p *KclvmServiceClient) ListOptions(args *gpyrpc.ParseProgram_Args) (resp *
 	return
 }
 
+func (p *KclvmServiceClient) ListVariables(args *gpyrpc.ListVariables_Args) (resp *gpyrpc.ListVariables_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).ListVariables(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
 func (p *KclvmServiceClient) LoadPackage(args *gpyrpc.LoadPackage_Args) (resp *gpyrpc.LoadPackage_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).LoadPackage(args)

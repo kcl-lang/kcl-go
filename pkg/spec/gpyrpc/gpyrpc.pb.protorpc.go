@@ -217,6 +217,7 @@ type PROTORPC_KclvmService interface {
 	ExecArtifact(in *ExecArtifact_Args, out *ExecProgram_Result) error
 	ParseProgram(in *ParseProgram_Args, out *ParseProgram_Result) error
 	ListOptions(in *ParseProgram_Args, out *ListOptions_Result) error
+	ListVariables(in *ListVariables_Args, out *ListVariables_Result) error
 	LoadPackage(in *LoadPackage_Args, out *LoadPackage_Result) error
 	FormatCode(in *FormatCode_Args, out *FormatCode_Result) error
 	FormatPath(in *FormatPath_Args, out *FormatPath_Result) error
@@ -579,6 +580,45 @@ func (c *PROTORPC_KclvmServiceClient) AsyncListOptions(in *ParseProgram_Args, ou
 	}
 	return c.Go(
 		"KclvmService.ListOptions",
+		in, out,
+		done,
+	)
+}
+
+func (c *PROTORPC_KclvmServiceClient) ListVariables(in *ListVariables_Args) (out *ListVariables_Result, err error) {
+	if in == nil {
+		in = new(ListVariables_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(ListVariables_Result)
+	if err = c.Call("KclvmService.ListVariables", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncListVariables(in *ListVariables_Args, out *ListVariables_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(ListVariables_Args)
+	}
+	return c.Go(
+		"KclvmService.ListVariables",
 		in, out,
 		done,
 	)
