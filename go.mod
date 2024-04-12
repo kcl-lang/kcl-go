@@ -3,6 +3,7 @@ module kcl-lang.io/kcl-go
 go 1.21
 
 require (
+	github.com/BurntSushi/toml v1.2.1
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
 	github.com/getkin/kin-openapi v0.124.0
@@ -22,7 +23,7 @@ require (
 	google.golang.org/protobuf v1.33.0
 	gopkg.in/yaml.v3 v3.0.1
 	kcl-lang.io/kpm v0.8.4
-	kcl-lang.io/lib v0.8.3
+	kcl-lang.io/lib v0.8.4
 )
 
 require (
@@ -34,7 +35,6 @@ require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230106234847-43070de90fa1 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
-	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
