@@ -3,7 +3,7 @@ module kcl-lang.io/kcl-go
 go 1.21
 
 require (
-	github.com/BurntSushi/toml v1.2.1
+	github.com/BurntSushi/toml v1.3.2
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
 	github.com/getkin/kin-openapi v0.124.0
