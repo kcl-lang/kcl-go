@@ -19,7 +19,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/wk8/go-ordered-map/v2 v2.1.8
 	github.com/yuin/goldmark v1.7.1
-	google.golang.org/grpc v1.63.0
+	google.golang.org/grpc v1.63.2
 	google.golang.org/protobuf v1.33.0
 	gopkg.in/yaml.v3 v3.0.1
 	kcl-lang.io/kpm v0.8.4
