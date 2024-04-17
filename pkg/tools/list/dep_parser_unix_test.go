@@ -119,3 +119,31 @@ func TestListDepPackages(t *testing.T) {
 		t.Fatalf("\nexpect = %v\ngot    = %v", expect, files)
 	}
 }
+
+func TestListDepPackagesWithFile(t *testing.T) {
+	files, err := ListDepPackages("./testdata/module_with_external/main.k", &Option{
+		ExcludeExternalPackage: true,
+		ExcludeBuiltin:         true,
+		IgnoreImportError:      true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expect := []string{
+		"./../../../relative_pkg4",
+		"./../../relative_pkg3",
+		"./../relative_pkg2",
+		"./relative_pkg1",
+		"pkg1",
+		"pkg2",
+		"pkg3/internal/pkg",
+	}
+
+	sort.Strings(files)
+	sort.Strings(expect)
+
+	if !reflect.DeepEqual(files, expect) {
+		t.Fatalf("\nexpect = %v\ngot    = %v", expect, files)
+	}
+}
