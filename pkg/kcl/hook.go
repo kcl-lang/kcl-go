@@ -35,21 +35,18 @@ func resultTypeAttributeHook(r *gpyrpc.ExecProgram_Result) error {
 	var data []map[string]interface{}
 	var mapData map[string]interface{}
 	// Unmarshal the JSON string into a Node
-	err := json.Unmarshal([]byte(r.JsonResult), &data)
-	if err != nil {
-		err := json.Unmarshal([]byte(r.JsonResult), &mapData)
-		if err != nil {
-			return nil
-		}
-	}
-	// Modify the _type fields
-	if data != nil {
+	if err := json.Unmarshal([]byte(r.JsonResult), &data); err == nil {
 		modifyTypeList(data)
 		marshal(r, data)
-	} else if mapData != nil {
+		return nil
+	}
+
+	if err := json.Unmarshal([]byte(r.JsonResult), &mapData); err == nil {
 		modifyType(mapData)
 		marshal(r, mapData)
+		return nil
 	}
+
 	return nil
 }
 
@@ -75,7 +72,10 @@ func modifyType(data map[string]interface{}) {
 				parts := strings.Split(v, ".")
 				data[key] = parts[len(parts)-1]
 			}
-		} else if nestedMap, ok := value.(map[string]interface{}); ok {
+			continue
+		}
+
+		if nestedMap, ok := value.(map[string]interface{}); ok {
 			modifyType(nestedMap)
 		}
 	}
