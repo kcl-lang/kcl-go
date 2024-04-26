@@ -541,9 +541,8 @@ func (d *SchemaDependency) Resolve(pointer jptr.Pointer, uri string) *Schema {
 // ValidateKeyword implements the Keyword interface for SchemaDependency
 func (d *SchemaDependency) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
 	schemaDebug("[SchemaDependency] Validating")
-	depsData := map[string]interface{}{}
-	ok := false
-	if depsData, ok = data.(map[string]interface{}); !ok {
+	depsData, ok := data.(map[string]interface{})
+	if !ok {
 		return
 	}
 	if _, okProp := depsData[d.prop]; !okProp {

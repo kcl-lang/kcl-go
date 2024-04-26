@@ -16,10 +16,10 @@ import (
 
 const (
 	hostname       string = `^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$`
-	unescapedTilda        = `\~[^01]`
-	endingTilda           = `\~$`
-	schemePrefix          = `^[^\:]+\:`
-	uriTemplate           = `\{[^\{\}\\]*\}`
+	unescapedTilda string = `\~[^01]`
+	endingTilda    string = `\~$`
+	schemePrefix   string = `^[^\:]+\:`
+	uriTemplate    string = `\{[^\{\}\\]*\}`
 )
 
 var (
@@ -280,7 +280,6 @@ func isValidTime(time string) error {
 	arbitraryDate := "1963-06-19"
 	dateTime := fmt.Sprintf("%sT%s", arbitraryDate, time)
 	return isValidDateTime(dateTime)
-	return nil
 }
 
 // A string instance is a valid against "uri-reference" if it is a
