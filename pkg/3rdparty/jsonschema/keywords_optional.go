@@ -16,10 +16,10 @@ import (
 
 const (
 	hostname       string = `^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$`
-	unescapedTilda        = `\~[^01]`
-	endingTilda           = `\~$`
-	schemePrefix          = `^[^\:]+\:`
-	uriTemplate           = `\{[^\{\}\\]*\}`
+	unescapedTilda string = `\~[^01]`
+	endingTilda    string = `\~$`
+	schemePrefix   string = `^[^\:]+\:`
+	uriTemplate    string = `\{[^\{\}\\]*\}`
 )
 
 var (

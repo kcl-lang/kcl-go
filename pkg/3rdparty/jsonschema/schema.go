@@ -266,14 +266,14 @@ func (s *Schema) Validate(ctx context.Context, data interface{}) *ValidationStat
 func (s *Schema) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
 	schemaDebug("[Schema] Validating")
 	if s == nil {
-		currentState.AddError(data, fmt.Sprintf("schema is nil"))
+		currentState.AddError(data, "schema is nil")
 		return
 	}
 	if s.SchemaType == SchemaTypeTrue {
 		return
 	}
 	if s.SchemaType == SchemaTypeFalse {
-		currentState.AddError(data, fmt.Sprintf("schema is always false"))
+		currentState.AddError(data, "schema is always false")
 		return
 	}
 
