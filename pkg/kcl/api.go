@@ -32,7 +32,7 @@ type KCLResultList struct {
 
 // ToString returns the result as string.
 func (p *KCLResultList) ToString() (string, error) {
-	if p.list == nil && len(p.list) == 0 {
+	if len(p.list) == 0 {
 		return "", fmt.Errorf("result is nil")
 	}
 	var resS string
@@ -45,7 +45,7 @@ func (p *KCLResultList) ToString() (string, error) {
 
 // ToBool returns the result as bool.
 func (p *KCLResultList) ToBool() (*bool, error) {
-	if p.list == nil && len(p.list) == 0 {
+	if len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resB bool
@@ -58,7 +58,7 @@ func (p *KCLResultList) ToBool() (*bool, error) {
 
 // ToMap returns the result as map[string]interface{}.
 func (p *KCLResultList) ToMap() (map[string]interface{}, error) {
-	if p.list == nil && len(p.list) == 0 {
+	if len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resMap map[string]interface{}
@@ -71,7 +71,7 @@ func (p *KCLResultList) ToMap() (map[string]interface{}, error) {
 
 // ToInt returns the result as int.
 func (p *KCLResultList) ToInt() (*int, error) {
-	if p.list == nil && len(p.list) == 0 {
+	if len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resI int
@@ -84,7 +84,7 @@ func (p *KCLResultList) ToInt() (*int, error) {
 
 // ToFloat64 returns the result as float64.
 func (p *KCLResultList) ToFloat64() (*float64, error) {
-	if p.list == nil && len(p.list) == 0 {
+	if len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resF float64
@@ -97,7 +97,7 @@ func (p *KCLResultList) ToFloat64() (*float64, error) {
 
 // ToList returns the result as []interface{}.
 func (p *KCLResultList) ToList() ([]interface{}, error) {
-	if p.list == nil && len(p.list) == 0 {
+	if len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
 	var resList []interface{}
@@ -110,7 +110,7 @@ func (p *KCLResultList) ToList() ([]interface{}, error) {
 
 // ToType returns the result as target type.
 func (p *KCLResultList) ToType(target interface{}) error {
-	if p.list == nil && len(p.list) == 0 {
+	if len(p.list) == 0 {
 		return fmt.Errorf("result is nil")
 	}
 
@@ -307,23 +307,23 @@ func (m *KCLResult) GetValue(key string, target ...interface{}) (value interface
 	case map[string]interface{}:
 		if err := mapstructure.Decode(rv, target[0]); err == nil {
 			return target[0], nil
-		} else {
-			return rv, err
 		}
+
+		return rv, err
 	case string:
 		if pv, ok2 := target[0].(*string); ok2 {
 			*pv = rv
 			return rv, nil
-		} else {
-			return "", fmt.Errorf("target expect *string type: got = %T", target[0])
 		}
+
+		return "", fmt.Errorf("target expect *string type: got = %T", target[0])
 	case int:
 		if pv, ok2 := target[0].(*int); ok2 {
 			*pv = rv
 			return rv, nil
-		} else {
-			return "", fmt.Errorf("target expect *int type: got = %T", target[0])
 		}
+
+		return "", fmt.Errorf("target expect *int type: got = %T", target[0])
 	case float64:
 		switch pTarget0 := target[0].(type) {
 		case *int:
