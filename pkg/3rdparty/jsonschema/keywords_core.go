@@ -449,7 +449,7 @@ func (r *RecursiveRef) isLocationVisited(location string) bool {
 func (r *RecursiveRef) _resolveRef(ctx context.Context, currentState *ValidationState) {
 	if currentState.RecursiveAnchor != nil {
 		if currentState.BaseURI == "" {
-			currentState.AddError(nil, fmt.Sprintf("base uri not set"))
+			currentState.AddError(nil, "base uri not set")
 			return
 		}
 		baseSchema := GetSchemaRegistry().Get(ctx, currentState.BaseURI)
