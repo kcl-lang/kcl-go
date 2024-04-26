@@ -42,9 +42,7 @@ func (sr *SchemaRegistry) Get(ctx context.Context, uri string) *Schema {
 			schemaDebug(fmt.Sprintf("[SchemaRegistry] Fetch error: %s", err.Error()))
 			return nil
 		}
-		if fetchedSchema == nil {
-			return nil
-		}
+
 		fetchedSchema.DocPath = uri
 		// TODO(arqu): meta validate schema
 		schema = fetchedSchema
