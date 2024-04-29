@@ -555,7 +555,7 @@ func TestWithExternalpkg(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert2.Equal(t, "{\"a\":\"Hello External_1 World!\",\"b\":\"Hello External_2 World!\"}\n", result.GetRawJsonResult())
+	assert2.Equal(t, "{\"a\": \"Hello External_1 World!\", \"b\": \"Hello External_2 World!\"}", result.GetRawJsonResult())
 	assert2.Equal(t, "a: Hello External_1 World!\nb: Hello External_2 World!", result.GetRawYamlResult())
 }
 

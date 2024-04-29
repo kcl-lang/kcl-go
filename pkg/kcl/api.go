@@ -463,7 +463,7 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 	for _, m := range result.list {
 		encoder.Encode(m.result)
 	}
-	result.raw_json_result = buffer.String()
+	result.raw_json_result = resp.JsonResult
 	result.raw_yaml_result = resp.YamlResult
 	return &result, nil
 }
