@@ -219,7 +219,7 @@ func TestGenKclFromYaml(t *testing.T) {
 	}
 }
 
-func TestGenKclFromMutiResourceYaml(t *testing.T) {
+func TestGenKclFromMultipleResourceYaml(t *testing.T) {
 	type testCase struct {
 		name   string
 		input  string
