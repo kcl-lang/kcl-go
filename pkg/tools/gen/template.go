@@ -75,7 +75,10 @@ func addTemplate(tmpl *template.Template, name, data string) *template.Template 
 }
 
 func formatType(t typeInterface) string {
-	return t.Format()
+	if t != nil {
+		return t.Format()
+	}
+	return typAny
 }
 
 func formatValue(v interface{}) string {
