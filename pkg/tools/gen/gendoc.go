@@ -159,8 +159,41 @@ func addOrCreateSchema(pkg *KclPackage, schemaName string, schema *KclOpenAPITyp
 	if pkg.schemaMapping == nil {
 		pkg.schemaMapping = map[string]*KclOpenAPIType{schemaName: schema}
 	} else {
-		pkg.schemaMapping[schemaName] = schema
+		if existingSchema, ok := pkg.schemaMapping[schemaName]; ok {
+			// Update existing schema
+			*existingSchema = *schema
+		} else {
+			// Add new schema
+			pkg.schemaMapping[schemaName] = schema
+		}
 	}
+}
+
+func (pkg *KclPackage) populateReferencedBy() {
+	for _, schema := range pkg.SchemaList {
+		for _, otherSchema := range pkg.SchemaList {
+			if schema == otherSchema {
+				continue
+			}
+			if otherSchema.referencesSchema(schema) {
+				schema.ReferencedBy = append(schema.ReferencedBy, otherSchema.Description)
+			}
+		}
+	}
+}
+
+// Function to check if one schema references another
+func (schema *KclOpenAPIType) referencesSchema(targetSchema *KclOpenAPIType) bool {
+	if schema.Properties == nil || targetSchema.Properties == nil {
+		return false
+	}
+
+	for _, property := range schema.Properties {
+		if property.Type == targetSchema.Type {
+			return true
+		}
+	}
+	return false
 }
 
 func funcMap() template.FuncMap {
@@ -240,6 +273,8 @@ func (g *GenContext) renderPackage(spec *SwaggerV2Spec, parentDir string) error 
 		pkgName = "main"
 	}
 	fmt.Printf("generating doc for package %s\n", pkgName)
+	// Populate "referencedBy" field on schemas
+	pkg.populateReferencedBy()
 	// --- format ---
 	switch strings.ToLower(string(g.Format)) {
 	case string(Markdown):
