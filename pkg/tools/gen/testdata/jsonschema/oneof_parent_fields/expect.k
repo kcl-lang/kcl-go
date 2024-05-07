@@ -30,17 +30,17 @@ schema TopLevelDefinitionConfigsItems0:
         The actual configuration to be applied
     type : str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type, required
         The type of this configuration
-    group_overrides : [TopLevelDefinitionConfigsItems0GroupOverridesItems0], optional
+    groupOverrides : [TopLevelDefinitionConfigsItems0GroupOverridesItems0], optional
         GroupOverrides overwrite specific parts of the Config when deploying it to any environment in a given group.
-    environment_overrides : [TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0], optional
+    environmentOverrides : [TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0], optional
         EnvironmentOverrides overwrite specific parts of the Config when deploying it to a given environment.
     """
 
     id: str
     config: TopLevelDefinitionConfigsItems0Config
     type: str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type
-    group_overrides?: [TopLevelDefinitionConfigsItems0GroupOverridesItems0]
-    environment_overrides?: [TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0]
+    groupOverrides?: [TopLevelDefinitionConfigsItems0GroupOverridesItems0]
+    environmentOverrides?: [TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0]
 
 schema TopLevelDefinitionConfigsItems0Config:
     r"""
@@ -56,7 +56,7 @@ schema TopLevelDefinitionConfigsItems0Config:
         The filepath to the JSON template used for this configuration
     skip : any, optional
         Defines whether this config should be skipped when deploying.
-    origin_object_id : str, optional
+    originObjectId : str, optional
         description=The identifier of the Dynatrace object this config originated from - this is filled when downloading
     """
 
@@ -64,7 +64,7 @@ schema TopLevelDefinitionConfigsItems0Config:
     parameters?: TopLevelDefinitionConfigsItems0ConfigParameters
     template: str
     skip?: any
-    origin_object_id?: str
+    originObjectId?: str
 
 schema TopLevelDefinitionConfigsItems0ConfigParameters:
     r"""
@@ -102,7 +102,7 @@ schema TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override:
         The filepath to the JSON template used for this configuration
     skip : any, optional
         Defines whether this config should be skipped when deploying.
-    origin_object_id : str, optional
+    originObjectId : str, optional
         description=The identifier of the Dynatrace object this config originated from - this is filled when downloading
     """
 
@@ -110,7 +110,7 @@ schema TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override:
     parameters?: TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0OverrideParameters
     template: str
     skip?: any
-    origin_object_id?: str
+    originObjectId?: str
 
 schema TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0OverrideParameters:
     r"""
@@ -148,7 +148,7 @@ schema TopLevelDefinitionConfigsItems0GroupOverridesItems0Override:
         The filepath to the JSON template used for this configuration
     skip : any, optional
         Defines whether this config should be skipped when deploying.
-    origin_object_id : str, optional
+    originObjectId : str, optional
         description=The identifier of the Dynatrace object this config originated from - this is filled when downloading
     """
 
@@ -156,7 +156,7 @@ schema TopLevelDefinitionConfigsItems0GroupOverridesItems0Override:
     parameters?: TopLevelDefinitionConfigsItems0GroupOverridesItems0OverrideParameters
     template: str
     skip?: any
-    origin_object_id?: str
+    originObjectId?: str
 
 schema TopLevelDefinitionConfigsItems0GroupOverridesItems0OverrideParameters:
     r"""

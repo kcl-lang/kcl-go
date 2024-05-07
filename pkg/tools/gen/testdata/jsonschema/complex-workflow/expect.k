@@ -46,12 +46,12 @@ schema WorkflowConcurrencyOneOf1:
     ----------
     group : str, required
         When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
-    cancel_in_progress : bool | str, optional
+    "cancel-in-progress" : bool | str, optional
         To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
     """
 
     group: str
-    cancel_in_progress?: bool | str
+    "cancel-in-progress"?: bool | str
 
 schema WorkflowDefaults:
     r"""
@@ -72,12 +72,12 @@ schema WorkflowDefaultsRun:
     ----------
     shell : any, optional
         You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-    working_directory : str, optional
+    "working-directory" : str, optional
         Using the working-directory keyword, you can specify the working directory of where to run the command.
     """
 
     shell?: any
-    working_directory?: str
+    "working-directory"?: str
 
 schema WorkflowEnvOneOf0:
     r"""
@@ -110,7 +110,7 @@ schema WorkflowJobsPatternProperties0OneOf0:
         Identifies any jobs that must complete successfully before this job will run. It can be a string or array of strings. If a job fails, all jobs that need it are skipped unless the jobs use a conditional statement that causes the job to continue.
     permissions : "read-all" | "write-all" | WorkflowJobsPatternProperties0OneOf0PermissionsOneOf1, optional
         You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
-    runs_on : "macos-10.15" | "macos-11" | "macos-12" | "macos-latest" | "self-hosted" | "ubuntu-18.04" | "ubuntu-20.04" | "ubuntu-22.04" | "ubuntu-latest" | "windows-2016" | "windows-2019" | "windows-2022" | "windows-latest" | any | str, required
+    "runs-on" : "macos-10.15" | "macos-11" | "macos-12" | "macos-latest" | "self-hosted" | "ubuntu-18.04" | "ubuntu-20.04" | "ubuntu-22.04" | "ubuntu-latest" | "windows-2016" | "windows-2019" | "windows-2022" | "windows-latest" | any | str, required
         The type of machine to run the job on. The machine can be either a GitHub-hosted runner, or a self-hosted runner.
     environment : str | WorkflowJobsPatternProperties0OneOf0EnvironmentOneOf1, optional
         The environment that the job references.
@@ -126,11 +126,11 @@ schema WorkflowJobsPatternProperties0OneOf0:
     steps : [WorkflowJobsPatternProperties0OneOf0StepsItems0], optional
         A job contains a sequence of tasks called steps. Steps can run commands, run setup tasks, or run an action in your repository, a public repository, or an action published in a Docker registry. Not all steps run actions, but all actions run as a step. Each step runs in its own process in the virtual environment and has access to the workspace and filesystem. Because steps run in their own process, changes to environment variables are not preserved between steps. GitHub provides built-in steps to set up and complete a job.
 
-    timeout_minutes : float, optional, default is 360
+    "timeout-minutes" : float, optional, default is 360
         The maximum number of minutes to let a workflow run before GitHub automatically cancels it. Default: 360
     strategy : WorkflowJobsPatternProperties0OneOf0Strategy, optional
         A strategy creates a build matrix for your jobs. You can define different variations of an environment to run each job in.
-    continue_on_error : bool | str, optional
+    "continue-on-error" : bool | str, optional
         Prevents a workflow run from failing when a job fails. Set to true to allow a workflow run to pass when this job fails.
     container : str | WorkflowJobsPatternProperties0OneOf0ContainerOneOf1, optional
         A container to run any steps in a job that don't already specify a container. If you have steps that use both script and container actions, the container actions will run as sibling containers on the same network with the same volume mounts.
@@ -149,16 +149,16 @@ schema WorkflowJobsPatternProperties0OneOf0:
     name?: str
     needs?: [str] | str
     permissions?: "read-all" | "write-all" | WorkflowJobsPatternProperties0OneOf0PermissionsOneOf1
-    runs_on: "macos-10.15" | "macos-11" | "macos-12" | "macos-latest" | "self-hosted" | "ubuntu-18.04" | "ubuntu-20.04" | "ubuntu-22.04" | "ubuntu-latest" | "windows-2016" | "windows-2019" | "windows-2022" | "windows-latest" | any | str
+    "runs-on": "macos-10.15" | "macos-11" | "macos-12" | "macos-latest" | "self-hosted" | "ubuntu-18.04" | "ubuntu-20.04" | "ubuntu-22.04" | "ubuntu-latest" | "windows-2016" | "windows-2019" | "windows-2022" | "windows-latest" | any | str
     environment?: str | WorkflowJobsPatternProperties0OneOf0EnvironmentOneOf1
     outputs?: WorkflowJobsPatternProperties0OneOf0Outputs
     env?: WorkflowJobsPatternProperties0OneOf0EnvOneOf0 | str
     defaults?: WorkflowJobsPatternProperties0OneOf0Defaults
     $if?: str
     steps?: [WorkflowJobsPatternProperties0OneOf0StepsItems0]
-    timeout_minutes?: float = 360
+    "timeout-minutes"?: float = 360
     strategy?: WorkflowJobsPatternProperties0OneOf0Strategy
-    continue_on_error?: bool | str
+    "continue-on-error"?: bool | str
     container?: str | WorkflowJobsPatternProperties0OneOf0ContainerOneOf1
     services?: WorkflowJobsPatternProperties0OneOf0Services
     concurrency?: str | WorkflowJobsPatternProperties0OneOf0ConcurrencyOneOf1
@@ -174,12 +174,12 @@ schema WorkflowJobsPatternProperties0OneOf0ConcurrencyOneOf1:
     ----------
     group : str, required
         When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
-    cancel_in_progress : bool | str, optional
+    "cancel-in-progress" : bool | str, optional
         To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
     """
 
     group: str
-    cancel_in_progress?: bool | str
+    "cancel-in-progress"?: bool | str
 
 schema WorkflowJobsPatternProperties0OneOf0ContainerOneOf1:
     r"""
@@ -253,12 +253,12 @@ schema WorkflowJobsPatternProperties0OneOf0DefaultsRun:
     ----------
     shell : any, optional
         You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-    working_directory : str, optional
+    "working-directory" : str, optional
         Using the working-directory keyword, you can specify the working directory of where to run the command.
     """
 
     shell?: any
-    working_directory?: str
+    "working-directory"?: str
 
 schema WorkflowJobsPatternProperties0OneOf0EnvOneOf0:
     r"""
@@ -300,13 +300,13 @@ schema WorkflowJobsPatternProperties0OneOf0PermissionsOneOf1:
     contents : "read" | "write" | "none", optional
     deployments : "read" | "write" | "none", optional
     discussions : "read" | "write" | "none", optional
-    id_token : "read" | "write" | "none", optional
+    "id-token" : "read" | "write" | "none", optional
     issues : "read" | "write" | "none", optional
     packages : "read" | "write" | "none", optional
     pages : "read" | "write" | "none", optional
-    pull_requests : "read" | "write" | "none", optional
-    repository_projects : "read" | "write" | "none", optional
-    security_events : "read" | "write" | "none", optional
+    "pull-requests" : "read" | "write" | "none", optional
+    "repository-projects" : "read" | "write" | "none", optional
+    "security-events" : "read" | "write" | "none", optional
     statuses : "read" | "write" | "none", optional
     """
 
@@ -315,13 +315,13 @@ schema WorkflowJobsPatternProperties0OneOf0PermissionsOneOf1:
     contents?: "read" | "write" | "none"
     deployments?: "read" | "write" | "none"
     discussions?: "read" | "write" | "none"
-    id_token?: "read" | "write" | "none"
+    "id-token"?: "read" | "write" | "none"
     issues?: "read" | "write" | "none"
     packages?: "read" | "write" | "none"
     pages?: "read" | "write" | "none"
-    pull_requests?: "read" | "write" | "none"
-    repository_projects?: "read" | "write" | "none"
-    security_events?: "read" | "write" | "none"
+    "pull-requests"?: "read" | "write" | "none"
+    "repository-projects"?: "read" | "write" | "none"
+    "security-events"?: "read" | "write" | "none"
     statuses?: "read" | "write" | "none"
 
 schema WorkflowJobsPatternProperties0OneOf0Services:
@@ -412,7 +412,7 @@ schema WorkflowJobsPatternProperties0OneOf0StepsItems0:
         Runs command-line programs using the operating system's shell. If you do not provide a name, the step name will default to the text specified in the run command.
         Commands run using non-login shells by default. You can choose a different shell and customize the shell used to run commands. For more information, see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#using-a-specific-shell.
         Each run keyword represents a new process and shell in the virtual environment. When you provide multi-line commands, each line runs in the same shell.
-    working_directory : str, optional
+    "working-directory" : str, optional
         Using the working-directory keyword, you can specify the working directory of where to run the command.
     shell : any, optional
         You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
@@ -420,9 +420,9 @@ schema WorkflowJobsPatternProperties0OneOf0StepsItems0:
         A map of the input parameters defined by the action. Each input parameter is a key/value pair. Input parameters are set as environment variables. The variable is prefixed with INPUT_ and converted to upper case.
     env : WorkflowJobsPatternProperties0OneOf0StepsItems0EnvOneOf0 | str, optional
         Sets environment variables for steps to use in the virtual environment. You can also set environment variables for the entire workflow or a job.
-    continue_on_error : bool | str, optional, default is False
+    "continue-on-error" : bool | str, optional, default is False
         Prevents a job from failing when a step fails. Set to true to allow a job to pass when this step fails.
-    timeout_minutes : float, optional
+    "timeout-minutes" : float, optional
         The maximum number of minutes to run the step before killing the process.
     """
 
@@ -431,12 +431,12 @@ schema WorkflowJobsPatternProperties0OneOf0StepsItems0:
     name?: str
     uses?: str
     run?: str
-    working_directory?: str
+    "working-directory"?: str
     shell?: any
     with?: WorkflowJobsPatternProperties0OneOf0StepsItems0WithOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StepsItems0With
     env?: WorkflowJobsPatternProperties0OneOf0StepsItems0EnvOneOf0 | str
-    continue_on_error?: bool | str = False
-    timeout_minutes?: float
+    "continue-on-error"?: bool | str = False
+    "timeout-minutes"?: float
 
 schema WorkflowJobsPatternProperties0OneOf0StepsItems0EnvOneOf0:
     r"""
@@ -475,15 +475,15 @@ schema WorkflowJobsPatternProperties0OneOf0Strategy:
         A build matrix is a set of different configurations of the virtual environment. For example you might run a job against more than one supported version of a language, operating system, or tool. Each configuration is a copy of the job that runs and reports a status.
         You can specify a matrix by supplying an array for the configuration options. For example, if the GitHub virtual environment supports Node.js versions 6, 8, and 10 you could specify an array of those versions in the matrix.
         When you define a matrix of operating systems, you must set the required runs-on keyword to the operating system of the current job, rather than hard-coding the operating system name. To access the operating system name, you can use the matrix.os context parameter to set runs-on. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
-    fail_fast : bool, optional, default is True
+    "fail-fast" : bool, optional, default is True
         When set to true, GitHub cancels all in-progress jobs if any matrix job fails. Default: true
-    max_parallel : float, optional
+    "max-parallel" : float, optional
         The maximum number of jobs that can run simultaneously when using a matrix job strategy. By default, GitHub will maximize the number of jobs run in parallel depending on the available runners on GitHub-hosted virtual machines.
     """
 
     matrix: WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StrategyMatrix
-    fail_fast?: bool = True
-    max_parallel?: float
+    "fail-fast"?: bool = True
+    "max-parallel"?: float
 
 schema WorkflowJobsPatternProperties0OneOf0StrategyMatrix:
     r"""
@@ -568,12 +568,12 @@ schema WorkflowJobsPatternProperties0OneOf1ConcurrencyOneOf1:
     ----------
     group : str, required
         When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
-    cancel_in_progress : bool | str, optional
+    "cancel-in-progress" : bool | str, optional
         To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
     """
 
     group: str
-    cancel_in_progress?: bool | str
+    "cancel-in-progress"?: bool | str
 
 schema WorkflowJobsPatternProperties0OneOf1Permissions:
     r"""
@@ -586,13 +586,13 @@ schema WorkflowJobsPatternProperties0OneOf1Permissions:
     contents : "read" | "write" | "none", optional
     deployments : "read" | "write" | "none", optional
     discussions : "read" | "write" | "none", optional
-    id_token : "read" | "write" | "none", optional
+    "id-token" : "read" | "write" | "none", optional
     issues : "read" | "write" | "none", optional
     packages : "read" | "write" | "none", optional
     pages : "read" | "write" | "none", optional
-    pull_requests : "read" | "write" | "none", optional
-    repository_projects : "read" | "write" | "none", optional
-    security_events : "read" | "write" | "none", optional
+    "pull-requests" : "read" | "write" | "none", optional
+    "repository-projects" : "read" | "write" | "none", optional
+    "security-events" : "read" | "write" | "none", optional
     statuses : "read" | "write" | "none", optional
     """
 
@@ -601,13 +601,13 @@ schema WorkflowJobsPatternProperties0OneOf1Permissions:
     contents?: "read" | "write" | "none"
     deployments?: "read" | "write" | "none"
     discussions?: "read" | "write" | "none"
-    id_token?: "read" | "write" | "none"
+    "id-token"?: "read" | "write" | "none"
     issues?: "read" | "write" | "none"
     packages?: "read" | "write" | "none"
     pages?: "read" | "write" | "none"
-    pull_requests?: "read" | "write" | "none"
-    repository_projects?: "read" | "write" | "none"
-    security_events?: "read" | "write" | "none"
+    "pull-requests"?: "read" | "write" | "none"
+    "repository-projects"?: "read" | "write" | "none"
+    "security-events"?: "read" | "write" | "none"
     statuses?: "read" | "write" | "none"
 
 schema WorkflowJobsPatternProperties0OneOf1SecretsOneOf0OneOf0:
@@ -1148,7 +1148,7 @@ schema WorkflowOnOneOf2PullRequest:
         You can exclude tags and branches using the ! character. The order that you define patterns matters.
         - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
         - A matching positive pattern after a negative match will include the Git ref again.
-    branches_ignore : [str], optional
+    "branches-ignore" : [str], optional
         When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
         The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
@@ -1168,7 +1168,7 @@ schema WorkflowOnOneOf2PullRequest:
         You can exclude tags and branches using the ! character. The order that you define patterns matters.
         - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
         - A matching positive pattern after a negative match will include the Git ref again.
-    tags_ignore : [str], optional
+    "tags-ignore" : [str], optional
         When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
         The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
@@ -1184,7 +1184,7 @@ schema WorkflowOnOneOf2PullRequest:
         You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
         - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
         - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
-    paths_ignore : [str], optional
+    "paths-ignore" : [str], optional
         When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
         The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
@@ -1194,21 +1194,21 @@ schema WorkflowOnOneOf2PullRequest:
 
     types?: ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"] = ["opened", "synchronize", "reopened"]
     branches?: [str]
-    branches_ignore?: [str]
+    "branches-ignore"?: [str]
     tags?: [str]
-    tags_ignore?: [str]
+    "tags-ignore"?: [str]
     paths?: [str]
-    paths_ignore?: [str]
+    "paths-ignore"?: [str]
     [key: str]: any
 
     check:
         len(types) >= 1 if types
         len(branches) >= 1 if branches
-        len(branches_ignore) >= 1 if branches_ignore
+        len("branches-ignore") >= 1 if "branches-ignore"
         len(tags) >= 1 if tags
-        len(tags_ignore) >= 1 if tags_ignore
+        len("tags-ignore") >= 1 if "tags-ignore"
         len(paths) >= 1 if paths
-        len(paths_ignore) >= 1 if paths_ignore
+        len("paths-ignore") >= 1 if "paths-ignore"
         regex.match(key, r"^(branche|tag|path)s(-ignore)?$")
 
 schema WorkflowOnOneOf2PullRequestOneOf0:
@@ -1293,7 +1293,7 @@ schema WorkflowOnOneOf2PullRequestTarget:
         You can exclude tags and branches using the ! character. The order that you define patterns matters.
         - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
         - A matching positive pattern after a negative match will include the Git ref again.
-    branches_ignore : [str | str], optional
+    "branches-ignore" : [str | str], optional
         When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
         The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
@@ -1313,7 +1313,7 @@ schema WorkflowOnOneOf2PullRequestTarget:
         You can exclude tags and branches using the ! character. The order that you define patterns matters.
         - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
         - A matching positive pattern after a negative match will include the Git ref again.
-    tags_ignore : [str | str], optional
+    "tags-ignore" : [str | str], optional
         When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
         The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
@@ -1329,7 +1329,7 @@ schema WorkflowOnOneOf2PullRequestTarget:
         You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
         - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
         - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
-    paths_ignore : [str | str], optional
+    "paths-ignore" : [str | str], optional
         When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
         The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
@@ -1339,21 +1339,21 @@ schema WorkflowOnOneOf2PullRequestTarget:
 
     types?: ["assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"] = ["opened", "synchronize", "reopened"]
     branches?: [str | str]
-    branches_ignore?: [str | str]
+    "branches-ignore"?: [str | str]
     tags?: [str | str]
-    tags_ignore?: [str | str]
+    "tags-ignore"?: [str | str]
     paths?: [str | str]
-    paths_ignore?: [str | str]
+    "paths-ignore"?: [str | str]
     [key: str]: any
 
     check:
         len(types) >= 1 if types
         len(branches) >= 1 if branches
-        len(branches_ignore) >= 1 if branches_ignore
+        len("branches-ignore") >= 1 if "branches-ignore"
         len(tags) >= 1 if tags
-        len(tags_ignore) >= 1 if tags_ignore
+        len("tags-ignore") >= 1 if "tags-ignore"
         len(paths) >= 1 if paths
-        len(paths_ignore) >= 1 if paths_ignore
+        len("paths-ignore") >= 1 if "paths-ignore"
         regex.match(key, r"^(branche|tag|path)s(-ignore)?$")
 
 schema WorkflowOnOneOf2PullRequestTargetOneOf0:
@@ -1380,7 +1380,7 @@ schema WorkflowOnOneOf2Push:
         You can exclude tags and branches using the ! character. The order that you define patterns matters.
         - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
         - A matching positive pattern after a negative match will include the Git ref again.
-    branches_ignore : [str | str | str], optional
+    "branches-ignore" : [str | str | str], optional
         When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
         The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
@@ -1400,7 +1400,7 @@ schema WorkflowOnOneOf2Push:
         You can exclude tags and branches using the ! character. The order that you define patterns matters.
         - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
         - A matching positive pattern after a negative match will include the Git ref again.
-    tags_ignore : [str | str | str], optional
+    "tags-ignore" : [str | str | str], optional
         When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
         The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
@@ -1416,7 +1416,7 @@ schema WorkflowOnOneOf2Push:
         You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
         - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
         - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
-    paths_ignore : [str | str | str], optional
+    "paths-ignore" : [str | str | str], optional
         When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
         The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
         You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
@@ -1425,20 +1425,20 @@ schema WorkflowOnOneOf2Push:
     """
 
     branches?: [str | str | str]
-    branches_ignore?: [str | str | str]
+    "branches-ignore"?: [str | str | str]
     tags?: [str | str | str]
-    tags_ignore?: [str | str | str]
+    "tags-ignore"?: [str | str | str]
     paths?: [str | str | str]
-    paths_ignore?: [str | str | str]
+    "paths-ignore"?: [str | str | str]
     [key: str]: [str]
 
     check:
         len(branches) >= 1 if branches
-        len(branches_ignore) >= 1 if branches_ignore
+        len("branches-ignore") >= 1 if "branches-ignore"
         len(tags) >= 1 if tags
-        len(tags_ignore) >= 1 if tags_ignore
+        len("tags-ignore") >= 1 if "tags-ignore"
         len(paths) >= 1 if paths
-        len(paths_ignore) >= 1 if paths_ignore
+        len("paths-ignore") >= 1 if "paths-ignore"
         regex.match(key, r"^(branche|tag|path)s(-ignore)?$")
 
 schema WorkflowOnOneOf2PushOneOf0:
@@ -1564,7 +1564,7 @@ schema WorkflowOnOneOf2WorkflowCallInputsPatternProperties0:
     ----------
     description : str, optional
         A string description of the input parameter.
-    deprecation_message : str, optional
+    deprecationMessage : str, optional
         A string shown to users using the deprecated input.
     required : bool, required
         A boolean to indicate whether the action requires the input parameter. Set to true when the parameter is required.
@@ -1575,7 +1575,7 @@ schema WorkflowOnOneOf2WorkflowCallInputsPatternProperties0:
     """
 
     description?: str
-    deprecation_message?: str
+    deprecationMessage?: str
     required: bool
     type: "boolean" | "number" | "string"
     default?: bool | float | str
@@ -1635,7 +1635,7 @@ schema WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties0:
     ----------
     description : str, required
         A string description of the input parameter.
-    deprecation_message : str, optional
+    deprecationMessage : str, optional
         A string shown to users using the deprecated input.
     required : bool, required
         A boolean to indicate whether the action requires the input parameter. Set to true when the parameter is required.
@@ -1648,7 +1648,7 @@ schema WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties0:
     """
 
     description: str
-    deprecation_message?: str
+    deprecationMessage?: str
     required: bool
     default?: any
     type?: "string" | "choice" | "boolean" | "environment"
@@ -1695,26 +1695,26 @@ schema WorkflowPermissionsOneOf1:
     contents : "read" | "write" | "none", optional
     deployments : "read" | "write" | "none", optional
     discussions : "read" | "write" | "none", optional
-    id_token : "read" | "write" | "none", optional
+    "id-token" : "read" | "write" | "none", optional
     issues : "read" | "write" | "none", optional
     packages : "read" | "write" | "none", optional
     pages : "read" | "write" | "none", optional
-    pull_requests : "read" | "write" | "none", optional
-    repository_projects : "read" | "write" | "none", optional
-    security_events : "read" | "write" | "none", optional
+    "pull-requests" : "read" | "write" | "none", optional
+    "repository-projects" : "read" | "write" | "none", optional
+    "security-events" : "read" | "write" | "none", optional
     statuses : "read" | "write" | "none", optional
     actions : "read" | "write" | "none", optional
     checks : "read" | "write" | "none", optional
     contents : "read" | "write" | "none", optional
     deployments : "read" | "write" | "none", optional
     discussions : "read" | "write" | "none", optional
-    id_token : "read" | "write" | "none", optional
+    "id-token" : "read" | "write" | "none", optional
     issues : "read" | "write" | "none", optional
     packages : "read" | "write" | "none", optional
     pages : "read" | "write" | "none", optional
-    pull_requests : "read" | "write" | "none", optional
-    repository_projects : "read" | "write" | "none", optional
-    security_events : "read" | "write" | "none", optional
+    "pull-requests" : "read" | "write" | "none", optional
+    "repository-projects" : "read" | "write" | "none", optional
+    "security-events" : "read" | "write" | "none", optional
     statuses : "read" | "write" | "none", optional
     """
 
@@ -1723,25 +1723,25 @@ schema WorkflowPermissionsOneOf1:
     contents?: "read" | "write" | "none"
     deployments?: "read" | "write" | "none"
     discussions?: "read" | "write" | "none"
-    id_token?: "read" | "write" | "none"
+    "id-token"?: "read" | "write" | "none"
     issues?: "read" | "write" | "none"
     packages?: "read" | "write" | "none"
     pages?: "read" | "write" | "none"
-    pull_requests?: "read" | "write" | "none"
-    repository_projects?: "read" | "write" | "none"
-    security_events?: "read" | "write" | "none"
+    "pull-requests"?: "read" | "write" | "none"
+    "repository-projects"?: "read" | "write" | "none"
+    "security-events"?: "read" | "write" | "none"
     statuses?: "read" | "write" | "none"
     actions?: "read" | "write" | "none"
     checks?: "read" | "write" | "none"
     contents?: "read" | "write" | "none"
     deployments?: "read" | "write" | "none"
     discussions?: "read" | "write" | "none"
-    id_token?: "read" | "write" | "none"
+    "id-token"?: "read" | "write" | "none"
     issues?: "read" | "write" | "none"
     packages?: "read" | "write" | "none"
     pages?: "read" | "write" | "none"
-    pull_requests?: "read" | "write" | "none"
-    repository_projects?: "read" | "write" | "none"
-    security_events?: "read" | "write" | "none"
+    "pull-requests"?: "read" | "write" | "none"
+    "repository-projects"?: "read" | "write" | "none"
+    "security-events"?: "read" | "write" | "none"
     statuses?: "read" | "write" | "none"
 
