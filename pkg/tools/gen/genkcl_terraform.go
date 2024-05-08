@@ -97,8 +97,9 @@ func convertSchemaFromTFSchema(ctx *tfConvertContext, tfSch tfProviderSchema) {
 			})
 			if t, ok := attr.Type.([]interface{}); ok && t[0] == "set" {
 				sch.Validations = append(sch.Validations, validation{
-					Name:   attrKey,
-					Unique: true,
+					Required: attr.Required,
+					Name:     attrKey,
+					Unique:   true,
 				})
 			}
 		}

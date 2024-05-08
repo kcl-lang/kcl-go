@@ -21,8 +21,8 @@ schema Book:
     check:
         len(title) <= 20
         len(title) >= 2
-        price <= 99.9
-        price >= 0
-        quantity < 100
-        quantity > 0
+        price <= 99.9 if price
+        price >= 0 if price
+        quantity < 100 if quantity
+        quantity > 0 if quantity
 

@@ -17,5 +17,5 @@ schema Book:
     price?: int
 
     check:
-        multiplyof(price, 10)
+        multiplyof(price, 10) if price
 

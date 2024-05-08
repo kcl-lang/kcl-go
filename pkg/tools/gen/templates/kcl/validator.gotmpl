@@ -1,23 +1,23 @@
 {{- range . -}}
     {{- if .Maximum }}
-        {{ formatName .Name }} {{ if .ExclusiveMaximum }}<{{ else }}<={{ end }} {{ .Maximum }}
+        {{ formatName .Name }} {{ if .ExclusiveMaximum }}<{{ else }}<={{ end }} {{ .Maximum }}{{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
     {{- if .Minimum }}
-        {{ formatName .Name }} {{ if .ExclusiveMinimum }}>{{ else }}>={{ end }} {{ .Minimum }}
+        {{ formatName .Name }} {{ if .ExclusiveMinimum }}>{{ else }}>={{ end }} {{ .Minimum }}{{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
     {{- if .MaxLength }}
-        len({{ formatName .Name }}) <= {{ .MaxLength }}
+        len({{ formatName .Name }}) <= {{ .MaxLength }}{{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
     {{- if .MinLength }}
-        len({{ formatName .Name }}) >= {{ .MinLength }}
+        len({{ formatName .Name }}) >= {{ .MinLength }}{{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
     {{- if .Regex }}
-        regex.match({{ formatName .Name }}, r"{{ .Regex }}")
+        regex.match({{ formatName .Name }}, r"{{ .Regex }}"){{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
     {{- if .MultiplyOf }}
-        multiplyof({{ formatName .Name }}, {{ .MultiplyOf }})
+        multiplyof({{ formatName .Name }}, {{ .MultiplyOf }}){{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
     {{- if .Unique }}
-        isunique({{ formatName .Name }})
+        isunique({{ formatName .Name }}){{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
 {{- end -}}

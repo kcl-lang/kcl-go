@@ -88,7 +88,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 		name = string(*title)
 	}
 	if name == "" {
-		name = "MyType"
+		name = "AnonymousType"
 	}
 	result := convertResult{IsSchema: false, Name: name}
 	if objectExists(ctx.pathObjects, s) {
@@ -158,6 +158,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 				if !propSch.IsSchema {
 					for _, validate := range propSch.Validations {
 						validate.Name = propSch.property.Name
+						validate.Required = propSch.property.Required
 						result.Validations = append(result.Validations, validate)
 					}
 				}
@@ -188,10 +189,12 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 						Alias: "key",
 						Type:  propSch.property.Type,
 						validation: &validation{
-							Name:  "key",
-							Regex: prop.Re,
+							Required: true,
+							Name:     "key",
+							Regex:    prop.Re,
 						},
 					}
+					ctx.imports["regex"] = struct{}{}
 				}
 			}
 		case *jsonschema.Default:
