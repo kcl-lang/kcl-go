@@ -17,7 +17,7 @@ schema Book:
     authors?: [str]
 
     check:
-        len(authors) <= 5
-        len(authors) >= 1
-        isunique(authors)
+        len(authors) <= 5 if authors
+        len(authors) >= 1 if authors
+        isunique(authors) if authors
 

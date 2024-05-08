@@ -36,8 +36,8 @@ schema AlicloudDbInstance:
     tags?: {str:str}
 
     check:
-        isunique(security_group_ids)
-        isunique(security_ips)
+        isunique(security_group_ids) if security_group_ids
+        isunique(security_ips) if security_ips
 
 schema ComplianceItem:
     r"""

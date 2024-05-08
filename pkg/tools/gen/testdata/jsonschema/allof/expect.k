@@ -33,7 +33,7 @@ schema ShopProductsOneOf0:
     price?: float
 
     check:
-        price >= 0
+        price >= 0 if price
 
 schema ShopProductsOneOf1Items0:
     r"""
@@ -53,5 +53,5 @@ schema ShopProductsOneOf1Items0:
     price?: float
 
     check:
-        price >= 0
+        price >= 0 if price
 

@@ -164,7 +164,7 @@ schema WorkflowJobsPatternProperties0OneOf0:
     concurrency?: str | WorkflowJobsPatternProperties0OneOf0ConcurrencyOneOf1
 
     check:
-        len(steps) >= 1
+        len(steps) >= 1 if steps
 
 schema WorkflowJobsPatternProperties0OneOf0ConcurrencyOneOf1:
     r"""
@@ -211,8 +211,8 @@ schema WorkflowJobsPatternProperties0OneOf0ContainerOneOf1:
     options?: str
 
     check:
-        len(ports) >= 1
-        len(volumes) >= 1
+        len(ports) >= 1 if ports
+        len(volumes) >= 1 if volumes
 
 schema WorkflowJobsPatternProperties0OneOf0ContainerOneOf1Credentials:
     r"""
@@ -364,8 +364,8 @@ schema WorkflowJobsPatternProperties0OneOf0ServicesAdditionalProperties:
     options?: str
 
     check:
-        len(ports) >= 1
-        len(volumes) >= 1
+        len(ports) >= 1 if ports
+        len(volumes) >= 1 if volumes
 
 schema WorkflowJobsPatternProperties0OneOf0ServicesAdditionalPropertiesCredentials:
     r"""
@@ -755,7 +755,7 @@ schema WorkflowOnOneOf2:
     schedule?: [WorkflowOnOneOf2ScheduleItems0]
 
     check:
-        len(schedule) >= 1
+        len(schedule) >= 1 if schedule
 
 schema WorkflowOnOneOf2BranchProtectionRule:
     r"""
@@ -772,7 +772,7 @@ schema WorkflowOnOneOf2BranchProtectionRule:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2BranchProtectionRuleOneOf0:
     r"""
@@ -796,7 +796,7 @@ schema WorkflowOnOneOf2CheckRun:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2CheckRunOneOf0:
     r"""
@@ -820,7 +820,7 @@ schema WorkflowOnOneOf2CheckSuite:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2CheckSuiteOneOf0:
     r"""
@@ -872,7 +872,7 @@ schema WorkflowOnOneOf2Discussion:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2DiscussionComment:
     r"""
@@ -889,7 +889,7 @@ schema WorkflowOnOneOf2DiscussionComment:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2DiscussionCommentOneOf0:
     r"""
@@ -934,7 +934,7 @@ schema WorkflowOnOneOf2IssueComment:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2IssueCommentOneOf0:
     r"""
@@ -958,7 +958,7 @@ schema WorkflowOnOneOf2Issues:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2IssuesOneOf0:
     r"""
@@ -982,7 +982,7 @@ schema WorkflowOnOneOf2Label:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2LabelOneOf0:
     r"""
@@ -1006,7 +1006,7 @@ schema WorkflowOnOneOf2Member:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2MemberOneOf0:
     r"""
@@ -1030,7 +1030,7 @@ schema WorkflowOnOneOf2Milestone:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2MilestoneOneOf0:
     r"""
@@ -1061,7 +1061,7 @@ schema WorkflowOnOneOf2Project:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2ProjectCard:
     r"""
@@ -1078,7 +1078,7 @@ schema WorkflowOnOneOf2ProjectCard:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2ProjectCardOneOf0:
     r"""
@@ -1102,7 +1102,7 @@ schema WorkflowOnOneOf2ProjectColumn:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2ProjectColumnOneOf0:
     r"""
@@ -1202,13 +1202,13 @@ schema WorkflowOnOneOf2PullRequest:
     [key: str]: any
 
     check:
-        len(types) >= 1
-        len(branches) >= 1
-        len(branches_ignore) >= 1
-        len(tags) >= 1
-        len(tags_ignore) >= 1
-        len(paths) >= 1
-        len(paths_ignore) >= 1
+        len(types) >= 1 if types
+        len(branches) >= 1 if branches
+        len(branches_ignore) >= 1 if branches_ignore
+        len(tags) >= 1 if tags
+        len(tags_ignore) >= 1 if tags_ignore
+        len(paths) >= 1 if paths
+        len(paths_ignore) >= 1 if paths_ignore
         regex.match(key, r"^(branche|tag|path)s(-ignore)?$")
 
 schema WorkflowOnOneOf2PullRequestOneOf0:
@@ -1237,7 +1237,7 @@ schema WorkflowOnOneOf2PullRequestReview:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2PullRequestReviewComment:
     r"""
@@ -1258,7 +1258,7 @@ schema WorkflowOnOneOf2PullRequestReviewComment:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2PullRequestReviewCommentOneOf0:
     r"""
@@ -1347,13 +1347,13 @@ schema WorkflowOnOneOf2PullRequestTarget:
     [key: str]: any
 
     check:
-        len(types) >= 1
-        len(branches) >= 1
-        len(branches_ignore) >= 1
-        len(tags) >= 1
-        len(tags_ignore) >= 1
-        len(paths) >= 1
-        len(paths_ignore) >= 1
+        len(types) >= 1 if types
+        len(branches) >= 1 if branches
+        len(branches_ignore) >= 1 if branches_ignore
+        len(tags) >= 1 if tags
+        len(tags_ignore) >= 1 if tags_ignore
+        len(paths) >= 1 if paths
+        len(paths_ignore) >= 1 if paths_ignore
         regex.match(key, r"^(branche|tag|path)s(-ignore)?$")
 
 schema WorkflowOnOneOf2PullRequestTargetOneOf0:
@@ -1433,12 +1433,12 @@ schema WorkflowOnOneOf2Push:
     [key: str]: [str]
 
     check:
-        len(branches) >= 1
-        len(branches_ignore) >= 1
-        len(tags) >= 1
-        len(tags_ignore) >= 1
-        len(paths) >= 1
-        len(paths_ignore) >= 1
+        len(branches) >= 1 if branches
+        len(branches_ignore) >= 1 if branches_ignore
+        len(tags) >= 1 if tags
+        len(tags_ignore) >= 1 if tags_ignore
+        len(paths) >= 1 if paths
+        len(paths_ignore) >= 1 if paths_ignore
         regex.match(key, r"^(branche|tag|path)s(-ignore)?$")
 
 schema WorkflowOnOneOf2PushOneOf0:
@@ -1463,7 +1463,7 @@ schema WorkflowOnOneOf2RegistryPackage:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2RegistryPackageOneOf0:
     r"""
@@ -1487,7 +1487,7 @@ schema WorkflowOnOneOf2Release:
     [...str]: any
 
     check:
-        len(types) >= 1
+        len(types) >= 1 if types
 
 schema WorkflowOnOneOf2ReleaseOneOf0:
     r"""
@@ -1515,7 +1515,7 @@ schema WorkflowOnOneOf2ScheduleItems0:
     cron?: str
 
     check:
-        regex.match(cron, r"^(((\d+,)+\d+|((\d+|\*)/\d+|((JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?))|(\d+-\d+)|\d+|\*|((MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?)) ?){5}$")
+        regex.match(cron, r"^(((\d+,)+\d+|((\d+|\*)/\d+|((JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?))|(\d+-\d+)|\d+|\*|((MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?)) ?){5}$") if cron
 
 schema WorkflowOnOneOf2StatusOneOf0:
     r"""
@@ -1655,7 +1655,7 @@ schema WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties0:
     options?: [str]
 
     check:
-        len(options) >= 1
+        len(options) >= 1 if options
 
 schema WorkflowOnOneOf2WorkflowRun:
     r"""
@@ -1674,8 +1674,8 @@ schema WorkflowOnOneOf2WorkflowRun:
     [...str]: any
 
     check:
-        len(types) >= 1
-        len(workflows) >= 1
+        len(types) >= 1 if types
+        len(workflows) >= 1 if workflows
 
 schema WorkflowOnOneOf2WorkflowRunOneOf0:
     r"""
