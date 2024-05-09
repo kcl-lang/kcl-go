@@ -305,6 +305,8 @@ message ListVariables_Result {
 
 message Variable {
 	string value = 1;
+	string type_name = 2;
+	string op_sym = 3;
 }
 
 message GetFullSchemaType_Args {
@@ -479,6 +481,7 @@ message KclType {
 	string pkg_path = 13;                // `pkg_path` represents the path name of the package where the attribute is located.
 	string description = 14;             // `description` represents the document of the attribute.
 	map<string, Example> examples = 15;  // A map object to hold examples, the key is the example name.
+	KclType base_schema = 16;            // contains referenced by info for schema
 }
 
 message Decorator {
