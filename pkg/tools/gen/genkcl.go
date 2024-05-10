@@ -14,8 +14,9 @@ import (
 )
 
 type GenKclOptions struct {
-	Mode         Mode
-	ParseFromTag bool
+	Mode          Mode
+	ParseFromTag  bool
+	CastingOption castingOption
 }
 
 // Mode is the mode of kcl schema code generation.
