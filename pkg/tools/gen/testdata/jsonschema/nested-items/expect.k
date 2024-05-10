@@ -9,17 +9,17 @@ schema MonacoManifestSchema:
 
     Attributes
     ----------
-    manifest_version : str, required
+    manifestVersion : str, required
         The schema version this manifest conforms to - e.g. 1.0
     projects : [MonacoManifestSchemaProjectsItems0], required
         The projects grouped by this manifest
-    environment_groups : [MonacoManifestSchemaEnvironmentGroupsItems0], required
+    environmentGroups : [MonacoManifestSchemaEnvironmentGroupsItems0], required
         The Environment groups to which projects in this manifest are deployed
     """
 
-    manifest_version: str
+    manifestVersion: str
     projects: [MonacoManifestSchemaProjectsItems0]
-    environment_groups: [MonacoManifestSchemaEnvironmentGroupsItems0]
+    environmentGroups: [MonacoManifestSchemaEnvironmentGroupsItems0]
 
 schema MonacoManifestSchemaEnvironmentGroupsItems0:
     r"""

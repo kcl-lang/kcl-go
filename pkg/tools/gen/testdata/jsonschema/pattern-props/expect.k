@@ -33,10 +33,10 @@ schema BookAuthorsPatternProperties0:
 
     Attributes
     ----------
-    first_name : str, optional
-    last_name : str, optional
+    firstName : str, optional
+    lastName : str, optional
     """
 
-    first_name?: str
-    last_name?: str
+    firstName?: str
+    lastName?: str
 
