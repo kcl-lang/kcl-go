@@ -13,16 +13,6 @@ import (
 )
 
 func TestGenKcl(t *testing.T) {
-	const code = `
-package main
-type employee struct {
-	name        string            ` + "`kcl:\"name=name,type=str\"`" + `           // kcl-type: str
-	age         int               ` + "`kcl:\"name=age,type=int\"`" + `            // kcl-type: int
-	friends     []string          ` + "`kcl:\"name=friends,type=[str]\"`" + `      // kcl-type: [str]
-	movies      map[string]*Movie ` + "`kcl:\"name=movies,type={str:Movie}\"`" + ` // kcl-type: {str:Movie}
-	bankCard    int               ` + "`kcl:\"nam=bankCard,type=int\",abc:\"name=bankCard,type=int\"`" + `       // kcl-type: int
-	nationality string            ` + "`kcl:\"name=nationality,type=str\"`" + `    // kcl-type: str
-}`
 	var buf bytes.Buffer
 	opts := &GenKclOptions{
 		ParseFromTag: false,
@@ -119,9 +109,10 @@ schema Company:
 
 func TestGenKclFromJsonSchema(t *testing.T) {
 	type testCase struct {
-		name   string
-		input  string
-		expect string
+		name           string
+		input          string
+		expectFilepath string
+		expect         string
 	}
 	var cases []testCase
 
@@ -135,9 +126,10 @@ func TestGenKclFromJsonSchema(t *testing.T) {
 		input := filepath.Join(casesPath, caseFile.Name(), "input.json")
 		expectFilepath := filepath.Join(casesPath, caseFile.Name(), "expect.k")
 		cases = append(cases, testCase{
-			name:   caseFile.Name(),
-			input:  input,
-			expect: readFileString(t, expectFilepath),
+			name:           caseFile.Name(),
+			input:          input,
+			expectFilepath: expectFilepath,
+			expect:         readFileString(t, expectFilepath),
 		})
 	}
 

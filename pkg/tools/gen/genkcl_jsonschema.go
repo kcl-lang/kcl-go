@@ -15,6 +15,14 @@ import (
 	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
+type castingOption int
+
+const (
+	originalName castingOption = iota
+	snakeCase
+	camelCase
+)
+
 type convertContext struct {
 	rootSchema *jsonschema.Schema
 	imports    map[string]struct{}
@@ -22,7 +30,8 @@ type convertContext struct {
 	paths      []string
 	// pathObjects is used to avoid infinite loop when converting recursive schema
 	// TODO: support recursive schema
-	pathObjects []*jsonschema.Schema
+	pathObjects   []*jsonschema.Schema
+	castingOption castingOption
 }
 
 type convertResult struct {
@@ -31,6 +40,17 @@ type convertResult struct {
 	Description string
 	schema
 	property
+}
+
+func convertPropertyName(name string, option castingOption) string {
+	switch option {
+	case snakeCase:
+		return strcase.ToSnake(name)
+	case camelCase:
+		return strcase.ToCamel(name)
+	default:
+		return name
+	}
 }
 
 func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src interface{}) error {
@@ -422,7 +442,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 	if result.HasIndexSignature && result.IndexSignature.validation != nil {
 		result.Validations = append(result.Validations, *result.IndexSignature.validation)
 	}
-	result.property.Name = strcase.ToSnake(result.Name)
+	result.property.Name = convertPropertyName(result.Name, ctx.castingOption)
 	result.property.Description = result.Description
 	return result
 }
