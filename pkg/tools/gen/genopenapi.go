@@ -379,7 +379,9 @@ func GetPkgDir(base string, pkgName string) string {
 func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenAPIType {
 	var referencedBy []string
 	if from.BaseSchema != nil {
-		referencedBy = append(referencedBy, SchemaId(pkgPath, from.BaseSchema))
+		childSchema := GetKclOpenAPIType(pkgPath, from.BaseSchema, true)
+		childSchema.ReferencedBy = append(childSchema.ReferencedBy, SchemaId(pkgPath, from))
+		referencedBy = append(referencedBy, childSchema.ReferencedBy...)
 	}
 	t := KclOpenAPIType{
 		Description:  from.Description,
