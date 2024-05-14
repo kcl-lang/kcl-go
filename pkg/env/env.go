@@ -13,9 +13,9 @@ var (
 	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.libHome=/path/to/lib"
 	libHome string
 	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.disableInstallArtifact=true"
-	disableInstallArtifact string
+	disableInstallArtifact string = "false"
 	// Can be inject value with -ldflags "-X kcl-lang.io/kcl-go/pkg/env.disableArtifactInPath=true"
-	disableArtifactInPath string
+	disableArtifactInPath string = "true"
 )
 
 // EnvSettings represents environment settings for the KCL Go SDK.
