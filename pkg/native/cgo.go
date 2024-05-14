@@ -84,8 +84,7 @@ func KclvmServiceCall(serv *C.kclvm_service, method *C.char, args *C.char) (*C.c
 		panic(err)
 	}
 
-	var size C.size_t
-	size = C.SIZE_MAX
+	var size C.size_t = C.SIZE_MAX
 	buf := C.kclvm_service_call_with_length(serviceCall, serv, method, args, &size)
 	return buf, size
 }

@@ -1,5 +1,5 @@
-//go:build !windows
-// +build !windows
+//go:build cgo
+// +build cgo
 
 package native
 

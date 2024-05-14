@@ -34,7 +34,7 @@ func loadServiceNativeLib() *dlopen.LibHandle {
 	h, err := dlopen.GetHandle(libPaths)
 
 	if err != nil {
-		panic(fmt.Errorf(`couldn't get a handle to kcl native library: %v`, err))
+		panic(fmt.Errorf(`couldn't get a handle to kcl native library from %v: %v`, libPaths, err))
 	}
 
 	runtime.SetFinalizer(h, func(x *dlopen.LibHandle) {

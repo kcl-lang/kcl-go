@@ -23,14 +23,7 @@ func init() {
 	if !env.GetDisableInstallArtifact() {
 		installKclArtifact()
 	}
-	if env.GetDisableUseArtifactInPath() {
-		// Must use the artifact installed by kcl-go
-		// Get the install lib path.
-		g_KclvmRoot = findInstalledArtifactRoot()
-	} else {
-		// Get kclvm root path in PATH
-		g_KclvmRoot = findKclvmRoot()
-	}
+	g_KclvmRoot = findKclvmRoot()
 }
 
 func installKclArtifact() {
@@ -103,18 +96,22 @@ func MustGetKclvmPath() string {
 }
 
 func findKclvmRoot() string {
-	kclvm_cli_exe := "kclvm_cli"
-	if runtime.GOOS == "windows" {
-		kclvm_cli_exe += ".exe"
-	}
-	if path, err := exec.LookPath(kclvm_cli_exe); err == nil {
+	if env.GetDisableUseArtifactInPath() {
+		return filepath.Dir(findInstalledArtifactRoot())
+	} else {
+		kclvm_cli_exe := "kclvm_cli"
 		if runtime.GOOS == "windows" {
-			return filepath.Dir(path)
-		} else {
-			return filepath.Dir(filepath.Dir(path))
+			kclvm_cli_exe += ".exe"
 		}
+		if path, err := exec.LookPath(kclvm_cli_exe); err == nil {
+			if runtime.GOOS == "windows" {
+				return filepath.Dir(path)
+			} else {
+				return filepath.Dir(filepath.Dir(path))
+			}
+		}
+		return ""
 	}
-	return ""
 }
 
 func findInstalledArtifactRoot() string {
