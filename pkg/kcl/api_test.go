@@ -23,15 +23,15 @@ func TestKCLResultMap(t *testing.T) {
 		"key2": "value2",
 	}
 	result := NewResult(data)
-	m, _ := result.ToMap()
+	m := result.GetResult()
 	tAssert(t, m["key1"] == "value1", m)
 	tAssert(t, m["key2"] == "value2", m)
 }
 
 func TestKCLResultInt(t *testing.T) {
 	result := NewResult(1)
-	m, _ := result.ToInt()
-	tAssert(t, *m == 1)
+	m := result.GetResult()
+	tAssert(t, m == 1)
 }
 
 func TestRun_kcl_yaml(t *testing.T) {

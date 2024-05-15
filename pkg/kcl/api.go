@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"reflect"
 	"regexp"
 	"strings"
 
@@ -23,244 +22,90 @@ import (
 
 type KclType = gpyrpc.KclType
 
-type KCLResultList struct {
+type KCLResultList[T KCLResultType] struct {
 	// When the list is empty, the result is the raw result.
-	list            []KCLResult
+	list            []KCLResult[T]
 	raw_json_result string
 	raw_yaml_result string
 }
 
-// ToString returns the result as string.
-func (p *KCLResultList) ToString() (string, error) {
-	if len(p.list) == 0 {
-		return "", fmt.Errorf("result is nil")
+// GetResult returns the result
+func (k *KCLResultList[T]) GetResult() (T, error) {
+	var result T
+	if len(k.list) == 0 {
+		return result, fmt.Errorf("result is nil")
 	}
-	var resS string
-	err := p.ToType(&resS)
-	if err != nil {
-		return "", err
-	}
-	return resS, nil
+
+	return k.list[0].GetResult(), nil
 }
 
-// ToBool returns the result as bool.
-func (p *KCLResultList) ToBool() (*bool, error) {
-	if len(p.list) == 0 {
-		return nil, fmt.Errorf("result is nil")
-	}
-	var resB bool
-	err := p.ToType(&resB)
-	if err != nil {
-		return nil, err
-	}
-	return &resB, nil
-}
-
-// ToMap returns the result as map[string]interface{}.
-func (p *KCLResultList) ToMap() (map[string]interface{}, error) {
-	if len(p.list) == 0 {
-		return nil, fmt.Errorf("result is nil")
-	}
-	var resMap map[string]interface{}
-	err := p.ToType(&resMap)
-	if err != nil {
-		return nil, err
-	}
-	return resMap, nil
-}
-
-// ToInt returns the result as int.
-func (p *KCLResultList) ToInt() (*int, error) {
-	if len(p.list) == 0 {
-		return nil, fmt.Errorf("result is nil")
-	}
-	var resI int
-	err := p.ToType(&resI)
-	if err != nil {
-		return nil, err
-	}
-	return &resI, nil
-}
-
-// ToFloat64 returns the result as float64.
-func (p *KCLResultList) ToFloat64() (*float64, error) {
-	if len(p.list) == 0 {
-		return nil, fmt.Errorf("result is nil")
-	}
-	var resF float64
-	err := p.ToType(&resF)
-	if err != nil {
-		return nil, err
-	}
-	return &resF, nil
-}
-
-// ToList returns the result as []interface{}.
-func (p *KCLResultList) ToList() ([]interface{}, error) {
-	if len(p.list) == 0 {
-		return nil, fmt.Errorf("result is nil")
-	}
-	var resList []interface{}
-	err := p.ToType(&resList)
-	if err != nil {
-		return nil, err
-	}
-	return resList, nil
-}
-
-// ToType returns the result as target type.
-func (p *KCLResultList) ToType(target interface{}) error {
-	if len(p.list) == 0 {
-		return fmt.Errorf("result is nil")
-	}
-
-	srcVal := reflect.ValueOf(p.list[0].result)
-	targetVal := reflect.ValueOf(target)
-
-	if targetVal.Kind() != reflect.Ptr || targetVal.IsNil() {
-		return fmt.Errorf("failed to convert result to %T", target)
-	}
-
-	if srcVal.Type() != targetVal.Elem().Type() {
-		return fmt.Errorf("failed to convert result to %T: type mismatch", target)
-	}
-
-	targetVal.Elem().Set(srcVal)
-
-	return nil
-}
-
-func (p *KCLResultList) Len() int {
+func (p *KCLResultList[T]) Len() int {
 	return len(p.list)
 }
 
-func (p *KCLResultList) Get(i int) *KCLResult {
+func (p *KCLResultList[T]) Get(i int) *KCLResult[T] {
 	if i == 0 {
 		return p.First()
 	}
+
 	if i == p.Len()-1 {
 		return p.Tail()
 	}
+
 	if i >= 0 && i < p.Len() {
 		return &p.list[i]
 	}
 	return nil
 }
-func (p *KCLResultList) First() *KCLResult {
+
+func (p *KCLResultList[T]) First() *KCLResult[T] {
 	if p.Len() > 0 {
 		return &p.list[0]
 	}
 	return nil
 }
-func (p *KCLResultList) Tail() *KCLResult {
+
+func (p *KCLResultList[T]) Tail() *KCLResult[T] {
 	if p.Len() > 0 {
 		return &p.list[len(p.list)-1]
 	}
 	return nil
 }
 
-func (p *KCLResultList) Slice() []KCLResult {
+func (p *KCLResultList[T]) Slice() []KCLResult[T] {
 	return p.list
 }
 
-func (p *KCLResultList) GetRawJsonResult() string {
+func (p *KCLResultList[T]) GetRawJsonResult() string {
 	return p.raw_json_result
 }
-func (p *KCLResultList) GetRawYamlResult() string {
+
+func (p *KCLResultList[T]) GetRawYamlResult() string {
 	return p.raw_yaml_result
 }
 
+type KCLResultType interface {
+	string | bool | map[string]any | int | float64 | []interface{} | any
+}
+
 // KCLResult denotes the result for the Run API.
-type KCLResult struct {
-	result any
+type KCLResult[T KCLResultType] struct {
+	result T
 }
 
 // NewResult constructs a KCLResult using the value
-func NewResult(value any) KCLResult {
-	return KCLResult{
+func NewResult[T KCLResultType](value T) KCLResult[T] {
+	return KCLResult[T]{
 		result: value,
 	}
 }
 
-// ToString returns the result as string.
-func (p *KCLResult) ToString() (string, error) {
-	var resS string
-	err := p.ToType(&resS)
-	if err != nil {
-		return "", err
-	}
-	return resS, nil
+// GetResult returns the result
+func (k *KCLResult[T]) GetResult() T {
+	return k.result
 }
 
-// ToBool returns the result as bool.
-func (p *KCLResult) ToBool() (*bool, error) {
-	var resB bool
-	err := p.ToType(&resB)
-	if err != nil {
-		return nil, err
-	}
-	return &resB, nil
-}
-
-// ToMap returns the result as map[string]interface{}.
-func (p *KCLResult) ToMap() (map[string]interface{}, error) {
-	var resMap map[string]interface{}
-	err := p.ToType(&resMap)
-	if err != nil {
-		return nil, err
-	}
-	return resMap, nil
-}
-
-// ToInt returns the result as int.
-func (p *KCLResult) ToInt() (*int, error) {
-	var resI int
-	err := p.ToType(&resI)
-	if err != nil {
-		return nil, err
-	}
-	return &resI, nil
-}
-
-// ToFloat64 returns the result as float64.
-func (p *KCLResult) ToFloat64() (*float64, error) {
-	var resF float64
-	err := p.ToType(&resF)
-	if err != nil {
-		return nil, err
-	}
-	return &resF, nil
-}
-
-// ToList returns the result as []interface{}.
-func (p *KCLResult) ToList() ([]interface{}, error) {
-	var resList []interface{}
-	err := p.ToType(&resList)
-	if err != nil {
-		return nil, err
-	}
-	return resList, nil
-}
-
-// ToType returns the result as target type.
-func (p *KCLResult) ToType(target interface{}) error {
-	srcVal := reflect.ValueOf(p.result)
-	targetVal := reflect.ValueOf(target)
-
-	if targetVal.Kind() != reflect.Ptr || targetVal.IsNil() {
-		return fmt.Errorf("failed to convert result to %T", target)
-	}
-
-	if srcVal.Type() != targetVal.Elem().Type() {
-		return fmt.Errorf("failed to convert result to %T: type mismatch", target)
-	}
-
-	targetVal.Elem().Set(srcVal)
-
-	return nil
-}
-
-func (m *KCLResult) Get(key string, target ...interface{}) interface{} {
+func (m *KCLResult[T]) Get(key string, target ...interface{}) interface{} {
 	ss := strings.Split(key, ".")
 	if len(ss) == 0 {
 		return nil
@@ -284,7 +129,7 @@ func (m *KCLResult) Get(key string, target ...interface{}) interface{} {
 	return rv
 }
 
-func (m *KCLResult) GetValue(key string, target ...interface{}) (value interface{}, err error) {
+func (m *KCLResult[T]) GetValue(key string, target ...interface{}) (value KCLResultType, err error) {
 	ss := strings.Split(key, ".")
 	if len(ss) == 0 {
 		return nil, nil
@@ -340,19 +185,19 @@ func (m *KCLResult) GetValue(key string, target ...interface{}) (value interface
 	}
 }
 
-func (m *KCLResult) YAMLString() string {
+func (m *KCLResult[T]) YAMLString() string {
 	out, _ := yaml.Marshal(m.result)
 	return string(out)
 }
 
-func (m *KCLResult) JSONString() string {
+func (m *KCLResult[T]) JSONString() string {
 	var prefix = ""
 	var indent = "    "
 	x, _ := json.MarshalIndent(m.result, prefix, indent)
 	return string(x)
 }
 
-func MustRun(path string, opts ...Option) *KCLResultList {
+func MustRun(path string, opts ...Option) *KCLResultList[KCLResultType] {
 	v, err := Run(path, opts...)
 	if err != nil {
 		panic(err)
@@ -361,20 +206,20 @@ func MustRun(path string, opts ...Option) *KCLResultList {
 	return v
 }
 
-func Run(path string, opts ...Option) (*KCLResultList, error) {
-	return run([]string{path}, opts...)
+func Run(path string, opts ...Option) (*KCLResultList[KCLResultType], error) {
+	return run[KCLResultType]([]string{path}, opts...)
 }
 
 // RunWithOpts is the same as Run, but it does not require a path as input.
 // Note: you need to specify the path in options by method WithKFilenameList()
 // or the workdir in method WorkDir(),
 // or it will return an error.
-func RunWithOpts(opts ...Option) (*KCLResultList, error) {
-	return run([]string{}, opts...)
+func RunWithOpts(opts ...Option) (*KCLResultList[KCLResultType], error) {
+	return run[KCLResultType]([]string{}, opts...)
 }
 
-func RunFiles(paths []string, opts ...Option) (*KCLResultList, error) {
-	return run(paths, opts...)
+func RunFiles(paths []string, opts ...Option) (*KCLResultList[KCLResultType], error) {
+	return run[KCLResultType](paths, opts...)
 }
 
 func GetSchemaType(file, code, schemaName string) ([]*gpyrpc.KclType, error) {
@@ -425,7 +270,7 @@ func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*gpyrpc.Kcl
 	return resp.SchemaTypeMapping, nil
 }
 
-func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io.Writer, hooks Hooks) (*KCLResultList, error) {
+func ExecResultToKCLResult[T KCLResultType](o *Option, resp *gpyrpc.ExecProgram_Result, logger io.Writer, hooks Hooks) (*KCLResultList[T], error) {
 	for _, hook := range hooks {
 		hook.Do(o, resp)
 	}
@@ -439,7 +284,7 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 		return nil, errors.New(resp.ErrMessage)
 	}
 
-	var result KCLResultList
+	var result KCLResultList[T]
 	if strings.TrimSpace(resp.JsonResult) == "" {
 		return &result, nil
 	}
@@ -450,11 +295,11 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 	}
 
 	for _, d := range documents {
-		var m any
+		var m T
 		if err := yaml.Unmarshal([]byte(d), &m); err != nil {
 			return nil, err
 		}
-		result.list = append(result.list, KCLResult{
+		result.list = append(result.list, KCLResult[T]{
 			result: m,
 		})
 	}
@@ -468,7 +313,7 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 	return &result, nil
 }
 
-func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultList, error) {
+func runWithHooks[T KCLResultType](pathList []string, hooks Hooks, opts ...Option) (*KCLResultList[T], error) {
 	args, err := ParseArgs(pathList, opts...)
 	if err != nil {
 		return nil, err
@@ -479,11 +324,11 @@ func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultLis
 	if err != nil {
 		return nil, err
 	}
-	return ExecResultToKCLResult(&args, resp, args.GetLogger(), hooks)
+	return ExecResultToKCLResult[T](&args, resp, args.GetLogger(), hooks)
 }
 
-func run(pathList []string, opts ...Option) (*KCLResultList, error) {
-	return runWithHooks(pathList, DefaultHooks, opts...)
+func run[T KCLResultType](pathList []string, opts ...Option) (*KCLResultList[T], error) {
+	return runWithHooks[T](pathList, DefaultHooks, opts...)
 }
 
 // splitDocuments returns a slice of all documents contained in a YAML string. Multiple documents can be divided by the

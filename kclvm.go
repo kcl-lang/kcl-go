@@ -51,8 +51,8 @@ type (
 	TestOptions        = testing.TestOptions
 	TestCaseInfo       = testing.TestCaseInfo
 	TestResult         = testing.TestResult
-	KCLResult          = kcl.KCLResult
-	KCLResultList      = kcl.KCLResultList
+	KCLResult          = kcl.KCLResult[kcl.KCLResultType]
+	KCLResultList      = kcl.KCLResultList[kcl.KCLResultType]
 
 	KclType = kcl.KclType
 )

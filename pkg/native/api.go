@@ -7,8 +7,8 @@ import (
 	"kcl-lang.io/kcl-go/pkg/kcl"
 )
 
-func MustRun(path string, opts ...kcl.Option) *kcl.KCLResultList {
-	v, err := Run(path, opts...)
+func MustRun(path string, opts ...kcl.Option) *kcl.KCLResultList[kcl.KCLResultType] {
+	v, err := Run[kcl.KCLResultType](path, opts...)
 	if err != nil {
 		panic(err)
 	}
@@ -16,11 +16,11 @@ func MustRun(path string, opts ...kcl.Option) *kcl.KCLResultList {
 	return v
 }
 
-func Run(path string, opts ...kcl.Option) (*kcl.KCLResultList, error) {
-	return run([]string{path}, opts...)
+func Run[T kcl.KCLResultType](path string, opts ...kcl.Option) (*kcl.KCLResultList[T], error) {
+	return run[T]([]string{path}, opts...)
 }
 
-func run(pathList []string, opts ...kcl.Option) (*kcl.KCLResultList, error) {
+func run[T kcl.KCLResultType](pathList []string, opts ...kcl.Option) (*kcl.KCLResultList[T], error) {
 	args, err := kcl.ParseArgs(pathList, opts...)
 	if err != nil {
 		return nil, err
@@ -31,5 +31,5 @@ func run(pathList []string, opts ...kcl.Option) (*kcl.KCLResultList, error) {
 	if err != nil {
 		return nil, err
 	}
-	return kcl.ExecResultToKCLResult(&args, resp, args.GetLogger(), kcl.DefaultHooks)
+	return kcl.ExecResultToKCLResult[T](&args, resp, args.GetLogger(), kcl.DefaultHooks)
 }
