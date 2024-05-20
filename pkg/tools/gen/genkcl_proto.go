@@ -51,7 +51,8 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 
 		builder.WriteString("schema ")
 		builder.WriteString(message.Name)
-		builder.WriteString(":" + lineBreak)
+		builder.WriteString(":")
+		builder.WriteString(lineBreak)
 
 		for _, element := range message.Elements {
 			switch field := element.(type) {
@@ -79,7 +80,8 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 				builder.WriteString(getFieldType(field.KeyType))
 				builder.WriteString(":")
 				builder.WriteString(getFieldType(field.Type))
-				builder.WriteString("}" + lineBreak)
+				builder.WriteString("}")
+				builder.WriteString(lineBreak)
 			}
 		}
 
