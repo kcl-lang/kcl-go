@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"runtime"
 
 	"github.com/emicklei/proto"
 )
@@ -25,6 +26,11 @@ var fieldTypeMap = map[string]string{
 
 // genKclFromProtoData
 func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src interface{}) error {
+	lineBreak := "\n"
+	if runtime.GOOS == "windows" {
+		lineBreak = "\r\n"
+	}
+
 	code, err := readSource(filename, src)
 	if err != nil {
 		return err
@@ -45,7 +51,7 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 
 		builder.WriteString("schema ")
 		builder.WriteString(message.Name)
-		builder.WriteString(":\n")
+		builder.WriteString(":" + lineBreak)
 
 		for _, element := range message.Elements {
 			switch field := element.(type) {
@@ -64,7 +70,7 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 				if field.Repeated {
 					builder.WriteString("]")
 				}
-				builder.WriteString("\n")
+				builder.WriteString(lineBreak)
 
 			case *proto.MapField:
 				builder.WriteString("    ")
@@ -73,11 +79,11 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 				builder.WriteString(getFieldType(field.KeyType))
 				builder.WriteString(":")
 				builder.WriteString(getFieldType(field.Type))
-				builder.WriteString("}\n")
+				builder.WriteString("}" + lineBreak)
 			}
 		}
 
-		builder.WriteString("\n")
+		builder.WriteString(lineBreak)
 	}
 
 	if err = builder.Flush(); err != nil {
