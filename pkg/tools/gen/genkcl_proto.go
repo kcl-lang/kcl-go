@@ -18,6 +18,9 @@ var fieldTypeMap = map[string]string{
 	"sint64":              "int",
 	"string":              "str",
 	"google.protobuf.Any": "any",
+	"bool":                "bool",
+	"float":               "float",
+	"double":              "float",
 }
 
 // genKclFromProtoData

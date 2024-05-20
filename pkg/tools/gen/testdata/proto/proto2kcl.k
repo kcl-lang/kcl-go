@@ -23,6 +23,9 @@ schema employee:
     movies: {str:Movie}
     bank_card: int
     nationality: str
+    salary: float
+    age_double: float
+    is_married: bool
 
 schema Company:
     name: str

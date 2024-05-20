@@ -33,6 +33,9 @@ message employee{
     map<string,Movie> movies = 4;
     int32 bank_card = 5;
     string nationality = 6;
+    float salary = 7;
+    double age_double = 9;
+    bool is_married = 8;
 }
 
 

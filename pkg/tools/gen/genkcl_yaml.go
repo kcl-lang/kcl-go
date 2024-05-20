@@ -2,9 +2,10 @@ package gen
 
 import (
 	"bytes"
-	"github.com/goccy/go-yaml"
 	"io"
 	"strings"
+
+	"github.com/goccy/go-yaml"
 )
 
 func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interface{}) error {
