@@ -23,7 +23,7 @@ require (
 	google.golang.org/protobuf v1.34.1
 	gopkg.in/yaml.v3 v3.0.1
 	kcl-lang.io/kpm v0.8.6
-	kcl-lang.io/lib v0.8.7
+	kcl-lang.io/lib v0.9.0-alpha.1.0.20240520020338-198f8ebdb26a
 )
 
 require (
