@@ -248,6 +248,17 @@ func TestGenKclFromMultipleResourceYaml(t *testing.T) {
 	}
 }
 
+func TestGenKclFromProto(t *testing.T) {
+	var buf bytes.Buffer
+	err := GenKcl(&buf, `./testdata/proto/proto2kcl.proto`, nil, &GenKclOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	b, _ := os.ReadFile("./testdata/proto/proto2kcl.k")
+	assert2.Equal(t, string(b), buf.String())
+}
+
 type TestData = data
 
 func TestGenKclFromJsonAndImports(t *testing.T) {

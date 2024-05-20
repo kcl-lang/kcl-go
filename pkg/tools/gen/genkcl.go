@@ -1,15 +1,14 @@
 package gen
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/goccy/go-yaml"
 	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
@@ -29,6 +28,7 @@ const (
 	ModeTerraformSchema
 	ModeJson
 	ModeYaml
+	ModeProto
 )
 
 type kclGenerator struct {
@@ -56,9 +56,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 			return err
 		}
 		codeStr := string(code)
-		var i interface{}
-		switch {
-		case json.Unmarshal(code, &i) == nil:
+		switch filepath.Ext(filename) {
+		case ".json":
 			switch {
 			case strings.Contains(codeStr, "$schema"):
 				k.opts.Mode = ModeJsonSchema
@@ -67,10 +66,12 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 			default:
 				k.opts.Mode = ModeJson
 			}
-		case yaml.Unmarshal(code, &i) == nil:
+		case ".yaml", "yml":
 			k.opts.Mode = ModeYaml
-		case strings.Contains(codeStr, "package "):
+		case ".go":
 			k.opts.Mode = ModeGoStruct
+		case ".proto":
+			k.opts.Mode = ModeProto
 		default:
 			return errors.New("failed to detect mode")
 		}
@@ -87,6 +88,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		return k.genKclFromJsonData(w, filename, src)
 	case ModeYaml:
 		return k.genKclFromYaml(w, filename, src)
+	case ModeProto:
+		return k.genKclFromProtoData(w, filename, src)
 	default:
 		return errors.New("unknown mode")
 	}

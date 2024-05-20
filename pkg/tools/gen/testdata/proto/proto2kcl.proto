@@ -1,0 +1,43 @@
+syntax = "proto3";
+package test;
+option go_package = "test";
+
+import "google/protobuf/any.proto";
+
+
+message Person{
+    string name = 1;
+    int64 age = 2;
+    repeated string friends = 3;
+    map<string,Movie> movies = 4;
+    optional employee employee = 6;
+    Company company = 7;
+    optional int32 star_int = 8;
+    map<string,string> star_map = 9;
+    google.protobuf.Any inter = 10;
+}
+
+message Movie{
+    string desc = 1;
+    int32 size = 2;
+    string kind  = 3;
+    google.protobuf.Any unknown1 = 4;
+    google.protobuf.Any unknown2 = 5;
+}
+
+
+message employee{
+    string name = 1;
+    uint32 age = 2;
+    repeated string friends = 3;
+    map<string,Movie> movies = 4;
+    int32 bank_card = 5;
+    string nationality = 6;
+}
+
+
+message Company{
+    string name = 1;
+    repeated employee employees = 2;
+    optional Person persons = 3;
+}
