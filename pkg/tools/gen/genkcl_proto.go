@@ -39,7 +39,7 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 	parser := proto.NewParser(bytes.NewBuffer(code))
 	definitions, err := parser.Parse()
 	if err != nil {
-		return fmt.Errorf(`error parsing proto file:%v`, err)
+		return fmt.Errorf(`error parsing proto file %v: %v`, filename, err)
 	}
 
 	builder := bufio.NewWriter(w)
