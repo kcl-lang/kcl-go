@@ -1,10 +1,10 @@
 package gen
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/emicklei/proto"
 )
@@ -36,7 +36,7 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 		return fmt.Errorf(`error parsing proto file:%v`, err)
 	}
 
-	var builder strings.Builder
+	builder := bufio.NewWriter(w)
 	for _, definition := range definitions.Elements {
 		message, ok := definition.(*proto.Message)
 		if !ok {
@@ -80,7 +80,7 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 		builder.WriteString("\n")
 	}
 
-	if _, err := w.Write([]byte(builder.String())); err != nil {
+	if err = builder.Flush(); err != nil {
 		return err
 	}
 
