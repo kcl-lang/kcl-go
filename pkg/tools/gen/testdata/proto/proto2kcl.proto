@@ -34,8 +34,10 @@ message employee{
     int32 bank_card = 5;
     string nationality = 6;
     float salary = 7;
-    double age_double = 9;
-    bool is_married = 8;
+    double age_double = 8;
+    bool is_married = 9;
+    gender gender = 10;
+    optional gender gender_opt = 10;
 }
 
 
@@ -43,4 +45,10 @@ message Company{
     string name = 1;
     repeated employee employees = 2;
     optional Person persons = 3;
+}
+
+enum gender{
+    unknown = 0;
+    male = 1;
+    female = 2;
 }
