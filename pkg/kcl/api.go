@@ -444,7 +444,7 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io
 		return &result, nil
 	}
 
-	documents, err := splitDocuments(resp.YamlResult)
+	documents, err := SplitDocuments(resp.YamlResult)
 	if err != nil {
 		return &result, nil
 	}
@@ -486,10 +486,10 @@ func run(pathList []string, opts ...Option) (*KCLResultList, error) {
 	return runWithHooks(pathList, DefaultHooks, opts...)
 }
 
-// splitDocuments returns a slice of all documents contained in a YAML string. Multiple documents can be divided by the
+// SplitDocuments returns a slice of all documents contained in a YAML string. Multiple documents can be divided by the
 // YAML document separator (---). It allows for white space and comments to be after the separator on the same line,
 // but will return an error if anything else is on the line.
-func splitDocuments(s string) ([]string, error) {
+func SplitDocuments(s string) ([]string, error) {
 	docs := make([]string, 0)
 	if len(s) > 0 {
 		// The YAML document separator is any line that starts with ---
