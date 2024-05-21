@@ -248,6 +248,30 @@ func TestGenKclFromMultipleResourceYaml(t *testing.T) {
 	}
 }
 
+func TestGenKclFromProto(t *testing.T) {
+	t.Run("not UseIntegersForNumbers", func(t *testing.T) {
+		var buf bytes.Buffer
+		err := GenKcl(&buf, `./testdata/proto/proto2kcl.proto`, nil, &GenKclOptions{UseIntegersForNumbers: false})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		b, _ := os.ReadFile("./testdata/proto/proto2kcl.k")
+		assert2.Equal(t, string(b), buf.String())
+	})
+
+	t.Run("UseIntegersForNumbers", func(t *testing.T) {
+		var buf bytes.Buffer
+		err := GenKcl(&buf, `./testdata/proto/proto2kcl.proto`, nil, &GenKclOptions{UseIntegersForNumbers: true})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		b, _ := os.ReadFile("./testdata/proto/proto2kcl_for_num.k")
+		assert2.Equal(t, string(b), buf.String())
+	})
+}
+
 type TestData = data
 
 func TestGenKclFromJsonAndImports(t *testing.T) {
