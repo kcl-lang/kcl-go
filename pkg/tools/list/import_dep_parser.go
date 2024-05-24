@@ -52,7 +52,7 @@ func newImportDepParser(root string, opt DepOptions) (p *importDepParser, err er
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.New(fmt.Sprintf("%v", r))
+			err = fmt.Errorf("%v", r)
 		}
 	}()
 	for _, file := range opt.Files {
@@ -123,7 +123,7 @@ func newImportGraph() *importGraph {
 }
 
 // stringSet is a simple string set implementation by map
-type stringSet map[string]bool
+type stringSet map[string]struct{}
 
 // emptyStringSet creates a string set with an empty value list
 func emptyStringSet() stringSet {
@@ -132,7 +132,7 @@ func emptyStringSet() stringSet {
 
 // add a string value to the stringSet s
 func (s stringSet) add(value string) {
-	s[value] = true
+	s[value] = struct{}{}
 }
 
 // contains checks if the stringSet s contains certain string value

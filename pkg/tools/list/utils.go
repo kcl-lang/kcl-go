@@ -3,27 +3,25 @@ package list
 import "strings"
 
 // TODO: read from kclvm rust.
-var standardSystemModules = []string{
-	"collection",
-	"net",
-	"manifests",
-	"math",
-	"datetime",
-	"regex",
-	"yaml",
-	"json",
-	"crypto",
-	"base64",
-	"units",
-	"file",
-	"template",
+var standardSystemModules = map[string]struct{}{
+	"collection": {},
+	"net":        {},
+	"manifests":  {},
+	"math":       {},
+	"datetime":   {},
+	"regex":      {},
+	"yaml":       {},
+	"json":       {},
+	"crypto":     {},
+	"base64":     {},
+	"units":      {},
+	"file":       {},
+	"template":   {},
 }
 
 func isBuiltinPkg(pkgpath string) bool {
-	for _, s := range standardSystemModules {
-		if s == pkgpath {
-			return true
-		}
+	if _, ok := standardSystemModules[pkgpath]; ok {
+		return true
 	}
 	return false
 }
