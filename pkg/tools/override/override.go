@@ -36,33 +36,38 @@ func ParseOverrideSpec(spec string) (*gpyrpc.CmdOverrideSpec, error) {
 		if len(splitValues) < 2 {
 			return nil, invalidSpecError(spec)
 		}
+
 		path := splitValues[0]
 		fieldValue := splitValues[1]
 		pkgpath, fieldPath, err := splitFieldPath(path)
 		if err != nil {
 			return nil, err
 		}
+
 		return &gpyrpc.CmdOverrideSpec{
 			Pkgpath:    pkgpath,
 			FieldPath:  fieldPath,
 			FieldValue: fieldValue,
 			Action:     CreateOrUpdateAction,
 		}, nil
-	} else if strippedSpec := strings.TrimSuffix(spec, "-"); strippedSpec != spec {
+	}
+
+	if strippedSpec := strings.TrimSuffix(spec, "-"); strippedSpec != spec {
 		// Delete the override value.
 		pkgpath, fieldPath, err := splitFieldPath(strippedSpec)
 		if err != nil {
 			return nil, err
 		}
+
 		return &gpyrpc.CmdOverrideSpec{
 			Pkgpath:    pkgpath,
 			FieldPath:  fieldPath,
 			FieldValue: "",
 			Action:     DeleteAction,
 		}, nil
-	} else {
-		return nil, invalidSpecError(spec)
 	}
+
+	return nil, invalidSpecError(spec)
 }
 
 // Get field package path and identifier name from the path.
@@ -78,16 +83,18 @@ func splitFieldPath(path string) (string, string, error) {
 			return "", "", err
 		}
 		return pkgpath, fieldPath, nil
-	} else if len(paths) == 2 {
+	}
+
+	if len(paths) == 2 {
 		pkgpath := paths[0]
 		fieldPath := paths[1]
 		if fieldPath == "" {
 			return "", "", err
 		}
 		return pkgpath, fieldPath, nil
-	} else {
-		return "", "", err
 	}
+
+	return "", "", err
 }
 
 // / Get the invalid spec error message.
