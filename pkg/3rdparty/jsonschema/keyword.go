@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 
 	jptr "github.com/qri-io/jsonpointer"
 )
@@ -59,8 +60,8 @@ func GetKeywordInsertOrder(prop string) int {
 	if order, ok := keywordInsertOrder[prop]; ok {
 		return order
 	}
-	// TODO(arqu): this is an arbitrary max
-	return 1000
+
+	return math.MaxInt
 }
 
 // SetKeywordOrder assignes a given order to a keyword
