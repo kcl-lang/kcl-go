@@ -44,16 +44,7 @@ func (p *Option) GetLogger() io.Writer {
 func ParseArgs(pathList []string, opts ...Option) (Option, error) {
 	var tmpOptList []Option
 	for _, s := range pathList {
-		switch {
-		case strings.HasSuffix(s, ".k"):
-			tmpOptList = append(tmpOptList, WithKFilenames(s))
-		case strings.HasSuffix(s, ".yaml") || strings.HasSuffix(s, ".yml"):
-			tmpOptList = append(tmpOptList, WithSettings(s))
-		case isDir(s):
-			tmpOptList = append(tmpOptList, WithWorkDir(s))
-		default:
-			tmpOptList = append(tmpOptList, WithKFilenames(s))
-		}
+		tmpOptList = append(tmpOptList, WithKFilenames(s))
 	}
 
 	args := NewOption().Merge(opts...).Merge(tmpOptList...)

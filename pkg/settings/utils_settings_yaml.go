@@ -88,8 +88,6 @@ func LoadFile(filename string, src interface{}) (f *SettingsFile, err error) {
 
 func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 	args := &gpyrpc.ExecProgram_Args{
-		WorkDir: filepath.Dir(settings.Filename),
-
 		KFilenameList: []string{},
 		KCodeList:     []string{},
 
@@ -106,6 +104,7 @@ func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 		SortKeys:              settings.Config.SortKeys,
 		ShowHidden:            settings.Config.ShowHidden,
 		IncludeSchemaTypePath: settings.Config.IncludeSchemaTypePath,
+		PathSelector:          settings.Config.PathSelector,
 	}
 	if settings.Config.Debug {
 		args.Debug = 1

@@ -121,18 +121,6 @@ x = {
 	// person: {Name:kcl Age:101}
 }
 
-func ExampleRun_getField() {
-	// run kcl.yaml
-	x, err := kcl.Run("./testdata/app0/kcl.yaml")
-	assert(err == nil, err)
-
-	// print deploy_topology[1].zone
-	fmt.Println(x.First().Get("deploy_topology.1.zone"))
-
-	// Output:
-	// R000A
-}
-
 func Example() {
 	const k_code = `
 name = "kcl"
