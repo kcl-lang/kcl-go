@@ -91,10 +91,10 @@ func formatValue(v interface{}) string {
 			if value[len(value)-1] == '"' {
 				// if the string ends with '"' then we need to add a space after the closing triple quote
 				return fmt.Sprintf(`r"""%s """`, value)
-			} else {
-				return fmt.Sprintf(`r"""%s"""`, value)
 			}
+			return fmt.Sprintf(`r"""%s"""`, value)
 		}
+
 		return fmt.Sprintf(`"%s"`, value)
 	case bool:
 		if value {
@@ -173,9 +173,11 @@ func formatName(name string) string {
 	if _, ok := kclKeywords[name]; ok {
 		return fmt.Sprintf("$%s", name)
 	}
+
 	if !validNameRegexp.MatchString(name) {
 		return fmt.Sprintf(`"%s"`, name)
 	}
+
 	return name
 }
 
@@ -197,15 +199,16 @@ func indentLines(s, indent string) string {
 			}
 			b.WriteString(line)
 			continue
-		} else {
-			if strings.Contains(line, `r"""`) && !strings.HasSuffix(line, `"""`) {
-				raw = true
-			}
+		}
+
+		if strings.Contains(line, `r"""`) && !strings.HasSuffix(line, `"""`) {
+			raw = true
 		}
 
 		b.WriteString(indent)
 		b.WriteString(line)
 	}
+
 	return b.String()
 }
 
