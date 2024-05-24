@@ -169,13 +169,12 @@ type _schema struct {
 func (s *Schema) UnmarshalJSON(data []byte) error {
 	var b bool
 	if err := json.Unmarshal(data, &b); err == nil {
+		// boolean false Always fails validation, as if the schema { "not":{} }
+		*s = Schema{SchemaType: SchemaTypeFalse}
 		if b {
 			// boolean true Always passes validation, as if the empty schema {}
 			*s = Schema{SchemaType: SchemaTypeTrue}
-			return nil
 		}
-		// boolean false Always fails validation, as if the schema { "not":{} }
-		*s = Schema{SchemaType: SchemaTypeFalse}
 		return nil
 	}
 
@@ -202,22 +201,24 @@ func (s *Schema) UnmarshalJSON(data []byte) error {
 		var keyword Keyword
 		if IsRegisteredKeyword(prop) {
 			keyword = GetKeyword(prop)
-		} else if IsNotSupportedKeyword(prop) {
+			if _, ok := keyword.(*Void); !ok {
+				if err := json.Unmarshal(rawmsg, keyword); err != nil {
+					return fmt.Errorf("error unmarshaling %s from json: %s", prop, err.Error())
+				}
+			}
+			sch.Keywords[prop] = keyword
+		}
+
+		if IsNotSupportedKeyword(prop) {
 			schemaDebug(fmt.Sprintf("[Schema] WARN: '%s' is not supported and will be ignored\n", prop))
 			continue
-		} else {
-			if sch.ExtraDefinitions == nil {
-				sch.ExtraDefinitions = map[string]json.RawMessage{}
-			}
-			sch.ExtraDefinitions[prop] = rawmsg
-			continue
 		}
-		if _, ok := keyword.(*Void); !ok {
-			if err := json.Unmarshal(rawmsg, keyword); err != nil {
-				return fmt.Errorf("error unmarshaling %s from json: %s", prop, err.Error())
-			}
+
+		if sch.ExtraDefinitions == nil {
+			sch.ExtraDefinitions = map[string]json.RawMessage{}
 		}
-		sch.Keywords[prop] = keyword
+		sch.ExtraDefinitions[prop] = rawmsg
+		continue
 	}
 
 	// ensures proper and stable keyword validation order
@@ -230,18 +231,19 @@ func (s *Schema) UnmarshalJSON(data []byte) error {
 		}
 		i++
 	}
+
 	sort.SliceStable(keyOrders, func(i, j int) bool {
 		if keyOrders[i].Order == keyOrders[j].Order {
 			return GetKeywordInsertOrder(keyOrders[i].Key) < GetKeywordInsertOrder(keyOrders[j].Key)
 		}
 		return keyOrders[i].Order < keyOrders[j].Order
 	})
+
 	orderedKeys := make([]string, len(sch.Keywords))
-	i = 0
-	for _, keyOrder := range keyOrders {
+	for i, keyOrder := range keyOrders {
 		orderedKeys[i] = keyOrder.Key
-		i++
 	}
+
 	sch.OrderedKeywords = orderedKeys
 
 	*s = Schema(*sch)
@@ -289,10 +291,9 @@ func (s *Schema) ValidateKeyword(ctx context.Context, currentState *ValidationSt
 			currentState.BaseURI = s.DocPath
 		} else if s.DocPath != "" {
 			if u, err := url.Parse(s.DocPath); err == nil {
+				currentState.BaseURI, _ = SafeResolveURL(currentState.BaseURI, s.DocPath)
 				if u.IsAbs() {
 					currentState.BaseURI = s.DocPath
-				} else {
-					currentState.BaseURI, _ = SafeResolveURL(currentState.BaseURI, s.DocPath)
 				}
 			}
 		}

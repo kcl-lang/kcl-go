@@ -5,23 +5,24 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 
 	jptr "github.com/qri-io/jsonpointer"
 )
 
-var notSupported = map[string]bool{
+var notSupported = map[string]struct{}{
 	// core
-	"$vocabulary": true,
+	"$vocabulary": {},
 
 	// other
-	"contentEncoding":  true,
-	"contentMediaType": true,
-	"contentSchema":    true,
-	"deprecated":       true,
+	"contentEncoding":  {},
+	"contentMediaType": {},
+	"contentSchema":    {},
+	"deprecated":       {},
 
 	// backward compatibility with draft7
-	"definitions":  true,
-	"dependencies": true,
+	"definitions":  {},
+	"dependencies": {},
 }
 
 var (
@@ -59,8 +60,8 @@ func GetKeywordInsertOrder(prop string) int {
 	if order, ok := keywordInsertOrder[prop]; ok {
 		return order
 	}
-	// TODO(arqu): this is an arbitrary max
-	return 1000
+
+	return math.MaxInt
 }
 
 // SetKeywordOrder assignes a given order to a keyword
