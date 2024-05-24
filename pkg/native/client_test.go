@@ -161,7 +161,7 @@ func ParseFileASTJson(filename string, src interface{}) (result string, err erro
 		case []byte:
 			code = string(src)
 		case string:
-			code = string(src)
+			code = src
 		case io.Reader:
 			d, err := io.ReadAll(src)
 			if err != nil {
