@@ -10,14 +10,14 @@ import (
 
 func FormatCode(code interface{}) ([]byte, error) {
 	var codeStr string
-	switch code.(type) {
+	switch code := code.(type) {
 	case []byte:
-		codeStr = string(code.([]byte))
+		codeStr = string(code)
 	case string:
-		codeStr = code.(string)
+		codeStr = code
 	case io.Reader:
 		var p []byte
-		_, err := code.(io.Reader).Read(p)
+		_, err := code.Read(p)
 		if err != nil {
 			return nil, err
 		}
