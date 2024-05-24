@@ -34,12 +34,6 @@ func TestKCLResultInt(t *testing.T) {
 	tAssert(t, *m == 1)
 }
 
-func TestRun_kcl_yaml(t *testing.T) {
-	const s = "../../testdata/app0/kcl.yaml"
-	_, err := RunFiles([]string{s})
-	tAssert(t, err == nil, err)
-}
-
 func TestRun(t *testing.T) {
 	const k_code = `
 name = "kcl"

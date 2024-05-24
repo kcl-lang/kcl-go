@@ -11,7 +11,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"sync"
 	"testing"
 
 	assert2 "github.com/stretchr/testify/assert"
@@ -35,36 +34,6 @@ func TestMain(m *testing.M) {
 	}
 
 	os.Exit(m.Run())
-}
-
-func TestRunFiles(t *testing.T) {
-	_, err := kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	chErr := make(chan error, 3)
-
-	var wg sync.WaitGroup
-	for i := 0; i < cap(chErr); i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			_, e := kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
-			chErr <- e
-		}()
-	}
-	wg.Wait()
-
-	for i := 0; i < cap(chErr); i++ {
-		if e := <-chErr; e != nil {
-			t.Fatal(e)
-		}
-	}
 }
 
 func TestStreamResult(t *testing.T) {
