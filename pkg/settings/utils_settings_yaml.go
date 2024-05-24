@@ -63,7 +63,7 @@ func LoadFile(filename string, src interface{}) (f *SettingsFile, err error) {
 	case []byte:
 		code = string(src)
 	case string:
-		code = string(src)
+		code = src
 	case io.Reader:
 		d, err := io.ReadAll(src)
 		if err != nil {
