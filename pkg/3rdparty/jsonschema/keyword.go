@@ -10,19 +10,19 @@ import (
 	jptr "github.com/qri-io/jsonpointer"
 )
 
-var notSupported = map[string]bool{
+var notSupported = map[string]struct{}{
 	// core
-	"$vocabulary": true,
+	"$vocabulary": {},
 
 	// other
-	"contentEncoding":  true,
-	"contentMediaType": true,
-	"contentSchema":    true,
-	"deprecated":       true,
+	"contentEncoding":  {},
+	"contentMediaType": {},
+	"contentSchema":    {},
+	"deprecated":       {},
 
 	// backward compatibility with draft7
-	"definitions":  true,
-	"dependencies": true,
+	"definitions":  {},
+	"dependencies": {},
 }
 
 var (
