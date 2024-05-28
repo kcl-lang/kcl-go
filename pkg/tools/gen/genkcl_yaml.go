@@ -6,10 +6,11 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"kcl-lang.io/kcl-go/pkg/kcl"
+	"kcl-lang.io/kcl-go/pkg/loader"
 )
 
 func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interface{}) error {
-	code, err := readSource(filename, src)
+	code, err := loader.ReadSource(filename, src)
 	if err != nil {
 		return err
 	}

@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/emicklei/proto"
+	"kcl-lang.io/kcl-go/pkg/loader"
 )
 
 var defaultFieldTypeMap = map[string]string{
@@ -33,7 +34,7 @@ func (k *kclGenerator) genKclFromProtoData(w io.Writer, filename string, src int
 		lineBreak = "\r\n"
 	}
 
-	code, err := readSource(filename, src)
+	code, err := loader.ReadSource(filename, src)
 	if err != nil {
 		return err
 	}

@@ -12,7 +12,6 @@ import (
 
 	"kcl-lang.io/kcl-go/pkg/settings"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
-	"kcl-lang.io/kcl-go/pkg/tools/override"
 )
 
 type Option struct {
@@ -97,11 +96,11 @@ func WithCode(codes ...string) Option {
 
 // kcl -E aaa=/xx/xxx/aaa main.k
 func WithExternalPkgs(key_value_list ...string) Option {
-	var args []*gpyrpc.CmdExternalPkgSpec
+	var args []*gpyrpc.ExternalPkg
 	for _, kv := range key_value_list {
 		if idx := strings.Index(kv, "="); idx > 0 {
 			name, value := kv[:idx], kv[idx+1:]
-			args = append(args, &gpyrpc.CmdExternalPkgSpec{
+			args = append(args, &gpyrpc.ExternalPkg{
 				PkgName: name,
 				PkgPath: value,
 			})
@@ -114,11 +113,11 @@ func WithExternalPkgs(key_value_list ...string) Option {
 
 // kcl -D aa=11 -D bb=22 main.k
 func WithOptions(key_value_list ...string) Option {
-	var args []*gpyrpc.CmdArgSpec
+	var args []*gpyrpc.Argument
 	for _, kv := range key_value_list {
 		if idx := strings.Index(kv, "="); idx > 0 {
 			name, value := kv[:idx], kv[idx+1:]
-			args = append(args, &gpyrpc.CmdArgSpec{
+			args = append(args, &gpyrpc.Argument{
 				Name:  name,
 				Value: value,
 			})
@@ -131,31 +130,10 @@ func WithOptions(key_value_list ...string) Option {
 
 // kcl -O pkgpath:path.to.field=field_value
 // kcl -O pkgpath.path.to.field-
-func WithOverrides(override_list ...string) Option {
-	var overrides []*gpyrpc.CmdOverrideSpec
-	for _, spec := range override_list {
-		o, _ := override.ParseOverrideSpec(spec)
-		overrides = append(overrides, o)
-	}
+func WithOverrides(overrides ...string) Option {
 	var opt = NewOption()
 	opt.Overrides = overrides
 	return *opt
-}
-
-// kcl -O pkgpath:path.to.field=field_value
-// kcl -O pkgpath.path.to.field-
-func WithOverridesError(override_list ...string) (Option, error) {
-	var overrides []*gpyrpc.CmdOverrideSpec
-	var opt = NewOption()
-	for _, spec := range override_list {
-		o, err := override.ParseOverrideSpec(spec)
-		if err != nil {
-			return *opt, err
-		}
-		overrides = append(overrides, o)
-	}
-	opt.Overrides = overrides
-	return *opt, nil
 }
 
 // kcl -S path.to.field

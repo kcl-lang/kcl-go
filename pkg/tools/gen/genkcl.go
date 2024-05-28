@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"kcl-lang.io/kcl-go/pkg/loader"
 	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
@@ -52,7 +53,7 @@ func newKclGenerator(opts *GenKclOptions) *kclGenerator {
 
 func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) error {
 	if k.opts.Mode == ModeAuto {
-		code, err := readSource(filename, src)
+		code, err := loader.ReadSource(filename, src)
 		if err != nil {
 			return err
 		}

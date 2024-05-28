@@ -149,7 +149,7 @@ a2 = App {
 
 	result, err = kcl.Run(testdata_main_k,
 		kcl.WithCode(code),
-		kcl.WithOverrides(":a1.image=\"new-a1-image\""),
+		kcl.WithOverrides("a1.image=\"new-a1-image\""),
 		kcl.WithOverrides("a2.image=\"new-a2-image:v123\""),
 		kcl.WithOverrides("a2.name-"),
 		kcl.WithPrintOverridesAST(true),
@@ -350,7 +350,7 @@ func TestGetSchemaType(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	result, err = kcl.GetSchemaType(p, "", "Person")
+	result, err = kcl.GetSchemaType(p, nil, "Person")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -423,7 +423,7 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	result, err = kcl.GetSchemaTypeMapping(p, "", "Person")
+	result, err = kcl.GetSchemaTypeMapping(p, nil, "Person")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -91,8 +91,8 @@ func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 		KFilenameList: []string{},
 		KCodeList:     []string{},
 
-		Args:      []*gpyrpc.CmdArgSpec{},
-		Overrides: []*gpyrpc.CmdOverrideSpec{},
+		Args:      []*gpyrpc.Argument{},
+		Overrides: []string{},
 
 		DisableYamlResult: false,
 		PrintOverrideAst:  false,
@@ -140,21 +140,9 @@ func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 		}
 	}
 
-	// kcl -O pkgpath:path.to.field=field_value
-	for _, kv := range settings.Config.Overrides {
-		idx0 := strings.Index(kv, ":")
-		idx1 := strings.Index(kv, "=")
-		if idx0 >= 0 && idx1 >= 0 && idx0 < idx1 {
-			var pkgpath = kv[:idx0]
-			var field_path = kv[idx0+1 : idx1]
-			var field_value = kv[idx1+1:]
-
-			args.Overrides = append(args.Overrides, &gpyrpc.CmdOverrideSpec{
-				Pkgpath:    pkgpath,
-				FieldPath:  field_path,
-				FieldValue: field_value,
-			})
-		}
+	// kcl -O path.to.field=field_value
+	for _, override := range settings.Config.Overrides {
+		args.Overrides = append(args.Overrides, override)
 	}
 
 	// kcl -D aa=11 -D bb=22 main.k
@@ -179,7 +167,7 @@ func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 			val = fmt.Sprint(v)
 		}
 
-		args.Args = append(args.Args, &gpyrpc.CmdArgSpec{
+		args.Args = append(args.Args, &gpyrpc.Argument{
 			Name:  key,
 			Value: val,
 		})
@@ -187,7 +175,7 @@ func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 
 	// kcl -E k8s=../vendor/k8s
 	for name, path := range settings.Config.PackageMaps {
-		externalPkg := gpyrpc.CmdExternalPkgSpec{
+		externalPkg := gpyrpc.ExternalPkg{
 			PkgName: name,
 			PkgPath: path,
 		}

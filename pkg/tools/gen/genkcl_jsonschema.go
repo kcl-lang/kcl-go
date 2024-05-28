@@ -12,6 +12,7 @@ import (
 
 	"github.com/iancoleman/strcase"
 	"kcl-lang.io/kcl-go/pkg/3rdparty/jsonschema"
+	"kcl-lang.io/kcl-go/pkg/loader"
 	"kcl-lang.io/kcl-go/pkg/logger"
 )
 
@@ -54,7 +55,7 @@ func convertPropertyName(name string, option castingOption) string {
 }
 
 func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src interface{}) error {
-	code, err := readSource(filename, src)
+	code, err := loader.ReadSource(filename, src)
 	if err != nil {
 		return err
 	}

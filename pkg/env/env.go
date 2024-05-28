@@ -73,6 +73,12 @@ func SetDisableUseArtifactInPath(value bool) {
 	instance().DisableUseArtifactInPath = value
 }
 
+// Enable the fast eval mode.
+func EnableFastEvalMode() {
+	// Set the fast eval mode for KCL
+	os.Setenv("KCL_FAST_EVAL", "1")
+}
+
 // envOr returns the value of the specified environment variable, or the
 // default value if it does not exist.
 func envOr(name, def string) string {

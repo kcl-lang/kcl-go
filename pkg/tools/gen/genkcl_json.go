@@ -4,10 +4,11 @@ import (
 	"io"
 
 	"github.com/goccy/go-yaml"
+	"kcl-lang.io/kcl-go/pkg/loader"
 )
 
 func (k *kclGenerator) genKclFromJsonData(w io.Writer, filename string, src interface{}) error {
-	code, err := readSource(filename, src)
+	code, err := loader.ReadSource(filename, src)
 	if err != nil {
 		return err
 	}
