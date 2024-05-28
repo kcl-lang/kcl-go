@@ -380,10 +380,10 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 	var referencedBy []string
 	schemaID := SchemaId(pkgPath, from)
 	if from.BaseSchema != nil {
-        childSchema := GetKclOpenAPIType(pkgPath, from.BaseSchema, true)
-        childSchema.ReferencedBy = append(childSchema.ReferencedBy, schemaID)
-        referencedBy = append(referencedBy, SchemaId(pkgPath, from.BaseSchema))
-    }
+		childSchema := GetKclOpenAPIType(pkgPath, from.BaseSchema, true)
+		childSchema.ReferencedBy = append(childSchema.ReferencedBy, schemaID)
+		referencedBy = append(referencedBy, SchemaId(pkgPath, from.BaseSchema))
+	}
 	t := KclOpenAPIType{
 		Description:  from.Description,
 		Default:      from.Default,
