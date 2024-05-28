@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"kcl-lang.io/kcl-go/pkg/kcl"
+	"kcl-lang.io/kcl-go/pkg/loader"
 	pb "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -42,7 +43,7 @@ func newPbGenerator(opt *Options) *pbGenerator {
 }
 
 func (p *pbGenerator) GenProto(filename string, src interface{}) (string, error) {
-	code, err := readSource(filename, src)
+	code, err := loader.ReadSource(filename, src)
 	if err != nil {
 		return "", err
 	}

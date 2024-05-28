@@ -5,8 +5,6 @@ package gen
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"os"
 	"sort"
 )
 
@@ -31,30 +29,6 @@ func jsonString(p interface{}) string {
 		return ""
 	}
 	return string(x)
-}
-
-func readSource(filename string, src interface{}) (data []byte, err error) {
-	if src == nil {
-		src, err = os.ReadFile(filename)
-		if err != nil {
-			return
-		}
-	}
-
-	switch src := src.(type) {
-	case []byte:
-		return src, nil
-	case string:
-		return []byte(src), nil
-	case io.Reader:
-		d, err := io.ReadAll(src)
-		if err != nil {
-			return nil, err
-		}
-		return d, nil
-	default:
-		return nil, fmt.Errorf("unsupported src type: %T", src)
-	}
 }
 
 // getSortedKeys returns the keys sorted in alphabetical order of a map.

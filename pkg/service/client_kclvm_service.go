@@ -141,25 +141,9 @@ func (p *KclvmServiceClient) OverrideFile(args *gpyrpc.OverrideFile_Args) (resp 
 	return
 }
 
-func (p *KclvmServiceClient) GetSchemaType(args *gpyrpc.GetSchemaType_Args) (resp *gpyrpc.GetSchemaType_Result, err error) {
-	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
-		resp, err = p.getClient(c).GetSchemaType(args)
-		err = p.wrapErr(err, stderr)
-	})
-	return
-}
-
 func (p *KclvmServiceClient) GetSchemaTypeMapping(args *gpyrpc.GetSchemaTypeMapping_Args) (resp *gpyrpc.GetSchemaTypeMapping_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).GetSchemaTypeMapping(args)
-		err = p.wrapErr(err, stderr)
-	})
-	return
-}
-
-func (p *KclvmServiceClient) GetFullSchemaType(args *gpyrpc.GetFullSchemaType_Args) (resp *gpyrpc.GetSchemaType_Result, err error) {
-	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
-		resp, err = p.getClient(c).GetFullSchemaType(args)
 		err = p.wrapErr(err, stderr)
 	})
 	return
@@ -208,6 +192,14 @@ func (p *KclvmServiceClient) RenameCode(args *gpyrpc.RenameCode_Args) (resp *gpy
 func (p *KclvmServiceClient) Test(args *gpyrpc.Test_Args) (resp *gpyrpc.Test_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).Test(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}
+
+func (p *KclvmServiceClient) UpdateDependencies(args *gpyrpc.UpdateDependencies_Args) (resp *gpyrpc.UpdateDependencies_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).UpdateDependencies(args)
 		err = p.wrapErr(err, stderr)
 	})
 	return

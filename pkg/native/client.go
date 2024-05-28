@@ -161,16 +161,8 @@ func (c *NativeServiceClient) OverrideFile(in *gpyrpc.OverrideFile_Args) (*gpyrp
 	return cApiCall[*gpyrpc.OverrideFile_Args, *gpyrpc.OverrideFile_Result](c, "KclvmService.OverrideFile", in)
 }
 
-func (c *NativeServiceClient) GetSchemaType(in *gpyrpc.GetSchemaType_Args) (*gpyrpc.GetSchemaType_Result, error) {
-	return cApiCall[*gpyrpc.GetSchemaType_Args, *gpyrpc.GetSchemaType_Result](c, "KclvmService.GetSchemaType", in)
-}
-
 func (c *NativeServiceClient) GetSchemaTypeMapping(in *gpyrpc.GetSchemaTypeMapping_Args) (*gpyrpc.GetSchemaTypeMapping_Result, error) {
 	return cApiCall[*gpyrpc.GetSchemaTypeMapping_Args, *gpyrpc.GetSchemaTypeMapping_Result](c, "KclvmService.GetSchemaTypeMapping", in)
-}
-
-func (c *NativeServiceClient) GetFullSchemaType(in *gpyrpc.GetFullSchemaType_Args) (*gpyrpc.GetSchemaType_Result, error) {
-	return cApiCall[*gpyrpc.GetFullSchemaType_Args, *gpyrpc.GetSchemaType_Result](c, "KclvmService.GetFullSchemaType", in)
 }
 
 func (c *NativeServiceClient) ValidateCode(in *gpyrpc.ValidateCode_Args) (*gpyrpc.ValidateCode_Result, error) {
@@ -195,4 +187,8 @@ func (c *NativeServiceClient) RenameCode(in *gpyrpc.RenameCode_Args) (*gpyrpc.Re
 
 func (c *NativeServiceClient) Test(in *gpyrpc.Test_Args) (*gpyrpc.Test_Result, error) {
 	return cApiCall[*gpyrpc.Test_Args, *gpyrpc.Test_Result](c, "KclvmService.Test", in)
+}
+
+func (c *NativeServiceClient) UpdateDependencies(in *gpyrpc.UpdateDependencies_Args) (*gpyrpc.UpdateDependencies_Result, error) {
+	return cApiCall[*gpyrpc.UpdateDependencies_Args, *gpyrpc.UpdateDependencies_Result](c, "KclvmService.UpdateDependencies", in)
 }

@@ -71,8 +71,12 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
 	p.router.GET("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
 	p.router.GET("/api:protorpc/KclvmService.OverrideFile", p.handle_OverrideFile)
-	p.router.GET("/api:protorpc/KclvmService.GetSchemaType", p.handle_GetSchemaType)
+	p.router.GET("/api:protorpc/KclvmService.GetSchemaTypeMapping", p.handle_GetSchemaTypeMapping)
 	p.router.GET("/api:protorpc/KclvmService.ValidateCode", p.handle_ValidateCode)
+	p.router.GET("/api:protorpc/KclvmService.Rename", p.handle_Rename)
+	p.router.GET("/api:protorpc/KclvmService.RenameCode", p.handle_RenameCode)
+	p.router.GET("/api:protorpc/KclvmService.Test", p.handle_Test)
+	p.router.GET("/api:protorpc/KclvmService.UpdateDependencies", p.handle_UpdateDependencies)
 
 	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
 	p.router.POST("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
@@ -89,13 +93,12 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/KclvmService.FormatPath", p.handle_FormatPath)
 	p.router.POST("/api:protorpc/KclvmService.LintPath", p.handle_LintPath)
 	p.router.POST("/api:protorpc/KclvmService.OverrideFile", p.handle_OverrideFile)
-	p.router.POST("/api:protorpc/KclvmService.GetSchemaType", p.handle_GetSchemaType)
 	p.router.POST("/api:protorpc/KclvmService.GetSchemaTypeMapping", p.handle_GetSchemaTypeMapping)
-	p.router.POST("/api:protorpc/KclvmService.GetFullSchemaType", p.handle_GetFullSchemaType)
 	p.router.POST("/api:protorpc/KclvmService.ValidateCode", p.handle_ValidateCode)
 	p.router.POST("/api:protorpc/KclvmService.Rename", p.handle_Rename)
 	p.router.POST("/api:protorpc/KclvmService.RenameCode", p.handle_RenameCode)
 	p.router.POST("/api:protorpc/KclvmService.Test", p.handle_Test)
+	p.router.POST("/api:protorpc/KclvmService.UpdateDependencies", p.handle_UpdateDependencies)
 }
 
 func (p *restServer) handle(
@@ -231,24 +234,10 @@ func (p *restServer) handle_OverrideFile(w http.ResponseWriter, r *http.Request,
 	})
 }
 
-func (p *restServer) handle_GetSchemaType(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	args := new(gpyrpc.GetSchemaType_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.GetSchemaType(args)
-	})
-}
-
 func (p *restServer) handle_GetSchemaTypeMapping(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	args := new(gpyrpc.GetSchemaTypeMapping_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.GetSchemaTypeMapping(args)
-	})
-}
-
-func (p *restServer) handle_GetFullSchemaType(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	args := new(gpyrpc.GetFullSchemaType_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.GetFullSchemaType(args)
 	})
 }
 
@@ -291,5 +280,12 @@ func (p *restServer) handle_Test(w http.ResponseWriter, r *http.Request, ps http
 	args := new(gpyrpc.Test_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.Test(args)
+	})
+}
+
+func (p *restServer) handle_UpdateDependencies(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.UpdateDependencies_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.UpdateDependencies(args)
 	})
 }

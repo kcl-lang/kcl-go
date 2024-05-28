@@ -217,8 +217,8 @@ func Test(testOpts *TestOptions, opts ...Option) (TestResult, error) {
 // schema_name: string
 //
 //	The schema name got, when the schema name is empty, all schemas are returned.
-func GetSchemaType(file, code, schemaName string) ([]*KclType, error) {
-	return kcl.GetSchemaType(file, code, schemaName)
+func GetSchemaType(filename string, src any, schemaName string) ([]*KclType, error) {
+	return kcl.GetSchemaType(filename, src, schemaName)
 }
 
 // GetSchemaTypeMapping returns a <schemaName>:<schemaType> mapping of schema types from a kcl file or code.
@@ -234,6 +234,6 @@ func GetSchemaType(file, code, schemaName string) ([]*KclType, error) {
 // schema_name: string
 //
 //	The schema name got, when the schema name is empty, all schemas are returned.
-func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*KclType, error) {
-	return kcl.GetSchemaTypeMapping(file, code, schemaName)
+func GetSchemaTypeMapping(filename string, src any, schemaName string) (map[string]*KclType, error) {
+	return kcl.GetSchemaTypeMapping(filename, src, schemaName)
 }

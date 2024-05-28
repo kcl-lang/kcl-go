@@ -27,7 +27,7 @@ func TestExecProgramWithPlugin(t *testing.T) {
 	result, err := client.ExecProgram(&gpyrpc.ExecProgram_Args{
 		KFilenameList: []string{"main.k"},
 		KCodeList:     []string{code},
-		Args: []*gpyrpc.CmdArgSpec{
+		Args: []*gpyrpc.Argument{
 			{
 				Name:  "a",
 				Value: "1",
@@ -63,7 +63,7 @@ func TestExecArtifactWithPlugin(t *testing.T) {
 	// ExecArtifact
 	execResult, err := client.ExecArtifact(&gpyrpc.ExecArtifact_Args{
 		ExecArgs: &gpyrpc.ExecProgram_Args{
-			Args: []*gpyrpc.CmdArgSpec{
+			Args: []*gpyrpc.Argument{
 				{
 					Name:  "a",
 					Value: "1",
