@@ -160,10 +160,8 @@ func addOrCreateSchema(pkg *KclPackage, schemaName string, schema *KclOpenAPITyp
 		pkg.schemaMapping = map[string]*KclOpenAPIType{schemaName: schema}
 	} else {
 		if existingSchema, ok := pkg.schemaMapping[schemaName]; ok {
-			// Update existing schema
 			*existingSchema = *schema
 		} else {
-			// Add new schema
 			pkg.schemaMapping[schemaName] = schema
 		}
 	}
