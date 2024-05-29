@@ -187,7 +187,7 @@ func (schema *KclOpenAPIType) referencesSchema(targetSchema *KclOpenAPIType) boo
 	}
 
 	for _, property := range schema.Properties {
-		if property.Type == targetSchema.Type {
+		if property == targetSchema {
 			return true
 		}
 	}

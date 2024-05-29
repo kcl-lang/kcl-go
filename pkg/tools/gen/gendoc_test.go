@@ -106,6 +106,43 @@ func TestDocGenerate(t *testing.T) {
 	}
 }
 
+func TestPopulateReferencedBy(t *testing.T) {
+	schemaA := &KclOpenAPIType{
+		Type:        "object",
+		Description: "Schema A",
+		Properties: map[string]*KclOpenAPIType{
+			"propA": {Type: "string"},
+		},
+	}
+	schemaB := &KclOpenAPIType{
+		Type:        "object",
+		Description: "Schema B",
+		Properties: map[string]*KclOpenAPIType{
+			"propB": {Type: "object"},
+		},
+	}
+	schemaC := &KclOpenAPIType{
+		Type:        "object",
+		Description: "Schema C",
+		Properties: map[string]*KclOpenAPIType{
+			"propC": {Type: "object"},
+		},
+	}
+
+	schemaB.Properties["refA"] = schemaA
+	schemaC.Properties["refB"] = schemaB
+
+	pkg := KclPackage{
+		SchemaList: []*KclOpenAPIType{schemaA, schemaB, schemaC},
+	}
+
+	pkg.populateReferencedBy()
+
+	assert2.ElementsMatch(t, schemaA.ReferencedBy, []string{"Schema B"})
+	assert2.ElementsMatch(t, schemaB.ReferencedBy, []string{"Schema C"})
+	assert2.Empty(t, schemaC.ReferencedBy)
+}
+
 func initTestCases(t *testing.T) []*TestCase {
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -174,11 +211,11 @@ func CompareDir(a string, b string) error {
 		}
 		linesA, err := readLines(aPath)
 		if err != nil {
-			return fmt.Errorf("failed to readlins from %s when compare files", aPath)
+			return fmt.Errorf("failed to readlines from %s when compare files", aPath)
 		}
 		linesB, err := readLines(bPath)
 		if err != nil {
-			return fmt.Errorf("failed to readlins from %s when compare files", bPath)
+			return fmt.Errorf("failed to readlines from %s when compare files", bPath)
 		}
 		for i, line := range linesA {
 			if line != linesB[i] {
