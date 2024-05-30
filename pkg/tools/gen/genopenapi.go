@@ -382,10 +382,10 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 		Description: from.Description,
 		Default:     from.Default,
 	}
-    
+
 	if nested && from.BaseSchema != nil {
 		baseSchema := GetKclOpenAPIType(pkgPath, from.BaseSchema, true)
-		baseSchema.ReferencedBy = append(baseSchema.ReferencedBy, SchemaId(pkgPath,from))
+		baseSchema.ReferencedBy = append(baseSchema.ReferencedBy, SchemaId(pkgPath, from))
 	}
 
 	// Get decorators
