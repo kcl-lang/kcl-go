@@ -377,7 +377,6 @@ func GetPkgDir(base string, pkgName string) string {
 
 // GetKclOpenAPIType converts the kcl.KclType(the representation of Type in KCL API) to KclOpenAPIType(the representation of Type in KCL Open API)
 func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenAPIType {
-
 	t := KclOpenAPIType{
 		Description: from.Description,
 		Default:     from.Default,
