@@ -15,6 +15,7 @@
                         {{- indentLines (include "data" .) "        " }}
                         {{- end }}
                     {{- "    }\n" }}
+                {{- else if isKclConfig . }}{{ indentLines (include "config" .) "    " -}}
                 {{- else }}
                     {{- indentLines (formatValue .) "    " }}{{- "\n" }}
                 {{- end }}
