@@ -97,7 +97,7 @@ x1 = Person {
 - [Constants](<#constants>)
 - [func FormatCode\(code interface\{\}\) \(\[\]byte, error\)](<#FormatCode>)
 - [func FormatPath\(path string\) \(changedPaths \[\]string, err error\)](<#FormatPath>)
-- [func GetSchemaTypeMapping\(file, code, schemaName string\) \(map\[string\]\*KclType, error\)](<#GetSchemaTypeMapping>)
+- [func GetSchemaTypeMapping\(filename string, src any, schemaName string\) \(map\[string\]\*KclType, error\)](<#GetSchemaTypeMapping>)
 - [func InitKclvmPath\(kclvmRoot string\)](<#InitKclvmPath>)
 - [func InitKclvmRuntime\(n int\)](<#InitKclvmRuntime>)
 - [func LintPath\(paths \[\]string\) \(results \[\]string, err error\)](<#LintPath>)
@@ -113,7 +113,7 @@ x1 = Person {
   - [func Run\(path string, opts ...Option\) \(\*KCLResultList, error\)](<#Run>)
   - [func RunFiles\(paths \[\]string, opts ...Option\) \(\*KCLResultList, error\)](<#RunFiles>)
 - [type KclType](<#KclType>)
-  - [func GetSchemaType\(file, code, schemaName string\) \(\[\]\*KclType, error\)](<#GetSchemaType>)
+  - [func GetSchemaType\(filename string, src any, schemaName string\) \(\[\]\*KclType, error\)](<#GetSchemaType>)
 - [type ListDepFilesOption](<#ListDepFilesOption>)
 - [type ListDepsOptions](<#ListDepsOptions>)
 - [type Option](<#Option>)
@@ -232,7 +232,7 @@ func main() {
 ## func [GetSchemaTypeMapping](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L237>)
 
 ```go
-func GetSchemaTypeMapping(file, code, schemaName string) (map[string]*KclType, error)
+func GetSchemaTypeMapping(filename string, src any, schemaName string) (map[string]*KclType, error)
 ```
 
 GetSchemaTypeMapping returns a \<schemaName\>:\<schemaType\> mapping of schema types from a kcl file or code.
@@ -649,48 +649,6 @@ func Run(path string, opts ...Option) (*KCLResultList, error)
 
 Run evaluates the KCL program with path and opts, then returns the object list.
 
-<details><summary>Example (Get Field)</summary>
-<p>
-
-
-
-```go
-package main
-
-import (
-	"fmt"
-	"log"
-
-	kcl "kcl-lang.io/kcl-go"
-)
-
-func assert(v bool, a ...interface{}) {
-	if !v {
-		a = append([]interface{}{"assert failed"}, a...)
-		log.Panic(a...)
-	}
-}
-
-func main() {
-	// run kcl.yaml
-	x, err := kcl.Run("./testdata/app0/kcl.yaml")
-	assert(err == nil, err)
-
-	// print deploy_topology[1].zone
-	fmt.Println(x.First().Get("deploy_topology.1.zone"))
-
-}
-```
-
-#### Output
-
-```
-R000A
-```
-
-</p>
-</details>
-
 <a name="RunFiles"></a>
 ### func [RunFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L81>)
 
@@ -736,7 +694,7 @@ type KclType = kcl.KclType
 ### func [GetSchemaType](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L220>)
 
 ```go
-func GetSchemaType(file, code, schemaName string) ([]*KclType, error)
+func GetSchemaType(filename string, src any, schemaName string) ([]*KclType, error)
 ```
 
 GetSchemaType returns schema types from a kcl file or code.

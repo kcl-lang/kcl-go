@@ -42,14 +42,21 @@ var funcs = template.FuncMap{
 		return ok
 	},
 	"isArray": func(v interface{}) bool {
-		_, ok := v.([]interface{})
-		return ok
+		switch v.(type) {
+		case []data:
+			return true
+		case []config:
+			return true
+		case []interface{}:
+			return true
+		default:
+			return false
+		}
 	},
 }
+var tmpl *template.Template = &template.Template{}
 
-func (k *kclGenerator) genKcl(w io.Writer, s kclFile) error {
-	tmpl := &template.Template{}
-
+func init() {
 	// add "include" function. It works like "template" but can be used in pipeline.
 	funcs["include"] = func(name string, data interface{}) (string, error) {
 		buf := bytes.NewBuffer(nil)
@@ -66,7 +73,11 @@ func (k *kclGenerator) genKcl(w io.Writer, s kclFile) error {
 	tmpl = addTemplate(tmpl, "validator", validatorTmpl)
 	tmpl = addTemplate(tmpl, "schema", schemaTmpl)
 	tmpl = addTemplate(tmpl, "index", indexTmpl)
-	return tmpl.Funcs(funcs).Execute(w, s)
+	tmpl = tmpl.Funcs(funcs)
+}
+
+func (k *kclGenerator) genKcl(w io.Writer, s kclFile) error {
+	return tmpl.Execute(w, s)
 }
 
 func addTemplate(tmpl *template.Template, name, data string) *template.Template {

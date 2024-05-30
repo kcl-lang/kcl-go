@@ -132,6 +132,8 @@ type kclFile struct {
 	Data []data
 	// [k =] [T]v configurations, k and T is optional.
 	Config []config
+	// ExtraCode denotes
+	ExtraCode string
 }
 
 type kImport struct {

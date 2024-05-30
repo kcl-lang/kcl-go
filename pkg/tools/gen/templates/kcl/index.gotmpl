@@ -11,3 +11,4 @@
 {{ range .Config -}}
 {{ template "config" . -}}
 {{ end -}}
+{{- if .ExtraCode }}{{ .ExtraCode }}{{- end }}
