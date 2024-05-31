@@ -18,6 +18,10 @@
 {{end}}{{if $example.Value}}```
 {{$example.Value}}
 ```{{end}}
+{{end}}{{if ne (len $Data.ReferencedBy) 0}}#### Referenced By
+{{range $index, $schema := $Data.ReferencedBy}}
+- {{$schema}}
+{{end}}
 {{end}}
 {{end -}}
 {{- end -}}

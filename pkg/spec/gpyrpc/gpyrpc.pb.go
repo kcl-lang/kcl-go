@@ -3752,7 +3752,7 @@ type KclType struct {
 	PkgPath     string              `protobuf:"bytes,13,opt,name=pkg_path,json=pkgPath,proto3" json:"pkg_path,omitempty"`                                                                            // `pkg_path` represents the path name of the package where the attribute is located.
 	Description string              `protobuf:"bytes,14,opt,name=description,proto3" json:"description,omitempty"`                                                                                   // `description` represents the document of the attribute.
 	Examples    map[string]*Example `protobuf:"bytes,15,rep,name=examples,proto3" json:"examples,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"` // A map object to hold examples, the key is the example name.
-	BaseSchema  *KclType            `protobuf:"bytes,16,opt,name=base_schema,json=baseSchema,proto3" json:"base_schema,omitempty"`                                                                   // contains referenced by info for schema
+	BaseSchema  *KclType            `protobuf:"bytes,16,opt,name=base_schema,proto3" json:"base_schema,omitempty"`
 }
 
 func (x *KclType) Reset() {
