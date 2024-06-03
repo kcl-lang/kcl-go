@@ -30,7 +30,9 @@ const (
 	ModeTerraformSchema
 	ModeJson
 	ModeYaml
+	ModeToml
 	ModeProto
+	ModeTextProto
 )
 
 type kclGenerator struct {
@@ -70,10 +72,14 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 			}
 		case ".yaml", "yml":
 			k.opts.Mode = ModeYaml
+		case ".toml":
+			k.opts.Mode = ModeYaml
 		case ".go":
 			k.opts.Mode = ModeGoStruct
 		case ".proto":
 			k.opts.Mode = ModeProto
+		case ".textproto":
+			k.opts.Mode = ModeTextProto
 		default:
 			return errors.New("failed to detect mode")
 		}
@@ -90,8 +96,12 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		return k.genKclFromJsonData(w, filename, src)
 	case ModeYaml:
 		return k.genKclFromYaml(w, filename, src)
+	//case ModeToml:
+	//	return k.genKclFromToml(w, filename, src)
 	case ModeProto:
-		return k.genKclFromProtoData(w, filename, src)
+		return k.genKclFromProto(w, filename, src)
+	// case ModeTextProto:
+	// 	return k.genKclFromTextProto(w, filename, src)
 	default:
 		return errors.New("unknown mode")
 	}
