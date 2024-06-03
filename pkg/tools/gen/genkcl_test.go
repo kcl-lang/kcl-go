@@ -373,13 +373,107 @@ app2: ac.AppConfiguration {
         app = "nginx"
     }
     annotations = {
-        app1 = {"app": "nginx"}
+        app1 = {app = "nginx"}
         app2 = Annotation {
-            app1 = {"app": "nginx"}
+            app1 = {app = "nginx"}
         }
     }
 }
 `)
+}
+
+func TestGenKclFromValue(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    interface{}
+		expected string
+	}{
+		{
+			name:     "bool true",
+			input:    true,
+			expected: "True",
+		},
+		{
+			name:     "bool false",
+			input:    false,
+			expected: "False",
+		},
+		{
+			name:     "int",
+			input:    123,
+			expected: "123",
+		},
+		{
+			name:     "float",
+			input:    123.456,
+			expected: "123.456",
+		},
+		{
+			name:     "string",
+			input:    "hello",
+			expected: "\"hello\"",
+		},
+		{
+			name:  "array",
+			input: [3]int{1, 2, 3},
+			expected: `[
+    1
+    2
+    3
+]`,
+		},
+		{
+			name:  "slice",
+			input: []string{"A", "B", "C"},
+			expected: `[
+    "A"
+    "B"
+    "C"
+]`,
+		},
+		{
+			name:  "map",
+			input: map[string]interface{}{"name": "example", "age": 30},
+			expected: `{
+    age = 30
+    name = "example"
+}`,
+		},
+		{
+			name:  "struct",
+			input: struct{ Name string }{"John"},
+			expected: `{
+    Name = "John"
+}`,
+		},
+		{
+			name: "nested",
+			input: map[string]interface{}{
+				"details": map[string]interface{}{
+					"age": 30,
+					"address": map[string]interface{}{
+						"city":    "New York",
+						"zipcode": 10001,
+					},
+				},
+				"active": true,
+			},
+			expected: "{\n    active = True\n    details = {\n        address = {\n            city = \"New York\"\n            zipcode = 10001\n        }\n        age = 30\n    }\n}",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err := GenKclFromValue(&buf, tt.input)
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
+			if buf.String() != tt.expected {
+				t.Errorf("expected: %s, got: %s", tt.expected, buf.String())
+			}
+		})
+	}
 }
 
 func readFileString(t testing.TB, p string) (content string) {
