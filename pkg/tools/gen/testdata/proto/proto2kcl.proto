@@ -15,6 +15,11 @@ message Person{
     optional int32 star_int = 8;
     map<string,string> star_map = 9;
     google.protobuf.Any inter = 10;
+    oneof payload {
+        int32 int_payload = 11;
+        string string_payload = 12;
+        bool bool_payload = 13;
+    }
 }
 
 message Movie{

@@ -193,7 +193,7 @@ type KclOpenAPIType struct {
 	ExternalDocs         string                     `json:"externalDocs,omitempty"`         // externalDocs
 	Ref                  string                     `json:"ref,omitempty"`                  // reference to schema path
 	BaseSchema           *KclOpenAPIType            `json:"baseSchema,omitempty"`
-	ReferencedBy         []string                   `json:"referencedBy,omitempty"`         // schemas referncing this schema
+	ReferencedBy         []string                   `json:"referencedBy,omitempty"` // schemas referncing this schema
 	*KclExtensions                                  // x-kcl- extensions
 }
 
@@ -384,11 +384,11 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 		baseSchema = GetKclOpenAPIType(pkgPath, from.BaseSchema, true)
 		baseSchema.ReferencedBy = append(baseSchema.ReferencedBy, SchemaId(pkgPath, from))
 	}
-	
+
 	t := KclOpenAPIType{
 		Description: from.Description,
 		Default:     from.Default,
-		BaseSchema: baseSchema,
+		BaseSchema:  baseSchema,
 	}
 
 	// Get decorators
