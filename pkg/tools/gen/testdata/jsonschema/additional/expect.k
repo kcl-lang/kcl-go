@@ -10,11 +10,11 @@ schema Ethernet:
     Attributes
     ----------
     name : str, optional
-    socket : EthernetSocket, optional, default is {"HTTP": 80, "HTTPS": 443}
+    socket : EthernetSocket, optional, default is {HTTP = 80, HTTPS = 443}
     """
 
     name?: str
-    socket?: EthernetSocket = {"HTTP": 80, "HTTPS": 443}
+    socket?: EthernetSocket = {HTTP = 80, HTTPS = 443}
 
 schema EthernetSocket:
     r"""

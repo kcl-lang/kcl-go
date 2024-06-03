@@ -73,7 +73,7 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		case ".yaml", "yml":
 			k.opts.Mode = ModeYaml
 		case ".toml":
-			k.opts.Mode = ModeYaml
+			k.opts.Mode = ModeToml
 		case ".go":
 			k.opts.Mode = ModeGoStruct
 		case ".proto":
@@ -96,12 +96,10 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		return k.genKclFromJsonData(w, filename, src)
 	case ModeYaml:
 		return k.genKclFromYaml(w, filename, src)
-	//case ModeToml:
-	//	return k.genKclFromToml(w, filename, src)
+	// case ModeToml:
+	// 	return k.genKclFromToml(w, filename, src)
 	case ModeProto:
 		return k.genKclFromProto(w, filename, src)
-	// case ModeTextProto:
-	// 	return k.genKclFromTextProto(w, filename, src)
 	default:
 		return errors.New("unknown mode")
 	}

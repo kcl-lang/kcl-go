@@ -93,60 +93,18 @@ func formatType(t typeInterface) string {
 }
 
 func formatValue(v interface{}) string {
-	if v == nil {
-		return "None"
+	var buf bytes.Buffer
+	p := &printer{
+		listInOneLine:   true,
+		configInOneLine: true,
+		writer:          &buf,
 	}
-	switch value := v.(type) {
-	case string:
-		if isStringEscaped(value) {
-			if value[len(value)-1] == '"' {
-				// if the string ends with '"' then we need to add a space after the closing triple quote
-				return fmt.Sprintf(`r"""%s """`, value)
-			}
-			return fmt.Sprintf(`r"""%s"""`, value)
-		}
-
-		return fmt.Sprintf(`"%s"`, value)
-	case bool:
-		if value {
-			return "True"
-		}
-		return "False"
-	case map[string]bool:
-		return formatMap(value)
-	case map[string]float32:
-		return formatMap(value)
-	case map[string]float64:
-		return formatMap(value)
-	case map[string]int:
-		return formatMap(value)
-	case map[string]string:
-		return formatMap(value)
-	case map[string]interface{}:
-		return formatMap(value)
-	case []interface{}:
-		var s strings.Builder
-		for i, item := range value {
-			if i != 0 {
-				s.WriteString(", ")
-			}
-			s.WriteString(formatValue(item))
-		}
-		return "[" + s.String() + "]"
-	default:
-		return fmt.Sprintf("%v", value)
+	err := p.walkValue(v)
+	if err != nil {
+		return fmt.Sprintf("%v", v)
+	} else {
+		return buf.String()
 	}
-}
-
-func formatMap[V any](value map[string]V) string {
-	var s strings.Builder
-	for _, key := range getSortedKeys(value) {
-		if s.Len() != 0 {
-			s.WriteString(", ")
-		}
-		s.WriteString(fmt.Sprintf("%s: %s", formatValue(key), formatValue(value[key])))
-	}
-	return "{" + s.String() + "}"
 }
 
 var kclKeywords = map[string]struct{}{
