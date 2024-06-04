@@ -382,7 +382,7 @@ app2: ac.AppConfiguration {
 `)
 }
 
-func TestGenKclFromValue(t *testing.T) {
+func TestMarshalKcl(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    interface{}
@@ -464,13 +464,12 @@ func TestGenKclFromValue(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var buf bytes.Buffer
-			err := GenKclFromValue(&buf, tt.input)
+			got, err := Marshal(tt.input)
 			if err != nil {
 				t.Errorf("unexpected error: %v", err)
 			}
-			if buf.String() != tt.expected {
-				t.Errorf("expected: %s, got: %s", tt.expected, buf.String())
+			if string(got) != tt.expected {
+				t.Errorf("expected: %s, got: %s", tt.expected, string(got))
 			}
 		})
 	}

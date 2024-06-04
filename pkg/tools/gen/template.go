@@ -95,9 +95,9 @@ func formatType(t typeInterface) string {
 func formatValue(v interface{}) string {
 	var buf bytes.Buffer
 	p := &printer{
-		listInOneLine:   true,
-		configInOneLine: true,
-		writer:          &buf,
+		listInline:   true,
+		configInline: true,
+		writer:       &buf,
 	}
 	err := p.walkValue(v)
 	if err != nil {
