@@ -1,19 +1,57 @@
 package gen
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/goccy/go-yaml"
 )
 
+const (
+	KclNoneValue  = "None"
+	KclTrueValue  = "True"
+	KclFalseValue = "False"
+)
+
+// Marshaler is the interface implemented by types that can marshal
+// themselves into valid KCL.
+type Marshaler interface {
+	MarshalKcl() ([]byte, error)
+}
+
+// Marshal returns a KCL representation of the Go value.
+func Marshal(v any) ([]byte, error) {
+	buf := new(bytes.Buffer)
+	p := &printer{
+		writer: buf,
+	}
+	if err := p.walkValue(v); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+var (
+	marshalTy = reflect.TypeOf((*Marshaler)(nil)).Elem()
+)
+
+func isMarshalTy(rv reflect.Value) bool {
+	return rv.Type().Implements(marshalTy)
+}
+
 type printer struct {
-	indent          uint
-	writer          io.Writer
-	listInOneLine   bool
-	configInOneLine bool
+	indent       uint
+	writer       io.Writer
+	listInline   bool
+	configInline bool
 }
 
 func (p *printer) writeIndent() {
@@ -63,19 +101,109 @@ func (p *printer) leave() {
 	}
 }
 
+func (p *printer) writeListBegin() {
+	p.write("[")
+	if !p.listInline {
+		p.writeIndentWithNewLine()
+	}
+}
+
+func (p *printer) writeListEnd() {
+	if !p.listInline {
+		p.writeDedentWithNewLine()
+	}
+	p.write("]")
+}
+
+func (p *printer) writeListSep() {
+	if !p.listInline {
+		p.writeNewLine()
+	} else {
+		p.write(", ")
+	}
+}
+
+func (p *printer) writeConfigBegin() {
+	p.write("{")
+	if !p.configInline {
+		p.writeIndentWithNewLine()
+	}
+}
+
+func (p *printer) writeConfigEnd() {
+	if !p.configInline {
+		p.writeDedentWithNewLine()
+	}
+	p.write("}")
+}
+
+func (p *printer) writeConfigSep() {
+	if !p.configInline {
+		p.writeNewLine()
+	} else {
+		p.write(", ")
+	}
+}
+
 func (p *printer) walkValue(v any) error {
 	if v == nil {
-		p.write("None")
+		p.write(KclNoneValue)
 		return nil
 	}
 	ty := reflect.TypeOf(v)
 	val := reflect.ValueOf(v)
+
+	switch v := val.Interface().(type) {
+	case Marshaler:
+		s, err := v.MarshalKcl()
+		if err != nil {
+			return err
+		}
+		if s == nil {
+			return errors.New("MarshalKcl returned nil and no error")
+		}
+		p.writer.Write(s)
+		return nil
+	case time.Duration:
+		p.write(v.String())
+		return nil
+	case json.Number:
+		n, _ := val.Interface().(json.Number)
+		if n == "" {
+			p.write("0")
+			return nil
+		} else if v, err := n.Int64(); err == nil {
+			p.walkValue(v)
+			return nil
+		} else if v, err := n.Float64(); err == nil {
+			p.walkValue(v)
+			return nil
+		}
+		return fmt.Errorf("unable to convert %q to int64 or float64", n)
+	case yaml.MapSlice:
+		n, _ := val.Interface().(yaml.MapSlice)
+		p.writeConfigBegin()
+		keys := val.MapKeys()
+		sort.Slice(keys, func(i, j int) bool {
+			return fmt.Sprintf("%v", keys[i]) < fmt.Sprintf("%v", keys[j])
+		})
+		for i, item := range n {
+			if i > 0 {
+				p.writeConfigSep()
+			}
+			p.walkValue(item.Key)
+			p.write(" = ")
+			p.walkValue(item.Value)
+		}
+		p.writeConfigEnd()
+	}
+
 	switch ty.Kind() {
 	case reflect.Bool:
 		if val.Bool() {
-			p.write("True")
+			p.write(KclTrueValue)
 		} else {
-			p.write("False")
+			p.write(KclFalseValue)
 		}
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		p.write(strconv.FormatInt(val.Int(), 10))
@@ -84,42 +212,25 @@ func (p *printer) walkValue(v any) error {
 	case reflect.Float32, reflect.Float64:
 		p.write(strconv.FormatFloat(val.Float(), 'f', -1, ty.Bits()))
 	case reflect.Array, reflect.Slice:
-		p.write("[")
-		if !p.listInOneLine {
-			p.writeIndentWithNewLine()
-		}
+		p.writeListBegin()
 		for i := 0; i < val.Len(); i++ {
 			if i > 0 {
-				if !p.listInOneLine {
-					p.writeNewLine()
-				} else {
-					p.write(", ")
-				}
+				p.writeListSep()
 			}
 			if err := p.walkValue(val.Index(i).Interface()); err != nil {
 				return err
 			}
 		}
-		if !p.listInOneLine {
-			p.writeDedentWithNewLine()
-		}
-		p.write("]")
+		p.writeListEnd()
 	case reflect.Map:
-		p.write("{")
-		if !p.configInOneLine {
-			p.writeIndentWithNewLine()
-		}
+		p.writeConfigBegin()
 		keys := val.MapKeys()
 		sort.Slice(keys, func(i, j int) bool {
 			return fmt.Sprintf("%v", keys[i]) < fmt.Sprintf("%v", keys[j])
 		})
 		for i, key := range keys {
 			if i > 0 {
-				if !p.configInOneLine {
-					p.writeNewLine()
-				} else {
-					p.write(", ")
-				}
+				p.writeConfigSep()
 			}
 			if key.Kind() == reflect.String {
 				p.write(formatName(key.String()))
@@ -133,10 +244,7 @@ func (p *printer) walkValue(v any) error {
 				return err
 			}
 		}
-		if !p.configInOneLine {
-			p.writeDedentWithNewLine()
-		}
-		p.write("}")
+		p.writeConfigEnd()
 	case reflect.String:
 		value := val.String()
 		if isStringEscaped(value) {
@@ -150,44 +258,46 @@ func (p *printer) walkValue(v any) error {
 			p.write(strconv.Quote(value))
 		}
 	case reflect.Struct:
-		p.write("{")
-		p.writeIndentWithNewLine()
-		for i := 0; i < ty.NumField(); i++ {
+		p.writeConfigBegin()
+		fields := TypeFields(ty, val)
+		for i, field := range fields {
 			if i > 0 {
-				if !p.configInOneLine {
+				if !p.configInline {
 					p.writeNewLine()
 				} else {
 					p.write(", ")
 				}
 			}
-			field := ty.Field(i)
-			fieldValue := val.Field(i).Interface()
-			p.write(formatName(field.Name) + " = ")
-			if err := p.walkValue(fieldValue); err != nil {
+			keyName := field.name
+			opts := field.opts
+			if opts != nil {
+				if field.opts.skip {
+					continue
+				}
+				if opts.omitempty && IsEmpty(field.val) {
+					continue
+				}
+				if opts.omitzero && IsZero(field.val) {
+					continue
+				}
+				if opts.name != "" {
+					keyName = opts.name
+				}
+			}
+			p.write(formatName(keyName) + " = ")
+			if err := p.walkValue(field.val.Interface()); err != nil {
 				return err
 			}
 		}
-		p.writeDedentWithNewLine()
-		p.write("}")
+		p.writeConfigEnd()
+	case reflect.Ptr, reflect.Interface:
+		if val.IsNil() {
+			p.write(KclNoneValue)
+		} else {
+			return p.walkValue(val.Elem())
+		}
 	default:
 		return fmt.Errorf("invalid value type to kcl: %v", ty)
 	}
 	return nil
-}
-
-// Generate KCL code from go value
-func GenKclFromValue(w io.Writer, v any) error {
-	p := &printer{
-		writer: w,
-	}
-	return p.walkValue(v)
-}
-
-// Generate KCL code from go value
-func GenKclFromValueWithIndent(w io.Writer, v any, indent uint) error {
-	p := &printer{
-		indent: indent,
-		writer: w,
-	}
-	return p.walkValue(v)
 }
