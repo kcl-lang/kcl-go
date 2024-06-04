@@ -183,10 +183,6 @@ func (p *printer) walkValue(v any) error {
 	case yaml.MapSlice:
 		n, _ := val.Interface().(yaml.MapSlice)
 		p.writeConfigBegin()
-		keys := val.MapKeys()
-		sort.Slice(keys, func(i, j int) bool {
-			return fmt.Sprintf("%v", keys[i]) < fmt.Sprintf("%v", keys[j])
-		})
 		for i, item := range n {
 			if i > 0 {
 				p.writeConfigSep()
