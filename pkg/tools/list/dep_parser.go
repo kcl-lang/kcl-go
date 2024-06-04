@@ -12,8 +12,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/BurntSushi/toml"
 	"gopkg.in/yaml.v3"
+	"kcl-lang.io/kcl-go/pkg/3rdparty/toml"
 )
 
 var _ = fmt.Sprint
