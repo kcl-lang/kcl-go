@@ -272,6 +272,31 @@ func TestGenKclFromProto(t *testing.T) {
 	})
 }
 
+func TestGenKclFromTextProto(t *testing.T) {
+	generator := TextProtoGenerator{}
+	got, err := generator.GenFromSchemaFile("./testdata/textproto/data.textproto", nil, "./testdata/textproto/schema.k", nil, "Config")
+	assert2.Nil(t, err)
+	expected := &config{
+		Name: "Config",
+		Data: []data{
+			{Key: "a", Value: 1},
+			{Key: "b", Value: 2.0},
+			{Key: "c", Value: true},
+			{Key: "d", Value: "value"},
+			{Key: "empty1", Value: []interface{}(nil)},
+			{Key: "empty2", Value: []interface{}(nil)},
+			{Key: "int1", Value: []interface{}{1, 2}},
+			{Key: "int2", Value: []interface{}{1, 2}},
+			{Key: "int3", Value: []interface{}{1, 2}},
+			{Key: "string1", Value: []interface{}{"a", "b"}},
+			{Key: "float1", Value: []interface{}{100.0, 1.0, 0.0}},
+			{Key: "map", Value: []data{{Key: "foo", Value: 2}}},
+			{Key: "map", Value: []data{{Key: "bar", Value: 3}}},
+		},
+	}
+	assert2.Equal(t, expected, got)
+}
+
 type TestData = data
 
 func TestGenKclFromJsonAndImports(t *testing.T) {

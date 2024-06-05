@@ -14,7 +14,8 @@ import (
 )
 
 const (
-	pbTypAny = "google.protobuf.Any"
+	pbTypAny        = "google.protobuf.Any"
+	pbTypAnyPkgPath = "google/protobuf/any.proto"
 )
 
 type Options struct {
@@ -49,13 +50,13 @@ func (p *pbGenerator) GenProto(filename string, src interface{}) (string, error)
 	}
 
 	if p.opt.GoPackage == "" {
-		p.opt.GoPackage = p.getOptopn_go_package(string(code))
+		p.opt.GoPackage = p.getOptionGoPackage(string(code))
 	}
 	if p.opt.PbPackage == "" {
-		p.opt.PbPackage = p.getOptopn_pb_package(string(code))
+		p.opt.PbPackage = p.getOptionPbPackage(string(code))
 	}
 
-	typs, err := kcl.GetSchemaType(filename, string(code), "")
+	types, err := kcl.GetSchemaType(filename, string(code), "")
 	if err != nil {
 		return "", err
 	}
@@ -74,7 +75,7 @@ func (p *pbGenerator) GenProto(filename string, src interface{}) (string, error)
 
 	fmt.Fprintf(&buf, "option go_package = \"%s\";\n", p.opt.GoPackage)
 
-	var messageBody = p.genProto_messages(typs...)
+	var messageBody = p.genProtoMessages(types...)
 
 	if p.needImportAny {
 		fmt.Fprintln(&buf)
@@ -86,12 +87,12 @@ func (p *pbGenerator) GenProto(filename string, src interface{}) (string, error)
 	return buf.String(), nil
 }
 
-func (p *pbGenerator) genProto_messages(types ...*pb.KclType) string {
+func (p *pbGenerator) genProtoMessages(types ...*pb.KclType) string {
 	var buf bytes.Buffer
 	for _, typ := range types {
 		switch typ.Type {
 		case typSchema:
-			p.genProto_schema(&buf, typ)
+			p.genProtoSchema(&buf, typ)
 		default:
 			fmt.Fprintf(&buf, "ERR: unknown '%v', json = %v\n", typ.Type, jsonString(typ))
 		}
@@ -99,7 +100,7 @@ func (p *pbGenerator) genProto_messages(types ...*pb.KclType) string {
 	return buf.String()
 }
 
-func (p *pbGenerator) genProto_schema(w io.Writer, typ *pb.KclType) {
+func (p *pbGenerator) genProtoSchema(w io.Writer, typ *pb.KclType) {
 	assert(typ.Type == typSchema)
 
 	fmt.Fprintln(w)
@@ -147,7 +148,7 @@ func (p *pbGenerator) genProto_schema(w io.Writer, typ *pb.KclType) {
 }
 
 // #kclvm/genpb: option go_package = kcl_gen/_/hello_k
-func (p *pbGenerator) getOptopn_go_package(code string) string {
+func (p *pbGenerator) getOptionGoPackage(code string) string {
 	if !strings.Contains(code, `#kclvm/genpb:`) {
 		return ""
 	}
@@ -161,7 +162,7 @@ func (p *pbGenerator) getOptopn_go_package(code string) string {
 }
 
 // #kclvm/genpb: option pb_package = kcl_gen._.hello_k
-func (p *pbGenerator) getOptopn_pb_package(code string) string {
+func (p *pbGenerator) getOptionPbPackage(code string) string {
 	if !strings.Contains(code, `#kclvm/genpb:`) {
 		return ""
 	}
