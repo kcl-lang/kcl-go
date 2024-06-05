@@ -160,7 +160,9 @@ func (k *kclGenerator) genKclFromProtoDef(builder *bufio.Writer, definitions *pr
 			builder.WriteString(lineBreak)
 		// TODO: Import node on multi proto files
 		case *proto.Import:
-			logger.GetLogger().Warningf("unsupported import statement for %v", def.Filename)
+			if def.Filename != pbTypAnyPkgPath {
+				logger.GetLogger().Warningf("unsupported import statement for %v", def.Filename)
+			}
 		}
 	}
 	if len(oneOfSchemas) > 0 {

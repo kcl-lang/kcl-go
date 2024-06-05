@@ -1,0 +1,29 @@
+a: 1
+b: 2.0
+c: true
+d: "value"
+empty1: []
+empty2: [
+]
+
+int1: [1, 2]
+int2: [1 2]
+int3: [
+    1
+    2
+]
+
+string1: [
+    "a",
+    "b"
+]
+
+float1: [ 1e+2 1. 0]
+map: {
+    key: "foo"
+    value: 2
+}
+map: {
+    key: "bar"
+    value: 3
+}

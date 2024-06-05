@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"kcl-lang.io/kcl-go/pkg/ast"
+
 	pb "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -132,7 +134,7 @@ type kclFile struct {
 	Data []data
 	// [k =] [T]v configurations, k and T is optional.
 	Config []config
-	// ExtraCode denotes
+	// ExtraCode denotes the any kcl code that we want to append the end of file.
 	ExtraCode string
 }
 
@@ -199,15 +201,17 @@ type indexSignature struct {
 
 // data is a kcl data definition.
 type data struct {
-	Key   string
-	Value interface{}
+	Key      string
+	Value    interface{}
+	Comments []*ast.Comment
 }
 
 type config struct {
-	Var     string
-	Name    string
-	IsUnion bool
-	Data    []data
+	Var      string
+	Name     string
+	IsUnion  bool
+	Data     []data
+	Comments []*ast.Comment
 }
 
 type typeInterface interface {
