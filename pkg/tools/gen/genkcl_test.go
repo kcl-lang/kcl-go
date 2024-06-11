@@ -290,8 +290,7 @@ func TestGenKclFromTextProto(t *testing.T) {
 			{Key: "int3", Value: []interface{}{1, 2}},
 			{Key: "string1", Value: []interface{}{"a", "b"}},
 			{Key: "float1", Value: []interface{}{100.0, 1.0, 0.0}},
-			{Key: "map", Value: []data{{Key: "foo", Value: 2}}},
-			{Key: "map", Value: []data{{Key: "bar", Value: 3}}},
+			{Key: "map", Value: []data{{Key: "foo", Value: 2}, {Key: "bar", Value: 3}}},
 		},
 	}
 	assert2.Equal(t, expected, got)
