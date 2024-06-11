@@ -60,7 +60,8 @@ func (d *TextProtoGenerator) GenFromSchemaFile(filename string, src any, schemaF
 
 func (d *TextProtoGenerator) genProperties(ty *kcl.KclType, nodes []*pbast.Node) (*config, error) {
 	var values []data
-	for _, n := range nodes {
+	var complexDataMapping map[string]int = make(map[string]int)
+	for i, n := range nodes {
 		var comments []*ast.Comment
 		if n.Values == nil && n.Children == nil {
 			if comments = addComments(n.PreComments...); comments != nil {
@@ -79,11 +80,35 @@ func (d *TextProtoGenerator) genProperties(ty *kcl.KclType, nodes []*pbast.Node)
 		if err != nil {
 			return nil, err
 		}
-		values = append(values, data{
-			Key:      n.Name,
-			Value:    value,
-			Comments: comments,
-		})
+		// Handling duplicate keys
+		if existingIndex, exists := complexDataMapping[n.Name]; exists {
+			v := values[existingIndex].Value
+			switch v := v.(type) {
+			// Schema
+			case config:
+				config := value.(config)
+				v.Data = append(v.Data, config.Data...)
+				values[existingIndex].Value = v
+			// Dict
+			case []data:
+				entries := value.([]data)
+				v = append(v, entries...)
+				values[existingIndex].Value = v
+			case []any:
+				data := value.([]any)
+				v = append(v, data...)
+				values[existingIndex].Value = v
+			default:
+				return nil, d.errorf(n, "duplicate key %s for value %v", n.Name, value)
+			}
+		} else {
+			complexDataMapping[n.Name] = i
+			values = append(values, data{
+				Key:      n.Name,
+				Value:    value,
+				Comments: comments,
+			})
+		}
 	}
 	return &config{
 		Name: ty.SchemaName,
