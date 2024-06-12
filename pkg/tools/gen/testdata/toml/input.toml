@@ -1,0 +1,23 @@
+name = "kcl"
+age = 1
+two = 2
+
+[x0]
+  name = "kcl"
+  age = 1
+
+[x1]
+  age = 101
+  name = "kcl"
+
+[x0.one.two]
+three = "x0_val"
+
+[x1.one.two.three]
+four = "x1_val"
+
+[x0.two]
+three = "x0_val"
+
+[x2]
+one = "two"
