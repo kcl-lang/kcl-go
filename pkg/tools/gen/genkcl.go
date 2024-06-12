@@ -96,8 +96,8 @@ func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) 
 		return k.genKclFromJsonData(w, filename, src)
 	case ModeYaml:
 		return k.genKclFromYaml(w, filename, src)
-	// case ModeToml:
-	// 	return k.genKclFromToml(w, filename, src)
+	case ModeToml:
+		return k.genKclFromToml(w, filename, src)
 	case ModeProto:
 		return k.genKclFromProto(w, filename, src)
 	default:

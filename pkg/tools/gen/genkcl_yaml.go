@@ -63,6 +63,11 @@ func convertKclFromYaml(yamlData *yaml.MapSlice) []data {
 			continue
 		}
 		switch value := item.Value.(type) {
+		case *yaml.MapSlice:
+			result = append(result, data{
+				Key:   key,
+				Value: convertKclFromYaml(value),
+			})
 		case yaml.MapSlice:
 			result = append(result, data{
 				Key:   key,
@@ -72,6 +77,8 @@ func convertKclFromYaml(yamlData *yaml.MapSlice) []data {
 			var vals []interface{}
 			for _, v := range value {
 				switch v := v.(type) {
+				case *yaml.MapSlice:
+					vals = append(vals, convertKclFromYaml(v))
 				case yaml.MapSlice:
 					vals = append(vals, convertKclFromYaml(&v))
 				default:
