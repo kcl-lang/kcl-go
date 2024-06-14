@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -72,7 +72,7 @@ func FetchSchema(ctx context.Context, uri string, schema *Schema) error {
 		if err != nil {
 			return err
 		}
-		body, err := ioutil.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
@@ -82,7 +82,7 @@ func FetchSchema(ctx context.Context, uri string, schema *Schema) error {
 		return json.Unmarshal(body, schema)
 	}
 	if u.Scheme == "file" {
-		body, err := ioutil.ReadFile(u.Path)
+		body, err := os.ReadFile(u.Path)
 		if err != nil {
 			return err
 		}
