@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -47,17 +47,17 @@ func TestFormatCode(t *testing.T) {
 func TestFormatPath(t *testing.T) {
 	successDir := filepath.Join("testdata", "success")
 	expectedFileSuffix := ".formatted"
-	expectedFiles := findFiles(t, successDir, func(info fs.FileInfo) bool {
+	expectedFiles := findFiles(t, successDir, func(info fs.DirEntry) bool {
 		return strings.HasSuffix(info.Name(), expectedFileSuffix)
 	})
 
-	sourceFiles := findFiles(t, successDir, func(info fs.FileInfo) bool {
+	sourceFiles := findFiles(t, successDir, func(info fs.DirEntry) bool {
 		return strings.HasSuffix(info.Name(), ".k")
 	})
 	var sourceFilesBackup []kclFile
 
 	for _, sourceFile := range sourceFiles {
-		content, err := ioutil.ReadFile(sourceFile)
+		content, err := os.ReadFile(sourceFile)
 		if err != nil {
 			t.Fatalf("read source file content failed: %s", sourceFile)
 		}
@@ -82,7 +82,7 @@ func TestFormatPath(t *testing.T) {
 	assert.ElementsMatchf(t, expectedFiles, changedPathsRelative, "format path get wrong result. changedPath mismatch, expect: %s, get: %s", expectedFiles, changedPathsRelative)
 
 	for _, expectedFile := range expectedFiles {
-		expected, err := ioutil.ReadFile(expectedFile)
+		expected, err := os.ReadFile(expectedFile)
 		if runtime.GOOS == "windows" {
 			expected = bytes.Replace(expected, []byte{0xd, 0xa}, []byte{0xa}, -1)
 		}
@@ -90,7 +90,7 @@ func TestFormatPath(t *testing.T) {
 			t.Fatalf("read expected formatted file failed: %s", expectedFile)
 		}
 		actualFile := strings.TrimSuffix(expectedFile, expectedFileSuffix) + ".k"
-		get, err := ioutil.ReadFile(actualFile)
+		get, err := os.ReadFile(actualFile)
 		if err != nil {
 			t.Fatalf("read actual formatted file failed: %s", actualFile)
 		}
@@ -98,10 +98,10 @@ func TestFormatPath(t *testing.T) {
 	}
 }
 
-type filterFile func(fs.FileInfo) bool
+type filterFile func(fs.DirEntry) bool
 
 func findFiles(t testing.TB, testDir string, filter filterFile) (names []string) {
-	files, err := ioutil.ReadDir(testDir)
+	files, err := os.ReadDir(testDir)
 	if err != nil {
 		t.Fatalf("ReadDir failed: %v", err)
 	}
@@ -122,7 +122,7 @@ type kclFile struct {
 
 func writeFile(t *testing.T, kclfiles []kclFile) {
 	for _, backUpFile := range kclfiles {
-		err := ioutil.WriteFile(backUpFile.name, backUpFile.content, 0666)
+		err := os.WriteFile(backUpFile.name, backUpFile.content, 0666)
 		if err != nil {
 			t.Logf("write back formatted source file failed: %v", err)
 		}
