@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
-	github.com/getkin/kin-openapi v0.124.0
+	github.com/getkin/kin-openapi v0.125.0
 	github.com/goccy/go-yaml v1.11.3
 	github.com/gofrs/flock v0.8.1
 	github.com/golang/protobuf v1.5.4
