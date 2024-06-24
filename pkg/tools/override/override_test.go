@@ -16,3 +16,10 @@ func TestOverrideFile(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestOverrideFileWithRelativeImport(t *testing.T) {
+	_, err := OverrideFile("./testdata/test_with_relative_import.k", []string{"config.replicas=1"}, []string{})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
