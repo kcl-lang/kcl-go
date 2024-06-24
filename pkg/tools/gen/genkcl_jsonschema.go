@@ -24,15 +24,19 @@ const (
 	camelCase
 )
 
+type context struct {
+	imports       map[string]struct{}
+	resultMap     map[string]convertResult
+	paths         []string
+	castingOption castingOption
+}
+
 type convertContext struct {
+	context
 	rootSchema *jsonschema.Schema
-	imports    map[string]struct{}
-	resultMap  map[string]convertResult
-	paths      []string
 	// pathObjects is used to avoid infinite loop when converting recursive schema
 	// TODO: support recursive schema
-	pathObjects   []*jsonschema.Schema
-	castingOption castingOption
+	pathObjects []*jsonschema.Schema
 }
 
 type convertResult struct {
@@ -66,10 +70,12 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 
 	// convert json schema to kcl schema
 	ctx := convertContext{
-		rootSchema:  js,
-		resultMap:   make(map[string]convertResult),
-		imports:     make(map[string]struct{}),
-		paths:       []string{},
+		rootSchema: js,
+		context: context{
+			resultMap: make(map[string]convertResult),
+			imports:   make(map[string]struct{}),
+			paths:     []string{},
+		},
 		pathObjects: []*jsonschema.Schema{},
 	}
 	result := convertSchemaFromJsonSchema(&ctx, js,
