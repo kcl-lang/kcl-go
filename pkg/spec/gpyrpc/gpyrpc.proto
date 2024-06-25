@@ -286,13 +286,22 @@ message OverrideFile_Result {
 	repeated Error parse_errors = 2;
 }
 
+message ListVariables_Options {
+	bool merge_program = 1;
+}
+
+message VariableList {
+  repeated Variable variables = 1;
+}
+
 message ListVariables_Args {
-	string file = 1;
+	repeated string files = 1;
 	repeated string specs = 2;
+	ListVariables_Options options = 3;
 }
 
 message ListVariables_Result {
-	map<string, Variable> variables = 1;
+	map<string, VariableList> variables = 1;
 	repeated string unsupported_codes = 2; 
 	repeated Error parse_errors = 3;
 }
@@ -481,7 +490,7 @@ message KclType {
 	string pkg_path = 13;                // `pkg_path` represents the path name of the package where the attribute is located.
 	string description = 14;             // `description` represents the document of the attribute.
 	map<string, Example> examples = 15;  // A map object to hold examples, the key is the example name.
-	KclType base_schema = 16;            // contains referenced by info for schema
+	KclType base_schema = 16;
 }
 
 message Decorator {
