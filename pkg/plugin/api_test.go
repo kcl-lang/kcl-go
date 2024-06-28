@@ -47,7 +47,7 @@ func TestPlugin_strings_panic(t *testing.T) {
 		t.Skip("cgo disabled")
 	}
 	result_json := Invoke("kcl_plugin.strings.panic", []interface{}{"KCL", "KCL", 123}, nil)
-	if result_json != `{"__kcl_PanicInfo__":true,"message":"[KCL KCL 123]"}` {
+	if result_json != `{"__kcl_PanicInfo__":"[KCL KCL 123]"}` {
 		t.Fatal(result_json)
 	}
 }
