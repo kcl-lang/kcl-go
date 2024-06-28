@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"kcl-lang.io/kcl-go/pkg/settings"
@@ -49,18 +47,6 @@ func ParseArgs(pathList []string, opts ...Option) (Option, error) {
 	args := NewOption().Merge(opts...).Merge(tmpOptList...)
 	if err := args.Err; err != nil {
 		return Option{}, err
-	}
-
-	if args.WorkDir == "" {
-		if len(args.KCodeList) == 0 {
-			if len(args.KFilenameList) > 0 {
-				if filepath.IsAbs(args.KFilenameList[0]) {
-					args.WorkDir = filepath.Dir(args.KFilenameList[0])
-				} else {
-					args.WorkDir, _ = os.Getwd()
-				}
-			}
-		}
 	}
 
 	if len(args.KFilenameList) == 0 {
