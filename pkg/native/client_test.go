@@ -46,6 +46,20 @@ func TestExecProgramWithPlugin(t *testing.T) {
 	}
 }
 
+func TestExecProgramWithPluginError(t *testing.T) {
+	client := NewNativeServiceClient()
+	result, err := client.ExecProgram(&gpyrpc.ExecProgram_Args{
+		KFilenameList: []string{"main.k"},
+		KCodeList:     []string{code},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(result.ErrMessage, "strconv.ParseInt: parsing \"<nil>\": invalid syntax") {
+		t.Fatal(result.ErrMessage)
+	}
+}
+
 func TestExecArtifactWithPlugin(t *testing.T) {
 	output := path.Join(t.TempDir(), "example")
 	client := NewNativeServiceClient()
