@@ -82,9 +82,26 @@ func (p *MethodArgs) FloatArg(i int) float64 {
 	return v
 }
 
+func (p *MethodArgs) BoolArg(i int) bool {
+	s := fmt.Sprint(p.Args[i])
+	v, err := strconv.ParseBool(s)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func (p *MethodArgs) StrArg(i int) string {
 	s := fmt.Sprint(p.Args[i])
 	return s
+}
+
+func (p *MethodArgs) ListArg(i int) []any {
+	return p.Args[i].([]any)
+}
+
+func (p *MethodArgs) MapArg(i int) map[string]any {
+	return p.Args[i].(map[string]any)
 }
 
 func (p *MethodArgs) IntKwArg(name string) int64 {
@@ -105,7 +122,24 @@ func (p *MethodArgs) FloatKwArg(name string) float64 {
 	return v
 }
 
+func (p *MethodArgs) BoolKwArg(name string) bool {
+	s := fmt.Sprint(p.KwArgs[name])
+	v, err := strconv.ParseBool(s)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func (p *MethodArgs) StrKwArg(name string) string {
 	s := fmt.Sprint(p.KwArgs[name])
 	return s
+}
+
+func (p *MethodArgs) ListKwArg(name string) []any {
+	return p.KwArgs[name].([]any)
+}
+
+func (p *MethodArgs) MapKwArg(name string) map[string]any {
+	return p.KwArgs[name].(map[string]any)
 }
