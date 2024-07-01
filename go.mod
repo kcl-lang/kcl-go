@@ -1,13 +1,14 @@
 module kcl-lang.io/kcl-go
 
 go 1.21
+toolchain go1.22.4
 
 require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
 	github.com/getkin/kin-openapi v0.125.0
 	github.com/goccy/go-yaml v1.11.3
-	github.com/gofrs/flock v0.8.1
+	github.com/gofrs/flock v0.11.0
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
 	github.com/iancoleman/strcase v0.3.0
