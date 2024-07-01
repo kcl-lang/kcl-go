@@ -21,7 +21,7 @@ You can use KCL to
 
 ## Building & Testing
 
-- [Install Go 1.21+](https://go.dev/dl/)
+- [Install Go 1.22+](https://go.dev/dl/)
 
 ```bash
 go test ./...

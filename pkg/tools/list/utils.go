@@ -17,6 +17,7 @@ var standardSystemModules = map[string]struct{}{
 	"units":      {},
 	"file":       {},
 	"template":   {},
+	"runtime":    {},
 }
 
 func isBuiltinPkg(pkgpath string) bool {
