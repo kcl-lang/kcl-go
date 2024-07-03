@@ -20,6 +20,19 @@ func Run(path string, opts ...kcl.Option) (*kcl.KCLResultList, error) {
 	return run([]string{path}, opts...)
 }
 
+func MustRunPaths(paths []string, opts ...kcl.Option) *kcl.KCLResultList {
+	v, err := RunPaths(paths, opts...)
+	if err != nil {
+		panic(err)
+	}
+
+	return v
+}
+
+func RunPaths(paths []string, opts ...kcl.Option) (*kcl.KCLResultList, error) {
+	return run(paths, opts...)
+}
+
 func run(pathList []string, opts ...kcl.Option) (*kcl.KCLResultList, error) {
 	args, err := kcl.ParseArgs(pathList, opts...)
 	if err != nil {

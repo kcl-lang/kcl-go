@@ -26,6 +26,15 @@ func TestNativeRun(t *testing.T) {
 	fmt.Println(yaml)
 }
 
+func ExampleNativeRunPaths() {
+	yaml := MustRunPaths([]string{"testdata/1.k", "testdata/2.k"}).GetRawYamlResult()
+	fmt.Println(yaml)
+
+	// output:
+	// a: b
+	// c: d
+}
+
 func TestNativeRunWithPlugin(t *testing.T) {
 	plugin.RegisterPlugin(plugin.Plugin{
 		Name: "my_plugin",
