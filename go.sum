@@ -1290,8 +1290,8 @@ k8s.io/utils v0.0.0-20230220204549-a5ecb0141aa5 h1:kmDqav+P+/5e1i9tFfHq1qcF3sOrD
 k8s.io/utils v0.0.0-20230220204549-a5ecb0141aa5/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
 kcl-lang.io/kpm v0.9.0 h1:ISbsPw1GWhe6Wt4MgfY0WZEjvb5NI43O+5dmH0CUoiM=
 kcl-lang.io/kpm v0.9.0/go.mod h1:+8dz5o9l1DEzEYdfRetnAXhrfqKdzTQb3s99DubbHhk=
-kcl-lang.io/lib v0.9.0 h1:2s4cw2D7QX3f+XJo6xxUOgfT0KRpbI+B4LEDCJpAuIQ=
-kcl-lang.io/lib v0.9.0/go.mod h1:tu+tzwGgHLzYZSIxUG/ntipStrxZd6OvutWYPTxS7cs=
+kcl-lang.io/lib v0.9.1 h1:wPcTYFZo4XQZYHPrEoQjV2SU++2jz2y/1Khfqj2/8DA=
+kcl-lang.io/lib v0.9.1/go.mod h1:tu+tzwGgHLzYZSIxUG/ntipStrxZd6OvutWYPTxS7cs=
 oras.land/oras-go v1.2.5 h1:XpYuAwAb0DfQsunIyMfeET92emK8km3W4yEzZvUbsTo=
 oras.land/oras-go v1.2.5/go.mod h1:PuAwRShRZCsZb7g8Ar3jKKQR/2A/qN+pkYxIOd/FAoo=
 oras.land/oras-go/v2 v2.5.0 h1:o8Me9kLY74Vp5uw07QXPiitjsw7qNXi8Twd+19Zf02c=
