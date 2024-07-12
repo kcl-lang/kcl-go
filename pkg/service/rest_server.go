@@ -44,7 +44,7 @@ func newRestServer(address string) *restServer {
 		address: address,
 		router:  httprouter.New(),
 		builtin: NewBuiltinServiceClient(),
-		c:       NewKclvmServiceClient(),
+		c:       newKclvmServiceClient(),
 	}
 	p.initHttpRrouter()
 	return p

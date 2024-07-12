@@ -3,13 +3,13 @@
 package lint
 
 import (
-	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 func LintPath(paths []string) (results []string, err error) {
-	client := service.NewKclvmServiceClient()
-	resp, err := client.LintPath(&gpyrpc.LintPath_Args{
+	svc := kcl.Service()
+	resp, err := svc.LintPath(&gpyrpc.LintPath_Args{
 		Paths: paths,
 	})
 	if err != nil {

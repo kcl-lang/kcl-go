@@ -33,7 +33,7 @@ type _KclvmServiceImpl struct {
 
 func newKclvmServiceImpl() *_KclvmServiceImpl {
 	return &_KclvmServiceImpl{
-		c: NewKclvmServiceClient(),
+		c: newKclvmServiceClient(),
 	}
 }
 

@@ -11,8 +11,8 @@ import (
 
 	"github.com/emicklei/proto"
 	"github.com/iancoleman/strcase"
-	"kcl-lang.io/kcl-go/pkg/loader"
 	"kcl-lang.io/kcl-go/pkg/logger"
+	"kcl-lang.io/kcl-go/pkg/source"
 )
 
 var defaultFieldTypeMap = map[string]string{
@@ -36,7 +36,7 @@ var defaultFieldTypeMap = map[string]string{
 
 // genKclFromProto converts the .proto config to KCL schema.
 func (k *kclGenerator) genKclFromProto(w io.Writer, filename string, src interface{}) error {
-	code, err := loader.ReadSource(filename, src)
+	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err
 	}

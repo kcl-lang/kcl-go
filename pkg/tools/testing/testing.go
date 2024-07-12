@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"kcl-lang.io/kcl-go/pkg/kcl"
-	"kcl-lang.io/kcl-go/pkg/service"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -67,8 +66,8 @@ func Test(testOpts *TestOptions, opts ...kcl.Option) (TestResult, error) {
 		return TestResult{}, err
 	}
 
-	client := service.NewKclvmServiceClient()
-	resp, err := client.Test(&gpyrpc.Test_Args{
+	svc := kcl.Service()
+	resp, err := svc.Test(&gpyrpc.Test_Args{
 		ExecArgs:  args.ExecProgram_Args,
 		PkgList:   testOpts.PkgList,
 		RunRegexp: testOpts.RunRegRxp,

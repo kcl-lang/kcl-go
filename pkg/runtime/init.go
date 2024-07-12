@@ -27,11 +27,6 @@ func GetRuntime() *Runtime {
 	return rpcRuntime
 }
 
-func GetPyRuntime() *Runtime {
-	once.Do(func() { initRuntime(0) })
-	return rpcRuntime
-}
-
 func initRuntime(maxProc int) {
 	if maxProc <= 0 {
 		maxProc = 2

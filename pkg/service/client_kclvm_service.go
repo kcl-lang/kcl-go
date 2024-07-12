@@ -12,14 +12,21 @@ import (
 )
 
 type KclvmServiceClient struct {
-	Runtime   *runtime.Runtime
-	pyRuntime *runtime.Runtime
+	Runtime *runtime.Runtime
 }
 
-func NewKclvmServiceClient() *KclvmServiceClient {
+var _ KclvmService = (*KclvmServiceClient)(nil)
+
+func NewKclvmServiceClient() KclvmService {
 	c := &KclvmServiceClient{
-		Runtime:   runtime.GetRuntime(),
-		pyRuntime: runtime.GetPyRuntime(),
+		Runtime: runtime.GetRuntime(),
+	}
+	return c
+}
+
+func newKclvmServiceClient() *KclvmServiceClient {
+	c := &KclvmServiceClient{
+		Runtime: runtime.GetRuntime(),
 	}
 	return c
 }
@@ -134,7 +141,7 @@ func (p *KclvmServiceClient) LintPath(args *gpyrpc.LintPath_Args) (resp *gpyrpc.
 }
 
 func (p *KclvmServiceClient) OverrideFile(args *gpyrpc.OverrideFile_Args) (resp *gpyrpc.OverrideFile_Result, err error) {
-	p.pyRuntime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).OverrideFile(args)
 		err = p.wrapErr(err, stderr)
 	})
