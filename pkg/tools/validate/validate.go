@@ -6,7 +6,7 @@ import (
 	"errors"
 	"os"
 
-	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -27,8 +27,8 @@ func Validate(dataFile, schemaFile string, opts *ValidateOptions) (ok bool, err 
 	if opts == nil {
 		opts = &ValidateOptions{}
 	}
-	client := service.NewKclvmServiceClient()
-	resp, err := client.ValidateCode(&gpyrpc.ValidateCode_Args{
+	svc := kcl.Service()
+	resp, err := svc.ValidateCode(&gpyrpc.ValidateCode_Args{
 		File:          schemaFile,
 		Data:          string(data),
 		Schema:        opts.Schema,
@@ -49,8 +49,8 @@ func ValidateCode(data, code string, opts *ValidateOptions) (ok bool, err error)
 	if opts == nil {
 		opts = &ValidateOptions{}
 	}
-	client := service.NewKclvmServiceClient()
-	resp, err := client.ValidateCode(&gpyrpc.ValidateCode_Args{
+	svc := kcl.Service()
+	resp, err := svc.ValidateCode(&gpyrpc.ValidateCode_Args{
 		Data:          data,
 		Code:          code,
 		Schema:        opts.Schema,
@@ -71,8 +71,8 @@ func ValidateCodeFile(dataFile, data, code string, opts *ValidateOptions) (ok bo
 	if opts == nil {
 		opts = &ValidateOptions{}
 	}
-	client := service.NewKclvmServiceClient()
-	resp, err := client.ValidateCode(&gpyrpc.ValidateCode_Args{
+	svc := kcl.Service()
+	resp, err := svc.ValidateCode(&gpyrpc.ValidateCode_Args{
 		Datafile:      dataFile,
 		Data:          data,
 		Code:          code,

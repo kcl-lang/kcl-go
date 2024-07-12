@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"kcl-lang.io/kcl-go/pkg/kcl"
-	"kcl-lang.io/kcl-go/pkg/loader"
+	"kcl-lang.io/kcl-go/pkg/source"
 	pb "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -41,7 +41,7 @@ func newGoGenerator(opts *GenGoOptions) *goGenerator {
 }
 
 func (g *goGenerator) GenFromSource(w io.Writer, filename string, src interface{}) error {
-	code, err := loader.ReadSource(filename, src)
+	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err
 	}

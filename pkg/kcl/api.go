@@ -17,8 +17,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
 
-	"kcl-lang.io/kcl-go/pkg/loader"
-	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/source"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -401,8 +400,8 @@ func GetFullSchemaTypeMapping(pathList []string, schemaName string, opts ...Opti
 		return nil, err
 	}
 
-	client := service.NewKclvmServiceClient()
-	resp, err := client.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
+	svc := Service()
+	resp, err := svc.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
 		ExecArgs:   args.ExecProgram_Args,
 		SchemaName: schemaName,
 	})
@@ -415,12 +414,12 @@ func GetFullSchemaTypeMapping(pathList []string, schemaName string, opts ...Opti
 }
 
 func GetSchemaTypeMapping(filename string, src any, schemaName string) (map[string]*gpyrpc.KclType, error) {
-	source, err := loader.ReadSource(filename, src)
+	source, err := source.ReadSource(filename, src)
 	if err != nil {
 		return nil, err
 	}
-	client := service.NewKclvmServiceClient()
-	resp, err := client.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
+	svc := Service()
+	resp, err := svc.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
 		ExecArgs: &gpyrpc.ExecProgram_Args{
 			KFilenameList: []string{filename},
 			KCodeList:     []string{string(source)},
@@ -490,8 +489,8 @@ func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultLis
 		return nil, err
 	}
 
-	client := service.NewKclvmServiceClient()
-	resp, err := client.ExecProgram(args.ExecProgram_Args)
+	svc := Service()
+	resp, err := svc.ExecProgram(args.ExecProgram_Args)
 	if err != nil {
 		return nil, err
 	}

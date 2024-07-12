@@ -8,8 +8,8 @@ import (
 	"strconv"
 
 	"github.com/iancoleman/strcase"
-	"kcl-lang.io/kcl-go/pkg/loader"
 	"kcl-lang.io/kcl-go/pkg/logger"
+	"kcl-lang.io/kcl-go/pkg/source"
 )
 
 type tfSchema struct {
@@ -50,7 +50,7 @@ type tfConvertContext struct {
 }
 
 func (k *kclGenerator) genSchemaFromTerraformSchema(w io.Writer, filename string, src interface{}) error {
-	code, err := loader.ReadSource(filename, src)
+	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err
 	}

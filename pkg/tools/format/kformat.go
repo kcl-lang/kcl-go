@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io"
 
-	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -26,8 +26,8 @@ func FormatCode(code interface{}) ([]byte, error) {
 		return nil, errors.New("unsupported source code format. valid formats: []byte, string, io.Reader")
 	}
 
-	client := service.NewKclvmServiceClient()
-	resp, err := client.FormatCode(&gpyrpc.FormatCode_Args{
+	svc := kcl.Service()
+	resp, err := svc.FormatCode(&gpyrpc.FormatCode_Args{
 		Source: codeStr,
 	})
 	if err != nil {
@@ -37,8 +37,8 @@ func FormatCode(code interface{}) ([]byte, error) {
 }
 
 func FormatPath(path string) (changedPaths []string, err error) {
-	client := service.NewKclvmServiceClient()
-	resp, err := client.FormatPath(&gpyrpc.FormatPath_Args{
+	svc := kcl.Service()
+	resp, err := svc.FormatPath(&gpyrpc.FormatPath_Args{
 		Path: path,
 	})
 	if err != nil {

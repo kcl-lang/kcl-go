@@ -6,7 +6,7 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"kcl-lang.io/kcl-go/pkg/kcl"
-	"kcl-lang.io/kcl-go/pkg/loader"
+	"kcl-lang.io/kcl-go/pkg/source"
 )
 
 const (
@@ -15,7 +15,7 @@ const (
 )
 
 func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interface{}) error {
-	code, err := loader.ReadSource(filename, src)
+	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err
 	}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"kcl-lang.io/kcl-go/pkg/service"
+	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -31,8 +31,8 @@ func ParseFileASTJson(filename string, src interface{}) (result string, err erro
 			return "", fmt.Errorf("unsupported src type: %T", src)
 		}
 	}
-	client := service.NewKclvmServiceClient()
-	resp, err := client.ParseFile(&gpyrpc.ParseFile_Args{
+	svc := kcl.Service()
+	resp, err := svc.ParseFile(&gpyrpc.ParseFile_Args{
 		Path:   filename,
 		Source: code,
 	})

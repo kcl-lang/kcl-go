@@ -9,7 +9,7 @@ import (
 
 	"kcl-lang.io/kcl-go/pkg/ast"
 	"kcl-lang.io/kcl-go/pkg/kcl"
-	"kcl-lang.io/kcl-go/pkg/loader"
+	"kcl-lang.io/kcl-go/pkg/source"
 
 	pbast "github.com/protocolbuffers/txtpbfmt/ast"
 	"github.com/protocolbuffers/txtpbfmt/parser"
@@ -28,7 +28,7 @@ type TextProtoGenerator struct {
 // Note fields in the textproto that have no corresponding field in schema
 // are ignored.
 func (d *TextProtoGenerator) Gen(filename string, src any, schema *kcl.KclType) (*config, error) {
-	source, err := loader.ReadSource(filename, src)
+	source, err := source.ReadSource(filename, src)
 	if runtime.GOOS == "windows" {
 		source = []byte(strings.Replace(string(source), "\r\n", "\n", -1))
 	}
