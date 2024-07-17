@@ -8,6 +8,9 @@ import (
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
+type ParseProgramArgs = gpyrpc.ParseProgram_Args
+type ParseProgramResult = gpyrpc.ParseProgram_Result
+
 // ParseFileASTJson parses the source code from the specified file or Reader
 // and returns the JSON representation of the Abstract Syntax Tree (AST).
 // The source code can be provided directly as a string or []byte,
@@ -40,4 +43,10 @@ func ParseFileASTJson(filename string, src interface{}) (result string, err erro
 		return "", err
 	}
 	return resp.AstJson, nil
+}
+
+// Parse KCL program with entry files and return the AST JSON string.
+func ParseProgram(args *ParseProgramArgs) (*ParseProgramResult, error) {
+	svc := kcl.Service()
+	return svc.ParseProgram(args)
 }

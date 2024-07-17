@@ -270,17 +270,6 @@ alice = Person {
 	defer os.Remove(testdata_main_k)
 }
 
-func _BenchmarkRunFilesParallel(b *testing.B) {
-	b.RunParallel(func(pb *testing.PB) {
-		for pb.Next() {
-			_, err := kcl.RunFiles([]string{"./testdata/app0/kcl.yaml"})
-			if err != nil {
-				b.Fatal(err)
-			}
-		}
-	})
-}
-
 func TestWithKFilenames(t *testing.T) {
 	kcl.WithKFilenames("/testdata/main.k")
 }

@@ -211,3 +211,11 @@ func (p *KclvmServiceClient) UpdateDependencies(args *gpyrpc.UpdateDependencies_
 	})
 	return
 }
+
+func (p *KclvmServiceClient) GetVersion(args *gpyrpc.GetVersion_Args) (resp *gpyrpc.GetVersion_Result, err error) {
+	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
+		resp, err = p.getClient(c).GetVersion(args)
+		err = p.wrapErr(err, stderr)
+	})
+	return
+}

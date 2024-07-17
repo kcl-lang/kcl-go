@@ -231,6 +231,7 @@ type PROTORPC_KclvmService interface {
 	RenameCode(in *RenameCode_Args, out *RenameCode_Result) error
 	Test(in *Test_Args, out *Test_Result) error
 	UpdateDependencies(in *UpdateDependencies_Args, out *UpdateDependencies_Result) error
+	GetVersion(in *GetVersion_Args, out *GetVersion_Result) error
 }
 
 // PROTORPC_AcceptKclvmServiceClient accepts connections on the listener and serves requests
@@ -1125,6 +1126,45 @@ func (c *PROTORPC_KclvmServiceClient) AsyncUpdateDependencies(in *UpdateDependen
 	}
 	return c.Go(
 		"KclvmService.UpdateDependencies",
+		in, out,
+		done,
+	)
+}
+
+func (c *PROTORPC_KclvmServiceClient) GetVersion(in *GetVersion_Args) (out *GetVersion_Result, err error) {
+	if in == nil {
+		in = new(GetVersion_Args)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(GetVersion_Result)
+	if err = c.Call("KclvmService.GetVersion", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclvmServiceClient) AsyncGetVersion(in *GetVersion_Args, out *GetVersion_Result, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(GetVersion_Args)
+	}
+	return c.Go(
+		"KclvmService.GetVersion",
 		in, out,
 		done,
 	)

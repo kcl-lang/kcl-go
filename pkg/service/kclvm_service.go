@@ -24,4 +24,5 @@ type KclvmService interface {
 	RenameCode(in *gpyrpc.RenameCode_Args) (out *gpyrpc.RenameCode_Result, err error)
 	Test(in *gpyrpc.Test_Args) (out *gpyrpc.Test_Result, err error)
 	UpdateDependencies(in *gpyrpc.UpdateDependencies_Args) (out *gpyrpc.UpdateDependencies_Result, err error)
+	GetVersion(in *gpyrpc.GetVersion_Args) (out *gpyrpc.GetVersion_Result, err error)
 }

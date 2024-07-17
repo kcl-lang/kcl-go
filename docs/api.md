@@ -116,9 +116,20 @@ x1 = Person {
   - [func GetSchemaType\(filename string, src any, schemaName string\) \(\[\]\*KclType, error\)](<#GetSchemaType>)
 - [type ListDepFilesOption](<#ListDepFilesOption>)
 - [type ListDepsOptions](<#ListDepsOptions>)
+- [type ListOptionsArgs](<#ListOptionsArgs>)
+- [type ListOptionsResult](<#ListOptionsResult>)
+  - [func ListOptions\(args \*ListOptionsArgs\) \(\*ListOptionsResult, error\)](<#ListOptions>)
+- [type ListVariablesArgs](<#ListVariablesArgs>)
+- [type ListVariablesResult](<#ListVariablesResult>)
+  - [func ListVariables\(args \*ListVariablesArgs\) \(\*ListVariablesResult, error\)](<#ListVariables>)
+- [type LoadPackageArgs](<#LoadPackageArgs>)
+- [type LoadPackageResult](<#LoadPackageResult>)
+  - [func LoadPackage\(args \*LoadPackageArgs\) \(\*LoadPackageResult, error\)](<#LoadPackage>)
 - [type Option](<#Option>)
+  - [func NewOption\(\) \*Option](<#NewOption>)
   - [func WithCode\(codes ...string\) Option](<#WithCode>)
   - [func WithDisableNone\(disableNone bool\) Option](<#WithDisableNone>)
+  - [func WithExternalPkgAndPath\(name, path string\) Option](<#WithExternalPkgAndPath>)
   - [func WithExternalPkgs\(externalPkgs ...string\) Option](<#WithExternalPkgs>)
   - [func WithFullTypePath\(fullTypePath bool\) Option](<#WithFullTypePath>)
   - [func WithIncludeSchemaTypePath\(includeSchemaTypePath bool\) Option](<#WithIncludeSchemaTypePath>)
@@ -132,11 +143,19 @@ x1 = Person {
   - [func WithShowHidden\(showHidden bool\) Option](<#WithShowHidden>)
   - [func WithSortKeys\(sortKeys bool\) Option](<#WithSortKeys>)
   - [func WithWorkDir\(workDir string\) Option](<#WithWorkDir>)
+- [type ParseProgramArgs](<#ParseProgramArgs>)
+- [type ParseProgramResult](<#ParseProgramResult>)
+  - [func ParseProgram\(args \*ParseProgramArgs\) \(\*ParseProgramResult, error\)](<#ParseProgram>)
 - [type TestCaseInfo](<#TestCaseInfo>)
 - [type TestOptions](<#TestOptions>)
 - [type TestResult](<#TestResult>)
   - [func Test\(testOpts \*TestOptions, opts ...Option\) \(TestResult, error\)](<#Test>)
+- [type UpdateDependenciesArgs](<#UpdateDependenciesArgs>)
+- [type UpdateDependenciesResult](<#UpdateDependenciesResult>)
+  - [func UpdateDependencies\(args \*UpdateDependenciesArgs\) \(\*UpdateDependenciesResult, error\)](<#UpdateDependencies>)
 - [type ValidateOptions](<#ValidateOptions>)
+- [type VersionResult](<#VersionResult>)
+  - [func GetVersion\(\) \(\*VersionResult, error\)](<#GetVersion>)
 
 
 ## Constants
@@ -148,7 +167,7 @@ const KclvmAbiVersion = scripts.KclvmAbiVersion
 ```
 
 <a name="FormatCode"></a>
-## func [FormatCode](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L143>)
+## func [FormatCode](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L167>)
 
 ```go
 func FormatCode(code interface{}) ([]byte, error)
@@ -191,7 +210,7 @@ a = 1 + 2
 </details>
 
 <a name="FormatPath"></a>
-## func [FormatPath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L155>)
+## func [FormatPath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L179>)
 
 ```go
 func FormatPath(path string) (changedPaths []string, err error)
@@ -229,7 +248,7 @@ func main() {
 </details>
 
 <a name="GetSchemaTypeMapping"></a>
-## func [GetSchemaTypeMapping](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L237>)
+## func [GetSchemaTypeMapping](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L258>)
 
 ```go
 func GetSchemaTypeMapping(filename string, src any, schemaName string) (map[string]*KclType, error)
@@ -256,7 +275,7 @@ The schema name got, when the schema name is empty, all schemas are returned.
 ```
 
 <a name="InitKclvmPath"></a>
-## func [InitKclvmPath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L61>)
+## func [InitKclvmPath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L75>)
 
 ```go
 func InitKclvmPath(kclvmRoot string)
@@ -265,7 +284,7 @@ func InitKclvmPath(kclvmRoot string)
 InitKclvmPath init kclvm path.
 
 <a name="InitKclvmRuntime"></a>
-## func [InitKclvmRuntime](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L66>)
+## func [InitKclvmRuntime](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L80>)
 
 ```go
 func InitKclvmRuntime(n int)
@@ -274,7 +293,7 @@ func InitKclvmRuntime(n int)
 InitKclvmRuntime init kclvm process.
 
 <a name="LintPath"></a>
-## func [LintPath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L175>)
+## func [LintPath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L199>)
 
 ```go
 func LintPath(paths []string) (results []string, err error)
@@ -324,7 +343,7 @@ Module 'a' imported but unused
 </details>
 
 <a name="ListDepFiles"></a>
-## func [ListDepFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L160>)
+## func [ListDepFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L184>)
 
 ```go
 func ListDepFiles(workDir string, opt *ListDepFilesOption) (files []string, err error)
@@ -333,7 +352,7 @@ func ListDepFiles(workDir string, opt *ListDepFilesOption) (files []string, err 
 ListDepFiles return the depend files from the given path
 
 <a name="ListDownStreamFiles"></a>
-## func [ListDownStreamFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L170>)
+## func [ListDownStreamFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L194>)
 
 ```go
 func ListDownStreamFiles(workDir string, opt *ListDepsOptions) ([]string, error)
@@ -342,7 +361,7 @@ func ListDownStreamFiles(workDir string, opt *ListDepsOptions) ([]string, error)
 ListDownStreamFiles return a list of downstream depend files from the given changed path list.
 
 <a name="ListUpStreamFiles"></a>
-## func [ListUpStreamFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L165>)
+## func [ListUpStreamFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L189>)
 
 ```go
 func ListUpStreamFiles(workDir string, opt *ListDepsOptions) (deps []string, err error)
@@ -351,23 +370,16 @@ func ListUpStreamFiles(workDir string, opt *ListDepsOptions) (deps []string, err
 ListUpStreamFiles return a list of upstream depend files from the given path list
 
 <a name="OverrideFile"></a>
-## func [OverrideFile](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L187>)
+## func [OverrideFile](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L208>)
 
 ```go
 func OverrideFile(file string, specs, importPaths []string) (bool, error)
 ```
 
-OverrideFile rewrites a file with override spec file: string. The File that need to be overridden specs: \[\]string. List of specs that need to be overridden.
-
-```
-Each spec string satisfies the form: <pkgpath>:<field_path>=<filed_value> or <pkgpath>:<field_path>-
-When the pkgpath is '__main__', it can be omitted.
-```
-
-importPaths. List of import statements that need to be added
+OverrideFile rewrites a file with override spec file: string. The File that need to be overridden specs: \[\]string. List of specs that need to be overridden. importPaths. List of import statements that need to be added. See https://www.kcl-lang.io/docs/user_docs/guides/automation for more override spec guide.
 
 <a name="Validate"></a>
-## func [Validate](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L198>)
+## func [Validate](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L219>)
 
 ```go
 func Validate(dataFile, schemaFile string, opts *ValidateOptions) (ok bool, err error)
@@ -376,7 +388,7 @@ func Validate(dataFile, schemaFile string, opts *ValidateOptions) (ok bool, err 
 Validate validates the given data file against the specified schema file with the provided options.
 
 <a name="ValidateCode"></a>
-## func [ValidateCode](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L192>)
+## func [ValidateCode](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L213>)
 
 ```go
 func ValidateCode(data, code string, opts *ValidateOptions) (ok bool, err error)
@@ -385,7 +397,7 @@ func ValidateCode(data, code string, opts *ValidateOptions) (ok bool, err error)
 ValidateCode validate data string match code string
 
 <a name="KCLResult"></a>
-## type [KCLResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L54>)
+## type [KCLResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L57>)
 
 
 
@@ -440,7 +452,7 @@ x1.age: 101
 </p>
 </details>
 
-<details><summary>Example ('et_struct)</summary>
+<details><summary>Example (Get)</summary>
 <p>
 
 
@@ -490,7 +502,7 @@ person: {Name:kcl Age:101}
 </details>
 
 <a name="KCLResultList"></a>
-## type [KCLResultList](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L55>)
+## type [KCLResultList](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L58>)
 
 
 
@@ -499,7 +511,7 @@ type KCLResultList = kcl.KCLResultList
 ```
 
 <a name="MustRun"></a>
-### func [MustRun](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L71>)
+### func [MustRun](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L85>)
 
 ```go
 func MustRun(path string, opts ...Option) *KCLResultList
@@ -641,7 +653,7 @@ func main() {
 </details>
 
 <a name="Run"></a>
-### func [Run](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L76>)
+### func [Run](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L90>)
 
 ```go
 func Run(path string, opts ...Option) (*KCLResultList, error)
@@ -650,7 +662,7 @@ func Run(path string, opts ...Option) (*KCLResultList, error)
 Run evaluates the KCL program with path and opts, then returns the object list.
 
 <a name="RunFiles"></a>
-### func [RunFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L81>)
+### func [RunFiles](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L95>)
 
 ```go
 func RunFiles(paths []string, opts ...Option) (*KCLResultList, error)
@@ -682,7 +694,7 @@ func main() {
 </details>
 
 <a name="KclType"></a>
-## type [KclType](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L57>)
+## type [KclType](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L60>)
 
 
 
@@ -691,7 +703,7 @@ type KclType = kcl.KclType
 ```
 
 <a name="GetSchemaType"></a>
-### func [GetSchemaType](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L220>)
+### func [GetSchemaType](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L241>)
 
 ```go
 func GetSchemaType(filename string, src any, schemaName string) ([]*KclType, error)
@@ -718,7 +730,7 @@ The schema name got, when the schema name is empty, all schemas are returned.
 ```
 
 <a name="ListDepFilesOption"></a>
-## type [ListDepFilesOption](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L49>)
+## type [ListDepFilesOption](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L52>)
 
 
 
@@ -727,7 +739,7 @@ type ListDepFilesOption = list.Option
 ```
 
 <a name="ListDepsOptions"></a>
-## type [ListDepsOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L48>)
+## type [ListDepsOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L51>)
 
 
 
@@ -735,8 +747,193 @@ type ListDepFilesOption = list.Option
 type ListDepsOptions = list.DepOptions
 ```
 
+<a name="ListOptionsArgs"></a>
+## type [ListOptionsArgs](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L68>)
+
+
+
+```go
+type ListOptionsArgs = loader.ListOptionsArgs
+```
+
+<a name="ListOptionsResult"></a>
+## type [ListOptionsResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L69>)
+
+
+
+```go
+type ListOptionsResult = loader.ListOptionsResult
+```
+
+<a name="ListOptions"></a>
+### func [ListOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L280>)
+
+```go
+func ListOptions(args *ListOptionsArgs) (*ListOptionsResult, error)
+```
+
+ListOptions provides users with the ability to parse kcl program and get all option calling information.
+
+<details><summary>Example</summary>
+<p>
+
+
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	kcl "kcl-lang.io/kcl-go"
+)
+
+func main() {
+	result, err := kcl.ListOptions(&kcl.ListOptionsArgs{
+		Paths: []string{"testdata/option/main.k"},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
+
+}
+```
+
+#### Output
+
+```
+options:{name:"key1"} options:{name:"key2" required:true} options:{name:"metadata-key"}
+```
+
+</p>
+</details>
+
+<a name="ListVariablesArgs"></a>
+## type [ListVariablesArgs](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L66>)
+
+
+
+```go
+type ListVariablesArgs = loader.ListVariablesArgs
+```
+
+<a name="ListVariablesResult"></a>
+## type [ListVariablesResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L67>)
+
+
+
+```go
+type ListVariablesResult = loader.ListVariablesResult
+```
+
+<a name="ListVariables"></a>
+### func [ListVariables](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L274>)
+
+```go
+func ListVariables(args *ListVariablesArgs) (*ListVariablesResult, error)
+```
+
+ListVariables provides users with the ability to parse KCL program and get all variables by specs.
+
+<details><summary>Example</summary>
+<p>
+
+
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	kcl "kcl-lang.io/kcl-go"
+)
+
+func main() {
+	result, err := kcl.ListVariables(&kcl.ListVariablesArgs{
+		Files: []string{"testdata/main.k"},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
+
+}
+```
+
+#### Output
+
+```
+variables:{key:"age"  value:{variables:{value:"2"  op_sym:"="}}}  variables:{key:"four"  value:{variables:{value:"4"  op_sym:"="}}}  variables:{key:"name"  value:{variables:{value:"\"kcl-go\""  op_sym:"="}}}  variables:{key:"x0"  value:{variables:{value:"Person {}"  type_name:"Person"  op_sym:"="}}}  variables:{key:"x1"  value:{variables:{value:"Person {age = 101}"  type_name:"Person"  op_sym:"="  dict_entries:{key:"age"  value:{value:"101"  op_sym:"="}}}}}
+```
+
+</p>
+</details>
+
+<a name="LoadPackageArgs"></a>
+## type [LoadPackageArgs](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L64>)
+
+
+
+```go
+type LoadPackageArgs = loader.LoadPackageArgs
+```
+
+<a name="LoadPackageResult"></a>
+## type [LoadPackageResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L65>)
+
+
+
+```go
+type LoadPackageResult = loader.LoadPackageResult
+```
+
+<a name="LoadPackage"></a>
+### func [LoadPackage](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L269>)
+
+```go
+func LoadPackage(args *LoadPackageArgs) (*LoadPackageResult, error)
+```
+
+LoadPackage provides users with the ability to parse KCL program and semantic model information including symbols, types, definitions, etc.
+
+<details><summary>Example</summary>
+<p>
+
+
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	kcl "kcl-lang.io/kcl-go"
+)
+
+func main() {
+	result, err := kcl.LoadPackage(&kcl.LoadPackageArgs{
+		ParseArgs: &kcl.ParseProgramArgs{
+			Paths: []string{"testdata/main.k"},
+		},
+		ResolveAst: true,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
+}
+```
+
+</p>
+</details>
+
 <a name="Option"></a>
-## type [Option](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L47>)
+## type [Option](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L50>)
 
 
 
@@ -744,8 +941,17 @@ type ListDepsOptions = list.DepOptions
 type Option = kcl.Option
 ```
 
+<a name="NewOption"></a>
+### func [NewOption](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L100>)
+
+```go
+func NewOption() *Option
+```
+
+NewOption returns a new Option.
+
 <a name="WithCode"></a>
-### func [WithCode](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L86>)
+### func [WithCode](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L105>)
 
 ```go
 func WithCode(codes ...string) Option
@@ -754,7 +960,7 @@ func WithCode(codes ...string) Option
 WithCode returns a Option which hold a kcl source code list.
 
 <a name="WithDisableNone"></a>
-### func [WithDisableNone](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L110>)
+### func [WithDisableNone](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L134>)
 
 ```go
 func WithDisableNone(disableNone bool) Option
@@ -762,8 +968,17 @@ func WithDisableNone(disableNone bool) Option
 
 WithDisableNone returns a Option which hold a disable none switch.
 
+<a name="WithExternalPkgAndPath"></a>
+### func [WithExternalPkgAndPath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L111>)
+
+```go
+func WithExternalPkgAndPath(name, path string) Option
+```
+
+WithExternalPkgAndPath returns a Option which hold a external package.
+
 <a name="WithExternalPkgs"></a>
-### func [WithExternalPkgs](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L89>)
+### func [WithExternalPkgs](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L108>)
 
 ```go
 func WithExternalPkgs(externalPkgs ...string) Option
@@ -772,7 +987,7 @@ func WithExternalPkgs(externalPkgs ...string) Option
 WithExternalPkgs returns a Option which hold a external package list.
 
 <a name="WithFullTypePath"></a>
-### func [WithFullTypePath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L118>)
+### func [WithFullTypePath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L142>)
 
 ```go
 func WithFullTypePath(fullTypePath bool) Option
@@ -781,7 +996,7 @@ func WithFullTypePath(fullTypePath bool) Option
 WithFullTypePath returns a Option which hold a include full type string in the \`\_type\` attribute.
 
 <a name="WithIncludeSchemaTypePath"></a>
-### func [WithIncludeSchemaTypePath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L113>)
+### func [WithIncludeSchemaTypePath](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L137>)
 
 ```go
 func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option
@@ -790,7 +1005,7 @@ func WithIncludeSchemaTypePath(includeSchemaTypePath bool) Option
 WithIncludeSchemaTypePath returns a Option which hold a include schema type path switch.
 
 <a name="WithKFilenames"></a>
-### func [WithKFilenames](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L92>)
+### func [WithKFilenames](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L116>)
 
 ```go
 func WithKFilenames(filenames ...string) Option
@@ -799,7 +1014,7 @@ func WithKFilenames(filenames ...string) Option
 WithKFilenames returns a Option which hold a filenames list.
 
 <a name="WithLogger"></a>
-### func [WithLogger](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L138>)
+### func [WithLogger](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L162>)
 
 ```go
 func WithLogger(l io.Writer) Option
@@ -808,7 +1023,7 @@ func WithLogger(l io.Writer) Option
 WithLogger returns a Option which hold a logger.
 
 <a name="WithOptions"></a>
-### func [WithOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L95>)
+### func [WithOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L119>)
 
 ```go
 func WithOptions(key_value_list ...string) Option
@@ -859,7 +1074,7 @@ name: kcl
 </details>
 
 <a name="WithOverrides"></a>
-### func [WithOverrides](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L98>)
+### func [WithOverrides](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L122>)
 
 ```go
 func WithOverrides(override_list ...string) Option
@@ -868,7 +1083,7 @@ func WithOverrides(override_list ...string) Option
 WithOverrides returns a Option which hold a override list.
 
 <a name="WithPrintOverridesAST"></a>
-### func [WithPrintOverridesAST](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L123>)
+### func [WithPrintOverridesAST](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L147>)
 
 ```go
 func WithPrintOverridesAST(printOverridesAST bool) Option
@@ -877,7 +1092,7 @@ func WithPrintOverridesAST(printOverridesAST bool) Option
 WithPrintOverridesAST returns a Option which hold a printOverridesAST switch.
 
 <a name="WithSelectors"></a>
-### func [WithSelectors](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L101>)
+### func [WithSelectors](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L125>)
 
 ```go
 func WithSelectors(selectors ...string) Option
@@ -886,7 +1101,7 @@ func WithSelectors(selectors ...string) Option
 WithSelectors returns a Option which hold a path selector list.
 
 <a name="WithSettings"></a>
-### func [WithSettings](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L104>)
+### func [WithSettings](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L128>)
 
 ```go
 func WithSettings(filename string) Option
@@ -895,7 +1110,7 @@ func WithSettings(filename string) Option
 WithSettings returns a Option which hold a settings file.
 
 <a name="WithShowHidden"></a>
-### func [WithShowHidden](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L133>)
+### func [WithShowHidden](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L157>)
 
 ```go
 func WithShowHidden(showHidden bool) Option
@@ -904,7 +1119,7 @@ func WithShowHidden(showHidden bool) Option
 WithShowHidden returns a Option which holds a showHidden switch.
 
 <a name="WithSortKeys"></a>
-### func [WithSortKeys](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L128>)
+### func [WithSortKeys](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L152>)
 
 ```go
 func WithSortKeys(sortKeys bool) Option
@@ -913,7 +1128,7 @@ func WithSortKeys(sortKeys bool) Option
 WithSortKeys returns a Option which holds a sortKeys switch.
 
 <a name="WithWorkDir"></a>
-### func [WithWorkDir](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L107>)
+### func [WithWorkDir](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L131>)
 
 ```go
 func WithWorkDir(workDir string) Option
@@ -921,8 +1136,64 @@ func WithWorkDir(workDir string) Option
 
 WithWorkDir returns a Option which hold a work dir.
 
+<a name="ParseProgramArgs"></a>
+## type [ParseProgramArgs](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L70>)
+
+
+
+```go
+type ParseProgramArgs = parser.ParseProgramArgs
+```
+
+<a name="ParseProgramResult"></a>
+## type [ParseProgramResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L71>)
+
+
+
+```go
+type ParseProgramResult = parser.ParseProgramResult
+```
+
+<a name="ParseProgram"></a>
+### func [ParseProgram](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L263>)
+
+```go
+func ParseProgram(args *ParseProgramArgs) (*ParseProgramResult, error)
+```
+
+Parse KCL program with entry files and return the AST JSON string.
+
+<details><summary>Example</summary>
+<p>
+
+
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	kcl "kcl-lang.io/kcl-go"
+)
+
+func main() {
+	result, err := kcl.ParseProgram(&kcl.ParseProgramArgs{
+		Paths: []string{"testdata/main.k"},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
+}
+```
+
+</p>
+</details>
+
 <a name="TestCaseInfo"></a>
-## type [TestCaseInfo](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L52>)
+## type [TestCaseInfo](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L55>)
 
 
 
@@ -931,7 +1202,7 @@ type TestCaseInfo = testing.TestCaseInfo
 ```
 
 <a name="TestOptions"></a>
-## type [TestOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L51>)
+## type [TestOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L54>)
 
 
 
@@ -940,7 +1211,7 @@ type TestOptions = testing.TestOptions
 ```
 
 <a name="TestResult"></a>
-## type [TestResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L53>)
+## type [TestResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L56>)
 
 
 
@@ -949,7 +1220,7 @@ type TestResult = testing.TestResult
 ```
 
 <a name="Test"></a>
-### func [Test](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L203>)
+### func [Test](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L224>)
 
 ```go
 func Test(testOpts *TestOptions, opts ...Option) (TestResult, error)
@@ -957,13 +1228,158 @@ func Test(testOpts *TestOptions, opts ...Option) (TestResult, error)
 
 Test calls the test tool to run uni tests in packages.
 
+<a name="UpdateDependenciesArgs"></a>
+## type [UpdateDependenciesArgs](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L62>)
+
+
+
+```go
+type UpdateDependenciesArgs = module.UpdateDependenciesArgs
+```
+
+<a name="UpdateDependenciesResult"></a>
+## type [UpdateDependenciesResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L63>)
+
+
+
+```go
+type UpdateDependenciesResult = module.UpdateDependenciesResult
+```
+
+<a name="UpdateDependencies"></a>
+### func [UpdateDependencies](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L285>)
+
+```go
+func UpdateDependencies(args *UpdateDependenciesArgs) (*UpdateDependenciesResult, error)
+```
+
+Download and update dependencies defined in the kcl.mod file and return the external package name and location list.
+
+<details><summary>Example</summary>
+<p>
+
+
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	kcl "kcl-lang.io/kcl-go"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
+)
+
+func main() {
+	// [package]
+	// name = "mod_update"
+	// edition = "0.0.1"
+	// version = "0.0.1"
+	//
+	// [dependencies]
+	// helloworld = { oci = "oci://ghcr.io/kcl-lang/helloworld", tag = "0.1.0" }
+	// flask = { git = "https://github.com/kcl-lang/flask-demo-kcl-manifests", commit = "ade147b" }
+
+	result, err := kcl.UpdateDependencies(&gpyrpc.UpdateDependencies_Args{
+		ManifestPath: "testdata/update_dependencies",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(result)
+}
+```
+
+</p>
+</details>
+
+<details><summary>Example (Exec Program)</summary>
+<p>
+
+
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	kcl "kcl-lang.io/kcl-go"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
+)
+
+func main() {
+	// [package]
+	// name = "mod_update"
+	// edition = "0.0.1"
+	// version = "0.0.1"
+	//
+	// [dependencies]
+	// helloworld = { oci = "oci://ghcr.io/kcl-lang/helloworld", tag = "0.1.0" }
+	// flask = { git = "https://github.com/kcl-lang/flask-demo-kcl-manifests", commit = "ade147b" }
+
+	result, err := kcl.UpdateDependencies(&gpyrpc.UpdateDependencies_Args{
+		ManifestPath: "testdata/update_dependencies",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// import helloworld
+	// import flask
+	// a = helloworld.The_first_kcl_program
+	// fmt.Println(result.ExternalPkgs)
+
+	opt := kcl.NewOption()
+	opt.ExternalPkgs = result.ExternalPkgs
+
+	runResult, err := kcl.Run("testdata/update_dependencies/main.k", *opt)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(runResult.GetRawYamlResult())
+
+}
+```
+
+#### Output
+
+```
+a: Hello World!
+```
+
+</p>
+</details>
+
 <a name="ValidateOptions"></a>
-## type [ValidateOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L50>)
+## type [ValidateOptions](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L53>)
 
 
 
 ```go
 type ValidateOptions = validate.ValidateOptions
 ```
+
+<a name="VersionResult"></a>
+## type [VersionResult](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L61>)
+
+
+
+```go
+type VersionResult = kcl.VersionResult
+```
+
+<a name="GetVersion"></a>
+### func [GetVersion](<https://github.com/kcl-lang/kcl-go/blob/main/kclvm.go#L290>)
+
+```go
+func GetVersion() (*VersionResult, error)
+```
+
+GetVersion returns the KCL service version information.
 
 Generated by [gomarkdoc](<https://github.com/princjef/gomarkdoc>)

@@ -7,14 +7,9 @@ import (
 	"log"
 
 	kcl "kcl-lang.io/kcl-go"
+	"kcl-lang.io/kcl-go/pkg/native"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
-
-func assert(v bool, a ...interface{}) {
-	if !v {
-		a = append([]interface{}{"assert failed"}, a...)
-		log.Panic(a...)
-	}
-}
 
 func ExampleMustRun() {
 	yaml := kcl.MustRun("testdata/main.k", kcl.WithCode(`name = "kcl"`)).First().YAMLString()
@@ -94,7 +89,7 @@ x1 = Person {age = 101}
 	// x1.age: 101
 }
 
-func ExampleKCLResult_Get_struct() {
+func ExampleKCLResult_get() {
 	const k_code = `
 schema Person:
     name: str = "kcl"
@@ -213,4 +208,105 @@ age = option("age")
 	// Output:
 	// age: 1
 	// name: kcl
+}
+
+func ExampleParseProgram() {
+	result, err := kcl.ParseProgram(&kcl.ParseProgramArgs{
+		Paths: []string{"testdata/main.k"},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
+}
+
+func ExampleLoadPackage() {
+	result, err := kcl.LoadPackage(&kcl.LoadPackageArgs{
+		ParseArgs: &kcl.ParseProgramArgs{
+			Paths: []string{"testdata/main.k"},
+		},
+		ResolveAst: true,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
+}
+
+func ExampleListVariables() {
+	result, err := kcl.ListVariables(&kcl.ListVariablesArgs{
+		Files: []string{"testdata/main.k"},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
+}
+
+func ExampleListOptions() {
+	result, err := kcl.ListOptions(&kcl.ListOptionsArgs{
+		Paths: []string{"testdata/option/main.k"},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
+}
+
+func ExampleUpdateDependencies() {
+	// [package]
+	// name = "mod_update"
+	// edition = "0.0.1"
+	// version = "0.0.1"
+	//
+	// [dependencies]
+	// helloworld = { oci = "oci://ghcr.io/kcl-lang/helloworld", tag = "0.1.0" }
+	// flask = { git = "https://github.com/kcl-lang/flask-demo-kcl-manifests", commit = "ade147b" }
+
+	result, err := kcl.UpdateDependencies(&gpyrpc.UpdateDependencies_Args{
+		ManifestPath: "testdata/update_dependencies",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(result)
+}
+
+func ExampleUpdateDependencies_execProgram() {
+	// [package]
+	// name = "mod_update"
+	// edition = "0.0.1"
+	// version = "0.0.1"
+	//
+	// [dependencies]
+	// helloworld = { oci = "oci://ghcr.io/kcl-lang/helloworld", tag = "0.1.0" }
+	// flask = { git = "https://github.com/kcl-lang/flask-demo-kcl-manifests", commit = "ade147b" }
+
+	svc := native.NewNativeServiceClient()
+
+	result, err := svc.UpdateDependencies(&gpyrpc.UpdateDependencies_Args{
+		ManifestPath: "testdata/update_dependencies",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// import helloworld
+	// import flask
+	// a = helloworld.The_first_kcl_program
+	// fmt.Println(result.ExternalPkgs)
+
+	execResult, err := svc.ExecProgram(&gpyrpc.ExecProgram_Args{
+		KFilenameList: []string{"testdata/update_dependencies/main.k"},
+		ExternalPkgs:  result.ExternalPkgs,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(execResult.YamlResult)
+
+	// Output:
+	// a: Hello World!
 }

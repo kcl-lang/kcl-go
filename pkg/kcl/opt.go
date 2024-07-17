@@ -97,6 +97,18 @@ func WithExternalPkgs(key_value_list ...string) Option {
 	return *opt
 }
 
+// kcl -E aaa=/xx/xxx/aaa main.k
+func WithExternalPkgNameAndPath(name, path string) Option {
+	var args []*gpyrpc.ExternalPkg
+	args = append(args, &gpyrpc.ExternalPkg{
+		PkgName: name,
+		PkgPath: path,
+	})
+	var opt = NewOption()
+	opt.ExternalPkgs = args
+	return *opt
+}
+
 // kcl -D aa=11 -D bb=22 main.k
 func WithOptions(key_value_list ...string) Option {
 	var args []*gpyrpc.Argument

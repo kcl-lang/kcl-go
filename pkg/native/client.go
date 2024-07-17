@@ -192,3 +192,7 @@ func (c *NativeServiceClient) Test(in *gpyrpc.Test_Args) (*gpyrpc.Test_Result, e
 func (c *NativeServiceClient) UpdateDependencies(in *gpyrpc.UpdateDependencies_Args) (*gpyrpc.UpdateDependencies_Result, error) {
 	return cApiCall[*gpyrpc.UpdateDependencies_Args, *gpyrpc.UpdateDependencies_Result](c, "KclvmService.UpdateDependencies", in)
 }
+
+func (c *NativeServiceClient) GetVersion(in *gpyrpc.GetVersion_Args) (*gpyrpc.GetVersion_Result, error) {
+	return cApiCall[*gpyrpc.GetVersion_Args, *gpyrpc.GetVersion_Result](c, "KclvmService.GetVersion", in)
+}
