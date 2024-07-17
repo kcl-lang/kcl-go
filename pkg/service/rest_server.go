@@ -77,6 +77,7 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/KclvmService.RenameCode", p.handle_RenameCode)
 	p.router.GET("/api:protorpc/KclvmService.Test", p.handle_Test)
 	p.router.GET("/api:protorpc/KclvmService.UpdateDependencies", p.handle_UpdateDependencies)
+	p.router.GET("/api:protorpc/KclvmService.GetVersion", p.handle_GetVersion)
 
 	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
 	p.router.POST("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
@@ -99,6 +100,7 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/KclvmService.RenameCode", p.handle_RenameCode)
 	p.router.POST("/api:protorpc/KclvmService.Test", p.handle_Test)
 	p.router.POST("/api:protorpc/KclvmService.UpdateDependencies", p.handle_UpdateDependencies)
+	p.router.POST("/api:protorpc/KclvmService.GetVersion", p.handle_GetVersion)
 }
 
 func (p *restServer) handle(
@@ -287,5 +289,12 @@ func (p *restServer) handle_UpdateDependencies(w http.ResponseWriter, r *http.Re
 	args := new(gpyrpc.UpdateDependencies_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.c.UpdateDependencies(args)
+	})
+}
+
+func (p *restServer) handle_GetVersion(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	args := new(gpyrpc.GetVersion_Args)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.c.GetVersion(args)
 	})
 }

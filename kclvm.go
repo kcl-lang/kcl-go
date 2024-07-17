@@ -34,10 +34,13 @@ import (
 	"io"
 
 	"kcl-lang.io/kcl-go/pkg/kcl"
+	"kcl-lang.io/kcl-go/pkg/loader"
+	"kcl-lang.io/kcl-go/pkg/parser"
 	"kcl-lang.io/kcl-go/pkg/runtime"
 	"kcl-lang.io/kcl-go/pkg/tools/format"
 	"kcl-lang.io/kcl-go/pkg/tools/lint"
 	"kcl-lang.io/kcl-go/pkg/tools/list"
+	"kcl-lang.io/kcl-go/pkg/tools/module"
 	"kcl-lang.io/kcl-go/pkg/tools/override"
 	"kcl-lang.io/kcl-go/pkg/tools/testing"
 	"kcl-lang.io/kcl-go/pkg/tools/validate"
@@ -54,7 +57,18 @@ type (
 	KCLResult          = kcl.KCLResult
 	KCLResultList      = kcl.KCLResultList
 
-	KclType = kcl.KclType
+	KclType                  = kcl.KclType
+	VersionResult            = kcl.VersionResult
+	UpdateDependenciesArgs   = module.UpdateDependenciesArgs
+	UpdateDependenciesResult = module.UpdateDependenciesResult
+	LoadPackageArgs          = loader.LoadPackageArgs
+	LoadPackageResult        = loader.LoadPackageResult
+	ListVariablesArgs        = loader.ListVariablesArgs
+	ListVariablesResult      = loader.ListVariablesResult
+	ListOptionsArgs          = loader.ListOptionsArgs
+	ListOptionsResult        = loader.ListOptionsResult
+	ParseProgramArgs         = parser.ParseProgramArgs
+	ParseProgramResult       = parser.ParseProgramResult
 )
 
 // InitKclvmPath init kclvm path.
@@ -82,11 +96,21 @@ func RunFiles(paths []string, opts ...Option) (*KCLResultList, error) {
 	return kcl.RunFiles(paths, opts...)
 }
 
+// NewOption returns a new Option.
+func NewOption() *Option {
+	return kcl.NewOption()
+}
+
 // WithCode returns a Option which hold a kcl source code list.
 func WithCode(codes ...string) Option { return kcl.WithCode(codes...) }
 
 // WithExternalPkgs returns a Option which hold a external package list.
 func WithExternalPkgs(externalPkgs ...string) Option { return kcl.WithExternalPkgs(externalPkgs...) }
+
+// WithExternalPkgAndPath returns a Option which hold a external package.
+func WithExternalPkgAndPath(name, path string) Option {
+	return kcl.WithExternalPkgNameAndPath(name, path)
+}
 
 // WithKFilenames returns a Option which hold a filenames list.
 func WithKFilenames(filenames ...string) Option { return kcl.WithKFilenames(filenames...) }
@@ -179,11 +203,8 @@ func LintPath(paths []string) (results []string, err error) {
 // OverrideFile rewrites a file with override spec
 // file: string. The File that need to be overridden
 // specs: []string. List of specs that need to be overridden.
-//
-//	Each spec string satisfies the form: <pkgpath>:<field_path>=<filed_value> or <pkgpath>:<field_path>-
-//	When the pkgpath is '__main__', it can be omitted.
-//
-// importPaths. List of import statements that need to be added
+// importPaths. List of import statements that need to be added.
+// See https://www.kcl-lang.io/docs/user_docs/guides/automation for more override spec guide.
 func OverrideFile(file string, specs, importPaths []string) (bool, error) {
 	return override.OverrideFile(file, specs, importPaths)
 }
@@ -236,4 +257,36 @@ func GetSchemaType(filename string, src any, schemaName string) ([]*KclType, err
 //	The schema name got, when the schema name is empty, all schemas are returned.
 func GetSchemaTypeMapping(filename string, src any, schemaName string) (map[string]*KclType, error) {
 	return kcl.GetSchemaTypeMapping(filename, src, schemaName)
+}
+
+// Parse KCL program with entry files and return the AST JSON string.
+func ParseProgram(args *ParseProgramArgs) (*ParseProgramResult, error) {
+	return parser.ParseProgram(args)
+}
+
+// LoadPackage provides users with the ability to parse KCL program and semantic model
+// information including symbols, types, definitions, etc.
+func LoadPackage(args *LoadPackageArgs) (*LoadPackageResult, error) {
+	return loader.LoadPackage(args)
+}
+
+// ListVariables provides users with the ability to parse KCL program and get all variables by specs.
+func ListVariables(args *ListVariablesArgs) (*ListVariablesResult, error) {
+	return loader.ListVariables(args)
+}
+
+// ListOptions provides users with the ability to parse kcl program and get all option
+// calling information.
+func ListOptions(args *ListOptionsArgs) (*ListOptionsResult, error) {
+	return loader.ListOptions(args)
+}
+
+// Download and update dependencies defined in the kcl.mod file and return the external package name and location list.
+func UpdateDependencies(args *UpdateDependenciesArgs) (*UpdateDependenciesResult, error) {
+	return module.UpdateDependencies(args)
+}
+
+// GetVersion returns the KCL service version information.
+func GetVersion() (*VersionResult, error) {
+	return kcl.GetVersion()
 }

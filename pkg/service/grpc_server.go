@@ -100,3 +100,6 @@ func (p *_KclvmServiceImpl) Test(ctx context.Context, args *gpyrpc.Test_Args) (*
 func (p *_KclvmServiceImpl) UpdateDependencies(ctx context.Context, args *gpyrpc.UpdateDependencies_Args) (*gpyrpc.UpdateDependencies_Result, error) {
 	return p.c.UpdateDependencies(args)
 }
+func (p *_KclvmServiceImpl) GetVersion(ctx context.Context, args *gpyrpc.GetVersion_Args) (*gpyrpc.GetVersion_Result, error) {
+	return p.c.GetVersion(args)
+}

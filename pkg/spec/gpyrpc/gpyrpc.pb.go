@@ -28,13 +28,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Message representing an external package for KCL.
 // kcl main.k -E pkg_name=pkg_path
 type ExternalPkg struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of the package.
 	PkgName string `protobuf:"bytes,1,opt,name=pkg_name,json=pkgName,proto3" json:"pkg_name,omitempty"`
+	// Path of the package.
 	PkgPath string `protobuf:"bytes,2,opt,name=pkg_path,json=pkgPath,proto3" json:"pkg_path,omitempty"`
 }
 
@@ -84,13 +87,16 @@ func (x *ExternalPkg) GetPkgPath() string {
 	return ""
 }
 
+// Message representing a key-value argument for KCL.
 // kcl main.k -D name=value
 type Argument struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name  string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Name of the argument.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Value of the argument.
 	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -140,13 +146,17 @@ func (x *Argument) GetValue() string {
 	return ""
 }
 
+// Message representing an error.
 type Error struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Level    string     `protobuf:"bytes,1,opt,name=level,proto3" json:"level,omitempty"`
-	Code     string     `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	// Level of the error (e.g., "Error", "Warning").
+	Level string `protobuf:"bytes,1,opt,name=level,proto3" json:"level,omitempty"`
+	// Error code. (e.g., "E1001")
+	Code string `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	// List of error messages.
 	Messages []*Message `protobuf:"bytes,3,rep,name=messages,proto3" json:"messages,omitempty"`
 }
 
@@ -203,12 +213,15 @@ func (x *Error) GetMessages() []*Message {
 	return nil
 }
 
+// Message representing a detailed error message with a position.
 type Message struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Msg string    `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg,omitempty"`
+	// The error message text.
+	Msg string `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg,omitempty"`
+	// The position in the source code where the error occurred.
 	Pos *Position `protobuf:"bytes,2,opt,name=pos,proto3" json:"pos,omitempty"`
 }
 
@@ -258,11 +271,13 @@ func (x *Message) GetPos() *Position {
 	return nil
 }
 
+// Message for ping request arguments.
 type Ping_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Value to be sent in the ping request.
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -305,11 +320,13 @@ func (x *Ping_Args) GetValue() string {
 	return ""
 }
 
+// Message for ping response.
 type Ping_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Value received in the ping response.
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -352,6 +369,122 @@ func (x *Ping_Result) GetValue() string {
 	return ""
 }
 
+// Message for version request arguments. Empty message.
+type GetVersion_Args struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetVersion_Args) Reset() {
+	*x = GetVersion_Args{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_gpyrpc_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetVersion_Args) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetVersion_Args) ProtoMessage() {}
+
+func (x *GetVersion_Args) ProtoReflect() protoreflect.Message {
+	mi := &file_gpyrpc_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetVersion_Args.ProtoReflect.Descriptor instead.
+func (*GetVersion_Args) Descriptor() ([]byte, []int) {
+	return file_gpyrpc_proto_rawDescGZIP(), []int{6}
+}
+
+// Message for version response.
+type GetVersion_Result struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// KCL version.
+	Version string `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	// Checksum of the KCL version.
+	Checksum string `protobuf:"bytes,2,opt,name=checksum,proto3" json:"checksum,omitempty"`
+	// Git Git SHA of the KCL code repo.
+	GitSha string `protobuf:"bytes,3,opt,name=git_sha,json=gitSha,proto3" json:"git_sha,omitempty"`
+	// Detailed version information as a string.
+	VersionInfo string `protobuf:"bytes,4,opt,name=version_info,json=versionInfo,proto3" json:"version_info,omitempty"`
+}
+
+func (x *GetVersion_Result) Reset() {
+	*x = GetVersion_Result{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_gpyrpc_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetVersion_Result) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetVersion_Result) ProtoMessage() {}
+
+func (x *GetVersion_Result) ProtoReflect() protoreflect.Message {
+	mi := &file_gpyrpc_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetVersion_Result.ProtoReflect.Descriptor instead.
+func (*GetVersion_Result) Descriptor() ([]byte, []int) {
+	return file_gpyrpc_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetVersion_Result) GetVersion() string {
+	if x != nil {
+		return x.Version
+	}
+	return ""
+}
+
+func (x *GetVersion_Result) GetChecksum() string {
+	if x != nil {
+		return x.Checksum
+	}
+	return ""
+}
+
+func (x *GetVersion_Result) GetGitSha() string {
+	if x != nil {
+		return x.GitSha
+	}
+	return ""
+}
+
+func (x *GetVersion_Result) GetVersionInfo() string {
+	if x != nil {
+		return x.VersionInfo
+	}
+	return ""
+}
+
+// Message for list method request arguments. Empty message.
 type ListMethod_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -361,7 +494,7 @@ type ListMethod_Args struct {
 func (x *ListMethod_Args) Reset() {
 	*x = ListMethod_Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[6]
+		mi := &file_gpyrpc_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -374,7 +507,7 @@ func (x *ListMethod_Args) String() string {
 func (*ListMethod_Args) ProtoMessage() {}
 
 func (x *ListMethod_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[6]
+	mi := &file_gpyrpc_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -387,21 +520,23 @@ func (x *ListMethod_Args) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMethod_Args.ProtoReflect.Descriptor instead.
 func (*ListMethod_Args) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{6}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{8}
 }
 
+// Message for list method response.
 type ListMethod_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// List of available method names.
 	MethodNameList []string `protobuf:"bytes,1,rep,name=method_name_list,json=methodNameList,proto3" json:"method_name_list,omitempty"`
 }
 
 func (x *ListMethod_Result) Reset() {
 	*x = ListMethod_Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[7]
+		mi := &file_gpyrpc_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -414,7 +549,7 @@ func (x *ListMethod_Result) String() string {
 func (*ListMethod_Result) ProtoMessage() {}
 
 func (x *ListMethod_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[7]
+	mi := &file_gpyrpc_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -427,7 +562,7 @@ func (x *ListMethod_Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMethod_Result.ProtoReflect.Descriptor instead.
 func (*ListMethod_Result) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{7}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListMethod_Result) GetMethodNameList() []string {
@@ -437,20 +572,24 @@ func (x *ListMethod_Result) GetMethodNameList() []string {
 	return nil
 }
 
+// Message for parse file request arguments.
 type ParseFile_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Path         string         `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
-	Source       string         `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
-	ExternalPkgs []*ExternalPkg `protobuf:"bytes,3,rep,name=external_pkgs,json=externalPkgs,proto3" json:"external_pkgs,omitempty"` // External packages path
+	// Path of the file to be parsed.
+	Path string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	// Source code to be parsed.
+	Source string `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
+	// External packages path.
+	ExternalPkgs []*ExternalPkg `protobuf:"bytes,3,rep,name=external_pkgs,json=externalPkgs,proto3" json:"external_pkgs,omitempty"`
 }
 
 func (x *ParseFile_Args) Reset() {
 	*x = ParseFile_Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[8]
+		mi := &file_gpyrpc_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -463,7 +602,7 @@ func (x *ParseFile_Args) String() string {
 func (*ParseFile_Args) ProtoMessage() {}
 
 func (x *ParseFile_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[8]
+	mi := &file_gpyrpc_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -476,7 +615,7 @@ func (x *ParseFile_Args) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParseFile_Args.ProtoReflect.Descriptor instead.
 func (*ParseFile_Args) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{8}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ParseFile_Args) GetPath() string {
@@ -500,20 +639,24 @@ func (x *ParseFile_Args) GetExternalPkgs() []*ExternalPkg {
 	return nil
 }
 
+// Message for parse file response.
 type ParseFile_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AstJson string   `protobuf:"bytes,1,opt,name=ast_json,json=astJson,proto3" json:"ast_json,omitempty"` // JSON string value
-	Deps    []string `protobuf:"bytes,2,rep,name=deps,proto3" json:"deps,omitempty"`                      // file dependency paths
-	Errors  []*Error `protobuf:"bytes,3,rep,name=errors,proto3" json:"errors,omitempty"`                  // Parse errors
+	// Abstract Syntax Tree (AST) in JSON format.
+	AstJson string `protobuf:"bytes,1,opt,name=ast_json,json=astJson,proto3" json:"ast_json,omitempty"`
+	// File dependency paths.
+	Deps []string `protobuf:"bytes,2,rep,name=deps,proto3" json:"deps,omitempty"`
+	// List of parse errors.
+	Errors []*Error `protobuf:"bytes,3,rep,name=errors,proto3" json:"errors,omitempty"`
 }
 
 func (x *ParseFile_Result) Reset() {
 	*x = ParseFile_Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[9]
+		mi := &file_gpyrpc_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -526,7 +669,7 @@ func (x *ParseFile_Result) String() string {
 func (*ParseFile_Result) ProtoMessage() {}
 
 func (x *ParseFile_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[9]
+	mi := &file_gpyrpc_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -539,7 +682,7 @@ func (x *ParseFile_Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParseFile_Result.ProtoReflect.Descriptor instead.
 func (*ParseFile_Result) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{9}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ParseFile_Result) GetAstJson() string {
@@ -563,20 +706,24 @@ func (x *ParseFile_Result) GetErrors() []*Error {
 	return nil
 }
 
+// Message for parse program request arguments.
 type ParseProgram_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Paths        []string       `protobuf:"bytes,1,rep,name=paths,proto3" json:"paths,omitempty"`
-	Sources      []string       `protobuf:"bytes,2,rep,name=sources,proto3" json:"sources,omitempty"`
-	ExternalPkgs []*ExternalPkg `protobuf:"bytes,3,rep,name=external_pkgs,json=externalPkgs,proto3" json:"external_pkgs,omitempty"` // External packages path
+	// Paths of the program files to be parsed.
+	Paths []string `protobuf:"bytes,1,rep,name=paths,proto3" json:"paths,omitempty"`
+	// Source codes to be parsed.
+	Sources []string `protobuf:"bytes,2,rep,name=sources,proto3" json:"sources,omitempty"`
+	// External packages path.
+	ExternalPkgs []*ExternalPkg `protobuf:"bytes,3,rep,name=external_pkgs,json=externalPkgs,proto3" json:"external_pkgs,omitempty"`
 }
 
 func (x *ParseProgram_Args) Reset() {
 	*x = ParseProgram_Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[10]
+		mi := &file_gpyrpc_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -589,7 +736,7 @@ func (x *ParseProgram_Args) String() string {
 func (*ParseProgram_Args) ProtoMessage() {}
 
 func (x *ParseProgram_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[10]
+	mi := &file_gpyrpc_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -602,7 +749,7 @@ func (x *ParseProgram_Args) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParseProgram_Args.ProtoReflect.Descriptor instead.
 func (*ParseProgram_Args) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{10}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ParseProgram_Args) GetPaths() []string {
@@ -626,20 +773,24 @@ func (x *ParseProgram_Args) GetExternalPkgs() []*ExternalPkg {
 	return nil
 }
 
+// Message for parse program response.
 type ParseProgram_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AstJson string   `protobuf:"bytes,1,opt,name=ast_json,json=astJson,proto3" json:"ast_json,omitempty"` // JSON string value
-	Paths   []string `protobuf:"bytes,2,rep,name=paths,proto3" json:"paths,omitempty"`                    // Returns the files in the order they should be compiled
-	Errors  []*Error `protobuf:"bytes,3,rep,name=errors,proto3" json:"errors,omitempty"`                  // Parse errors
+	// Abstract Syntax Tree (AST) in JSON format.
+	AstJson string `protobuf:"bytes,1,opt,name=ast_json,json=astJson,proto3" json:"ast_json,omitempty"`
+	// Returns the files in the order they should be compiled.
+	Paths []string `protobuf:"bytes,2,rep,name=paths,proto3" json:"paths,omitempty"`
+	// List of parse errors.
+	Errors []*Error `protobuf:"bytes,3,rep,name=errors,proto3" json:"errors,omitempty"`
 }
 
 func (x *ParseProgram_Result) Reset() {
 	*x = ParseProgram_Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[11]
+		mi := &file_gpyrpc_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -652,7 +803,7 @@ func (x *ParseProgram_Result) String() string {
 func (*ParseProgram_Result) ProtoMessage() {}
 
 func (x *ParseProgram_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[11]
+	mi := &file_gpyrpc_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -665,7 +816,7 @@ func (x *ParseProgram_Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParseProgram_Result.ProtoReflect.Descriptor instead.
 func (*ParseProgram_Result) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{11}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ParseProgram_Result) GetAstJson() string {
@@ -689,21 +840,26 @@ func (x *ParseProgram_Result) GetErrors() []*Error {
 	return nil
 }
 
+// Message for load package request arguments.
 type LoadPackage_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ParseArgs    *ParseProgram_Args `protobuf:"bytes,1,opt,name=parse_args,json=parseArgs,proto3" json:"parse_args,omitempty"`
-	ResolveAst   bool               `protobuf:"varint,2,opt,name=resolve_ast,json=resolveAst,proto3" json:"resolve_ast,omitempty"`
-	LoadBuiltin  bool               `protobuf:"varint,3,opt,name=load_builtin,json=loadBuiltin,proto3" json:"load_builtin,omitempty"`
-	WithAstIndex bool               `protobuf:"varint,4,opt,name=with_ast_index,json=withAstIndex,proto3" json:"with_ast_index,omitempty"`
+	// Arguments for parsing the program.
+	ParseArgs *ParseProgram_Args `protobuf:"bytes,1,opt,name=parse_args,json=parseArgs,proto3" json:"parse_args,omitempty"`
+	// Flag indicating whether to resolve AST.
+	ResolveAst bool `protobuf:"varint,2,opt,name=resolve_ast,json=resolveAst,proto3" json:"resolve_ast,omitempty"`
+	// Flag indicating whether to load built-in modules.
+	LoadBuiltin bool `protobuf:"varint,3,opt,name=load_builtin,json=loadBuiltin,proto3" json:"load_builtin,omitempty"`
+	// Flag indicating whether to include AST index.
+	WithAstIndex bool `protobuf:"varint,4,opt,name=with_ast_index,json=withAstIndex,proto3" json:"with_ast_index,omitempty"`
 }
 
 func (x *LoadPackage_Args) Reset() {
 	*x = LoadPackage_Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[12]
+		mi := &file_gpyrpc_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -716,7 +872,7 @@ func (x *LoadPackage_Args) String() string {
 func (*LoadPackage_Args) ProtoMessage() {}
 
 func (x *LoadPackage_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[12]
+	mi := &file_gpyrpc_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -729,7 +885,7 @@ func (x *LoadPackage_Args) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoadPackage_Args.ProtoReflect.Descriptor instead.
 func (*LoadPackage_Args) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{12}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *LoadPackage_Args) GetParseArgs() *ParseProgram_Args {
@@ -760,27 +916,38 @@ func (x *LoadPackage_Args) GetWithAstIndex() bool {
 	return false
 }
 
+// Message for load package response.
 type LoadPackage_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Program               string                  `protobuf:"bytes,1,opt,name=program,proto3" json:"program,omitempty"`                                                                                                                                                      // JSON string value
-	Paths                 []string                `protobuf:"bytes,2,rep,name=paths,proto3" json:"paths,omitempty"`                                                                                                                                                          // Returns the files in the order they should be compiled
-	ParseErrors           []*Error                `protobuf:"bytes,3,rep,name=parse_errors,json=parseErrors,proto3" json:"parse_errors,omitempty"`                                                                                                                           // Parse errors
-	TypeErrors            []*Error                `protobuf:"bytes,4,rep,name=type_errors,json=typeErrors,proto3" json:"type_errors,omitempty"`                                                                                                                              // Type errors
-	Scopes                map[string]*Scope       `protobuf:"bytes,5,rep,name=scopes,proto3" json:"scopes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`                                                                // Map key is the ScopeIndex json string.
-	Symbols               map[string]*Symbol      `protobuf:"bytes,6,rep,name=symbols,proto3" json:"symbols,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`                                                              // Map key is the SymbolIndex json string.
-	NodeSymbolMap         map[string]*SymbolIndex `protobuf:"bytes,7,rep,name=node_symbol_map,json=nodeSymbolMap,proto3" json:"node_symbol_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`                           // Map key is the AST index UUID string.
-	SymbolNodeMap         map[string]string       `protobuf:"bytes,8,rep,name=symbol_node_map,json=symbolNodeMap,proto3" json:"symbol_node_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`                           // Map key is the SymbolIndex json string.
-	FullyQualifiedNameMap map[string]*SymbolIndex `protobuf:"bytes,9,rep,name=fully_qualified_name_map,json=fullyQualifiedNameMap,proto3" json:"fully_qualified_name_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"` // Map key is the fully_qualified_name e.g. `pkg.Name`
-	PkgScopeMap           map[string]*ScopeIndex  `protobuf:"bytes,10,rep,name=pkg_scope_map,json=pkgScopeMap,proto3" json:"pkg_scope_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`                                // Map key is the package path.
+	// Program Abstract Syntax Tree (AST) in JSON format.
+	Program string `protobuf:"bytes,1,opt,name=program,proto3" json:"program,omitempty"`
+	// Returns the files in the order they should be compiled.
+	Paths []string `protobuf:"bytes,2,rep,name=paths,proto3" json:"paths,omitempty"`
+	// List of parse errors.
+	ParseErrors []*Error `protobuf:"bytes,3,rep,name=parse_errors,json=parseErrors,proto3" json:"parse_errors,omitempty"`
+	// List of type errors.
+	TypeErrors []*Error `protobuf:"bytes,4,rep,name=type_errors,json=typeErrors,proto3" json:"type_errors,omitempty"`
+	// Map of scopes with scope index as key.
+	Scopes map[string]*Scope `protobuf:"bytes,5,rep,name=scopes,proto3" json:"scopes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Map of symbols with symbol index as key.
+	Symbols map[string]*Symbol `protobuf:"bytes,6,rep,name=symbols,proto3" json:"symbols,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Map of node-symbol associations with AST index UUID as key.
+	NodeSymbolMap map[string]*SymbolIndex `protobuf:"bytes,7,rep,name=node_symbol_map,json=nodeSymbolMap,proto3" json:"node_symbol_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Map of symbol-node associations with symbol index as key.
+	SymbolNodeMap map[string]string `protobuf:"bytes,8,rep,name=symbol_node_map,json=symbolNodeMap,proto3" json:"symbol_node_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Map of fully qualified names with symbol index as key.
+	FullyQualifiedNameMap map[string]*SymbolIndex `protobuf:"bytes,9,rep,name=fully_qualified_name_map,json=fullyQualifiedNameMap,proto3" json:"fully_qualified_name_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Map of package scope with package path as key.
+	PkgScopeMap map[string]*ScopeIndex `protobuf:"bytes,10,rep,name=pkg_scope_map,json=pkgScopeMap,proto3" json:"pkg_scope_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *LoadPackage_Result) Reset() {
 	*x = LoadPackage_Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[13]
+		mi := &file_gpyrpc_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -793,7 +960,7 @@ func (x *LoadPackage_Result) String() string {
 func (*LoadPackage_Result) ProtoMessage() {}
 
 func (x *LoadPackage_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[13]
+	mi := &file_gpyrpc_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -806,7 +973,7 @@ func (x *LoadPackage_Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoadPackage_Result.ProtoReflect.Descriptor instead.
 func (*LoadPackage_Result) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{13}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *LoadPackage_Result) GetProgram() string {
@@ -879,18 +1046,20 @@ func (x *LoadPackage_Result) GetPkgScopeMap() map[string]*ScopeIndex {
 	return nil
 }
 
+// Message for list options response.
 type ListOptions_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Options []*OptionHelp `protobuf:"bytes,2,rep,name=options,proto3" json:"options,omitempty"` // Returns the files in the order they should be compiled
+	// List of available options.
+	Options []*OptionHelp `protobuf:"bytes,2,rep,name=options,proto3" json:"options,omitempty"`
 }
 
 func (x *ListOptions_Result) Reset() {
 	*x = ListOptions_Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[14]
+		mi := &file_gpyrpc_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -903,7 +1072,7 @@ func (x *ListOptions_Result) String() string {
 func (*ListOptions_Result) ProtoMessage() {}
 
 func (x *ListOptions_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[14]
+	mi := &file_gpyrpc_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -916,7 +1085,7 @@ func (x *ListOptions_Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOptions_Result.ProtoReflect.Descriptor instead.
 func (*ListOptions_Result) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{14}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListOptions_Result) GetOptions() []*OptionHelp {
@@ -926,22 +1095,28 @@ func (x *ListOptions_Result) GetOptions() []*OptionHelp {
 	return nil
 }
 
+// Message representing a help option.
 type OptionHelp struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name         string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Type         string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Required     bool   `protobuf:"varint,3,opt,name=required,proto3" json:"required,omitempty"`
+	// Name of the option.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Type of the option.
+	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	// Flag indicating if the option is required.
+	Required bool `protobuf:"varint,3,opt,name=required,proto3" json:"required,omitempty"`
+	// Default value of the option.
 	DefaultValue string `protobuf:"bytes,4,opt,name=default_value,json=defaultValue,proto3" json:"default_value,omitempty"`
-	Help         string `protobuf:"bytes,5,opt,name=help,proto3" json:"help,omitempty"`
+	// Help text for the option.
+	Help string `protobuf:"bytes,5,opt,name=help,proto3" json:"help,omitempty"`
 }
 
 func (x *OptionHelp) Reset() {
 	*x = OptionHelp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[15]
+		mi := &file_gpyrpc_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -954,7 +1129,7 @@ func (x *OptionHelp) String() string {
 func (*OptionHelp) ProtoMessage() {}
 
 func (x *OptionHelp) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[15]
+	mi := &file_gpyrpc_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -967,7 +1142,7 @@ func (x *OptionHelp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionHelp.ProtoReflect.Descriptor instead.
 func (*OptionHelp) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{15}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *OptionHelp) GetName() string {
@@ -1005,23 +1180,30 @@ func (x *OptionHelp) GetHelp() string {
 	return ""
 }
 
+// Message representing a symbol in KCL.
 type Symbol struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ty       *KclType       `protobuf:"bytes,1,opt,name=ty,proto3" json:"ty,omitempty"`
-	Name     string         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Owner    *SymbolIndex   `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
-	Def      *SymbolIndex   `protobuf:"bytes,4,opt,name=def,proto3" json:"def,omitempty"`
-	Attrs    []*SymbolIndex `protobuf:"bytes,5,rep,name=attrs,proto3" json:"attrs,omitempty"`
-	IsGlobal bool           `protobuf:"varint,6,opt,name=is_global,json=isGlobal,proto3" json:"is_global,omitempty"`
+	// Type of the symbol.
+	Ty *KclType `protobuf:"bytes,1,opt,name=ty,proto3" json:"ty,omitempty"`
+	// Name of the symbol.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Owner of the symbol.
+	Owner *SymbolIndex `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	// Definition of the symbol.
+	Def *SymbolIndex `protobuf:"bytes,4,opt,name=def,proto3" json:"def,omitempty"`
+	// Attributes of the symbol.
+	Attrs []*SymbolIndex `protobuf:"bytes,5,rep,name=attrs,proto3" json:"attrs,omitempty"`
+	// Flag indicating if the symbol is global.
+	IsGlobal bool `protobuf:"varint,6,opt,name=is_global,json=isGlobal,proto3" json:"is_global,omitempty"`
 }
 
 func (x *Symbol) Reset() {
 	*x = Symbol{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[16]
+		mi := &file_gpyrpc_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1034,7 +1216,7 @@ func (x *Symbol) String() string {
 func (*Symbol) ProtoMessage() {}
 
 func (x *Symbol) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[16]
+	mi := &file_gpyrpc_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1047,7 +1229,7 @@ func (x *Symbol) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Symbol.ProtoReflect.Descriptor instead.
 func (*Symbol) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{16}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *Symbol) GetTy() *KclType {
@@ -1092,22 +1274,28 @@ func (x *Symbol) GetIsGlobal() bool {
 	return false
 }
 
+// Message representing a scope in KCL.
 type Scope struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Kind     string         `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
-	Parent   *ScopeIndex    `protobuf:"bytes,2,opt,name=parent,proto3" json:"parent,omitempty"`
-	Owner    *SymbolIndex   `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
-	Children []*ScopeIndex  `protobuf:"bytes,4,rep,name=children,proto3" json:"children,omitempty"`
-	Defs     []*SymbolIndex `protobuf:"bytes,5,rep,name=defs,proto3" json:"defs,omitempty"`
+	// Type of the scope.
+	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
+	// Parent scope.
+	Parent *ScopeIndex `protobuf:"bytes,2,opt,name=parent,proto3" json:"parent,omitempty"`
+	// Owner of the scope.
+	Owner *SymbolIndex `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	// Children of the scope.
+	Children []*ScopeIndex `protobuf:"bytes,4,rep,name=children,proto3" json:"children,omitempty"`
+	// Definitions in the scope.
+	Defs []*SymbolIndex `protobuf:"bytes,5,rep,name=defs,proto3" json:"defs,omitempty"`
 }
 
 func (x *Scope) Reset() {
 	*x = Scope{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[17]
+		mi := &file_gpyrpc_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1120,7 +1308,7 @@ func (x *Scope) String() string {
 func (*Scope) ProtoMessage() {}
 
 func (x *Scope) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[17]
+	mi := &file_gpyrpc_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1133,7 +1321,7 @@ func (x *Scope) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Scope.ProtoReflect.Descriptor instead.
 func (*Scope) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{17}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *Scope) GetKind() string {
@@ -1171,20 +1359,24 @@ func (x *Scope) GetDefs() []*SymbolIndex {
 	return nil
 }
 
+// Message representing a symbol index.
 type SymbolIndex struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	I    uint64 `protobuf:"varint,1,opt,name=i,proto3" json:"i,omitempty"`
-	G    uint64 `protobuf:"varint,2,opt,name=g,proto3" json:"g,omitempty"`
+	// Index identifier.
+	I uint64 `protobuf:"varint,1,opt,name=i,proto3" json:"i,omitempty"`
+	// Global identifier.
+	G uint64 `protobuf:"varint,2,opt,name=g,proto3" json:"g,omitempty"`
+	// Type of the symbol or scope.
 	Kind string `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
 }
 
 func (x *SymbolIndex) Reset() {
 	*x = SymbolIndex{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[18]
+		mi := &file_gpyrpc_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1197,7 +1389,7 @@ func (x *SymbolIndex) String() string {
 func (*SymbolIndex) ProtoMessage() {}
 
 func (x *SymbolIndex) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[18]
+	mi := &file_gpyrpc_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1210,7 +1402,7 @@ func (x *SymbolIndex) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SymbolIndex.ProtoReflect.Descriptor instead.
 func (*SymbolIndex) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{18}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *SymbolIndex) GetI() uint64 {
@@ -1234,20 +1426,24 @@ func (x *SymbolIndex) GetKind() string {
 	return ""
 }
 
+// Message representing a scope index.
 type ScopeIndex struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	I    uint64 `protobuf:"varint,1,opt,name=i,proto3" json:"i,omitempty"`
-	G    uint64 `protobuf:"varint,2,opt,name=g,proto3" json:"g,omitempty"`
+	// Index identifier.
+	I uint64 `protobuf:"varint,1,opt,name=i,proto3" json:"i,omitempty"`
+	// Global identifier.
+	G uint64 `protobuf:"varint,2,opt,name=g,proto3" json:"g,omitempty"`
+	// Type of the scope.
 	Kind string `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
 }
 
 func (x *ScopeIndex) Reset() {
 	*x = ScopeIndex{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[19]
+		mi := &file_gpyrpc_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1260,7 +1456,7 @@ func (x *ScopeIndex) String() string {
 func (*ScopeIndex) ProtoMessage() {}
 
 func (x *ScopeIndex) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[19]
+	mi := &file_gpyrpc_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1273,7 +1469,7 @@ func (x *ScopeIndex) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScopeIndex.ProtoReflect.Descriptor instead.
 func (*ScopeIndex) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{19}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ScopeIndex) GetI() uint64 {
@@ -1297,46 +1493,54 @@ func (x *ScopeIndex) GetKind() string {
 	return ""
 }
 
+// Message for execute program request arguments.
 type ExecProgram_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WorkDir           string      `protobuf:"bytes,1,opt,name=work_dir,json=workDir,proto3" json:"work_dir,omitempty"`
-	KFilenameList     []string    `protobuf:"bytes,2,rep,name=k_filename_list,json=kFilenameList,proto3" json:"k_filename_list,omitempty"`
-	KCodeList         []string    `protobuf:"bytes,3,rep,name=k_code_list,json=kCodeList,proto3" json:"k_code_list,omitempty"`
-	Args              []*Argument `protobuf:"bytes,4,rep,name=args,proto3" json:"args,omitempty"`
-	Overrides         []string    `protobuf:"bytes,5,rep,name=overrides,proto3" json:"overrides,omitempty"`
-	DisableYamlResult bool        `protobuf:"varint,6,opt,name=disable_yaml_result,json=disableYamlResult,proto3" json:"disable_yaml_result,omitempty"`
-	PrintOverrideAst  bool        `protobuf:"varint,7,opt,name=print_override_ast,json=printOverrideAst,proto3" json:"print_override_ast,omitempty"`
-	// -r --strict-range-check
+	// Working directory.
+	WorkDir string `protobuf:"bytes,1,opt,name=work_dir,json=workDir,proto3" json:"work_dir,omitempty"`
+	// List of KCL filenames.
+	KFilenameList []string `protobuf:"bytes,2,rep,name=k_filename_list,json=kFilenameList,proto3" json:"k_filename_list,omitempty"`
+	// List of KCL codes.
+	KCodeList []string `protobuf:"bytes,3,rep,name=k_code_list,json=kCodeList,proto3" json:"k_code_list,omitempty"`
+	// Arguments for the program.
+	Args []*Argument `protobuf:"bytes,4,rep,name=args,proto3" json:"args,omitempty"`
+	// Override configurations.
+	Overrides []string `protobuf:"bytes,5,rep,name=overrides,proto3" json:"overrides,omitempty"`
+	// Flag to disable YAML result.
+	DisableYamlResult bool `protobuf:"varint,6,opt,name=disable_yaml_result,json=disableYamlResult,proto3" json:"disable_yaml_result,omitempty"`
+	// Flag to print override AST.
+	PrintOverrideAst bool `protobuf:"varint,7,opt,name=print_override_ast,json=printOverrideAst,proto3" json:"print_override_ast,omitempty"`
+	// Flag for strict range check.
 	StrictRangeCheck bool `protobuf:"varint,8,opt,name=strict_range_check,json=strictRangeCheck,proto3" json:"strict_range_check,omitempty"`
-	// -n --disable-none
+	// Flag to disable none values.
 	DisableNone bool `protobuf:"varint,9,opt,name=disable_none,json=disableNone,proto3" json:"disable_none,omitempty"`
-	// -v --verbose
+	// Verbose level.
 	Verbose int32 `protobuf:"varint,10,opt,name=verbose,proto3" json:"verbose,omitempty"`
-	// -d --debug
+	// Debug level.
 	Debug int32 `protobuf:"varint,11,opt,name=debug,proto3" json:"debug,omitempty"`
-	// yaml/json: sort keys
+	// Flag to sort keys in YAML/JSON results.
 	SortKeys bool `protobuf:"varint,12,opt,name=sort_keys,json=sortKeys,proto3" json:"sort_keys,omitempty"`
-	// -E --external : external packages path
+	// External packages path.
 	ExternalPkgs []*ExternalPkg `protobuf:"bytes,13,rep,name=external_pkgs,json=externalPkgs,proto3" json:"external_pkgs,omitempty"`
-	// Whether including schema type in JSON/YAML result
+	// Flag to include schema type path in results.
 	IncludeSchemaTypePath bool `protobuf:"varint,14,opt,name=include_schema_type_path,json=includeSchemaTypePath,proto3" json:"include_schema_type_path,omitempty"`
-	// Whether only compiling the program
+	// Flag to compile only without execution.
 	CompileOnly bool `protobuf:"varint,15,opt,name=compile_only,json=compileOnly,proto3" json:"compile_only,omitempty"`
-	// Show hidden attributes
+	// Flag to show hidden attributes.
 	ShowHidden bool `protobuf:"varint,16,opt,name=show_hidden,json=showHidden,proto3" json:"show_hidden,omitempty"`
-	// -S --path_selector
+	// Path selectors for results.
 	PathSelector []string `protobuf:"bytes,17,rep,name=path_selector,json=pathSelector,proto3" json:"path_selector,omitempty"`
-	// -K --fast_eval
+	// Flag for fast evaluation.
 	FastEval bool `protobuf:"varint,18,opt,name=fast_eval,json=fastEval,proto3" json:"fast_eval,omitempty"`
 }
 
 func (x *ExecProgram_Args) Reset() {
 	*x = ExecProgram_Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[20]
+		mi := &file_gpyrpc_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1349,7 +1553,7 @@ func (x *ExecProgram_Args) String() string {
 func (*ExecProgram_Args) ProtoMessage() {}
 
 func (x *ExecProgram_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[20]
+	mi := &file_gpyrpc_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1362,7 +1566,7 @@ func (x *ExecProgram_Args) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExecProgram_Args.ProtoReflect.Descriptor instead.
 func (*ExecProgram_Args) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{20}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ExecProgram_Args) GetWorkDir() string {
@@ -1491,21 +1695,26 @@ func (x *ExecProgram_Args) GetFastEval() bool {
 	return false
 }
 
+// Message for execute program response.
 type ExecProgram_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Result in JSON format.
 	JsonResult string `protobuf:"bytes,1,opt,name=json_result,json=jsonResult,proto3" json:"json_result,omitempty"`
+	// Result in YAML format.
 	YamlResult string `protobuf:"bytes,2,opt,name=yaml_result,json=yamlResult,proto3" json:"yaml_result,omitempty"`
+	// Log message from execution.
 	LogMessage string `protobuf:"bytes,3,opt,name=log_message,json=logMessage,proto3" json:"log_message,omitempty"`
+	// Error message from execution.
 	ErrMessage string `protobuf:"bytes,4,opt,name=err_message,json=errMessage,proto3" json:"err_message,omitempty"`
 }
 
 func (x *ExecProgram_Result) Reset() {
 	*x = ExecProgram_Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[21]
+		mi := &file_gpyrpc_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1518,7 +1727,7 @@ func (x *ExecProgram_Result) String() string {
 func (*ExecProgram_Result) ProtoMessage() {}
 
 func (x *ExecProgram_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[21]
+	mi := &file_gpyrpc_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1531,7 +1740,7 @@ func (x *ExecProgram_Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExecProgram_Result.ProtoReflect.Descriptor instead.
 func (*ExecProgram_Result) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{21}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ExecProgram_Result) GetJsonResult() string {
@@ -1562,19 +1771,22 @@ func (x *ExecProgram_Result) GetErrMessage() string {
 	return ""
 }
 
+// Message for build program request arguments.
 type BuildProgram_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Arguments for executing the program.
 	ExecArgs *ExecProgram_Args `protobuf:"bytes,1,opt,name=exec_args,json=execArgs,proto3" json:"exec_args,omitempty"`
-	Output   string            `protobuf:"bytes,2,opt,name=output,proto3" json:"output,omitempty"`
+	// Output path.
+	Output string `protobuf:"bytes,2,opt,name=output,proto3" json:"output,omitempty"`
 }
 
 func (x *BuildProgram_Args) Reset() {
 	*x = BuildProgram_Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[22]
+		mi := &file_gpyrpc_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1587,7 +1799,7 @@ func (x *BuildProgram_Args) String() string {
 func (*BuildProgram_Args) ProtoMessage() {}
 
 func (x *BuildProgram_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[22]
+	mi := &file_gpyrpc_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1600,7 +1812,7 @@ func (x *BuildProgram_Args) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BuildProgram_Args.ProtoReflect.Descriptor instead.
 func (*BuildProgram_Args) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{22}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *BuildProgram_Args) GetExecArgs() *ExecProgram_Args {
@@ -1617,18 +1829,20 @@ func (x *BuildProgram_Args) GetOutput() string {
 	return ""
 }
 
+// Message for build program response.
 type BuildProgram_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Path of the built program.
 	Path string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
 }
 
 func (x *BuildProgram_Result) Reset() {
 	*x = BuildProgram_Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[23]
+		mi := &file_gpyrpc_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1641,7 +1855,7 @@ func (x *BuildProgram_Result) String() string {
 func (*BuildProgram_Result) ProtoMessage() {}
 
 func (x *BuildProgram_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[23]
+	mi := &file_gpyrpc_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1654,7 +1868,7 @@ func (x *BuildProgram_Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BuildProgram_Result.ProtoReflect.Descriptor instead.
 func (*BuildProgram_Result) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{23}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *BuildProgram_Result) GetPath() string {
@@ -1664,19 +1878,22 @@ func (x *BuildProgram_Result) GetPath() string {
 	return ""
 }
 
+// Message for execute artifact request arguments.
 type ExecArtifact_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Path     string            `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	// Path of the artifact.
+	Path string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	// Arguments for executing the program.
 	ExecArgs *ExecProgram_Args `protobuf:"bytes,2,opt,name=exec_args,json=execArgs,proto3" json:"exec_args,omitempty"`
 }
 
 func (x *ExecArtifact_Args) Reset() {
 	*x = ExecArtifact_Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[24]
+		mi := &file_gpyrpc_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1689,7 +1906,7 @@ func (x *ExecArtifact_Args) String() string {
 func (*ExecArtifact_Args) ProtoMessage() {}
 
 func (x *ExecArtifact_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[24]
+	mi := &file_gpyrpc_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1702,7 +1919,7 @@ func (x *ExecArtifact_Args) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExecArtifact_Args.ProtoReflect.Descriptor instead.
 func (*ExecArtifact_Args) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{24}
+	return file_gpyrpc_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ExecArtifact_Args) GetPath() string {
@@ -1719,96 +1936,13 @@ func (x *ExecArtifact_Args) GetExecArgs() *ExecProgram_Args {
 	return nil
 }
 
-type ResetPlugin_Args struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	PluginRoot string `protobuf:"bytes,1,opt,name=plugin_root,json=pluginRoot,proto3" json:"plugin_root,omitempty"`
-}
-
-func (x *ResetPlugin_Args) Reset() {
-	*x = ResetPlugin_Args{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[25]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ResetPlugin_Args) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ResetPlugin_Args) ProtoMessage() {}
-
-func (x *ResetPlugin_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[25]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ResetPlugin_Args.ProtoReflect.Descriptor instead.
-func (*ResetPlugin_Args) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{25}
-}
-
-func (x *ResetPlugin_Args) GetPluginRoot() string {
-	if x != nil {
-		return x.PluginRoot
-	}
-	return ""
-}
-
-type ResetPlugin_Result struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *ResetPlugin_Result) Reset() {
-	*x = ResetPlugin_Result{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_gpyrpc_proto_msgTypes[26]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ResetPlugin_Result) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ResetPlugin_Result) ProtoMessage() {}
-
-func (x *ResetPlugin_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_gpyrpc_proto_msgTypes[26]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ResetPlugin_Result.ProtoReflect.Descriptor instead.
-func (*ResetPlugin_Result) Descriptor() ([]byte, []int) {
-	return file_gpyrpc_proto_rawDescGZIP(), []int{26}
-}
-
+// Message for format code request arguments.
 type FormatCode_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Source code to be formatted.
 	Source string `protobuf:"bytes,1,opt,name=source,proto3" json:"source,omitempty"`
 }
 
@@ -1851,11 +1985,13 @@ func (x *FormatCode_Args) GetSource() string {
 	return ""
 }
 
+// Message for format code response.
 type FormatCode_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Formatted code as bytes.
 	Formatted []byte `protobuf:"bytes,1,opt,name=formatted,proto3" json:"formatted,omitempty"`
 }
 
@@ -1898,11 +2034,13 @@ func (x *FormatCode_Result) GetFormatted() []byte {
 	return nil
 }
 
+// Message for format file path request arguments.
 type FormatPath_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Path of the file to format.
 	Path string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
 }
 
@@ -1945,11 +2083,13 @@ func (x *FormatPath_Args) GetPath() string {
 	return ""
 }
 
+// Message for format file path response.
 type FormatPath_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// List of changed file paths.
 	ChangedPaths []string `protobuf:"bytes,1,rep,name=changed_paths,json=changedPaths,proto3" json:"changed_paths,omitempty"`
 }
 
@@ -1992,11 +2132,13 @@ func (x *FormatPath_Result) GetChangedPaths() []string {
 	return nil
 }
 
+// Message for lint file path request arguments.
 type LintPath_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Paths of the files to lint.
 	Paths []string `protobuf:"bytes,1,rep,name=paths,proto3" json:"paths,omitempty"`
 }
 
@@ -2039,11 +2181,13 @@ func (x *LintPath_Args) GetPaths() []string {
 	return nil
 }
 
+// Message for lint file path response.
 type LintPath_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// List of lint results.
 	Results []string `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
 }
 
@@ -2086,13 +2230,17 @@ func (x *LintPath_Result) GetResults() []string {
 	return nil
 }
 
+// Message for override file request arguments.
 type OverrideFile_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	File        string   `protobuf:"bytes,1,opt,name=file,proto3" json:"file,omitempty"`
-	Specs       []string `protobuf:"bytes,2,rep,name=specs,proto3" json:"specs,omitempty"`
+	// Path of the file to override.
+	File string `protobuf:"bytes,1,opt,name=file,proto3" json:"file,omitempty"`
+	// List of override specifications.
+	Specs []string `protobuf:"bytes,2,rep,name=specs,proto3" json:"specs,omitempty"`
+	// List of import paths.
 	ImportPaths []string `protobuf:"bytes,3,rep,name=import_paths,json=importPaths,proto3" json:"import_paths,omitempty"`
 }
 
@@ -2149,12 +2297,15 @@ func (x *OverrideFile_Args) GetImportPaths() []string {
 	return nil
 }
 
+// Message for override file response.
 type OverrideFile_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Result      bool     `protobuf:"varint,1,opt,name=result,proto3" json:"result,omitempty"`
+	// Result of the override operation.
+	Result bool `protobuf:"varint,1,opt,name=result,proto3" json:"result,omitempty"`
+	// List of parse errors encountered.
 	ParseErrors []*Error `protobuf:"bytes,2,rep,name=parse_errors,json=parseErrors,proto3" json:"parse_errors,omitempty"`
 }
 
@@ -2204,11 +2355,13 @@ func (x *OverrideFile_Result) GetParseErrors() []*Error {
 	return nil
 }
 
+// Message for list variables options.
 type ListVariables_Options struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Flag to merge program configuration.
 	MergeProgram bool `protobuf:"varint,1,opt,name=merge_program,json=mergeProgram,proto3" json:"merge_program,omitempty"`
 }
 
@@ -2251,11 +2404,13 @@ func (x *ListVariables_Options) GetMergeProgram() bool {
 	return false
 }
 
+// Message representing a list of variables.
 type VariableList struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// List of variables.
 	Variables []*Variable `protobuf:"bytes,1,rep,name=variables,proto3" json:"variables,omitempty"`
 }
 
@@ -2298,13 +2453,17 @@ func (x *VariableList) GetVariables() []*Variable {
 	return nil
 }
 
+// Message for list variables request arguments.
 type ListVariables_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Files   []string               `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
-	Specs   []string               `protobuf:"bytes,2,rep,name=specs,proto3" json:"specs,omitempty"`
+	// Files to be processed.
+	Files []string `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
+	// Specifications for variables.
+	Specs []string `protobuf:"bytes,2,rep,name=specs,proto3" json:"specs,omitempty"`
+	// Options for listing variables.
 	Options *ListVariables_Options `protobuf:"bytes,3,opt,name=options,proto3" json:"options,omitempty"`
 }
 
@@ -2361,14 +2520,18 @@ func (x *ListVariables_Args) GetOptions() *ListVariables_Options {
 	return nil
 }
 
+// Message for list variables response.
 type ListVariables_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Variables        map[string]*VariableList `protobuf:"bytes,1,rep,name=variables,proto3" json:"variables,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	UnsupportedCodes []string                 `protobuf:"bytes,2,rep,name=unsupported_codes,json=unsupportedCodes,proto3" json:"unsupported_codes,omitempty"`
-	ParseErrors      []*Error                 `protobuf:"bytes,3,rep,name=parse_errors,json=parseErrors,proto3" json:"parse_errors,omitempty"`
+	// Map of variable lists by file.
+	Variables map[string]*VariableList `protobuf:"bytes,1,rep,name=variables,proto3" json:"variables,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// List of unsupported codes.
+	UnsupportedCodes []string `protobuf:"bytes,2,rep,name=unsupported_codes,json=unsupportedCodes,proto3" json:"unsupported_codes,omitempty"`
+	// List of parse errors encountered.
+	ParseErrors []*Error `protobuf:"bytes,3,rep,name=parse_errors,json=parseErrors,proto3" json:"parse_errors,omitempty"`
 }
 
 func (x *ListVariables_Result) Reset() {
@@ -2424,15 +2587,21 @@ func (x *ListVariables_Result) GetParseErrors() []*Error {
 	return nil
 }
 
+// Message representing a variable.
 type Variable struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Value       string      `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	TypeName    string      `protobuf:"bytes,2,opt,name=type_name,json=typeName,proto3" json:"type_name,omitempty"`
-	OpSym       string      `protobuf:"bytes,3,opt,name=op_sym,json=opSym,proto3" json:"op_sym,omitempty"`
-	ListItems   []*Variable `protobuf:"bytes,4,rep,name=list_items,json=listItems,proto3" json:"list_items,omitempty"`
+	// Value of the variable.
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	// Type name of the variable.
+	TypeName string `protobuf:"bytes,2,opt,name=type_name,json=typeName,proto3" json:"type_name,omitempty"`
+	// Operation symbol associated with the variable.
+	OpSym string `protobuf:"bytes,3,opt,name=op_sym,json=opSym,proto3" json:"op_sym,omitempty"`
+	// List items if the variable is a list.
+	ListItems []*Variable `protobuf:"bytes,4,rep,name=list_items,json=listItems,proto3" json:"list_items,omitempty"`
+	// Dictionary entries if the variable is a dictionary.
 	DictEntries []*MapEntry `protobuf:"bytes,5,rep,name=dict_entries,json=dictEntries,proto3" json:"dict_entries,omitempty"`
 }
 
@@ -2503,12 +2672,15 @@ func (x *Variable) GetDictEntries() []*MapEntry {
 	return nil
 }
 
+// Message representing a map entry.
 type MapEntry struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Key   string    `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// Key of the map entry.
+	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// Value of the map entry.
 	Value *Variable `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -2558,13 +2730,16 @@ func (x *MapEntry) GetValue() *Variable {
 	return nil
 }
 
+// Message for get schema type mapping request arguments.
 type GetSchemaTypeMapping_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ExecArgs   *ExecProgram_Args `protobuf:"bytes,1,opt,name=exec_args,json=execArgs,proto3" json:"exec_args,omitempty"`
-	SchemaName string            `protobuf:"bytes,2,opt,name=schema_name,json=schemaName,proto3" json:"schema_name,omitempty"`
+	// Arguments for executing the program.
+	ExecArgs *ExecProgram_Args `protobuf:"bytes,1,opt,name=exec_args,json=execArgs,proto3" json:"exec_args,omitempty"`
+	// Name of the schema.
+	SchemaName string `protobuf:"bytes,2,opt,name=schema_name,json=schemaName,proto3" json:"schema_name,omitempty"`
 }
 
 func (x *GetSchemaTypeMapping_Args) Reset() {
@@ -2613,11 +2788,13 @@ func (x *GetSchemaTypeMapping_Args) GetSchemaName() string {
 	return ""
 }
 
+// Message for get schema type mapping response.
 type GetSchemaTypeMapping_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Map of schema type mappings.
 	SchemaTypeMapping map[string]*KclType `protobuf:"bytes,1,rep,name=schema_type_mapping,json=schemaTypeMapping,proto3" json:"schema_type_mapping,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
@@ -2660,18 +2837,26 @@ func (x *GetSchemaTypeMapping_Result) GetSchemaTypeMapping() map[string]*KclType
 	return nil
 }
 
+// Message for validate code request arguments.
 type ValidateCode_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Datafile      string `protobuf:"bytes,1,opt,name=datafile,proto3" json:"datafile,omitempty"`
-	Data          string `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	File          string `protobuf:"bytes,3,opt,name=file,proto3" json:"file,omitempty"`
-	Code          string `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`
-	Schema        string `protobuf:"bytes,5,opt,name=schema,proto3" json:"schema,omitempty"`
+	// Path to the data file.
+	Datafile string `protobuf:"bytes,1,opt,name=datafile,proto3" json:"datafile,omitempty"`
+	// Data content.
+	Data string `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	// Path to the code file.
+	File string `protobuf:"bytes,3,opt,name=file,proto3" json:"file,omitempty"`
+	// Source code content.
+	Code string `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`
+	// Name of the schema.
+	Schema string `protobuf:"bytes,5,opt,name=schema,proto3" json:"schema,omitempty"`
+	// Name of the attribute.
 	AttributeName string `protobuf:"bytes,6,opt,name=attribute_name,json=attributeName,proto3" json:"attribute_name,omitempty"`
-	Format        string `protobuf:"bytes,7,opt,name=format,proto3" json:"format,omitempty"`
+	// Format of the validation (e.g., "json", "yaml").
+	Format string `protobuf:"bytes,7,opt,name=format,proto3" json:"format,omitempty"`
 }
 
 func (x *ValidateCode_Args) Reset() {
@@ -2755,12 +2940,15 @@ func (x *ValidateCode_Args) GetFormat() string {
 	return ""
 }
 
+// Message for validate code response.
 type ValidateCode_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Success    bool   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// Flag indicating if validation was successful.
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// Error message from validation.
 	ErrMessage string `protobuf:"bytes,2,opt,name=err_message,json=errMessage,proto3" json:"err_message,omitempty"`
 }
 
@@ -2810,13 +2998,17 @@ func (x *ValidateCode_Result) GetErrMessage() string {
 	return ""
 }
 
+// Message representing a position in the source code.
 type Position struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Line     int64  `protobuf:"varint,1,opt,name=line,proto3" json:"line,omitempty"`
-	Column   int64  `protobuf:"varint,2,opt,name=column,proto3" json:"column,omitempty"`
+	// Line number.
+	Line int64 `protobuf:"varint,1,opt,name=line,proto3" json:"line,omitempty"`
+	// Column number.
+	Column int64 `protobuf:"varint,2,opt,name=column,proto3" json:"column,omitempty"`
+	// Filename the position refers to.
 	Filename string `protobuf:"bytes,3,opt,name=filename,proto3" json:"filename,omitempty"`
 }
 
@@ -2873,15 +3065,20 @@ func (x *Position) GetFilename() string {
 	return ""
 }
 
+// Message for list dependency files request arguments.
 type ListDepFiles_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WorkDir       string `protobuf:"bytes,1,opt,name=work_dir,json=workDir,proto3" json:"work_dir,omitempty"`
-	UseAbsPath    bool   `protobuf:"varint,2,opt,name=use_abs_path,json=useAbsPath,proto3" json:"use_abs_path,omitempty"`
-	IncludeAll    bool   `protobuf:"varint,3,opt,name=include_all,json=includeAll,proto3" json:"include_all,omitempty"`
-	UseFastParser bool   `protobuf:"varint,4,opt,name=use_fast_parser,json=useFastParser,proto3" json:"use_fast_parser,omitempty"`
+	// Working directory.
+	WorkDir string `protobuf:"bytes,1,opt,name=work_dir,json=workDir,proto3" json:"work_dir,omitempty"`
+	// Flag to use absolute paths.
+	UseAbsPath bool `protobuf:"varint,2,opt,name=use_abs_path,json=useAbsPath,proto3" json:"use_abs_path,omitempty"`
+	// Flag to include all files.
+	IncludeAll bool `protobuf:"varint,3,opt,name=include_all,json=includeAll,proto3" json:"include_all,omitempty"`
+	// Flag to use fast parser.
+	UseFastParser bool `protobuf:"varint,4,opt,name=use_fast_parser,json=useFastParser,proto3" json:"use_fast_parser,omitempty"`
 }
 
 func (x *ListDepFiles_Args) Reset() {
@@ -2944,14 +3141,18 @@ func (x *ListDepFiles_Args) GetUseFastParser() bool {
 	return false
 }
 
+// Message for list dependency files response.
 type ListDepFiles_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pkgroot string   `protobuf:"bytes,1,opt,name=pkgroot,proto3" json:"pkgroot,omitempty"`
-	Pkgpath string   `protobuf:"bytes,2,opt,name=pkgpath,proto3" json:"pkgpath,omitempty"`
-	Files   []string `protobuf:"bytes,3,rep,name=files,proto3" json:"files,omitempty"`
+	// Root package path.
+	Pkgroot string `protobuf:"bytes,1,opt,name=pkgroot,proto3" json:"pkgroot,omitempty"`
+	// Package path.
+	Pkgpath string `protobuf:"bytes,2,opt,name=pkgpath,proto3" json:"pkgpath,omitempty"`
+	// List of file paths in the package.
+	Files []string `protobuf:"bytes,3,rep,name=files,proto3" json:"files,omitempty"`
 }
 
 func (x *ListDepFiles_Result) Reset() {
@@ -3007,13 +3208,16 @@ func (x *ListDepFiles_Result) GetFiles() []string {
 	return nil
 }
 
+// Message for load settings files request arguments.
 type LoadSettingsFiles_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WorkDir string   `protobuf:"bytes,1,opt,name=work_dir,json=workDir,proto3" json:"work_dir,omitempty"`
-	Files   []string `protobuf:"bytes,2,rep,name=files,proto3" json:"files,omitempty"`
+	// Working directory.
+	WorkDir string `protobuf:"bytes,1,opt,name=work_dir,json=workDir,proto3" json:"work_dir,omitempty"`
+	// Setting files to load.
+	Files []string `protobuf:"bytes,2,rep,name=files,proto3" json:"files,omitempty"`
 }
 
 func (x *LoadSettingsFiles_Args) Reset() {
@@ -3062,13 +3266,16 @@ func (x *LoadSettingsFiles_Args) GetFiles() []string {
 	return nil
 }
 
+// Message for load settings files response.
 type LoadSettingsFiles_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	KclCliConfigs *CliConfig      `protobuf:"bytes,1,opt,name=kcl_cli_configs,json=kclCliConfigs,proto3" json:"kcl_cli_configs,omitempty"`
-	KclOptions    []*KeyValuePair `protobuf:"bytes,2,rep,name=kcl_options,json=kclOptions,proto3" json:"kcl_options,omitempty"`
+	// KCL CLI configuration.
+	KclCliConfigs *CliConfig `protobuf:"bytes,1,opt,name=kcl_cli_configs,json=kclCliConfigs,proto3" json:"kcl_cli_configs,omitempty"`
+	// List of KCL options as key-value pairs.
+	KclOptions []*KeyValuePair `protobuf:"bytes,2,rep,name=kcl_options,json=kclOptions,proto3" json:"kcl_options,omitempty"`
 }
 
 func (x *LoadSettingsFiles_Result) Reset() {
@@ -3117,23 +3324,36 @@ func (x *LoadSettingsFiles_Result) GetKclOptions() []*KeyValuePair {
 	return nil
 }
 
+// Message representing KCL CLI configuration.
 type CliConfig struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Files                 []string `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
-	Output                string   `protobuf:"bytes,2,opt,name=output,proto3" json:"output,omitempty"`
-	Overrides             []string `protobuf:"bytes,3,rep,name=overrides,proto3" json:"overrides,omitempty"`
-	PathSelector          []string `protobuf:"bytes,4,rep,name=path_selector,json=pathSelector,proto3" json:"path_selector,omitempty"`
-	StrictRangeCheck      bool     `protobuf:"varint,5,opt,name=strict_range_check,json=strictRangeCheck,proto3" json:"strict_range_check,omitempty"`
-	DisableNone           bool     `protobuf:"varint,6,opt,name=disable_none,json=disableNone,proto3" json:"disable_none,omitempty"`
-	Verbose               int64    `protobuf:"varint,7,opt,name=verbose,proto3" json:"verbose,omitempty"`
-	Debug                 bool     `protobuf:"varint,8,opt,name=debug,proto3" json:"debug,omitempty"`
-	SortKeys              bool     `protobuf:"varint,9,opt,name=sort_keys,json=sortKeys,proto3" json:"sort_keys,omitempty"`
-	ShowHidden            bool     `protobuf:"varint,10,opt,name=show_hidden,json=showHidden,proto3" json:"show_hidden,omitempty"`
-	IncludeSchemaTypePath bool     `protobuf:"varint,11,opt,name=include_schema_type_path,json=includeSchemaTypePath,proto3" json:"include_schema_type_path,omitempty"`
-	FastEval              bool     `protobuf:"varint,12,opt,name=fast_eval,json=fastEval,proto3" json:"fast_eval,omitempty"`
+	// List of files.
+	Files []string `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
+	// Output path.
+	Output string `protobuf:"bytes,2,opt,name=output,proto3" json:"output,omitempty"`
+	// List of overrides.
+	Overrides []string `protobuf:"bytes,3,rep,name=overrides,proto3" json:"overrides,omitempty"`
+	// Path selectors.
+	PathSelector []string `protobuf:"bytes,4,rep,name=path_selector,json=pathSelector,proto3" json:"path_selector,omitempty"`
+	// Flag for strict range check.
+	StrictRangeCheck bool `protobuf:"varint,5,opt,name=strict_range_check,json=strictRangeCheck,proto3" json:"strict_range_check,omitempty"`
+	// Flag to disable none values.
+	DisableNone bool `protobuf:"varint,6,opt,name=disable_none,json=disableNone,proto3" json:"disable_none,omitempty"`
+	// Verbose level.
+	Verbose int64 `protobuf:"varint,7,opt,name=verbose,proto3" json:"verbose,omitempty"`
+	// Debug flag.
+	Debug bool `protobuf:"varint,8,opt,name=debug,proto3" json:"debug,omitempty"`
+	// Flag to sort keys in YAML/JSON results.
+	SortKeys bool `protobuf:"varint,9,opt,name=sort_keys,json=sortKeys,proto3" json:"sort_keys,omitempty"`
+	// Flag to show hidden attributes.
+	ShowHidden bool `protobuf:"varint,10,opt,name=show_hidden,json=showHidden,proto3" json:"show_hidden,omitempty"`
+	// Flag to include schema type path in results.
+	IncludeSchemaTypePath bool `protobuf:"varint,11,opt,name=include_schema_type_path,json=includeSchemaTypePath,proto3" json:"include_schema_type_path,omitempty"`
+	// Flag for fast evaluation.
+	FastEval bool `protobuf:"varint,12,opt,name=fast_eval,json=fastEval,proto3" json:"fast_eval,omitempty"`
 }
 
 func (x *CliConfig) Reset() {
@@ -3252,12 +3472,15 @@ func (x *CliConfig) GetFastEval() bool {
 	return false
 }
 
+// Message representing a key-value pair.
 type KeyValuePair struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Key   string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// Key of the pair.
+	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// Value of the pair.
 	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -3307,15 +3530,20 @@ func (x *KeyValuePair) GetValue() string {
 	return ""
 }
 
+// Message for rename request arguments.
 type Rename_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	PackageRoot string   `protobuf:"bytes,1,opt,name=package_root,json=packageRoot,proto3" json:"package_root,omitempty"` // the file path to the package root
-	SymbolPath  string   `protobuf:"bytes,2,opt,name=symbol_path,json=symbolPath,proto3" json:"symbol_path,omitempty"`    // the path to the target symbol to be renamed. The symbol path should conform to format: `<pkgpath>:<field_path>` When the pkgpath is '__main__', `<pkgpath>:` can be omitted.
-	FilePaths   []string `protobuf:"bytes,3,rep,name=file_paths,json=filePaths,proto3" json:"file_paths,omitempty"`       // the paths to the source code files
-	NewName     string   `protobuf:"bytes,4,opt,name=new_name,json=newName,proto3" json:"new_name,omitempty"`             // the new name of the symbol
+	// File path to the package root.
+	PackageRoot string `protobuf:"bytes,1,opt,name=package_root,json=packageRoot,proto3" json:"package_root,omitempty"`
+	// Path to the target symbol to be renamed.
+	SymbolPath string `protobuf:"bytes,2,opt,name=symbol_path,json=symbolPath,proto3" json:"symbol_path,omitempty"`
+	// Paths to the source code files.
+	FilePaths []string `protobuf:"bytes,3,rep,name=file_paths,json=filePaths,proto3" json:"file_paths,omitempty"`
+	// New name of the symbol.
+	NewName string `protobuf:"bytes,4,opt,name=new_name,json=newName,proto3" json:"new_name,omitempty"`
 }
 
 func (x *Rename_Args) Reset() {
@@ -3378,12 +3606,14 @@ func (x *Rename_Args) GetNewName() string {
 	return ""
 }
 
+// Message for rename response.
 type Rename_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ChangedFiles []string `protobuf:"bytes,1,rep,name=changed_files,json=changedFiles,proto3" json:"changed_files,omitempty"` // the file paths got changed
+	// List of file paths that got changed.
+	ChangedFiles []string `protobuf:"bytes,1,rep,name=changed_files,json=changedFiles,proto3" json:"changed_files,omitempty"`
 }
 
 func (x *Rename_Result) Reset() {
@@ -3425,15 +3655,20 @@ func (x *Rename_Result) GetChangedFiles() []string {
 	return nil
 }
 
+// Message for rename code request arguments.
 type RenameCode_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	PackageRoot string            `protobuf:"bytes,1,opt,name=package_root,json=packageRoot,proto3" json:"package_root,omitempty"`                                                                                         // the file path to the package root
-	SymbolPath  string            `protobuf:"bytes,2,opt,name=symbol_path,json=symbolPath,proto3" json:"symbol_path,omitempty"`                                                                                            // the path to the target symbol to be renamed. The symbol path should conform to format: `<pkgpath>:<field_path>` When the pkgpath is '__main__', `<pkgpath>:` can be omitted.
-	SourceCodes map[string]string `protobuf:"bytes,3,rep,name=source_codes,json=sourceCodes,proto3" json:"source_codes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"` // the source code. a <filename>:<code> map
-	NewName     string            `protobuf:"bytes,4,opt,name=new_name,json=newName,proto3" json:"new_name,omitempty"`                                                                                                     // the new name of the symbol
+	// File path to the package root.
+	PackageRoot string `protobuf:"bytes,1,opt,name=package_root,json=packageRoot,proto3" json:"package_root,omitempty"`
+	// Path to the target symbol to be renamed.
+	SymbolPath string `protobuf:"bytes,2,opt,name=symbol_path,json=symbolPath,proto3" json:"symbol_path,omitempty"`
+	// Map of source code with filename as key and code as value.
+	SourceCodes map[string]string `protobuf:"bytes,3,rep,name=source_codes,json=sourceCodes,proto3" json:"source_codes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// New name of the symbol.
+	NewName string `protobuf:"bytes,4,opt,name=new_name,json=newName,proto3" json:"new_name,omitempty"`
 }
 
 func (x *RenameCode_Args) Reset() {
@@ -3496,12 +3731,14 @@ func (x *RenameCode_Args) GetNewName() string {
 	return ""
 }
 
+// Message for rename code response.
 type RenameCode_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ChangedCodes map[string]string `protobuf:"bytes,1,rep,name=changed_codes,json=changedCodes,proto3" json:"changed_codes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"` // the changed code. a <filename>:<code> map
+	// Map of changed code with filename as key and modified code as value.
+	ChangedCodes map[string]string `protobuf:"bytes,1,rep,name=changed_codes,json=changedCodes,proto3" json:"changed_codes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *RenameCode_Result) Reset() {
@@ -3543,15 +3780,20 @@ func (x *RenameCode_Result) GetChangedCodes() map[string]string {
 	return nil
 }
 
+// Message for test request arguments.
 type Test_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ExecArgs  *ExecProgram_Args `protobuf:"bytes,1,opt,name=exec_args,json=execArgs,proto3" json:"exec_args,omitempty"`    // This field stores the execution program arguments.
-	PkgList   []string          `protobuf:"bytes,2,rep,name=pkg_list,json=pkgList,proto3" json:"pkg_list,omitempty"`       // The package path list to be tested e.g., "./...", "/path/to/package/", "/path/to/package/..."
-	RunRegexp string            `protobuf:"bytes,3,opt,name=run_regexp,json=runRegexp,proto3" json:"run_regexp,omitempty"` // This field stores a regular expression for filtering tests to run.
-	FailFast  bool              `protobuf:"varint,4,opt,name=fail_fast,json=failFast,proto3" json:"fail_fast,omitempty"`   // This field determines whether the test run should stop on the first failure.
+	// Execution program arguments.
+	ExecArgs *ExecProgram_Args `protobuf:"bytes,1,opt,name=exec_args,json=execArgs,proto3" json:"exec_args,omitempty"`
+	// List of KCL package paths to be tested.
+	PkgList []string `protobuf:"bytes,2,rep,name=pkg_list,json=pkgList,proto3" json:"pkg_list,omitempty"`
+	// Regular expression for filtering tests to run.
+	RunRegexp string `protobuf:"bytes,3,opt,name=run_regexp,json=runRegexp,proto3" json:"run_regexp,omitempty"`
+	// Flag to stop the test run on the first failure.
+	FailFast bool `protobuf:"varint,4,opt,name=fail_fast,json=failFast,proto3" json:"fail_fast,omitempty"`
 }
 
 func (x *Test_Args) Reset() {
@@ -3614,11 +3856,13 @@ func (x *Test_Args) GetFailFast() bool {
 	return false
 }
 
+// Message for test response.
 type Test_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// List of test case information.
 	Info []*TestCaseInfo `protobuf:"bytes,2,rep,name=info,proto3" json:"info,omitempty"`
 }
 
@@ -3661,14 +3905,19 @@ func (x *Test_Result) GetInfo() []*TestCaseInfo {
 	return nil
 }
 
+// Message representing information about a single test case.
 type TestCaseInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name       string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"` // Test case name
-	Error      string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
-	Duration   uint64 `protobuf:"varint,3,opt,name=duration,proto3" json:"duration,omitempty"` // Number of whole microseconds in the duration.
+	// Name of the test case.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Error message if any.
+	Error string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	// Duration of the test case in microseconds.
+	Duration uint64 `protobuf:"varint,3,opt,name=duration,proto3" json:"duration,omitempty"`
+	// Log message from the test case.
 	LogMessage string `protobuf:"bytes,4,opt,name=log_message,json=logMessage,proto3" json:"log_message,omitempty"`
 }
 
@@ -3732,13 +3981,16 @@ func (x *TestCaseInfo) GetLogMessage() string {
 	return ""
 }
 
+// Message for update dependencies request arguments.
 type UpdateDependencies_Args struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Path to the manifest file.
 	ManifestPath string `protobuf:"bytes,1,opt,name=manifest_path,json=manifestPath,proto3" json:"manifest_path,omitempty"`
-	Vendor       bool   `protobuf:"varint,2,opt,name=vendor,proto3" json:"vendor,omitempty"`
+	// Flag to vendor dependencies locally.
+	Vendor bool `protobuf:"varint,2,opt,name=vendor,proto3" json:"vendor,omitempty"`
 }
 
 func (x *UpdateDependencies_Args) Reset() {
@@ -3787,11 +4039,13 @@ func (x *UpdateDependencies_Args) GetVendor() bool {
 	return false
 }
 
+// Message for update dependencies response.
 type UpdateDependencies_Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// List of external packages updated.
 	ExternalPkgs []*ExternalPkg `protobuf:"bytes,3,rep,name=external_pkgs,json=externalPkgs,proto3" json:"external_pkgs,omitempty"`
 }
 
@@ -3834,27 +4088,44 @@ func (x *UpdateDependencies_Result) GetExternalPkgs() []*ExternalPkg {
 	return nil
 }
 
+// Message representing a KCL type.
 type KclType struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type        string              `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`                                                                                                     // schema, dict, list, str, int, float, bool, any, union, number_multiplier
-	UnionTypes  []*KclType          `protobuf:"bytes,2,rep,name=union_types,json=unionTypes,proto3" json:"union_types,omitempty"`                                                                       // union types
-	Default     string              `protobuf:"bytes,3,opt,name=default,proto3" json:"default,omitempty"`                                                                                               // default value
-	SchemaName  string              `protobuf:"bytes,4,opt,name=schema_name,json=schemaName,proto3" json:"schema_name,omitempty"`                                                                       // schema name
-	SchemaDoc   string              `protobuf:"bytes,5,opt,name=schema_doc,json=schemaDoc,proto3" json:"schema_doc,omitempty"`                                                                          // schema doc
-	Properties  map[string]*KclType `protobuf:"bytes,6,rep,name=properties,proto3" json:"properties,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"` // schema properties
-	Required    []string            `protobuf:"bytes,7,rep,name=required,proto3" json:"required,omitempty"`                                                                                             // required schema properties, [property_name1, property_name2]
-	Key         *KclType            `protobuf:"bytes,8,opt,name=key,proto3" json:"key,omitempty"`                                                                                                       // dict key type
-	Item        *KclType            `protobuf:"bytes,9,opt,name=item,proto3" json:"item,omitempty"`                                                                                                     // dict/list item type
-	Line        int32               `protobuf:"varint,10,opt,name=line,proto3" json:"line,omitempty"`
-	Decorators  []*Decorator        `protobuf:"bytes,11,rep,name=decorators,proto3" json:"decorators,omitempty"`                                                                                     // schema decorators
-	Filename    string              `protobuf:"bytes,12,opt,name=filename,proto3" json:"filename,omitempty"`                                                                                         // `filename` represents the absolute path of the file name where the attribute is located.
-	PkgPath     string              `protobuf:"bytes,13,opt,name=pkg_path,json=pkgPath,proto3" json:"pkg_path,omitempty"`                                                                            // `pkg_path` represents the path name of the package where the attribute is located.
-	Description string              `protobuf:"bytes,14,opt,name=description,proto3" json:"description,omitempty"`                                                                                   // `description` represents the document of the attribute.
-	Examples    map[string]*Example `protobuf:"bytes,15,rep,name=examples,proto3" json:"examples,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"` // A map object to hold examples, the key is the example name.
-	BaseSchema  *KclType            `protobuf:"bytes,16,opt,name=base_schema,json=baseSchema,proto3" json:"base_schema,omitempty"`
+	// Type name (e.g., schema, dict, list, str, int, float, bool, any, union, number_multiplier).
+	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	// Union types if applicable.
+	UnionTypes []*KclType `protobuf:"bytes,2,rep,name=union_types,json=unionTypes,proto3" json:"union_types,omitempty"`
+	// Default value of the type.
+	Default string `protobuf:"bytes,3,opt,name=default,proto3" json:"default,omitempty"`
+	// Name of the schema if applicable.
+	SchemaName string `protobuf:"bytes,4,opt,name=schema_name,json=schemaName,proto3" json:"schema_name,omitempty"`
+	// Documentation for the schema.
+	SchemaDoc string `protobuf:"bytes,5,opt,name=schema_doc,json=schemaDoc,proto3" json:"schema_doc,omitempty"`
+	// Properties of the schema as a map with property name as key.
+	Properties map[string]*KclType `protobuf:"bytes,6,rep,name=properties,proto3" json:"properties,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// List of required schema properties.
+	Required []string `protobuf:"bytes,7,rep,name=required,proto3" json:"required,omitempty"`
+	// Key type if the KclType is a dictionary.
+	Key *KclType `protobuf:"bytes,8,opt,name=key,proto3" json:"key,omitempty"`
+	// Item type if the KclType is a list or dictionary.
+	Item *KclType `protobuf:"bytes,9,opt,name=item,proto3" json:"item,omitempty"`
+	// Line number where the type is defined.
+	Line int32 `protobuf:"varint,10,opt,name=line,proto3" json:"line,omitempty"`
+	// List of decorators for the schema.
+	Decorators []*Decorator `protobuf:"bytes,11,rep,name=decorators,proto3" json:"decorators,omitempty"`
+	// Absolute path of the file where the attribute is located.
+	Filename string `protobuf:"bytes,12,opt,name=filename,proto3" json:"filename,omitempty"`
+	// Path of the package where the attribute is located.
+	PkgPath string `protobuf:"bytes,13,opt,name=pkg_path,json=pkgPath,proto3" json:"pkg_path,omitempty"`
+	// Documentation for the attribute.
+	Description string `protobuf:"bytes,14,opt,name=description,proto3" json:"description,omitempty"`
+	// Map of examples with example name as key.
+	Examples map[string]*Example `protobuf:"bytes,15,rep,name=examples,proto3" json:"examples,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Base schema if applicable.
+	BaseSchema *KclType `protobuf:"bytes,16,opt,name=base_schema,json=baseSchema,proto3" json:"base_schema,omitempty"`
 }
 
 func (x *KclType) Reset() {
@@ -4001,14 +4272,18 @@ func (x *KclType) GetBaseSchema() *KclType {
 	return nil
 }
 
+// Message representing a decorator in KCL.
 type Decorator struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name      string            `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Arguments []string          `protobuf:"bytes,2,rep,name=arguments,proto3" json:"arguments,omitempty"`
-	Keywords  map[string]string `protobuf:"bytes,3,rep,name=keywords,proto3" json:"keywords,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Name of the decorator.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Arguments for the decorator.
+	Arguments []string `protobuf:"bytes,2,rep,name=arguments,proto3" json:"arguments,omitempty"`
+	// Keyword arguments for the decorator as a map with keyword name as key.
+	Keywords map[string]string `protobuf:"bytes,3,rep,name=keywords,proto3" json:"keywords,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *Decorator) Reset() {
@@ -4064,14 +4339,18 @@ func (x *Decorator) GetKeywords() map[string]string {
 	return nil
 }
 
+// Message representing an example in KCL.
 type Example struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Summary     string `protobuf:"bytes,1,opt,name=summary,proto3" json:"summary,omitempty"`         // Short description for the example.
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"` // Long description for the example.
-	Value       string `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`             // Embedded literal example.
+	// Short description for the example.
+	Summary string `protobuf:"bytes,1,opt,name=summary,proto3" json:"summary,omitempty"`
+	// Long description for the example.
+	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	// Embedded literal example.
+	Value string `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
 }
 
 func (x *Example) Reset() {
@@ -4153,244 +4432,249 @@ var file_gpyrpc_proto_rawDesc = []byte{
 	0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
 	0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x23, 0x0a, 0x0b, 0x50, 0x69, 0x6e, 0x67, 0x5f, 0x52, 0x65,
 	0x73, 0x75, 0x6c, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x11, 0x0a, 0x0f, 0x4c, 0x69,
-	0x73, 0x74, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x22, 0x3d, 0x0a,
-	0x11, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x5f, 0x52, 0x65, 0x73, 0x75,
-	0x6c, 0x74, 0x12, 0x28, 0x0a, 0x10, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x5f, 0x6e, 0x61, 0x6d,
-	0x65, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0e, 0x6d, 0x65,
-	0x74, 0x68, 0x6f, 0x64, 0x4e, 0x61, 0x6d, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x22, 0x76, 0x0a, 0x0e,
-	0x50, 0x61, 0x72, 0x73, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x12,
-	0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61,
-	0x74, 0x68, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x06, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x0d, 0x65, 0x78,
-	0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x70, 0x6b, 0x67, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x11, 0x0a, 0x0f, 0x47, 0x65,
+	0x74, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x22, 0x85, 0x01,
+	0x0a, 0x11, 0x47, 0x65, 0x74, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x5f, 0x52, 0x65, 0x73,
+	0x75, 0x6c, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x1a, 0x0a,
+	0x08, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x73, 0x75, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x08, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x73, 0x75, 0x6d, 0x12, 0x17, 0x0a, 0x07, 0x67, 0x69, 0x74,
+	0x5f, 0x73, 0x68, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x67, 0x69, 0x74, 0x53,
+	0x68, 0x61, 0x12, 0x21, 0x0a, 0x0c, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x6e,
+	0x66, 0x6f, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f,
+	0x6e, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x11, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x65, 0x74,
+	0x68, 0x6f, 0x64, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x22, 0x3d, 0x0a, 0x11, 0x4c, 0x69, 0x73, 0x74,
+	0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x28, 0x0a,
+	0x10, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x6c, 0x69, 0x73,
+	0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0e, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x4e,
+	0x61, 0x6d, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x22, 0x76, 0x0a, 0x0e, 0x50, 0x61, 0x72, 0x73, 0x65,
+	0x46, 0x69, 0x6c, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74,
+	0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x12, 0x16, 0x0a,
+	0x06, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73,
+	0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x0d, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61,
+	0x6c, 0x5f, 0x70, 0x6b, 0x67, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67,
+	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x50, 0x6b,
+	0x67, 0x52, 0x0c, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x50, 0x6b, 0x67, 0x73, 0x22,
+	0x68, 0x0a, 0x10, 0x50, 0x61, 0x72, 0x73, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x5f, 0x52, 0x65, 0x73,
+	0x75, 0x6c, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x61, 0x73, 0x74, 0x5f, 0x6a, 0x73, 0x6f, 0x6e, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x73, 0x74, 0x4a, 0x73, 0x6f, 0x6e, 0x12, 0x12,
+	0x0a, 0x04, 0x64, 0x65, 0x70, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x64, 0x65,
+	0x70, 0x73, 0x12, 0x25, 0x0a, 0x06, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x18, 0x03, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x72, 0x72, 0x6f,
+	0x72, 0x52, 0x06, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x22, 0x7d, 0x0a, 0x11, 0x50, 0x61, 0x72,
+	0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x14,
+	0x0a, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x05, 0x70,
+	0x61, 0x74, 0x68, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x18,
+	0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x07, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x12, 0x38,
+	0x0a, 0x0d, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x70, 0x6b, 0x67, 0x73, 0x18,
+	0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45,
+	0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x50, 0x6b, 0x67, 0x52, 0x0c, 0x65, 0x78, 0x74, 0x65,
+	0x72, 0x6e, 0x61, 0x6c, 0x50, 0x6b, 0x67, 0x73, 0x22, 0x6d, 0x0a, 0x13, 0x50, 0x61, 0x72, 0x73,
+	0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12,
+	0x19, 0x0a, 0x08, 0x61, 0x73, 0x74, 0x5f, 0x6a, 0x73, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x07, 0x61, 0x73, 0x74, 0x4a, 0x73, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x61,
+	0x74, 0x68, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73,
+	0x12, 0x25, 0x0a, 0x06, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x0d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x52,
+	0x06, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x22, 0xb6, 0x01, 0x0a, 0x10, 0x4c, 0x6f, 0x61, 0x64,
+	0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x38, 0x0a, 0x0a,
+	0x70, 0x61, 0x72, 0x73, 0x65, 0x5f, 0x61, 0x72, 0x67, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50,
+	0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x52, 0x09, 0x70, 0x61, 0x72,
+	0x73, 0x65, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1f, 0x0a, 0x0b, 0x72, 0x65, 0x73, 0x6f, 0x6c, 0x76,
+	0x65, 0x5f, 0x61, 0x73, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0a, 0x72, 0x65, 0x73,
+	0x6f, 0x6c, 0x76, 0x65, 0x41, 0x73, 0x74, 0x12, 0x21, 0x0a, 0x0c, 0x6c, 0x6f, 0x61, 0x64, 0x5f,
+	0x62, 0x75, 0x69, 0x6c, 0x74, 0x69, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0b, 0x6c,
+	0x6f, 0x61, 0x64, 0x42, 0x75, 0x69, 0x6c, 0x74, 0x69, 0x6e, 0x12, 0x24, 0x0a, 0x0e, 0x77, 0x69,
+	0x74, 0x68, 0x5f, 0x61, 0x73, 0x74, 0x5f, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x0c, 0x77, 0x69, 0x74, 0x68, 0x41, 0x73, 0x74, 0x49, 0x6e, 0x64, 0x65, 0x78,
+	0x22, 0xfa, 0x08, 0x0a, 0x12, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65,
+	0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x70, 0x72, 0x6f, 0x67, 0x72,
+	0x61, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x70, 0x72, 0x6f, 0x67, 0x72, 0x61,
+	0x6d, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09,
+	0x52, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73, 0x12, 0x30, 0x0a, 0x0c, 0x70, 0x61, 0x72, 0x73, 0x65,
+	0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e,
+	0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x52, 0x0b, 0x70, 0x61,
+	0x72, 0x73, 0x65, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x12, 0x2e, 0x0a, 0x0b, 0x74, 0x79, 0x70,
+	0x65, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d,
+	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x52, 0x0a, 0x74,
+	0x79, 0x70, 0x65, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x12, 0x3e, 0x0a, 0x06, 0x73, 0x63, 0x6f,
+	0x70, 0x65, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x67, 0x70, 0x79, 0x72,
+	0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52,
+	0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x73, 0x45, 0x6e, 0x74, 0x72,
+	0x79, 0x52, 0x06, 0x73, 0x63, 0x6f, 0x70, 0x65, 0x73, 0x12, 0x41, 0x0a, 0x07, 0x73, 0x79, 0x6d,
+	0x62, 0x6f, 0x6c, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x67, 0x70, 0x79,
+	0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f,
+	0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x73, 0x45, 0x6e,
+	0x74, 0x72, 0x79, 0x52, 0x07, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x73, 0x12, 0x55, 0x0a, 0x0f,
+	0x6e, 0x6f, 0x64, 0x65, 0x5f, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x5f, 0x6d, 0x61, 0x70, 0x18,
+	0x07, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c,
+	0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c,
+	0x74, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x4d, 0x61, 0x70, 0x45,
+	0x6e, 0x74, 0x72, 0x79, 0x52, 0x0d, 0x6e, 0x6f, 0x64, 0x65, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c,
+	0x4d, 0x61, 0x70, 0x12, 0x55, 0x0a, 0x0f, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x5f, 0x6e, 0x6f,
+	0x64, 0x65, 0x5f, 0x6d, 0x61, 0x70, 0x18, 0x08, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x67,
+	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67,
+	0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x4e,
+	0x6f, 0x64, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0d, 0x73, 0x79, 0x6d,
+	0x62, 0x6f, 0x6c, 0x4e, 0x6f, 0x64, 0x65, 0x4d, 0x61, 0x70, 0x12, 0x6e, 0x0a, 0x18, 0x66, 0x75,
+	0x6c, 0x6c, 0x79, 0x5f, 0x71, 0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x65, 0x64, 0x5f, 0x6e, 0x61,
+	0x6d, 0x65, 0x5f, 0x6d, 0x61, 0x70, 0x18, 0x09, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x35, 0x2e, 0x67,
+	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67,
+	0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x46, 0x75, 0x6c, 0x6c, 0x79, 0x51, 0x75,
+	0x61, 0x6c, 0x69, 0x66, 0x69, 0x65, 0x64, 0x4e, 0x61, 0x6d, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e,
+	0x74, 0x72, 0x79, 0x52, 0x15, 0x66, 0x75, 0x6c, 0x6c, 0x79, 0x51, 0x75, 0x61, 0x6c, 0x69, 0x66,
+	0x69, 0x65, 0x64, 0x4e, 0x61, 0x6d, 0x65, 0x4d, 0x61, 0x70, 0x12, 0x4f, 0x0a, 0x0d, 0x70, 0x6b,
+	0x67, 0x5f, 0x73, 0x63, 0x6f, 0x70, 0x65, 0x5f, 0x6d, 0x61, 0x70, 0x18, 0x0a, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x2b, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50,
+	0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x50, 0x6b,
+	0x67, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0b,
+	0x70, 0x6b, 0x67, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x1a, 0x48, 0x0a, 0x0b, 0x53,
+	0x63, 0x6f, 0x70, 0x65, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65,
+	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x23, 0x0a, 0x05,
+	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x67, 0x70,
+	0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x4a, 0x0a, 0x0c, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x73,
+	0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x24, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e,
+	0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38,
+	0x01, 0x1a, 0x55, 0x0a, 0x12, 0x4e, 0x6f, 0x64, 0x65, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x4d,
+	0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x29, 0x0a, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70,
+	0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x40, 0x0a, 0x12, 0x53, 0x79, 0x6d, 0x62,
+	0x6f, 0x6c, 0x4e, 0x6f, 0x64, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10,
+	0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79,
+	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x5d, 0x0a, 0x1a, 0x46, 0x75,
+	0x6c, 0x6c, 0x79, 0x51, 0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x65, 0x64, 0x4e, 0x61, 0x6d, 0x65,
+	0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x29, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72,
+	0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x05,
+	0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x52, 0x0a, 0x10, 0x50, 0x6b, 0x67,
+	0x53, 0x63, 0x6f, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a,
+	0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12,
+	0x28, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12,
+	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x49, 0x6e, 0x64,
+	0x65, 0x78, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x42, 0x0a,
+	0x12, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x52, 0x65, 0x73,
+	0x75, 0x6c, 0x74, 0x12, 0x2c, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x02,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4f, 0x70,
+	0x74, 0x69, 0x6f, 0x6e, 0x48, 0x65, 0x6c, 0x70, 0x52, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x73, 0x22, 0x89, 0x01, 0x0a, 0x0a, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x48, 0x65, 0x6c, 0x70,
+	0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x71, 0x75,
+	0x69, 0x72, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75,
+	0x69, 0x72, 0x65, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x5f,
+	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x64, 0x65, 0x66,
+	0x61, 0x75, 0x6c, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x65, 0x6c,
+	0x70, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x65, 0x6c, 0x70, 0x22, 0xd7, 0x01,
+	0x0a, 0x06, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x12, 0x1f, 0x0a, 0x02, 0x74, 0x79, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4b, 0x63,
+	0x6c, 0x54, 0x79, 0x70, 0x65, 0x52, 0x02, 0x74, 0x79, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d,
+	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x29, 0x0a,
+	0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67,
+	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65,
+	0x78, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x25, 0x0a, 0x03, 0x64, 0x65, 0x66, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53,
+	0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x03, 0x64, 0x65, 0x66, 0x12,
+	0x29, 0x0a, 0x05, 0x61, 0x74, 0x74, 0x72, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13,
+	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e,
+	0x64, 0x65, 0x78, 0x52, 0x05, 0x61, 0x74, 0x74, 0x72, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x69, 0x73,
+	0x5f, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x18, 0x06, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x69,
+	0x73, 0x47, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x22, 0xcb, 0x01, 0x0a, 0x05, 0x53, 0x63, 0x6f, 0x70,
+	0x65, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x6b, 0x69, 0x6e, 0x64, 0x12, 0x2a, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x65, 0x6e, 0x74, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53,
+	0x63, 0x6f, 0x70, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x06, 0x70, 0x61, 0x72, 0x65, 0x6e,
+	0x74, 0x12, 0x29, 0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c,
+	0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x2e, 0x0a, 0x08,
+	0x63, 0x68, 0x69, 0x6c, 0x64, 0x72, 0x65, 0x6e, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x12,
+	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x49, 0x6e, 0x64,
+	0x65, 0x78, 0x52, 0x08, 0x63, 0x68, 0x69, 0x6c, 0x64, 0x72, 0x65, 0x6e, 0x12, 0x27, 0x0a, 0x04,
+	0x64, 0x65, 0x66, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79,
+	0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52,
+	0x04, 0x64, 0x65, 0x66, 0x73, 0x22, 0x3d, 0x0a, 0x0b, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49,
+	0x6e, 0x64, 0x65, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x69, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52,
+	0x01, 0x69, 0x12, 0x0c, 0x0a, 0x01, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x01, 0x67,
+	0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
+	0x6b, 0x69, 0x6e, 0x64, 0x22, 0x3c, 0x0a, 0x0a, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x49, 0x6e, 0x64,
+	0x65, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x69, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x01, 0x69,
+	0x12, 0x0c, 0x0a, 0x01, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x01, 0x67, 0x12, 0x12,
+	0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x69,
+	0x6e, 0x64, 0x22, 0xae, 0x05, 0x0a, 0x10, 0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72,
+	0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x19, 0x0a, 0x08, 0x77, 0x6f, 0x72, 0x6b, 0x5f,
+	0x64, 0x69, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x77, 0x6f, 0x72, 0x6b, 0x44,
+	0x69, 0x72, 0x12, 0x26, 0x0a, 0x0f, 0x6b, 0x5f, 0x66, 0x69, 0x6c, 0x65, 0x6e, 0x61, 0x6d, 0x65,
+	0x5f, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0d, 0x6b, 0x46, 0x69,
+	0x6c, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x1e, 0x0a, 0x0b, 0x6b, 0x5f,
+	0x63, 0x6f, 0x64, 0x65, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52,
+	0x09, 0x6b, 0x43, 0x6f, 0x64, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x24, 0x0a, 0x04, 0x61, 0x72,
+	0x67, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70,
+	0x63, 0x2e, 0x41, 0x72, 0x67, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x04, 0x61, 0x72, 0x67, 0x73,
+	0x12, 0x1c, 0x0a, 0x09, 0x6f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65, 0x73, 0x18, 0x05, 0x20,
+	0x03, 0x28, 0x09, 0x52, 0x09, 0x6f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65, 0x73, 0x12, 0x2e,
+	0x0a, 0x13, 0x64, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x5f, 0x79, 0x61, 0x6d, 0x6c, 0x5f, 0x72,
+	0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x06, 0x20, 0x01, 0x28, 0x08, 0x52, 0x11, 0x64, 0x69, 0x73,
+	0x61, 0x62, 0x6c, 0x65, 0x59, 0x61, 0x6d, 0x6c, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x2c,
+	0x0a, 0x12, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x5f, 0x6f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65,
+	0x5f, 0x61, 0x73, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x08, 0x52, 0x10, 0x70, 0x72, 0x69, 0x6e,
+	0x74, 0x4f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65, 0x41, 0x73, 0x74, 0x12, 0x2c, 0x0a, 0x12,
+	0x73, 0x74, 0x72, 0x69, 0x63, 0x74, 0x5f, 0x72, 0x61, 0x6e, 0x67, 0x65, 0x5f, 0x63, 0x68, 0x65,
+	0x63, 0x6b, 0x18, 0x08, 0x20, 0x01, 0x28, 0x08, 0x52, 0x10, 0x73, 0x74, 0x72, 0x69, 0x63, 0x74,
+	0x52, 0x61, 0x6e, 0x67, 0x65, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x12, 0x21, 0x0a, 0x0c, 0x64, 0x69,
+	0x73, 0x61, 0x62, 0x6c, 0x65, 0x5f, 0x6e, 0x6f, 0x6e, 0x65, 0x18, 0x09, 0x20, 0x01, 0x28, 0x08,
+	0x52, 0x0b, 0x64, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f, 0x6e, 0x65, 0x12, 0x18, 0x0a,
+	0x07, 0x76, 0x65, 0x72, 0x62, 0x6f, 0x73, 0x65, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07,
+	0x76, 0x65, 0x72, 0x62, 0x6f, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x64, 0x65, 0x62, 0x75, 0x67,
+	0x18, 0x0b, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x64, 0x65, 0x62, 0x75, 0x67, 0x12, 0x1b, 0x0a,
+	0x09, 0x73, 0x6f, 0x72, 0x74, 0x5f, 0x6b, 0x65, 0x79, 0x73, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x08,
+	0x52, 0x08, 0x73, 0x6f, 0x72, 0x74, 0x4b, 0x65, 0x79, 0x73, 0x12, 0x38, 0x0a, 0x0d, 0x65, 0x78,
+	0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x70, 0x6b, 0x67, 0x73, 0x18, 0x0d, 0x20, 0x03, 0x28,
 	0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x78, 0x74, 0x65, 0x72,
 	0x6e, 0x61, 0x6c, 0x50, 0x6b, 0x67, 0x52, 0x0c, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c,
-	0x50, 0x6b, 0x67, 0x73, 0x22, 0x68, 0x0a, 0x10, 0x50, 0x61, 0x72, 0x73, 0x65, 0x46, 0x69, 0x6c,
-	0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x61, 0x73, 0x74, 0x5f,
-	0x6a, 0x73, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x73, 0x74, 0x4a,
-	0x73, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x65, 0x70, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28,
-	0x09, 0x52, 0x04, 0x64, 0x65, 0x70, 0x73, 0x12, 0x25, 0x0a, 0x06, 0x65, 0x72, 0x72, 0x6f, 0x72,
-	0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63,
-	0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x52, 0x06, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x22, 0x7d,
-	0x0a, 0x11, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41,
-	0x72, 0x67, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73, 0x18, 0x01, 0x20, 0x03,
-	0x28, 0x09, 0x52, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x6f, 0x75,
-	0x72, 0x63, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x07, 0x73, 0x6f, 0x75, 0x72,
-	0x63, 0x65, 0x73, 0x12, 0x38, 0x0a, 0x0d, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f,
-	0x70, 0x6b, 0x67, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79,
-	0x72, 0x70, 0x63, 0x2e, 0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x50, 0x6b, 0x67, 0x52,
-	0x0c, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x50, 0x6b, 0x67, 0x73, 0x22, 0x6d, 0x0a,
-	0x13, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65,
-	0x73, 0x75, 0x6c, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x61, 0x73, 0x74, 0x5f, 0x6a, 0x73, 0x6f, 0x6e,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x73, 0x74, 0x4a, 0x73, 0x6f, 0x6e, 0x12,
-	0x14, 0x0a, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x05,
-	0x70, 0x61, 0x74, 0x68, 0x73, 0x12, 0x25, 0x0a, 0x06, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x18,
-	0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45,
-	0x72, 0x72, 0x6f, 0x72, 0x52, 0x06, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x22, 0xb6, 0x01, 0x0a,
-	0x10, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x41, 0x72, 0x67,
-	0x73, 0x12, 0x38, 0x0a, 0x0a, 0x70, 0x61, 0x72, 0x73, 0x65, 0x5f, 0x61, 0x72, 0x67, 0x73, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50,
-	0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73,
-	0x52, 0x09, 0x70, 0x61, 0x72, 0x73, 0x65, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1f, 0x0a, 0x0b, 0x72,
-	0x65, 0x73, 0x6f, 0x6c, 0x76, 0x65, 0x5f, 0x61, 0x73, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08,
-	0x52, 0x0a, 0x72, 0x65, 0x73, 0x6f, 0x6c, 0x76, 0x65, 0x41, 0x73, 0x74, 0x12, 0x21, 0x0a, 0x0c,
-	0x6c, 0x6f, 0x61, 0x64, 0x5f, 0x62, 0x75, 0x69, 0x6c, 0x74, 0x69, 0x6e, 0x18, 0x03, 0x20, 0x01,
-	0x28, 0x08, 0x52, 0x0b, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x75, 0x69, 0x6c, 0x74, 0x69, 0x6e, 0x12,
-	0x24, 0x0a, 0x0e, 0x77, 0x69, 0x74, 0x68, 0x5f, 0x61, 0x73, 0x74, 0x5f, 0x69, 0x6e, 0x64, 0x65,
-	0x78, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0c, 0x77, 0x69, 0x74, 0x68, 0x41, 0x73, 0x74,
-	0x49, 0x6e, 0x64, 0x65, 0x78, 0x22, 0xfa, 0x08, 0x0a, 0x12, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61,
-	0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x18, 0x0a, 0x07,
-	0x70, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x70,
-	0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73, 0x18,
-	0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x05, 0x70, 0x61, 0x74, 0x68, 0x73, 0x12, 0x30, 0x0a, 0x0c,
-	0x70, 0x61, 0x72, 0x73, 0x65, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x18, 0x03, 0x20, 0x03,
-	0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x72, 0x72, 0x6f,
-	0x72, 0x52, 0x0b, 0x70, 0x61, 0x72, 0x73, 0x65, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x12, 0x2e,
-	0x0a, 0x0b, 0x74, 0x79, 0x70, 0x65, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x18, 0x04, 0x20,
-	0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x72, 0x72,
-	0x6f, 0x72, 0x52, 0x0a, 0x74, 0x79, 0x70, 0x65, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x73, 0x12, 0x3e,
-	0x0a, 0x06, 0x73, 0x63, 0x6f, 0x70, 0x65, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x26,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b,
-	0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x53, 0x63, 0x6f, 0x70, 0x65,
-	0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x06, 0x73, 0x63, 0x6f, 0x70, 0x65, 0x73, 0x12, 0x41,
-	0x0a, 0x07, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x27, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63,
-	0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x53, 0x79, 0x6d, 0x62,
-	0x6f, 0x6c, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x07, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c,
-	0x73, 0x12, 0x55, 0x0a, 0x0f, 0x6e, 0x6f, 0x64, 0x65, 0x5f, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c,
-	0x5f, 0x6d, 0x61, 0x70, 0x18, 0x07, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x67, 0x70, 0x79,
-	0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f,
-	0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x53, 0x79, 0x6d, 0x62, 0x6f,
-	0x6c, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0d, 0x6e, 0x6f, 0x64, 0x65, 0x53,
-	0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x4d, 0x61, 0x70, 0x12, 0x55, 0x0a, 0x0f, 0x73, 0x79, 0x6d, 0x62,
-	0x6f, 0x6c, 0x5f, 0x6e, 0x6f, 0x64, 0x65, 0x5f, 0x6d, 0x61, 0x70, 0x18, 0x08, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x2d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50,
-	0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x53, 0x79,
-	0x6d, 0x62, 0x6f, 0x6c, 0x4e, 0x6f, 0x64, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79,
-	0x52, 0x0d, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x4e, 0x6f, 0x64, 0x65, 0x4d, 0x61, 0x70, 0x12,
-	0x6e, 0x0a, 0x18, 0x66, 0x75, 0x6c, 0x6c, 0x79, 0x5f, 0x71, 0x75, 0x61, 0x6c, 0x69, 0x66, 0x69,
-	0x65, 0x64, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x6d, 0x61, 0x70, 0x18, 0x09, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x35, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50,
-	0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x2e, 0x46, 0x75,
-	0x6c, 0x6c, 0x79, 0x51, 0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x65, 0x64, 0x4e, 0x61, 0x6d, 0x65,
-	0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x15, 0x66, 0x75, 0x6c, 0x6c, 0x79, 0x51,
-	0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x65, 0x64, 0x4e, 0x61, 0x6d, 0x65, 0x4d, 0x61, 0x70, 0x12,
-	0x4f, 0x0a, 0x0d, 0x70, 0x6b, 0x67, 0x5f, 0x73, 0x63, 0x6f, 0x70, 0x65, 0x5f, 0x6d, 0x61, 0x70,
-	0x18, 0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2b, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e,
-	0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75,
-	0x6c, 0x74, 0x2e, 0x50, 0x6b, 0x67, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e,
-	0x74, 0x72, 0x79, 0x52, 0x0b, 0x70, 0x6b, 0x67, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x4d, 0x61, 0x70,
-	0x1a, 0x48, 0x0a, 0x0b, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12,
-	0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65,
-	0x79, 0x12, 0x23, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x0d, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x52,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x4a, 0x0a, 0x0c, 0x53, 0x79,
-	0x6d, 0x62, 0x6f, 0x6c, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65,
-	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x24, 0x0a, 0x05,
-	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x67, 0x70,
-	0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x52, 0x05, 0x76, 0x61, 0x6c,
-	0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x55, 0x0a, 0x12, 0x4e, 0x6f, 0x64, 0x65, 0x53, 0x79,
-	0x6d, 0x62, 0x6f, 0x6c, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03,
-	0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x29,
-	0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e,
-	0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64,
-	0x65, 0x78, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x40, 0x0a,
-	0x12, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x4e, 0x6f, 0x64, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e,
-	0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a,
-	0x5d, 0x0a, 0x1a, 0x46, 0x75, 0x6c, 0x6c, 0x79, 0x51, 0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x65,
-	0x64, 0x4e, 0x61, 0x6d, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a,
-	0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12,
-	0x29, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e,
-	0x64, 0x65, 0x78, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x52,
-	0x0a, 0x10, 0x50, 0x6b, 0x67, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74,
-	0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x03, 0x6b, 0x65, 0x79, 0x12, 0x28, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x63, 0x6f,
-	0x70, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02,
-	0x38, 0x01, 0x22, 0x42, 0x0a, 0x12, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e,
-	0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x2c, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69,
-	0x6f, 0x6e, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x67, 0x70, 0x79, 0x72,
-	0x70, 0x63, 0x2e, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x48, 0x65, 0x6c, 0x70, 0x52, 0x07, 0x6f,
-	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x89, 0x01, 0x0a, 0x0a, 0x4f, 0x70, 0x74, 0x69, 0x6f,
-	0x6e, 0x48, 0x65, 0x6c, 0x70, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70,
-	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x1a, 0x0a,
-	0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x64, 0x65, 0x66,
-	0x61, 0x75, 0x6c, 0x74, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0c, 0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x12, 0x12,
-	0x0a, 0x04, 0x68, 0x65, 0x6c, 0x70, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x65,
-	0x6c, 0x70, 0x22, 0xd7, 0x01, 0x0a, 0x06, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x12, 0x1f, 0x0a,
-	0x02, 0x74, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x67, 0x70, 0x79, 0x72,
-	0x70, 0x63, 0x2e, 0x4b, 0x63, 0x6c, 0x54, 0x79, 0x70, 0x65, 0x52, 0x02, 0x74, 0x79, 0x12, 0x12,
-	0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61,
-	0x6d, 0x65, 0x12, 0x29, 0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f,
-	0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x25, 0x0a,
-	0x03, 0x64, 0x65, 0x66, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79,
-	0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52,
-	0x03, 0x64, 0x65, 0x66, 0x12, 0x29, 0x0a, 0x05, 0x61, 0x74, 0x74, 0x72, 0x73, 0x18, 0x05, 0x20,
-	0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d,
-	0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x05, 0x61, 0x74, 0x74, 0x72, 0x73, 0x12,
-	0x1b, 0x0a, 0x09, 0x69, 0x73, 0x5f, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x18, 0x06, 0x20, 0x01,
-	0x28, 0x08, 0x52, 0x08, 0x69, 0x73, 0x47, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x22, 0xcb, 0x01, 0x0a,
-	0x05, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x12, 0x2a, 0x0a, 0x06, 0x70, 0x61,
-	0x72, 0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x67, 0x70, 0x79,
-	0x72, 0x70, 0x63, 0x2e, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x06,
-	0x70, 0x61, 0x72, 0x65, 0x6e, 0x74, 0x12, 0x29, 0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53,
-	0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65,
-	0x72, 0x12, 0x2e, 0x0a, 0x08, 0x63, 0x68, 0x69, 0x6c, 0x64, 0x72, 0x65, 0x6e, 0x18, 0x04, 0x20,
-	0x03, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x63, 0x6f,
-	0x70, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x08, 0x63, 0x68, 0x69, 0x6c, 0x64, 0x72, 0x65,
-	0x6e, 0x12, 0x27, 0x0a, 0x04, 0x64, 0x65, 0x66, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x53, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x49,
-	0x6e, 0x64, 0x65, 0x78, 0x52, 0x04, 0x64, 0x65, 0x66, 0x73, 0x22, 0x3d, 0x0a, 0x0b, 0x53, 0x79,
-	0x6d, 0x62, 0x6f, 0x6c, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x69, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x04, 0x52, 0x01, 0x69, 0x12, 0x0c, 0x0a, 0x01, 0x67, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x04, 0x52, 0x01, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x03, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x22, 0x3c, 0x0a, 0x0a, 0x53, 0x63, 0x6f,
-	0x70, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x69, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x04, 0x52, 0x01, 0x69, 0x12, 0x0c, 0x0a, 0x01, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04,
-	0x52, 0x01, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x22, 0xae, 0x05, 0x0a, 0x10, 0x45, 0x78, 0x65, 0x63,
-	0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x19, 0x0a, 0x08,
-	0x77, 0x6f, 0x72, 0x6b, 0x5f, 0x64, 0x69, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
-	0x77, 0x6f, 0x72, 0x6b, 0x44, 0x69, 0x72, 0x12, 0x26, 0x0a, 0x0f, 0x6b, 0x5f, 0x66, 0x69, 0x6c,
-	0x65, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09,
-	0x52, 0x0d, 0x6b, 0x46, 0x69, 0x6c, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12,
-	0x1e, 0x0a, 0x0b, 0x6b, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x03,
-	0x20, 0x03, 0x28, 0x09, 0x52, 0x09, 0x6b, 0x43, 0x6f, 0x64, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12,
-	0x24, 0x0a, 0x04, 0x61, 0x72, 0x67, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x10, 0x2e,
-	0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x41, 0x72, 0x67, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
-	0x04, 0x61, 0x72, 0x67, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64,
-	0x65, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x09, 0x52, 0x09, 0x6f, 0x76, 0x65, 0x72, 0x72, 0x69,
-	0x64, 0x65, 0x73, 0x12, 0x2e, 0x0a, 0x13, 0x64, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x5f, 0x79,
-	0x61, 0x6d, 0x6c, 0x5f, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x06, 0x20, 0x01, 0x28, 0x08,
-	0x52, 0x11, 0x64, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x59, 0x61, 0x6d, 0x6c, 0x52, 0x65, 0x73,
-	0x75, 0x6c, 0x74, 0x12, 0x2c, 0x0a, 0x12, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x5f, 0x6f, 0x76, 0x65,
-	0x72, 0x72, 0x69, 0x64, 0x65, 0x5f, 0x61, 0x73, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x10, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x4f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65, 0x41, 0x73,
-	0x74, 0x12, 0x2c, 0x0a, 0x12, 0x73, 0x74, 0x72, 0x69, 0x63, 0x74, 0x5f, 0x72, 0x61, 0x6e, 0x67,
-	0x65, 0x5f, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x18, 0x08, 0x20, 0x01, 0x28, 0x08, 0x52, 0x10, 0x73,
-	0x74, 0x72, 0x69, 0x63, 0x74, 0x52, 0x61, 0x6e, 0x67, 0x65, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x12,
-	0x21, 0x0a, 0x0c, 0x64, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x5f, 0x6e, 0x6f, 0x6e, 0x65, 0x18,
-	0x09, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x61, 0x62, 0x6c, 0x65, 0x4e, 0x6f,
-	0x6e, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x76, 0x65, 0x72, 0x62, 0x6f, 0x73, 0x65, 0x18, 0x0a, 0x20,
-	0x01, 0x28, 0x05, 0x52, 0x07, 0x76, 0x65, 0x72, 0x62, 0x6f, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05,
-	0x64, 0x65, 0x62, 0x75, 0x67, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x64, 0x65, 0x62,
-	0x75, 0x67, 0x12, 0x1b, 0x0a, 0x09, 0x73, 0x6f, 0x72, 0x74, 0x5f, 0x6b, 0x65, 0x79, 0x73, 0x18,
-	0x0c, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x73, 0x6f, 0x72, 0x74, 0x4b, 0x65, 0x79, 0x73, 0x12,
-	0x38, 0x0a, 0x0d, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x70, 0x6b, 0x67, 0x73,
-	0x18, 0x0d, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e,
-	0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x50, 0x6b, 0x67, 0x52, 0x0c, 0x65, 0x78, 0x74,
-	0x65, 0x72, 0x6e, 0x61, 0x6c, 0x50, 0x6b, 0x67, 0x73, 0x12, 0x37, 0x0a, 0x18, 0x69, 0x6e, 0x63,
-	0x6c, 0x75, 0x64, 0x65, 0x5f, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x5f, 0x74, 0x79, 0x70, 0x65,
-	0x5f, 0x70, 0x61, 0x74, 0x68, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x08, 0x52, 0x15, 0x69, 0x6e, 0x63,
-	0x6c, 0x75, 0x64, 0x65, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x54, 0x79, 0x70, 0x65, 0x50, 0x61,
-	0x74, 0x68, 0x12, 0x21, 0x0a, 0x0c, 0x63, 0x6f, 0x6d, 0x70, 0x69, 0x6c, 0x65, 0x5f, 0x6f, 0x6e,
-	0x6c, 0x79, 0x18, 0x0f, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0b, 0x63, 0x6f, 0x6d, 0x70, 0x69, 0x6c,
-	0x65, 0x4f, 0x6e, 0x6c, 0x79, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x68, 0x6f, 0x77, 0x5f, 0x68, 0x69,
-	0x64, 0x64, 0x65, 0x6e, 0x18, 0x10, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0a, 0x73, 0x68, 0x6f, 0x77,
-	0x48, 0x69, 0x64, 0x64, 0x65, 0x6e, 0x12, 0x23, 0x0a, 0x0d, 0x70, 0x61, 0x74, 0x68, 0x5f, 0x73,
-	0x65, 0x6c, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x18, 0x11, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0c, 0x70,
-	0x61, 0x74, 0x68, 0x53, 0x65, 0x6c, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x12, 0x1b, 0x0a, 0x09, 0x66,
-	0x61, 0x73, 0x74, 0x5f, 0x65, 0x76, 0x61, 0x6c, 0x18, 0x12, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08,
-	0x66, 0x61, 0x73, 0x74, 0x45, 0x76, 0x61, 0x6c, 0x22, 0x98, 0x01, 0x0a, 0x12, 0x45, 0x78, 0x65,
-	0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12,
-	0x1f, 0x0a, 0x0b, 0x6a, 0x73, 0x6f, 0x6e, 0x5f, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6a, 0x73, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74,
-	0x12, 0x1f, 0x0a, 0x0b, 0x79, 0x61, 0x6d, 0x6c, 0x5f, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x79, 0x61, 0x6d, 0x6c, 0x52, 0x65, 0x73, 0x75, 0x6c,
-	0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x6c, 0x6f, 0x67, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6c, 0x6f, 0x67, 0x4d, 0x65, 0x73, 0x73, 0x61,
-	0x67, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x65, 0x72, 0x72, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67,
-	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x65, 0x72, 0x72, 0x4d, 0x65, 0x73, 0x73,
-	0x61, 0x67, 0x65, 0x22, 0x62, 0x0a, 0x11, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x50, 0x72, 0x6f, 0x67,
-	0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x35, 0x0a, 0x09, 0x65, 0x78, 0x65, 0x63,
-	0x5f, 0x61, 0x72, 0x67, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x67, 0x70,
-	0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d,
-	0x5f, 0x41, 0x72, 0x67, 0x73, 0x52, 0x08, 0x65, 0x78, 0x65, 0x63, 0x41, 0x72, 0x67, 0x73, 0x12,
-	0x16, 0x0a, 0x06, 0x6f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x06, 0x6f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x22, 0x29, 0x0a, 0x13, 0x42, 0x75, 0x69, 0x6c, 0x64,
-	0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x12,
-	0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61,
-	0x74, 0x68, 0x22, 0x5e, 0x0a, 0x11, 0x45, 0x78, 0x65, 0x63, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61,
-	0x63, 0x74, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x12, 0x35, 0x0a, 0x09, 0x65,
-	0x78, 0x65, 0x63, 0x5f, 0x61, 0x72, 0x67, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67,
-	0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x52, 0x08, 0x65, 0x78, 0x65, 0x63, 0x41, 0x72,
-	0x67, 0x73, 0x22, 0x33, 0x0a, 0x10, 0x52, 0x65, 0x73, 0x65, 0x74, 0x50, 0x6c, 0x75, 0x67, 0x69,
-	0x6e, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x12, 0x1f, 0x0a, 0x0b, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e,
-	0x5f, 0x72, 0x6f, 0x6f, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x70, 0x6c, 0x75,
-	0x67, 0x69, 0x6e, 0x52, 0x6f, 0x6f, 0x74, 0x22, 0x14, 0x0a, 0x12, 0x52, 0x65, 0x73, 0x65, 0x74,
-	0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x22, 0x29, 0x0a,
+	0x50, 0x6b, 0x67, 0x73, 0x12, 0x37, 0x0a, 0x18, 0x69, 0x6e, 0x63, 0x6c, 0x75, 0x64, 0x65, 0x5f,
+	0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x5f, 0x70, 0x61, 0x74, 0x68,
+	0x18, 0x0e, 0x20, 0x01, 0x28, 0x08, 0x52, 0x15, 0x69, 0x6e, 0x63, 0x6c, 0x75, 0x64, 0x65, 0x53,
+	0x63, 0x68, 0x65, 0x6d, 0x61, 0x54, 0x79, 0x70, 0x65, 0x50, 0x61, 0x74, 0x68, 0x12, 0x21, 0x0a,
+	0x0c, 0x63, 0x6f, 0x6d, 0x70, 0x69, 0x6c, 0x65, 0x5f, 0x6f, 0x6e, 0x6c, 0x79, 0x18, 0x0f, 0x20,
+	0x01, 0x28, 0x08, 0x52, 0x0b, 0x63, 0x6f, 0x6d, 0x70, 0x69, 0x6c, 0x65, 0x4f, 0x6e, 0x6c, 0x79,
+	0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x68, 0x6f, 0x77, 0x5f, 0x68, 0x69, 0x64, 0x64, 0x65, 0x6e, 0x18,
+	0x10, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0a, 0x73, 0x68, 0x6f, 0x77, 0x48, 0x69, 0x64, 0x64, 0x65,
+	0x6e, 0x12, 0x23, 0x0a, 0x0d, 0x70, 0x61, 0x74, 0x68, 0x5f, 0x73, 0x65, 0x6c, 0x65, 0x63, 0x74,
+	0x6f, 0x72, 0x18, 0x11, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0c, 0x70, 0x61, 0x74, 0x68, 0x53, 0x65,
+	0x6c, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x12, 0x1b, 0x0a, 0x09, 0x66, 0x61, 0x73, 0x74, 0x5f, 0x65,
+	0x76, 0x61, 0x6c, 0x18, 0x12, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x66, 0x61, 0x73, 0x74, 0x45,
+	0x76, 0x61, 0x6c, 0x22, 0x98, 0x01, 0x0a, 0x12, 0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67,
+	0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x6a, 0x73,
+	0x6f, 0x6e, 0x5f, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0a, 0x6a, 0x73, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x79,
+	0x61, 0x6d, 0x6c, 0x5f, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0a, 0x79, 0x61, 0x6d, 0x6c, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x1f, 0x0a, 0x0b,
+	0x6c, 0x6f, 0x67, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0a, 0x6c, 0x6f, 0x67, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x1f, 0x0a,
+	0x0b, 0x65, 0x72, 0x72, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0a, 0x65, 0x72, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x62,
+	0x0a, 0x11, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41,
+	0x72, 0x67, 0x73, 0x12, 0x35, 0x0a, 0x09, 0x65, 0x78, 0x65, 0x63, 0x5f, 0x61, 0x72, 0x67, 0x73,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e,
+	0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73,
+	0x52, 0x08, 0x65, 0x78, 0x65, 0x63, 0x41, 0x72, 0x67, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x6f, 0x75,
+	0x74, 0x70, 0x75, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6f, 0x75, 0x74, 0x70,
+	0x75, 0x74, 0x22, 0x29, 0x0a, 0x13, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x50, 0x72, 0x6f, 0x67, 0x72,
+	0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74,
+	0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x22, 0x5e, 0x0a,
+	0x11, 0x45, 0x78, 0x65, 0x63, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61, 0x63, 0x74, 0x5f, 0x41, 0x72,
+	0x67, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x12, 0x35, 0x0a, 0x09, 0x65, 0x78, 0x65, 0x63, 0x5f, 0x61,
+	0x72, 0x67, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x67, 0x70, 0x79, 0x72,
+	0x70, 0x63, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41,
+	0x72, 0x67, 0x73, 0x52, 0x08, 0x65, 0x78, 0x65, 0x63, 0x41, 0x72, 0x67, 0x73, 0x22, 0x29, 0x0a,
 	0x0f, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73,
 	0x12, 0x16, 0x0a, 0x06, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x06, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x22, 0x31, 0x0a, 0x11, 0x46, 0x6f, 0x72, 0x6d,
@@ -4715,103 +4999,107 @@ var file_gpyrpc_proto_rawDesc = []byte{
 	0x73, 0x74, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x12, 0x17, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70,
 	0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x5f, 0x41, 0x72, 0x67,
 	0x73, 0x1a, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4d,
-	0x65, 0x74, 0x68, 0x6f, 0x64, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x32, 0xc0, 0x0b, 0x0a,
+	0x65, 0x74, 0x68, 0x6f, 0x64, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x32, 0x82, 0x0c, 0x0a,
 	0x0c, 0x4b, 0x63, 0x6c, 0x76, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2e, 0x0a,
 	0x04, 0x50, 0x69, 0x6e, 0x67, 0x12, 0x11, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50,
 	0x69, 0x6e, 0x67, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70,
-	0x63, 0x2e, 0x50, 0x69, 0x6e, 0x67, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x43, 0x0a,
-	0x0b, 0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x12, 0x18, 0x2e, 0x67,
-	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61,
-	0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e,
-	0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75,
-	0x6c, 0x74, 0x12, 0x46, 0x0a, 0x0c, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x50, 0x72, 0x6f, 0x67, 0x72,
-	0x61, 0x6d, 0x12, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x42, 0x75, 0x69, 0x6c,
-	0x64, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e,
-	0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x50, 0x72, 0x6f, 0x67,
-	0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x45, 0x0a, 0x0c, 0x45, 0x78,
-	0x65, 0x63, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61, 0x63, 0x74, 0x12, 0x19, 0x2e, 0x67, 0x70, 0x79,
-	0x72, 0x70, 0x63, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61, 0x63, 0x74,
+	0x63, 0x2e, 0x50, 0x69, 0x6e, 0x67, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x40, 0x0a,
+	0x0a, 0x47, 0x65, 0x74, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x17, 0x2e, 0x67, 0x70,
+	0x79, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x5f,
+	0x41, 0x72, 0x67, 0x73, 0x1a, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65,
+	0x74, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12,
+	0x46, 0x0a, 0x0c, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x12,
+	0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72,
+	0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e, 0x67, 0x70, 0x79,
+	0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d,
+	0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x3d, 0x0a, 0x09, 0x50, 0x61, 0x72, 0x73, 0x65,
+	0x46, 0x69, 0x6c, 0x65, 0x12, 0x16, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61,
+	0x72, 0x73, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x18, 0x2e, 0x67,
+	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x5f,
+	0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x43, 0x0a, 0x0b, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61,
+	0x63, 0x6b, 0x61, 0x67, 0x65, 0x12, 0x18, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c,
+	0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a,
+	0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63,
+	0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x44, 0x0a, 0x0b, 0x4c,
+	0x69, 0x73, 0x74, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x19, 0x2e, 0x67, 0x70, 0x79,
+	0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d,
+	0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c,
+	0x74, 0x12, 0x49, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x56, 0x61, 0x72, 0x69, 0x61, 0x62, 0x6c,
+	0x65, 0x73, 0x12, 0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74,
+	0x56, 0x61, 0x72, 0x69, 0x61, 0x62, 0x6c, 0x65, 0x73, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1c,
+	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x56, 0x61, 0x72, 0x69,
+	0x61, 0x62, 0x6c, 0x65, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x43, 0x0a, 0x0b,
+	0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x12, 0x18, 0x2e, 0x67, 0x70,
+	0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d,
 	0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45,
 	0x78, 0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c,
-	0x74, 0x12, 0x3d, 0x0a, 0x09, 0x50, 0x61, 0x72, 0x73, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x12, 0x16,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x46, 0x69, 0x6c,
-	0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x18, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e,
-	0x50, 0x61, 0x72, 0x73, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74,
-	0x12, 0x46, 0x0a, 0x0c, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d,
-	0x12, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50,
-	0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e, 0x67, 0x70,
-	0x79, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61,
-	0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x43, 0x0a, 0x0b, 0x4c, 0x6f, 0x61, 0x64,
-	0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x12, 0x18, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63,
-	0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x41, 0x72, 0x67,
-	0x73, 0x1a, 0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x50,
-	0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x44, 0x0a,
-	0x0b, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x19, 0x2e, 0x67,
-	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x50, 0x61, 0x72, 0x73, 0x65, 0x50, 0x72, 0x6f, 0x67, 0x72,
-	0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63,
-	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x52, 0x65, 0x73,
-	0x75, 0x6c, 0x74, 0x12, 0x49, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x56, 0x61, 0x72, 0x69, 0x61,
-	0x62, 0x6c, 0x65, 0x73, 0x12, 0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69,
-	0x73, 0x74, 0x56, 0x61, 0x72, 0x69, 0x61, 0x62, 0x6c, 0x65, 0x73, 0x5f, 0x41, 0x72, 0x67, 0x73,
-	0x1a, 0x1c, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x56, 0x61,
-	0x72, 0x69, 0x61, 0x62, 0x6c, 0x65, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x40,
-	0x0a, 0x0a, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x17, 0x2e, 0x67,
-	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x43, 0x6f, 0x64, 0x65,
-	0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x46,
-	0x6f, 0x72, 0x6d, 0x61, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74,
-	0x12, 0x40, 0x0a, 0x0a, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x50, 0x61, 0x74, 0x68, 0x12, 0x17,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x50, 0x61,
-	0x74, 0x68, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63,
-	0x2e, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x50, 0x61, 0x74, 0x68, 0x5f, 0x52, 0x65, 0x73, 0x75,
-	0x6c, 0x74, 0x12, 0x3a, 0x0a, 0x08, 0x4c, 0x69, 0x6e, 0x74, 0x50, 0x61, 0x74, 0x68, 0x12, 0x15,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x6e, 0x74, 0x50, 0x61, 0x74, 0x68,
-	0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x17, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c,
-	0x69, 0x6e, 0x74, 0x50, 0x61, 0x74, 0x68, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x46,
-	0x0a, 0x0c, 0x4f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x12, 0x19,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65,
-	0x46, 0x69, 0x6c, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e, 0x67, 0x70, 0x79, 0x72,
-	0x70, 0x63, 0x2e, 0x4f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x5f,
-	0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x5e, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x53, 0x63, 0x68,
-	0x65, 0x6d, 0x61, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x12, 0x21,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x68, 0x65, 0x6d,
-	0x61, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x5f, 0x41, 0x72, 0x67,
-	0x73, 0x1a, 0x23, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63,
-	0x68, 0x65, 0x6d, 0x61, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x5f,
-	0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x46, 0x0a, 0x0c, 0x56, 0x61, 0x6c, 0x69, 0x64, 0x61,
-	0x74, 0x65, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e,
-	0x56, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x41, 0x72, 0x67,
-	0x73, 0x1a, 0x1b, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x56, 0x61, 0x6c, 0x69, 0x64,
-	0x61, 0x74, 0x65, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x46,
-	0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x65, 0x70, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x12, 0x19,
-	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x65, 0x70, 0x46,
-	0x69, 0x6c, 0x65, 0x73, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e, 0x67, 0x70, 0x79, 0x72,
-	0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x65, 0x70, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x5f,
-	0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x55, 0x0a, 0x11, 0x4c, 0x6f, 0x61, 0x64, 0x53, 0x65,
-	0x74, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x12, 0x1e, 0x2e, 0x67, 0x70,
-	0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67,
-	0x73, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x20, 0x2e, 0x67, 0x70,
-	0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67,
-	0x73, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x34, 0x0a,
-	0x06, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63,
-	0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x15, 0x2e, 0x67,
-	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x52, 0x65, 0x73,
-	0x75, 0x6c, 0x74, 0x12, 0x40, 0x0a, 0x0a, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x43, 0x6f, 0x64,
-	0x65, 0x12, 0x17, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d,
-	0x65, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x19, 0x2e, 0x67, 0x70, 0x79,
-	0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x52,
-	0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x2e, 0x0a, 0x04, 0x54, 0x65, 0x73, 0x74, 0x12, 0x11, 0x2e,
-	0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x5f, 0x41, 0x72, 0x67, 0x73,
-	0x1a, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x5f, 0x52,
-	0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x58, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44,
-	0x65, 0x70, 0x65, 0x6e, 0x64, 0x65, 0x6e, 0x63, 0x69, 0x65, 0x73, 0x12, 0x1f, 0x2e, 0x67, 0x70,
-	0x79, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x65, 0x70, 0x65, 0x6e,
-	0x64, 0x65, 0x6e, 0x63, 0x69, 0x65, 0x73, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x21, 0x2e, 0x67,
-	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x65, 0x70, 0x65,
-	0x6e, 0x64, 0x65, 0x6e, 0x63, 0x69, 0x65, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x42,
-	0x2b, 0x5a, 0x29, 0x6b, 0x63, 0x6c, 0x2d, 0x6c, 0x61, 0x6e, 0x67, 0x2e, 0x69, 0x6f, 0x2f, 0x6b,
-	0x63, 0x6c, 0x2d, 0x67, 0x6f, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x73, 0x70, 0x65, 0x63, 0x2f, 0x67,
-	0x70, 0x79, 0x72, 0x70, 0x63, 0x3b, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x12, 0x46, 0x0a, 0x0c, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61,
+	0x6d, 0x12, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64,
+	0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e, 0x67,
+	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x50, 0x72, 0x6f, 0x67, 0x72,
+	0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x45, 0x0a, 0x0c, 0x45, 0x78, 0x65,
+	0x63, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61, 0x63, 0x74, 0x12, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72,
+	0x70, 0x63, 0x2e, 0x45, 0x78, 0x65, 0x63, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61, 0x63, 0x74, 0x5f,
+	0x41, 0x72, 0x67, 0x73, 0x1a, 0x1a, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x78,
+	0x65, 0x63, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74,
+	0x12, 0x46, 0x0a, 0x0c, 0x4f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65, 0x46, 0x69, 0x6c, 0x65,
+	0x12, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4f, 0x76, 0x65, 0x72, 0x72, 0x69,
+	0x64, 0x65, 0x46, 0x69, 0x6c, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e, 0x67, 0x70,
+	0x79, 0x72, 0x70, 0x63, 0x2e, 0x4f, 0x76, 0x65, 0x72, 0x72, 0x69, 0x64, 0x65, 0x46, 0x69, 0x6c,
+	0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x5e, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x53,
+	0x63, 0x68, 0x65, 0x6d, 0x61, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x70, 0x69, 0x6e, 0x67,
+	0x12, 0x21, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x68,
+	0x65, 0x6d, 0x61, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x5f, 0x41,
+	0x72, 0x67, 0x73, 0x1a, 0x23, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74,
+	0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x70, 0x69, 0x6e,
+	0x67, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x40, 0x0a, 0x0a, 0x46, 0x6f, 0x72, 0x6d,
+	0x61, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x17, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e,
+	0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a,
+	0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x43,
+	0x6f, 0x64, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x40, 0x0a, 0x0a, 0x46, 0x6f,
+	0x72, 0x6d, 0x61, 0x74, 0x50, 0x61, 0x74, 0x68, 0x12, 0x17, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70,
+	0x63, 0x2e, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x50, 0x61, 0x74, 0x68, 0x5f, 0x41, 0x72, 0x67,
+	0x73, 0x1a, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x46, 0x6f, 0x72, 0x6d, 0x61,
+	0x74, 0x50, 0x61, 0x74, 0x68, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x3a, 0x0a, 0x08,
+	0x4c, 0x69, 0x6e, 0x74, 0x50, 0x61, 0x74, 0x68, 0x12, 0x15, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70,
+	0x63, 0x2e, 0x4c, 0x69, 0x6e, 0x74, 0x50, 0x61, 0x74, 0x68, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a,
+	0x17, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x6e, 0x74, 0x50, 0x61, 0x74,
+	0x68, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x46, 0x0a, 0x0c, 0x56, 0x61, 0x6c, 0x69,
+	0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70,
+	0x63, 0x2e, 0x56, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x41,
+	0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x56, 0x61, 0x6c,
+	0x69, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74,
+	0x12, 0x46, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x65, 0x70, 0x46, 0x69, 0x6c, 0x65, 0x73,
+	0x12, 0x19, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x65,
+	0x70, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x1b, 0x2e, 0x67, 0x70,
+	0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x65, 0x70, 0x46, 0x69, 0x6c, 0x65,
+	0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x55, 0x0a, 0x11, 0x4c, 0x6f, 0x61, 0x64,
+	0x53, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x12, 0x1e, 0x2e,
+	0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x74, 0x74, 0x69,
+	0x6e, 0x67, 0x73, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x20, 0x2e,
+	0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x53, 0x65, 0x74, 0x74, 0x69,
+	0x6e, 0x67, 0x73, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12,
+	0x34, 0x0a, 0x06, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72,
+	0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x15,
+	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x52,
+	0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x40, 0x0a, 0x0a, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x43,
+	0x6f, 0x64, 0x65, 0x12, 0x17, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e,
+	0x61, 0x6d, 0x65, 0x43, 0x6f, 0x64, 0x65, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x19, 0x2e, 0x67,
+	0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x43, 0x6f, 0x64, 0x65,
+	0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x2e, 0x0a, 0x04, 0x54, 0x65, 0x73, 0x74, 0x12,
+	0x11, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x5f, 0x41, 0x72,
+	0x67, 0x73, 0x1a, 0x13, 0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x54, 0x65, 0x73, 0x74,
+	0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x58, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x44, 0x65, 0x70, 0x65, 0x6e, 0x64, 0x65, 0x6e, 0x63, 0x69, 0x65, 0x73, 0x12, 0x1f, 0x2e,
+	0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x65, 0x70,
+	0x65, 0x6e, 0x64, 0x65, 0x6e, 0x63, 0x69, 0x65, 0x73, 0x5f, 0x41, 0x72, 0x67, 0x73, 0x1a, 0x21,
+	0x2e, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x65,
+	0x70, 0x65, 0x6e, 0x64, 0x65, 0x6e, 0x63, 0x69, 0x65, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x75, 0x6c,
+	0x74, 0x42, 0x2b, 0x5a, 0x29, 0x6b, 0x63, 0x6c, 0x2d, 0x6c, 0x61, 0x6e, 0x67, 0x2e, 0x69, 0x6f,
+	0x2f, 0x6b, 0x63, 0x6c, 0x2d, 0x67, 0x6f, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x73, 0x70, 0x65, 0x63,
+	0x2f, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x3b, 0x67, 0x70, 0x79, 0x72, 0x70, 0x63, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -4834,27 +5122,27 @@ var file_gpyrpc_proto_goTypes = []any{
 	(*Message)(nil),                     // 3: gpyrpc.Message
 	(*Ping_Args)(nil),                   // 4: gpyrpc.Ping_Args
 	(*Ping_Result)(nil),                 // 5: gpyrpc.Ping_Result
-	(*ListMethod_Args)(nil),             // 6: gpyrpc.ListMethod_Args
-	(*ListMethod_Result)(nil),           // 7: gpyrpc.ListMethod_Result
-	(*ParseFile_Args)(nil),              // 8: gpyrpc.ParseFile_Args
-	(*ParseFile_Result)(nil),            // 9: gpyrpc.ParseFile_Result
-	(*ParseProgram_Args)(nil),           // 10: gpyrpc.ParseProgram_Args
-	(*ParseProgram_Result)(nil),         // 11: gpyrpc.ParseProgram_Result
-	(*LoadPackage_Args)(nil),            // 12: gpyrpc.LoadPackage_Args
-	(*LoadPackage_Result)(nil),          // 13: gpyrpc.LoadPackage_Result
-	(*ListOptions_Result)(nil),          // 14: gpyrpc.ListOptions_Result
-	(*OptionHelp)(nil),                  // 15: gpyrpc.OptionHelp
-	(*Symbol)(nil),                      // 16: gpyrpc.Symbol
-	(*Scope)(nil),                       // 17: gpyrpc.Scope
-	(*SymbolIndex)(nil),                 // 18: gpyrpc.SymbolIndex
-	(*ScopeIndex)(nil),                  // 19: gpyrpc.ScopeIndex
-	(*ExecProgram_Args)(nil),            // 20: gpyrpc.ExecProgram_Args
-	(*ExecProgram_Result)(nil),          // 21: gpyrpc.ExecProgram_Result
-	(*BuildProgram_Args)(nil),           // 22: gpyrpc.BuildProgram_Args
-	(*BuildProgram_Result)(nil),         // 23: gpyrpc.BuildProgram_Result
-	(*ExecArtifact_Args)(nil),           // 24: gpyrpc.ExecArtifact_Args
-	(*ResetPlugin_Args)(nil),            // 25: gpyrpc.ResetPlugin_Args
-	(*ResetPlugin_Result)(nil),          // 26: gpyrpc.ResetPlugin_Result
+	(*GetVersion_Args)(nil),             // 6: gpyrpc.GetVersion_Args
+	(*GetVersion_Result)(nil),           // 7: gpyrpc.GetVersion_Result
+	(*ListMethod_Args)(nil),             // 8: gpyrpc.ListMethod_Args
+	(*ListMethod_Result)(nil),           // 9: gpyrpc.ListMethod_Result
+	(*ParseFile_Args)(nil),              // 10: gpyrpc.ParseFile_Args
+	(*ParseFile_Result)(nil),            // 11: gpyrpc.ParseFile_Result
+	(*ParseProgram_Args)(nil),           // 12: gpyrpc.ParseProgram_Args
+	(*ParseProgram_Result)(nil),         // 13: gpyrpc.ParseProgram_Result
+	(*LoadPackage_Args)(nil),            // 14: gpyrpc.LoadPackage_Args
+	(*LoadPackage_Result)(nil),          // 15: gpyrpc.LoadPackage_Result
+	(*ListOptions_Result)(nil),          // 16: gpyrpc.ListOptions_Result
+	(*OptionHelp)(nil),                  // 17: gpyrpc.OptionHelp
+	(*Symbol)(nil),                      // 18: gpyrpc.Symbol
+	(*Scope)(nil),                       // 19: gpyrpc.Scope
+	(*SymbolIndex)(nil),                 // 20: gpyrpc.SymbolIndex
+	(*ScopeIndex)(nil),                  // 21: gpyrpc.ScopeIndex
+	(*ExecProgram_Args)(nil),            // 22: gpyrpc.ExecProgram_Args
+	(*ExecProgram_Result)(nil),          // 23: gpyrpc.ExecProgram_Result
+	(*BuildProgram_Args)(nil),           // 24: gpyrpc.BuildProgram_Args
+	(*BuildProgram_Result)(nil),         // 25: gpyrpc.BuildProgram_Result
+	(*ExecArtifact_Args)(nil),           // 26: gpyrpc.ExecArtifact_Args
 	(*FormatCode_Args)(nil),             // 27: gpyrpc.FormatCode_Args
 	(*FormatCode_Result)(nil),           // 28: gpyrpc.FormatCode_Result
 	(*FormatPath_Args)(nil),             // 29: gpyrpc.FormatPath_Args
@@ -4913,7 +5201,7 @@ var file_gpyrpc_proto_depIdxs = []int32{
 	2,  // 3: gpyrpc.ParseFile_Result.errors:type_name -> gpyrpc.Error
 	0,  // 4: gpyrpc.ParseProgram_Args.external_pkgs:type_name -> gpyrpc.ExternalPkg
 	2,  // 5: gpyrpc.ParseProgram_Result.errors:type_name -> gpyrpc.Error
-	10, // 6: gpyrpc.LoadPackage_Args.parse_args:type_name -> gpyrpc.ParseProgram_Args
+	12, // 6: gpyrpc.LoadPackage_Args.parse_args:type_name -> gpyrpc.ParseProgram_Args
 	2,  // 7: gpyrpc.LoadPackage_Result.parse_errors:type_name -> gpyrpc.Error
 	2,  // 8: gpyrpc.LoadPackage_Result.type_errors:type_name -> gpyrpc.Error
 	64, // 9: gpyrpc.LoadPackage_Result.scopes:type_name -> gpyrpc.LoadPackage_Result.ScopesEntry
@@ -4922,19 +5210,19 @@ var file_gpyrpc_proto_depIdxs = []int32{
 	67, // 12: gpyrpc.LoadPackage_Result.symbol_node_map:type_name -> gpyrpc.LoadPackage_Result.SymbolNodeMapEntry
 	68, // 13: gpyrpc.LoadPackage_Result.fully_qualified_name_map:type_name -> gpyrpc.LoadPackage_Result.FullyQualifiedNameMapEntry
 	69, // 14: gpyrpc.LoadPackage_Result.pkg_scope_map:type_name -> gpyrpc.LoadPackage_Result.PkgScopeMapEntry
-	15, // 15: gpyrpc.ListOptions_Result.options:type_name -> gpyrpc.OptionHelp
+	17, // 15: gpyrpc.ListOptions_Result.options:type_name -> gpyrpc.OptionHelp
 	61, // 16: gpyrpc.Symbol.ty:type_name -> gpyrpc.KclType
-	18, // 17: gpyrpc.Symbol.owner:type_name -> gpyrpc.SymbolIndex
-	18, // 18: gpyrpc.Symbol.def:type_name -> gpyrpc.SymbolIndex
-	18, // 19: gpyrpc.Symbol.attrs:type_name -> gpyrpc.SymbolIndex
-	19, // 20: gpyrpc.Scope.parent:type_name -> gpyrpc.ScopeIndex
-	18, // 21: gpyrpc.Scope.owner:type_name -> gpyrpc.SymbolIndex
-	19, // 22: gpyrpc.Scope.children:type_name -> gpyrpc.ScopeIndex
-	18, // 23: gpyrpc.Scope.defs:type_name -> gpyrpc.SymbolIndex
+	20, // 17: gpyrpc.Symbol.owner:type_name -> gpyrpc.SymbolIndex
+	20, // 18: gpyrpc.Symbol.def:type_name -> gpyrpc.SymbolIndex
+	20, // 19: gpyrpc.Symbol.attrs:type_name -> gpyrpc.SymbolIndex
+	21, // 20: gpyrpc.Scope.parent:type_name -> gpyrpc.ScopeIndex
+	20, // 21: gpyrpc.Scope.owner:type_name -> gpyrpc.SymbolIndex
+	21, // 22: gpyrpc.Scope.children:type_name -> gpyrpc.ScopeIndex
+	20, // 23: gpyrpc.Scope.defs:type_name -> gpyrpc.SymbolIndex
 	1,  // 24: gpyrpc.ExecProgram_Args.args:type_name -> gpyrpc.Argument
 	0,  // 25: gpyrpc.ExecProgram_Args.external_pkgs:type_name -> gpyrpc.ExternalPkg
-	20, // 26: gpyrpc.BuildProgram_Args.exec_args:type_name -> gpyrpc.ExecProgram_Args
-	20, // 27: gpyrpc.ExecArtifact_Args.exec_args:type_name -> gpyrpc.ExecProgram_Args
+	22, // 26: gpyrpc.BuildProgram_Args.exec_args:type_name -> gpyrpc.ExecProgram_Args
+	22, // 27: gpyrpc.ExecArtifact_Args.exec_args:type_name -> gpyrpc.ExecProgram_Args
 	2,  // 28: gpyrpc.OverrideFile_Result.parse_errors:type_name -> gpyrpc.Error
 	39, // 29: gpyrpc.VariableList.variables:type_name -> gpyrpc.Variable
 	35, // 30: gpyrpc.ListVariables_Args.options:type_name -> gpyrpc.ListVariables_Options
@@ -4943,13 +5231,13 @@ var file_gpyrpc_proto_depIdxs = []int32{
 	39, // 33: gpyrpc.Variable.list_items:type_name -> gpyrpc.Variable
 	40, // 34: gpyrpc.Variable.dict_entries:type_name -> gpyrpc.MapEntry
 	39, // 35: gpyrpc.MapEntry.value:type_name -> gpyrpc.Variable
-	20, // 36: gpyrpc.GetSchemaTypeMapping_Args.exec_args:type_name -> gpyrpc.ExecProgram_Args
+	22, // 36: gpyrpc.GetSchemaTypeMapping_Args.exec_args:type_name -> gpyrpc.ExecProgram_Args
 	71, // 37: gpyrpc.GetSchemaTypeMapping_Result.schema_type_mapping:type_name -> gpyrpc.GetSchemaTypeMapping_Result.SchemaTypeMappingEntry
 	50, // 38: gpyrpc.LoadSettingsFiles_Result.kcl_cli_configs:type_name -> gpyrpc.CliConfig
 	51, // 39: gpyrpc.LoadSettingsFiles_Result.kcl_options:type_name -> gpyrpc.KeyValuePair
 	72, // 40: gpyrpc.RenameCode_Args.source_codes:type_name -> gpyrpc.RenameCode_Args.SourceCodesEntry
 	73, // 41: gpyrpc.RenameCode_Result.changed_codes:type_name -> gpyrpc.RenameCode_Result.ChangedCodesEntry
-	20, // 42: gpyrpc.Test_Args.exec_args:type_name -> gpyrpc.ExecProgram_Args
+	22, // 42: gpyrpc.Test_Args.exec_args:type_name -> gpyrpc.ExecProgram_Args
 	58, // 43: gpyrpc.Test_Result.info:type_name -> gpyrpc.TestCaseInfo
 	0,  // 44: gpyrpc.UpdateDependencies_Result.external_pkgs:type_name -> gpyrpc.ExternalPkg
 	61, // 45: gpyrpc.KclType.union_types:type_name -> gpyrpc.KclType
@@ -4960,63 +5248,65 @@ var file_gpyrpc_proto_depIdxs = []int32{
 	75, // 50: gpyrpc.KclType.examples:type_name -> gpyrpc.KclType.ExamplesEntry
 	61, // 51: gpyrpc.KclType.base_schema:type_name -> gpyrpc.KclType
 	76, // 52: gpyrpc.Decorator.keywords:type_name -> gpyrpc.Decorator.KeywordsEntry
-	17, // 53: gpyrpc.LoadPackage_Result.ScopesEntry.value:type_name -> gpyrpc.Scope
-	16, // 54: gpyrpc.LoadPackage_Result.SymbolsEntry.value:type_name -> gpyrpc.Symbol
-	18, // 55: gpyrpc.LoadPackage_Result.NodeSymbolMapEntry.value:type_name -> gpyrpc.SymbolIndex
-	18, // 56: gpyrpc.LoadPackage_Result.FullyQualifiedNameMapEntry.value:type_name -> gpyrpc.SymbolIndex
-	19, // 57: gpyrpc.LoadPackage_Result.PkgScopeMapEntry.value:type_name -> gpyrpc.ScopeIndex
+	19, // 53: gpyrpc.LoadPackage_Result.ScopesEntry.value:type_name -> gpyrpc.Scope
+	18, // 54: gpyrpc.LoadPackage_Result.SymbolsEntry.value:type_name -> gpyrpc.Symbol
+	20, // 55: gpyrpc.LoadPackage_Result.NodeSymbolMapEntry.value:type_name -> gpyrpc.SymbolIndex
+	20, // 56: gpyrpc.LoadPackage_Result.FullyQualifiedNameMapEntry.value:type_name -> gpyrpc.SymbolIndex
+	21, // 57: gpyrpc.LoadPackage_Result.PkgScopeMapEntry.value:type_name -> gpyrpc.ScopeIndex
 	36, // 58: gpyrpc.ListVariables_Result.VariablesEntry.value:type_name -> gpyrpc.VariableList
 	61, // 59: gpyrpc.GetSchemaTypeMapping_Result.SchemaTypeMappingEntry.value:type_name -> gpyrpc.KclType
 	61, // 60: gpyrpc.KclType.PropertiesEntry.value:type_name -> gpyrpc.KclType
 	63, // 61: gpyrpc.KclType.ExamplesEntry.value:type_name -> gpyrpc.Example
 	4,  // 62: gpyrpc.BuiltinService.Ping:input_type -> gpyrpc.Ping_Args
-	6,  // 63: gpyrpc.BuiltinService.ListMethod:input_type -> gpyrpc.ListMethod_Args
+	8,  // 63: gpyrpc.BuiltinService.ListMethod:input_type -> gpyrpc.ListMethod_Args
 	4,  // 64: gpyrpc.KclvmService.Ping:input_type -> gpyrpc.Ping_Args
-	20, // 65: gpyrpc.KclvmService.ExecProgram:input_type -> gpyrpc.ExecProgram_Args
-	22, // 66: gpyrpc.KclvmService.BuildProgram:input_type -> gpyrpc.BuildProgram_Args
-	24, // 67: gpyrpc.KclvmService.ExecArtifact:input_type -> gpyrpc.ExecArtifact_Args
-	8,  // 68: gpyrpc.KclvmService.ParseFile:input_type -> gpyrpc.ParseFile_Args
-	10, // 69: gpyrpc.KclvmService.ParseProgram:input_type -> gpyrpc.ParseProgram_Args
-	12, // 70: gpyrpc.KclvmService.LoadPackage:input_type -> gpyrpc.LoadPackage_Args
-	10, // 71: gpyrpc.KclvmService.ListOptions:input_type -> gpyrpc.ParseProgram_Args
-	37, // 72: gpyrpc.KclvmService.ListVariables:input_type -> gpyrpc.ListVariables_Args
-	27, // 73: gpyrpc.KclvmService.FormatCode:input_type -> gpyrpc.FormatCode_Args
-	29, // 74: gpyrpc.KclvmService.FormatPath:input_type -> gpyrpc.FormatPath_Args
-	31, // 75: gpyrpc.KclvmService.LintPath:input_type -> gpyrpc.LintPath_Args
-	33, // 76: gpyrpc.KclvmService.OverrideFile:input_type -> gpyrpc.OverrideFile_Args
-	41, // 77: gpyrpc.KclvmService.GetSchemaTypeMapping:input_type -> gpyrpc.GetSchemaTypeMapping_Args
-	43, // 78: gpyrpc.KclvmService.ValidateCode:input_type -> gpyrpc.ValidateCode_Args
-	46, // 79: gpyrpc.KclvmService.ListDepFiles:input_type -> gpyrpc.ListDepFiles_Args
-	48, // 80: gpyrpc.KclvmService.LoadSettingsFiles:input_type -> gpyrpc.LoadSettingsFiles_Args
-	52, // 81: gpyrpc.KclvmService.Rename:input_type -> gpyrpc.Rename_Args
-	54, // 82: gpyrpc.KclvmService.RenameCode:input_type -> gpyrpc.RenameCode_Args
-	56, // 83: gpyrpc.KclvmService.Test:input_type -> gpyrpc.Test_Args
-	59, // 84: gpyrpc.KclvmService.UpdateDependencies:input_type -> gpyrpc.UpdateDependencies_Args
-	5,  // 85: gpyrpc.BuiltinService.Ping:output_type -> gpyrpc.Ping_Result
-	7,  // 86: gpyrpc.BuiltinService.ListMethod:output_type -> gpyrpc.ListMethod_Result
-	5,  // 87: gpyrpc.KclvmService.Ping:output_type -> gpyrpc.Ping_Result
-	21, // 88: gpyrpc.KclvmService.ExecProgram:output_type -> gpyrpc.ExecProgram_Result
-	23, // 89: gpyrpc.KclvmService.BuildProgram:output_type -> gpyrpc.BuildProgram_Result
-	21, // 90: gpyrpc.KclvmService.ExecArtifact:output_type -> gpyrpc.ExecProgram_Result
-	9,  // 91: gpyrpc.KclvmService.ParseFile:output_type -> gpyrpc.ParseFile_Result
-	11, // 92: gpyrpc.KclvmService.ParseProgram:output_type -> gpyrpc.ParseProgram_Result
-	13, // 93: gpyrpc.KclvmService.LoadPackage:output_type -> gpyrpc.LoadPackage_Result
-	14, // 94: gpyrpc.KclvmService.ListOptions:output_type -> gpyrpc.ListOptions_Result
-	38, // 95: gpyrpc.KclvmService.ListVariables:output_type -> gpyrpc.ListVariables_Result
-	28, // 96: gpyrpc.KclvmService.FormatCode:output_type -> gpyrpc.FormatCode_Result
-	30, // 97: gpyrpc.KclvmService.FormatPath:output_type -> gpyrpc.FormatPath_Result
-	32, // 98: gpyrpc.KclvmService.LintPath:output_type -> gpyrpc.LintPath_Result
-	34, // 99: gpyrpc.KclvmService.OverrideFile:output_type -> gpyrpc.OverrideFile_Result
-	42, // 100: gpyrpc.KclvmService.GetSchemaTypeMapping:output_type -> gpyrpc.GetSchemaTypeMapping_Result
-	44, // 101: gpyrpc.KclvmService.ValidateCode:output_type -> gpyrpc.ValidateCode_Result
-	47, // 102: gpyrpc.KclvmService.ListDepFiles:output_type -> gpyrpc.ListDepFiles_Result
-	49, // 103: gpyrpc.KclvmService.LoadSettingsFiles:output_type -> gpyrpc.LoadSettingsFiles_Result
-	53, // 104: gpyrpc.KclvmService.Rename:output_type -> gpyrpc.Rename_Result
-	55, // 105: gpyrpc.KclvmService.RenameCode:output_type -> gpyrpc.RenameCode_Result
-	57, // 106: gpyrpc.KclvmService.Test:output_type -> gpyrpc.Test_Result
-	60, // 107: gpyrpc.KclvmService.UpdateDependencies:output_type -> gpyrpc.UpdateDependencies_Result
-	85, // [85:108] is the sub-list for method output_type
-	62, // [62:85] is the sub-list for method input_type
+	6,  // 65: gpyrpc.KclvmService.GetVersion:input_type -> gpyrpc.GetVersion_Args
+	12, // 66: gpyrpc.KclvmService.ParseProgram:input_type -> gpyrpc.ParseProgram_Args
+	10, // 67: gpyrpc.KclvmService.ParseFile:input_type -> gpyrpc.ParseFile_Args
+	14, // 68: gpyrpc.KclvmService.LoadPackage:input_type -> gpyrpc.LoadPackage_Args
+	12, // 69: gpyrpc.KclvmService.ListOptions:input_type -> gpyrpc.ParseProgram_Args
+	37, // 70: gpyrpc.KclvmService.ListVariables:input_type -> gpyrpc.ListVariables_Args
+	22, // 71: gpyrpc.KclvmService.ExecProgram:input_type -> gpyrpc.ExecProgram_Args
+	24, // 72: gpyrpc.KclvmService.BuildProgram:input_type -> gpyrpc.BuildProgram_Args
+	26, // 73: gpyrpc.KclvmService.ExecArtifact:input_type -> gpyrpc.ExecArtifact_Args
+	33, // 74: gpyrpc.KclvmService.OverrideFile:input_type -> gpyrpc.OverrideFile_Args
+	41, // 75: gpyrpc.KclvmService.GetSchemaTypeMapping:input_type -> gpyrpc.GetSchemaTypeMapping_Args
+	27, // 76: gpyrpc.KclvmService.FormatCode:input_type -> gpyrpc.FormatCode_Args
+	29, // 77: gpyrpc.KclvmService.FormatPath:input_type -> gpyrpc.FormatPath_Args
+	31, // 78: gpyrpc.KclvmService.LintPath:input_type -> gpyrpc.LintPath_Args
+	43, // 79: gpyrpc.KclvmService.ValidateCode:input_type -> gpyrpc.ValidateCode_Args
+	46, // 80: gpyrpc.KclvmService.ListDepFiles:input_type -> gpyrpc.ListDepFiles_Args
+	48, // 81: gpyrpc.KclvmService.LoadSettingsFiles:input_type -> gpyrpc.LoadSettingsFiles_Args
+	52, // 82: gpyrpc.KclvmService.Rename:input_type -> gpyrpc.Rename_Args
+	54, // 83: gpyrpc.KclvmService.RenameCode:input_type -> gpyrpc.RenameCode_Args
+	56, // 84: gpyrpc.KclvmService.Test:input_type -> gpyrpc.Test_Args
+	59, // 85: gpyrpc.KclvmService.UpdateDependencies:input_type -> gpyrpc.UpdateDependencies_Args
+	5,  // 86: gpyrpc.BuiltinService.Ping:output_type -> gpyrpc.Ping_Result
+	9,  // 87: gpyrpc.BuiltinService.ListMethod:output_type -> gpyrpc.ListMethod_Result
+	5,  // 88: gpyrpc.KclvmService.Ping:output_type -> gpyrpc.Ping_Result
+	7,  // 89: gpyrpc.KclvmService.GetVersion:output_type -> gpyrpc.GetVersion_Result
+	13, // 90: gpyrpc.KclvmService.ParseProgram:output_type -> gpyrpc.ParseProgram_Result
+	11, // 91: gpyrpc.KclvmService.ParseFile:output_type -> gpyrpc.ParseFile_Result
+	15, // 92: gpyrpc.KclvmService.LoadPackage:output_type -> gpyrpc.LoadPackage_Result
+	16, // 93: gpyrpc.KclvmService.ListOptions:output_type -> gpyrpc.ListOptions_Result
+	38, // 94: gpyrpc.KclvmService.ListVariables:output_type -> gpyrpc.ListVariables_Result
+	23, // 95: gpyrpc.KclvmService.ExecProgram:output_type -> gpyrpc.ExecProgram_Result
+	25, // 96: gpyrpc.KclvmService.BuildProgram:output_type -> gpyrpc.BuildProgram_Result
+	23, // 97: gpyrpc.KclvmService.ExecArtifact:output_type -> gpyrpc.ExecProgram_Result
+	34, // 98: gpyrpc.KclvmService.OverrideFile:output_type -> gpyrpc.OverrideFile_Result
+	42, // 99: gpyrpc.KclvmService.GetSchemaTypeMapping:output_type -> gpyrpc.GetSchemaTypeMapping_Result
+	28, // 100: gpyrpc.KclvmService.FormatCode:output_type -> gpyrpc.FormatCode_Result
+	30, // 101: gpyrpc.KclvmService.FormatPath:output_type -> gpyrpc.FormatPath_Result
+	32, // 102: gpyrpc.KclvmService.LintPath:output_type -> gpyrpc.LintPath_Result
+	44, // 103: gpyrpc.KclvmService.ValidateCode:output_type -> gpyrpc.ValidateCode_Result
+	47, // 104: gpyrpc.KclvmService.ListDepFiles:output_type -> gpyrpc.ListDepFiles_Result
+	49, // 105: gpyrpc.KclvmService.LoadSettingsFiles:output_type -> gpyrpc.LoadSettingsFiles_Result
+	53, // 106: gpyrpc.KclvmService.Rename:output_type -> gpyrpc.Rename_Result
+	55, // 107: gpyrpc.KclvmService.RenameCode:output_type -> gpyrpc.RenameCode_Result
+	57, // 108: gpyrpc.KclvmService.Test:output_type -> gpyrpc.Test_Result
+	60, // 109: gpyrpc.KclvmService.UpdateDependencies:output_type -> gpyrpc.UpdateDependencies_Result
+	86, // [86:110] is the sub-list for method output_type
+	62, // [62:86] is the sub-list for method input_type
 	62, // [62:62] is the sub-list for extension type_name
 	62, // [62:62] is the sub-list for extension extendee
 	0,  // [0:62] is the sub-list for field type_name
@@ -5101,7 +5391,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[6].Exporter = func(v any, i int) any {
-			switch v := v.(*ListMethod_Args); i {
+			switch v := v.(*GetVersion_Args); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5113,7 +5403,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[7].Exporter = func(v any, i int) any {
-			switch v := v.(*ListMethod_Result); i {
+			switch v := v.(*GetVersion_Result); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5125,7 +5415,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[8].Exporter = func(v any, i int) any {
-			switch v := v.(*ParseFile_Args); i {
+			switch v := v.(*ListMethod_Args); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5137,7 +5427,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[9].Exporter = func(v any, i int) any {
-			switch v := v.(*ParseFile_Result); i {
+			switch v := v.(*ListMethod_Result); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5149,7 +5439,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[10].Exporter = func(v any, i int) any {
-			switch v := v.(*ParseProgram_Args); i {
+			switch v := v.(*ParseFile_Args); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5161,7 +5451,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[11].Exporter = func(v any, i int) any {
-			switch v := v.(*ParseProgram_Result); i {
+			switch v := v.(*ParseFile_Result); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5173,7 +5463,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[12].Exporter = func(v any, i int) any {
-			switch v := v.(*LoadPackage_Args); i {
+			switch v := v.(*ParseProgram_Args); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5185,7 +5475,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[13].Exporter = func(v any, i int) any {
-			switch v := v.(*LoadPackage_Result); i {
+			switch v := v.(*ParseProgram_Result); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5197,7 +5487,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[14].Exporter = func(v any, i int) any {
-			switch v := v.(*ListOptions_Result); i {
+			switch v := v.(*LoadPackage_Args); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5209,7 +5499,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[15].Exporter = func(v any, i int) any {
-			switch v := v.(*OptionHelp); i {
+			switch v := v.(*LoadPackage_Result); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5221,7 +5511,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[16].Exporter = func(v any, i int) any {
-			switch v := v.(*Symbol); i {
+			switch v := v.(*ListOptions_Result); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5233,7 +5523,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[17].Exporter = func(v any, i int) any {
-			switch v := v.(*Scope); i {
+			switch v := v.(*OptionHelp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5245,7 +5535,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[18].Exporter = func(v any, i int) any {
-			switch v := v.(*SymbolIndex); i {
+			switch v := v.(*Symbol); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5257,7 +5547,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[19].Exporter = func(v any, i int) any {
-			switch v := v.(*ScopeIndex); i {
+			switch v := v.(*Scope); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5269,7 +5559,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[20].Exporter = func(v any, i int) any {
-			switch v := v.(*ExecProgram_Args); i {
+			switch v := v.(*SymbolIndex); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5281,7 +5571,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[21].Exporter = func(v any, i int) any {
-			switch v := v.(*ExecProgram_Result); i {
+			switch v := v.(*ScopeIndex); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5293,7 +5583,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[22].Exporter = func(v any, i int) any {
-			switch v := v.(*BuildProgram_Args); i {
+			switch v := v.(*ExecProgram_Args); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5305,7 +5595,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[23].Exporter = func(v any, i int) any {
-			switch v := v.(*BuildProgram_Result); i {
+			switch v := v.(*ExecProgram_Result); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5317,7 +5607,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[24].Exporter = func(v any, i int) any {
-			switch v := v.(*ExecArtifact_Args); i {
+			switch v := v.(*BuildProgram_Args); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5329,7 +5619,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[25].Exporter = func(v any, i int) any {
-			switch v := v.(*ResetPlugin_Args); i {
+			switch v := v.(*BuildProgram_Result); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5341,7 +5631,7 @@ func file_gpyrpc_proto_init() {
 			}
 		}
 		file_gpyrpc_proto_msgTypes[26].Exporter = func(v any, i int) any {
-			switch v := v.(*ResetPlugin_Result); i {
+			switch v := v.(*ExecArtifact_Args); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5829,7 +6119,9 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type BuiltinServiceClient interface {
+	// Sends a ping request.
 	Ping(ctx context.Context, in *Ping_Args, opts ...grpc.CallOption) (*Ping_Result, error)
+	// Lists available methods.
 	ListMethod(ctx context.Context, in *ListMethod_Args, opts ...grpc.CallOption) (*ListMethod_Result, error)
 }
 
@@ -5861,7 +6153,9 @@ func (c *builtinServiceClient) ListMethod(ctx context.Context, in *ListMethod_Ar
 
 // BuiltinServiceServer is the server API for BuiltinService service.
 type BuiltinServiceServer interface {
+	// Sends a ping request.
 	Ping(context.Context, *Ping_Args) (*Ping_Result, error)
+	// Lists available methods.
 	ListMethod(context.Context, *ListMethod_Args) (*ListMethod_Result, error)
 }
 
@@ -5937,26 +6231,725 @@ var _BuiltinService_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type KclvmServiceClient interface {
+	// / Ping KclvmService, return the same value as the parameter
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "Ping",
+	// /     "params": {
+	// /         "value": "hello"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "value": "hello"
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	Ping(ctx context.Context, in *Ping_Args, opts ...grpc.CallOption) (*Ping_Result, error)
-	ExecProgram(ctx context.Context, in *ExecProgram_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error)
-	BuildProgram(ctx context.Context, in *BuildProgram_Args, opts ...grpc.CallOption) (*BuildProgram_Result, error)
-	ExecArtifact(ctx context.Context, in *ExecArtifact_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error)
-	ParseFile(ctx context.Context, in *ParseFile_Args, opts ...grpc.CallOption) (*ParseFile_Result, error)
+	// / GetVersion KclvmService, return the kclvm service version information
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "GetVersion",
+	// /     "params": {},
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "version": "0.9.1",
+	// /         "checksum": "c020ab3eb4b9179219d6837a57f5d323",
+	// /         "git_sha": "1a9a72942fffc9f62cb8f1ae4e1d5ca32aa1f399",
+	// /         "version_info": "Version: 0.9.1-c020ab3eb4b9179219d6837a57f5d323\nPlatform: aarch64-apple-darwin\nGitCommit: 1a9a72942fffc9f62cb8f1ae4e1d5ca32aa1f399"
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	GetVersion(ctx context.Context, in *GetVersion_Args, opts ...grpc.CallOption) (*GetVersion_Result, error)
+	// / Parse KCL program with entry files.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ParseProgram",
+	// /     "params": {
+	// /         "paths": ["./src/testdata/test.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "ast_json": "{...}",
+	// /         "paths": ["./src/testdata/test.k"],
+	// /         "errors": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	ParseProgram(ctx context.Context, in *ParseProgram_Args, opts ...grpc.CallOption) (*ParseProgram_Result, error)
+	// / Parse KCL single file to Module AST JSON string with import dependencies
+	// / and parse errors.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ParseFile",
+	// /     "params": {
+	// /         "path": "./src/testdata/parse/main.k"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "ast_json": "{...}",
+	// /         "deps": ["./dep1", "./dep2"],
+	// /         "errors": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	ParseFile(ctx context.Context, in *ParseFile_Args, opts ...grpc.CallOption) (*ParseFile_Result, error)
+	// / load_package provides users with the ability to parse kcl program and semantic model
+	// / information including symbols, types, definitions, etc.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "LoadPackage",
+	// /     "params": {
+	// /         "parse_args": {
+	// /             "paths": ["./src/testdata/parse/main.k"]
+	// /         },
+	// /         "resolve_ast": true
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "program": "{...}",
+	// /         "paths": ["./src/testdata/parse/main.k"],
+	// /         "parse_errors": [],
+	// /         "type_errors": [],
+	// /         "symbols": { ... },
+	// /         "scopes": { ... },
+	// /         "node_symbol_map": { ... },
+	// /         "symbol_node_map": { ... },
+	// /         "fully_qualified_name_map": { ... },
+	// /         "pkg_scope_map": { ... }
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	LoadPackage(ctx context.Context, in *LoadPackage_Args, opts ...grpc.CallOption) (*LoadPackage_Result, error)
+	// / list_options provides users with the ability to parse kcl program and get all option information.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ListOptions",
+	// /     "params": {
+	// /         "paths": ["./src/testdata/option/main.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "options": [
+	// /             { "name": "option1", "type": "str", "required": true, "default_value": "", "help": "option 1 help" },
+	// /             { "name": "option2", "type": "int", "required": false, "default_value": "0", "help": "option 2 help" },
+	// /             { "name": "option3", "type": "bool", "required": false, "default_value": "false", "help": "option 3 help" }
+	// /         ]
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	ListOptions(ctx context.Context, in *ParseProgram_Args, opts ...grpc.CallOption) (*ListOptions_Result, error)
+	// / list_variables provides users with the ability to parse kcl program and get all variables by specs.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ListVariables",
+	// /     "params": {
+	// /         "files": ["./src/testdata/variables/main.k"],
+	// /         "specs": ["a"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "variables": {
+	// /             "a": {
+	// /                 "variables": [
+	// /                     { "value": "1", "type_name": "int", "op_sym": "", "list_items": [], "dict_entries": [] }
+	// /                 ]
+	// /             }
+	// /         },
+	// /         "unsupported_codes": [],
+	// /         "parse_errors": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	ListVariables(ctx context.Context, in *ListVariables_Args, opts ...grpc.CallOption) (*ListVariables_Result, error)
-	FormatCode(ctx context.Context, in *FormatCode_Args, opts ...grpc.CallOption) (*FormatCode_Result, error)
-	FormatPath(ctx context.Context, in *FormatPath_Args, opts ...grpc.CallOption) (*FormatPath_Result, error)
-	LintPath(ctx context.Context, in *LintPath_Args, opts ...grpc.CallOption) (*LintPath_Result, error)
+	// / Execute KCL file with args. **Note that it is not thread safe.**
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecProgram",
+	// /     "params": {
+	// /         "work_dir": "./src/testdata",
+	// /         "k_filename_list": ["test.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "json_result": "{\"alice\": {\"age\": 18}}",
+	// /         "yaml_result": "alice:\n  age: 18",
+	// /         "log_message": "",
+	// /         "err_message": ""
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Request with code
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecProgram",
+	// /     "params": {
+	// /         "k_filename_list": ["file.k"],
+	// /         "k_code_list": ["alice = {age = 18}"]
+	// /     },
+	// /     "id": 2
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "json_result": "{\"alice\": {\"age\": 18}}",
+	// /         "yaml_result": "alice:\n  age: 18",
+	// /         "log_message": "",
+	// /         "err_message": ""
+	// /     },
+	// /     "id": 2
+	// / }
+	// /
+	// / // Error case - cannot find file
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecProgram",
+	// /     "params": {
+	// /         "k_filename_list": ["invalid_file.k"]
+	// /     },
+	// /     "id": 3
+	// / }
+	// /
+	// / // Error Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "error": {
+	// /         "code": -32602,
+	// /         "message": "Cannot find the kcl file"
+	// /     },
+	// /     "id": 3
+	// / }
+	// /
+	// / // Error case - no input files
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecProgram",
+	// /     "params": {
+	// /         "k_filename_list": []
+	// /     },
+	// /     "id": 4
+	// / }
+	// /
+	// / // Error Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "error": {
+	// /         "code": -32602,
+	// /         "message": "No input KCL files or paths"
+	// /     },
+	// /     "id": 4
+	// / }
+	// / ```
+	ExecProgram(ctx context.Context, in *ExecProgram_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error)
+	// / Build the KCL program to an artifact.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "BuildProgram",
+	// /     "params": {
+	// /         "exec_args": {
+	// /             "work_dir": "./src/testdata",
+	// /             "k_filename_list": ["test.k"]
+	// /         },
+	// /         "output": "./build"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "path": "./build/test.k"
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	BuildProgram(ctx context.Context, in *BuildProgram_Args, opts ...grpc.CallOption) (*BuildProgram_Result, error)
+	// / Execute the KCL artifact with args. **Note that it is not thread safe.**
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecArtifact",
+	// /     "params": {
+	// /         "path": "./artifact_path",
+	// /         "exec_args": {
+	// /             "work_dir": "./src/testdata",
+	// /             "k_filename_list": ["test.k"]
+	// /         }
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "json_result": "{\"alice\": {\"age\": 18}}",
+	// /         "yaml_result": "alice:\n  age: 18",
+	// /         "log_message": "",
+	// /         "err_message": ""
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	ExecArtifact(ctx context.Context, in *ExecArtifact_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error)
+	// / Override KCL file with args.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "OverrideFile",
+	// /     "params": {
+	// /         "file": "./src/testdata/test.k",
+	// /         "specs": ["alice.age=18"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "result": true,
+	// /         "parse_errors": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	OverrideFile(ctx context.Context, in *OverrideFile_Args, opts ...grpc.CallOption) (*OverrideFile_Result, error)
+	// / Get schema type mapping.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "GetSchemaTypeMapping",
+	// /     "params": {
+	// /         "exec_args": {
+	// /             "work_dir": "./src/testdata",
+	// /             "k_filename_list": ["main.k"],
+	// /             "external_pkgs": [
+	// /                 {
+	// /                     "pkg_name":"pkg",
+	// /                     "pkg_path": "./src/testdata/pkg"
+	// /                 }
+	// /             ]
+	// /         },
+	// /         "schema_name": "Person"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "schema_type_mapping": {
+	// /             "Person": {
+	// /                 "type": "schema",
+	// /                 "schema_name": "Person",
+	// /                 "properties": {
+	// /                     "name": { "type": "str" },
+	// /                     "age": { "type": "int" }
+	// /                 },
+	// /                 "required": ["name", "age"],
+	// /                 "decorators": []
+	// /             }
+	// /         }
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	GetSchemaTypeMapping(ctx context.Context, in *GetSchemaTypeMapping_Args, opts ...grpc.CallOption) (*GetSchemaTypeMapping_Result, error)
+	// / Format code source.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "FormatCode",
+	// /     "params": {
+	// /         "source": "schema Person {\n    name: str\n    age: int\n}\nperson = Person {\n    name = \"Alice\"\n    age = 18\n}\n"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "formatted": "schema Person {\n    name: str\n    age: int\n}\nperson = Person {\n    name = \"Alice\"\n    age = 18\n}\n"
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	FormatCode(ctx context.Context, in *FormatCode_Args, opts ...grpc.CallOption) (*FormatCode_Result, error)
+	// / Format KCL file or directory path contains KCL files and returns the changed file paths.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "FormatPath",
+	// /     "params": {
+	// /         "path": "./src/testdata/test.k"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "changed_paths": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	FormatPath(ctx context.Context, in *FormatPath_Args, opts ...grpc.CallOption) (*FormatPath_Result, error)
+	// / Lint files and return error messages including errors and warnings.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "LintPath",
+	// /     "params": {
+	// /         "paths": ["./src/testdata/test-lint.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "results": ["Module 'math' imported but unused"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	LintPath(ctx context.Context, in *LintPath_Args, opts ...grpc.CallOption) (*LintPath_Result, error)
+	// / Validate code using schema and data strings.
+	// /
+	// / **Note that it is not thread safe.**
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ValidateCode",
+	// /     "params": {
+	// /         "code": "schema Person {\n    name: str\n    age: int\n    check: 0 < age < 120\n}",
+	// /         "data": "{\"name\": \"Alice\", \"age\": 10}"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "success": true,
+	// /         "err_message": ""
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	ValidateCode(ctx context.Context, in *ValidateCode_Args, opts ...grpc.CallOption) (*ValidateCode_Result, error)
 	ListDepFiles(ctx context.Context, in *ListDepFiles_Args, opts ...grpc.CallOption) (*ListDepFiles_Result, error)
+	// / Build setting file config from args.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "LoadSettingsFiles",
+	// /     "params": {
+	// /         "work_dir": "./src/testdata/settings",
+	// /         "files": ["./src/testdata/settings/kcl.yaml"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "kcl_cli_configs": {
+	// /             "files": ["./src/testdata/settings/kcl.yaml"],
+	// /             "output": "",
+	// /             "overrides": [],
+	// /             "path_selector": [],
+	// /             "strict_range_check": false,
+	// /             "disable_none": false,
+	// /             "verbose": 0,
+	// /             "debug": false,
+	// /             "sort_keys": false,
+	// /             "show_hidden": false,
+	// /             "include_schema_type_path": false,
+	// /             "fast_eval": false
+	// /         },
+	// /         "kcl_options": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	LoadSettingsFiles(ctx context.Context, in *LoadSettingsFiles_Args, opts ...grpc.CallOption) (*LoadSettingsFiles_Result, error)
+	// / Rename all the occurrences of the target symbol in the files. This API will rewrite files if they contain symbols to be renamed.
+	// / Return the file paths that got changed.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "Rename",
+	// /     "params": {
+	// /         "package_root": "./src/testdata/rename_doc",
+	// /         "symbol_path": "a",
+	// /         "file_paths": ["./src/testdata/rename_doc/main.k"],
+	// /         "new_name": "a2"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "changed_files": ["./src/testdata/rename_doc/main.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	Rename(ctx context.Context, in *Rename_Args, opts ...grpc.CallOption) (*Rename_Result, error)
+	// / Rename all the occurrences of the target symbol and return the modified code if any code has been changed. This API won't rewrite files but return the changed code.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "RenameCode",
+	// /     "params": {
+	// /         "package_root": "/mock/path",
+	// /         "symbol_path": "a",
+	// /         "source_codes": {
+	// /             "/mock/path/main.k": "a = 1\nb = a"
+	// /         },
+	// /         "new_name": "a2"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "changed_codes": {
+	// /             "/mock/path/main.k": "a2 = 1\nb = a2"
+	// /         }
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	RenameCode(ctx context.Context, in *RenameCode_Args, opts ...grpc.CallOption) (*RenameCode_Result, error)
+	// / Test KCL packages with test arguments.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "Test",
+	// /     "params": {
+	// /         "exec_args": {
+	// /             "work_dir": "./src/testdata/testing/module",
+	// /             "k_filename_list": ["main.k"]
+	// /         },
+	// /         "pkg_list": ["./src/testdata/testing/module/..."]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "info": [
+	// /             {"name": "test_case_1", "error": "", "duration": 1000, "log_message": ""},
+	// /             {"name": "test_case_2", "error": "some error", "duration": 2000, "log_message": ""}
+	// /         ]
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	Test(ctx context.Context, in *Test_Args, opts ...grpc.CallOption) (*Test_Result, error)
+	// / Download and update dependencies defined in the kcl.mod file.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "UpdateDependencies",
+	// /     "params": {
+	// /         "manifest_path": "./src/testdata/update_dependencies"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "external_pkgs": [
+	// /             {"pkg_name": "pkg1", "pkg_path": "./src/testdata/update_dependencies/pkg1"}
+	// /         ]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Request with vendor flag
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "UpdateDependencies",
+	// /     "params": {
+	// /         "manifest_path": "./src/testdata/update_dependencies",
+	// /         "vendor": true
+	// /     },
+	// /     "id": 2
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "external_pkgs": [
+	// /             {"pkg_name": "pkg1", "pkg_path": "./src/testdata/update_dependencies/pkg1"}
+	// /         ]
+	// /     },
+	// /     "id": 2
+	// / }
+	// / ```
 	UpdateDependencies(ctx context.Context, in *UpdateDependencies_Args, opts ...grpc.CallOption) (*UpdateDependencies_Result, error)
 }
 
@@ -5977,36 +6970,9 @@ func (c *kclvmServiceClient) Ping(ctx context.Context, in *Ping_Args, opts ...gr
 	return out, nil
 }
 
-func (c *kclvmServiceClient) ExecProgram(ctx context.Context, in *ExecProgram_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error) {
-	out := new(ExecProgram_Result)
-	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/ExecProgram", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *kclvmServiceClient) BuildProgram(ctx context.Context, in *BuildProgram_Args, opts ...grpc.CallOption) (*BuildProgram_Result, error) {
-	out := new(BuildProgram_Result)
-	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/BuildProgram", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *kclvmServiceClient) ExecArtifact(ctx context.Context, in *ExecArtifact_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error) {
-	out := new(ExecProgram_Result)
-	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/ExecArtifact", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *kclvmServiceClient) ParseFile(ctx context.Context, in *ParseFile_Args, opts ...grpc.CallOption) (*ParseFile_Result, error) {
-	out := new(ParseFile_Result)
-	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/ParseFile", in, out, opts...)
+func (c *kclvmServiceClient) GetVersion(ctx context.Context, in *GetVersion_Args, opts ...grpc.CallOption) (*GetVersion_Result, error) {
+	out := new(GetVersion_Result)
+	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/GetVersion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -6016,6 +6982,15 @@ func (c *kclvmServiceClient) ParseFile(ctx context.Context, in *ParseFile_Args, 
 func (c *kclvmServiceClient) ParseProgram(ctx context.Context, in *ParseProgram_Args, opts ...grpc.CallOption) (*ParseProgram_Result, error) {
 	out := new(ParseProgram_Result)
 	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/ParseProgram", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kclvmServiceClient) ParseFile(ctx context.Context, in *ParseFile_Args, opts ...grpc.CallOption) (*ParseFile_Result, error) {
+	out := new(ParseFile_Result)
+	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/ParseFile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -6049,6 +7024,51 @@ func (c *kclvmServiceClient) ListVariables(ctx context.Context, in *ListVariable
 	return out, nil
 }
 
+func (c *kclvmServiceClient) ExecProgram(ctx context.Context, in *ExecProgram_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error) {
+	out := new(ExecProgram_Result)
+	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/ExecProgram", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kclvmServiceClient) BuildProgram(ctx context.Context, in *BuildProgram_Args, opts ...grpc.CallOption) (*BuildProgram_Result, error) {
+	out := new(BuildProgram_Result)
+	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/BuildProgram", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kclvmServiceClient) ExecArtifact(ctx context.Context, in *ExecArtifact_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error) {
+	out := new(ExecProgram_Result)
+	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/ExecArtifact", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kclvmServiceClient) OverrideFile(ctx context.Context, in *OverrideFile_Args, opts ...grpc.CallOption) (*OverrideFile_Result, error) {
+	out := new(OverrideFile_Result)
+	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/OverrideFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kclvmServiceClient) GetSchemaTypeMapping(ctx context.Context, in *GetSchemaTypeMapping_Args, opts ...grpc.CallOption) (*GetSchemaTypeMapping_Result, error) {
+	out := new(GetSchemaTypeMapping_Result)
+	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/GetSchemaTypeMapping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *kclvmServiceClient) FormatCode(ctx context.Context, in *FormatCode_Args, opts ...grpc.CallOption) (*FormatCode_Result, error) {
 	out := new(FormatCode_Result)
 	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/FormatCode", in, out, opts...)
@@ -6070,24 +7090,6 @@ func (c *kclvmServiceClient) FormatPath(ctx context.Context, in *FormatPath_Args
 func (c *kclvmServiceClient) LintPath(ctx context.Context, in *LintPath_Args, opts ...grpc.CallOption) (*LintPath_Result, error) {
 	out := new(LintPath_Result)
 	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/LintPath", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *kclvmServiceClient) OverrideFile(ctx context.Context, in *OverrideFile_Args, opts ...grpc.CallOption) (*OverrideFile_Result, error) {
-	out := new(OverrideFile_Result)
-	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/OverrideFile", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *kclvmServiceClient) GetSchemaTypeMapping(ctx context.Context, in *GetSchemaTypeMapping_Args, opts ...grpc.CallOption) (*GetSchemaTypeMapping_Result, error) {
-	out := new(GetSchemaTypeMapping_Result)
-	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/GetSchemaTypeMapping", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -6159,26 +7161,725 @@ func (c *kclvmServiceClient) UpdateDependencies(ctx context.Context, in *UpdateD
 
 // KclvmServiceServer is the server API for KclvmService service.
 type KclvmServiceServer interface {
+	// / Ping KclvmService, return the same value as the parameter
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "Ping",
+	// /     "params": {
+	// /         "value": "hello"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "value": "hello"
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	Ping(context.Context, *Ping_Args) (*Ping_Result, error)
-	ExecProgram(context.Context, *ExecProgram_Args) (*ExecProgram_Result, error)
-	BuildProgram(context.Context, *BuildProgram_Args) (*BuildProgram_Result, error)
-	ExecArtifact(context.Context, *ExecArtifact_Args) (*ExecProgram_Result, error)
-	ParseFile(context.Context, *ParseFile_Args) (*ParseFile_Result, error)
+	// / GetVersion KclvmService, return the kclvm service version information
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "GetVersion",
+	// /     "params": {},
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "version": "0.9.1",
+	// /         "checksum": "c020ab3eb4b9179219d6837a57f5d323",
+	// /         "git_sha": "1a9a72942fffc9f62cb8f1ae4e1d5ca32aa1f399",
+	// /         "version_info": "Version: 0.9.1-c020ab3eb4b9179219d6837a57f5d323\nPlatform: aarch64-apple-darwin\nGitCommit: 1a9a72942fffc9f62cb8f1ae4e1d5ca32aa1f399"
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	GetVersion(context.Context, *GetVersion_Args) (*GetVersion_Result, error)
+	// / Parse KCL program with entry files.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ParseProgram",
+	// /     "params": {
+	// /         "paths": ["./src/testdata/test.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "ast_json": "{...}",
+	// /         "paths": ["./src/testdata/test.k"],
+	// /         "errors": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	ParseProgram(context.Context, *ParseProgram_Args) (*ParseProgram_Result, error)
+	// / Parse KCL single file to Module AST JSON string with import dependencies
+	// / and parse errors.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ParseFile",
+	// /     "params": {
+	// /         "path": "./src/testdata/parse/main.k"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "ast_json": "{...}",
+	// /         "deps": ["./dep1", "./dep2"],
+	// /         "errors": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	ParseFile(context.Context, *ParseFile_Args) (*ParseFile_Result, error)
+	// / load_package provides users with the ability to parse kcl program and semantic model
+	// / information including symbols, types, definitions, etc.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "LoadPackage",
+	// /     "params": {
+	// /         "parse_args": {
+	// /             "paths": ["./src/testdata/parse/main.k"]
+	// /         },
+	// /         "resolve_ast": true
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "program": "{...}",
+	// /         "paths": ["./src/testdata/parse/main.k"],
+	// /         "parse_errors": [],
+	// /         "type_errors": [],
+	// /         "symbols": { ... },
+	// /         "scopes": { ... },
+	// /         "node_symbol_map": { ... },
+	// /         "symbol_node_map": { ... },
+	// /         "fully_qualified_name_map": { ... },
+	// /         "pkg_scope_map": { ... }
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	LoadPackage(context.Context, *LoadPackage_Args) (*LoadPackage_Result, error)
+	// / list_options provides users with the ability to parse kcl program and get all option information.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ListOptions",
+	// /     "params": {
+	// /         "paths": ["./src/testdata/option/main.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "options": [
+	// /             { "name": "option1", "type": "str", "required": true, "default_value": "", "help": "option 1 help" },
+	// /             { "name": "option2", "type": "int", "required": false, "default_value": "0", "help": "option 2 help" },
+	// /             { "name": "option3", "type": "bool", "required": false, "default_value": "false", "help": "option 3 help" }
+	// /         ]
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	ListOptions(context.Context, *ParseProgram_Args) (*ListOptions_Result, error)
+	// / list_variables provides users with the ability to parse kcl program and get all variables by specs.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ListVariables",
+	// /     "params": {
+	// /         "files": ["./src/testdata/variables/main.k"],
+	// /         "specs": ["a"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "variables": {
+	// /             "a": {
+	// /                 "variables": [
+	// /                     { "value": "1", "type_name": "int", "op_sym": "", "list_items": [], "dict_entries": [] }
+	// /                 ]
+	// /             }
+	// /         },
+	// /         "unsupported_codes": [],
+	// /         "parse_errors": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	ListVariables(context.Context, *ListVariables_Args) (*ListVariables_Result, error)
-	FormatCode(context.Context, *FormatCode_Args) (*FormatCode_Result, error)
-	FormatPath(context.Context, *FormatPath_Args) (*FormatPath_Result, error)
-	LintPath(context.Context, *LintPath_Args) (*LintPath_Result, error)
+	// / Execute KCL file with args. **Note that it is not thread safe.**
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecProgram",
+	// /     "params": {
+	// /         "work_dir": "./src/testdata",
+	// /         "k_filename_list": ["test.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "json_result": "{\"alice\": {\"age\": 18}}",
+	// /         "yaml_result": "alice:\n  age: 18",
+	// /         "log_message": "",
+	// /         "err_message": ""
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Request with code
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecProgram",
+	// /     "params": {
+	// /         "k_filename_list": ["file.k"],
+	// /         "k_code_list": ["alice = {age = 18}"]
+	// /     },
+	// /     "id": 2
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "json_result": "{\"alice\": {\"age\": 18}}",
+	// /         "yaml_result": "alice:\n  age: 18",
+	// /         "log_message": "",
+	// /         "err_message": ""
+	// /     },
+	// /     "id": 2
+	// / }
+	// /
+	// / // Error case - cannot find file
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecProgram",
+	// /     "params": {
+	// /         "k_filename_list": ["invalid_file.k"]
+	// /     },
+	// /     "id": 3
+	// / }
+	// /
+	// / // Error Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "error": {
+	// /         "code": -32602,
+	// /         "message": "Cannot find the kcl file"
+	// /     },
+	// /     "id": 3
+	// / }
+	// /
+	// / // Error case - no input files
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecProgram",
+	// /     "params": {
+	// /         "k_filename_list": []
+	// /     },
+	// /     "id": 4
+	// / }
+	// /
+	// / // Error Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "error": {
+	// /         "code": -32602,
+	// /         "message": "No input KCL files or paths"
+	// /     },
+	// /     "id": 4
+	// / }
+	// / ```
+	ExecProgram(context.Context, *ExecProgram_Args) (*ExecProgram_Result, error)
+	// / Build the KCL program to an artifact.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "BuildProgram",
+	// /     "params": {
+	// /         "exec_args": {
+	// /             "work_dir": "./src/testdata",
+	// /             "k_filename_list": ["test.k"]
+	// /         },
+	// /         "output": "./build"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "path": "./build/test.k"
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	BuildProgram(context.Context, *BuildProgram_Args) (*BuildProgram_Result, error)
+	// / Execute the KCL artifact with args. **Note that it is not thread safe.**
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ExecArtifact",
+	// /     "params": {
+	// /         "path": "./artifact_path",
+	// /         "exec_args": {
+	// /             "work_dir": "./src/testdata",
+	// /             "k_filename_list": ["test.k"]
+	// /         }
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "json_result": "{\"alice\": {\"age\": 18}}",
+	// /         "yaml_result": "alice:\n  age: 18",
+	// /         "log_message": "",
+	// /         "err_message": ""
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	ExecArtifact(context.Context, *ExecArtifact_Args) (*ExecProgram_Result, error)
+	// / Override KCL file with args.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "OverrideFile",
+	// /     "params": {
+	// /         "file": "./src/testdata/test.k",
+	// /         "specs": ["alice.age=18"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "result": true,
+	// /         "parse_errors": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	OverrideFile(context.Context, *OverrideFile_Args) (*OverrideFile_Result, error)
+	// / Get schema type mapping.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "GetSchemaTypeMapping",
+	// /     "params": {
+	// /         "exec_args": {
+	// /             "work_dir": "./src/testdata",
+	// /             "k_filename_list": ["main.k"],
+	// /             "external_pkgs": [
+	// /                 {
+	// /                     "pkg_name":"pkg",
+	// /                     "pkg_path": "./src/testdata/pkg"
+	// /                 }
+	// /             ]
+	// /         },
+	// /         "schema_name": "Person"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "schema_type_mapping": {
+	// /             "Person": {
+	// /                 "type": "schema",
+	// /                 "schema_name": "Person",
+	// /                 "properties": {
+	// /                     "name": { "type": "str" },
+	// /                     "age": { "type": "int" }
+	// /                 },
+	// /                 "required": ["name", "age"],
+	// /                 "decorators": []
+	// /             }
+	// /         }
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	GetSchemaTypeMapping(context.Context, *GetSchemaTypeMapping_Args) (*GetSchemaTypeMapping_Result, error)
+	// / Format code source.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "FormatCode",
+	// /     "params": {
+	// /         "source": "schema Person {\n    name: str\n    age: int\n}\nperson = Person {\n    name = \"Alice\"\n    age = 18\n}\n"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "formatted": "schema Person {\n    name: str\n    age: int\n}\nperson = Person {\n    name = \"Alice\"\n    age = 18\n}\n"
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	FormatCode(context.Context, *FormatCode_Args) (*FormatCode_Result, error)
+	// / Format KCL file or directory path contains KCL files and returns the changed file paths.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "FormatPath",
+	// /     "params": {
+	// /         "path": "./src/testdata/test.k"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "changed_paths": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	FormatPath(context.Context, *FormatPath_Args) (*FormatPath_Result, error)
+	// / Lint files and return error messages including errors and warnings.
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "LintPath",
+	// /     "params": {
+	// /         "paths": ["./src/testdata/test-lint.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "results": ["Module 'math' imported but unused"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
+	LintPath(context.Context, *LintPath_Args) (*LintPath_Result, error)
+	// / Validate code using schema and data strings.
+	// /
+	// / **Note that it is not thread safe.**
+	// /
+	// / # Examples
+	// /
+	// / ```jsonrpc
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "ValidateCode",
+	// /     "params": {
+	// /         "code": "schema Person {\n    name: str\n    age: int\n    check: 0 < age < 120\n}",
+	// /         "data": "{\"name\": \"Alice\", \"age\": 10}"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "success": true,
+	// /         "err_message": ""
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	ValidateCode(context.Context, *ValidateCode_Args) (*ValidateCode_Result, error)
 	ListDepFiles(context.Context, *ListDepFiles_Args) (*ListDepFiles_Result, error)
+	// / Build setting file config from args.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "LoadSettingsFiles",
+	// /     "params": {
+	// /         "work_dir": "./src/testdata/settings",
+	// /         "files": ["./src/testdata/settings/kcl.yaml"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "kcl_cli_configs": {
+	// /             "files": ["./src/testdata/settings/kcl.yaml"],
+	// /             "output": "",
+	// /             "overrides": [],
+	// /             "path_selector": [],
+	// /             "strict_range_check": false,
+	// /             "disable_none": false,
+	// /             "verbose": 0,
+	// /             "debug": false,
+	// /             "sort_keys": false,
+	// /             "show_hidden": false,
+	// /             "include_schema_type_path": false,
+	// /             "fast_eval": false
+	// /         },
+	// /         "kcl_options": []
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	LoadSettingsFiles(context.Context, *LoadSettingsFiles_Args) (*LoadSettingsFiles_Result, error)
+	// / Rename all the occurrences of the target symbol in the files. This API will rewrite files if they contain symbols to be renamed.
+	// / Return the file paths that got changed.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "Rename",
+	// /     "params": {
+	// /         "package_root": "./src/testdata/rename_doc",
+	// /         "symbol_path": "a",
+	// /         "file_paths": ["./src/testdata/rename_doc/main.k"],
+	// /         "new_name": "a2"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "changed_files": ["./src/testdata/rename_doc/main.k"]
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	Rename(context.Context, *Rename_Args) (*Rename_Result, error)
+	// / Rename all the occurrences of the target symbol and return the modified code if any code has been changed. This API won't rewrite files but return the changed code.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "RenameCode",
+	// /     "params": {
+	// /         "package_root": "/mock/path",
+	// /         "symbol_path": "a",
+	// /         "source_codes": {
+	// /             "/mock/path/main.k": "a = 1\nb = a"
+	// /         },
+	// /         "new_name": "a2"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "changed_codes": {
+	// /             "/mock/path/main.k": "a2 = 1\nb = a2"
+	// /         }
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	RenameCode(context.Context, *RenameCode_Args) (*RenameCode_Result, error)
+	// / Test KCL packages with test arguments.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "Test",
+	// /     "params": {
+	// /         "exec_args": {
+	// /             "work_dir": "./src/testdata/testing/module",
+	// /             "k_filename_list": ["main.k"]
+	// /         },
+	// /         "pkg_list": ["./src/testdata/testing/module/..."]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "info": [
+	// /             {"name": "test_case_1", "error": "", "duration": 1000, "log_message": ""},
+	// /             {"name": "test_case_2", "error": "some error", "duration": 2000, "log_message": ""}
+	// /         ]
+	// /     },
+	// /     "id": 1
+	// / }
+	// / ```
 	Test(context.Context, *Test_Args) (*Test_Result, error)
+	// / Download and update dependencies defined in the kcl.mod file.
+	// /
+	// / # Examples
+	// /
+	// /
+	// / // Request
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "UpdateDependencies",
+	// /     "params": {
+	// /         "manifest_path": "./src/testdata/update_dependencies"
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "external_pkgs": [
+	// /             {"pkg_name": "pkg1", "pkg_path": "./src/testdata/update_dependencies/pkg1"}
+	// /         ]
+	// /     },
+	// /     "id": 1
+	// / }
+	// /
+	// / // Request with vendor flag
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "method": "UpdateDependencies",
+	// /     "params": {
+	// /         "manifest_path": "./src/testdata/update_dependencies",
+	// /         "vendor": true
+	// /     },
+	// /     "id": 2
+	// / }
+	// /
+	// / // Response
+	// / {
+	// /     "jsonrpc": "2.0",
+	// /     "result": {
+	// /         "external_pkgs": [
+	// /             {"pkg_name": "pkg1", "pkg_path": "./src/testdata/update_dependencies/pkg1"}
+	// /         ]
+	// /     },
+	// /     "id": 2
+	// / }
+	// / ```
 	UpdateDependencies(context.Context, *UpdateDependencies_Args) (*UpdateDependencies_Result, error)
 }
 
@@ -6189,20 +7890,14 @@ type UnimplementedKclvmServiceServer struct {
 func (*UnimplementedKclvmServiceServer) Ping(context.Context, *Ping_Args) (*Ping_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (*UnimplementedKclvmServiceServer) ExecProgram(context.Context, *ExecProgram_Args) (*ExecProgram_Result, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExecProgram not implemented")
-}
-func (*UnimplementedKclvmServiceServer) BuildProgram(context.Context, *BuildProgram_Args) (*BuildProgram_Result, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BuildProgram not implemented")
-}
-func (*UnimplementedKclvmServiceServer) ExecArtifact(context.Context, *ExecArtifact_Args) (*ExecProgram_Result, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExecArtifact not implemented")
-}
-func (*UnimplementedKclvmServiceServer) ParseFile(context.Context, *ParseFile_Args) (*ParseFile_Result, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ParseFile not implemented")
+func (*UnimplementedKclvmServiceServer) GetVersion(context.Context, *GetVersion_Args) (*GetVersion_Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVersion not implemented")
 }
 func (*UnimplementedKclvmServiceServer) ParseProgram(context.Context, *ParseProgram_Args) (*ParseProgram_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParseProgram not implemented")
+}
+func (*UnimplementedKclvmServiceServer) ParseFile(context.Context, *ParseFile_Args) (*ParseFile_Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ParseFile not implemented")
 }
 func (*UnimplementedKclvmServiceServer) LoadPackage(context.Context, *LoadPackage_Args) (*LoadPackage_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadPackage not implemented")
@@ -6213,6 +7908,21 @@ func (*UnimplementedKclvmServiceServer) ListOptions(context.Context, *ParseProgr
 func (*UnimplementedKclvmServiceServer) ListVariables(context.Context, *ListVariables_Args) (*ListVariables_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListVariables not implemented")
 }
+func (*UnimplementedKclvmServiceServer) ExecProgram(context.Context, *ExecProgram_Args) (*ExecProgram_Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecProgram not implemented")
+}
+func (*UnimplementedKclvmServiceServer) BuildProgram(context.Context, *BuildProgram_Args) (*BuildProgram_Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BuildProgram not implemented")
+}
+func (*UnimplementedKclvmServiceServer) ExecArtifact(context.Context, *ExecArtifact_Args) (*ExecProgram_Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecArtifact not implemented")
+}
+func (*UnimplementedKclvmServiceServer) OverrideFile(context.Context, *OverrideFile_Args) (*OverrideFile_Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OverrideFile not implemented")
+}
+func (*UnimplementedKclvmServiceServer) GetSchemaTypeMapping(context.Context, *GetSchemaTypeMapping_Args) (*GetSchemaTypeMapping_Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSchemaTypeMapping not implemented")
+}
 func (*UnimplementedKclvmServiceServer) FormatCode(context.Context, *FormatCode_Args) (*FormatCode_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FormatCode not implemented")
 }
@@ -6221,12 +7931,6 @@ func (*UnimplementedKclvmServiceServer) FormatPath(context.Context, *FormatPath_
 }
 func (*UnimplementedKclvmServiceServer) LintPath(context.Context, *LintPath_Args) (*LintPath_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LintPath not implemented")
-}
-func (*UnimplementedKclvmServiceServer) OverrideFile(context.Context, *OverrideFile_Args) (*OverrideFile_Result, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OverrideFile not implemented")
-}
-func (*UnimplementedKclvmServiceServer) GetSchemaTypeMapping(context.Context, *GetSchemaTypeMapping_Args) (*GetSchemaTypeMapping_Result, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSchemaTypeMapping not implemented")
 }
 func (*UnimplementedKclvmServiceServer) ValidateCode(context.Context, *ValidateCode_Args) (*ValidateCode_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateCode not implemented")
@@ -6272,74 +7976,20 @@ func _KclvmService_Ping_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_ExecProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ExecProgram_Args)
+func _KclvmService_GetVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetVersion_Args)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ExecProgram(ctx, in)
+		return srv.(KclvmServiceServer).GetVersion(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ExecProgram",
+		FullMethod: "/gpyrpc.KclvmService/GetVersion",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ExecProgram(ctx, req.(*ExecProgram_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _KclvmService_BuildProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BuildProgram_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KclvmServiceServer).BuildProgram(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/BuildProgram",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).BuildProgram(ctx, req.(*BuildProgram_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _KclvmService_ExecArtifact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ExecArtifact_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KclvmServiceServer).ExecArtifact(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ExecArtifact",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ExecArtifact(ctx, req.(*ExecArtifact_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _KclvmService_ParseFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ParseFile_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KclvmServiceServer).ParseFile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ParseFile",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ParseFile(ctx, req.(*ParseFile_Args))
+		return srv.(KclvmServiceServer).GetVersion(ctx, req.(*GetVersion_Args))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -6358,6 +8008,24 @@ func _KclvmService_ParseProgram_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(KclvmServiceServer).ParseProgram(ctx, req.(*ParseProgram_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KclvmService_ParseFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ParseFile_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KclvmServiceServer).ParseFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gpyrpc.KclvmService/ParseFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KclvmServiceServer).ParseFile(ctx, req.(*ParseFile_Args))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -6416,6 +8084,96 @@ func _KclvmService_ListVariables_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KclvmService_ExecProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecProgram_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KclvmServiceServer).ExecProgram(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gpyrpc.KclvmService/ExecProgram",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KclvmServiceServer).ExecProgram(ctx, req.(*ExecProgram_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KclvmService_BuildProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BuildProgram_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KclvmServiceServer).BuildProgram(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gpyrpc.KclvmService/BuildProgram",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KclvmServiceServer).BuildProgram(ctx, req.(*BuildProgram_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KclvmService_ExecArtifact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecArtifact_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KclvmServiceServer).ExecArtifact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gpyrpc.KclvmService/ExecArtifact",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KclvmServiceServer).ExecArtifact(ctx, req.(*ExecArtifact_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KclvmService_OverrideFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OverrideFile_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KclvmServiceServer).OverrideFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gpyrpc.KclvmService/OverrideFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KclvmServiceServer).OverrideFile(ctx, req.(*OverrideFile_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KclvmService_GetSchemaTypeMapping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSchemaTypeMapping_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KclvmServiceServer).GetSchemaTypeMapping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gpyrpc.KclvmService/GetSchemaTypeMapping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KclvmServiceServer).GetSchemaTypeMapping(ctx, req.(*GetSchemaTypeMapping_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _KclvmService_FormatCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FormatCode_Args)
 	if err := dec(in); err != nil {
@@ -6466,42 +8224,6 @@ func _KclvmService_LintPath_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(KclvmServiceServer).LintPath(ctx, req.(*LintPath_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _KclvmService_OverrideFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OverrideFile_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KclvmServiceServer).OverrideFile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/OverrideFile",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).OverrideFile(ctx, req.(*OverrideFile_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _KclvmService_GetSchemaTypeMapping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSchemaTypeMapping_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KclvmServiceServer).GetSchemaTypeMapping(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/GetSchemaTypeMapping",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).GetSchemaTypeMapping(ctx, req.(*GetSchemaTypeMapping_Args))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -6641,24 +8363,16 @@ var _KclvmService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _KclvmService_Ping_Handler,
 		},
 		{
-			MethodName: "ExecProgram",
-			Handler:    _KclvmService_ExecProgram_Handler,
-		},
-		{
-			MethodName: "BuildProgram",
-			Handler:    _KclvmService_BuildProgram_Handler,
-		},
-		{
-			MethodName: "ExecArtifact",
-			Handler:    _KclvmService_ExecArtifact_Handler,
-		},
-		{
-			MethodName: "ParseFile",
-			Handler:    _KclvmService_ParseFile_Handler,
+			MethodName: "GetVersion",
+			Handler:    _KclvmService_GetVersion_Handler,
 		},
 		{
 			MethodName: "ParseProgram",
 			Handler:    _KclvmService_ParseProgram_Handler,
+		},
+		{
+			MethodName: "ParseFile",
+			Handler:    _KclvmService_ParseFile_Handler,
 		},
 		{
 			MethodName: "LoadPackage",
@@ -6673,6 +8387,26 @@ var _KclvmService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _KclvmService_ListVariables_Handler,
 		},
 		{
+			MethodName: "ExecProgram",
+			Handler:    _KclvmService_ExecProgram_Handler,
+		},
+		{
+			MethodName: "BuildProgram",
+			Handler:    _KclvmService_BuildProgram_Handler,
+		},
+		{
+			MethodName: "ExecArtifact",
+			Handler:    _KclvmService_ExecArtifact_Handler,
+		},
+		{
+			MethodName: "OverrideFile",
+			Handler:    _KclvmService_OverrideFile_Handler,
+		},
+		{
+			MethodName: "GetSchemaTypeMapping",
+			Handler:    _KclvmService_GetSchemaTypeMapping_Handler,
+		},
+		{
 			MethodName: "FormatCode",
 			Handler:    _KclvmService_FormatCode_Handler,
 		},
@@ -6683,14 +8417,6 @@ var _KclvmService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LintPath",
 			Handler:    _KclvmService_LintPath_Handler,
-		},
-		{
-			MethodName: "OverrideFile",
-			Handler:    _KclvmService_OverrideFile_Handler,
-		},
-		{
-			MethodName: "GetSchemaTypeMapping",
-			Handler:    _KclvmService_GetSchemaTypeMapping_Handler,
 		},
 		{
 			MethodName: "ValidateCode",

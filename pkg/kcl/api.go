@@ -17,7 +17,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
 
-	"kcl-lang.io/kcl-go/pkg/source"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -375,61 +374,6 @@ func RunWithOpts(opts ...Option) (*KCLResultList, error) {
 
 func RunFiles(paths []string, opts ...Option) (*KCLResultList, error) {
 	return run(paths, opts...)
-}
-
-func GetSchemaType(filename string, src any, schemaName string) ([]*gpyrpc.KclType, error) {
-	mapping, err := GetSchemaTypeMapping(filename, src, schemaName)
-	if err != nil {
-		return nil, err
-	}
-	return getValues(mapping), nil
-}
-
-func GetFullSchemaType(pathList []string, schemaName string, opts ...Option) ([]*gpyrpc.KclType, error) {
-	mapping, err := GetFullSchemaTypeMapping(pathList, schemaName, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return getValues(mapping), nil
-}
-
-func GetFullSchemaTypeMapping(pathList []string, schemaName string, opts ...Option) (map[string]*gpyrpc.KclType, error) {
-	opts = append(opts, *NewOption().Merge(WithKFilenames(pathList...)))
-	args, err := ParseArgs(pathList, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	svc := Service()
-	resp, err := svc.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
-		ExecArgs:   args.ExecProgram_Args,
-		SchemaName: schemaName,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return resp.SchemaTypeMapping, nil
-}
-
-func GetSchemaTypeMapping(filename string, src any, schemaName string) (map[string]*gpyrpc.KclType, error) {
-	source, err := source.ReadSource(filename, src)
-	if err != nil {
-		return nil, err
-	}
-	svc := Service()
-	resp, err := svc.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
-		ExecArgs: &gpyrpc.ExecProgram_Args{
-			KFilenameList: []string{filename},
-			KCodeList:     []string{string(source)},
-		},
-		SchemaName: schemaName,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return resp.SchemaTypeMapping, nil
 }
 
 func getValues(myMap map[string]*gpyrpc.KclType) []*gpyrpc.KclType {
