@@ -7,7 +7,10 @@ on:
       - "releases/*"
 jobs:
   build-and-test:
-    runs-on: macos-12
+    strategy:
+      matrix:
+        os: [ macos-12, macos-13, macos-14 ]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
