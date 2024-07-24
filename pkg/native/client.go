@@ -85,7 +85,7 @@ func cApiCall[I interface {
 
 	defer C.free(unsafe.Pointer(cIn))
 
-	cOut, cOutSize := KclvmServiceCall(c.client, cCallName, cIn)
+	cOut, cOutSize := KclvmServiceCall(c.client, cCallName, cIn, C.size_t(len(inBytes)))
 
 	defer KclvmServiceFreeString(cOut)
 
