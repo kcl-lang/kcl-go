@@ -16,7 +16,7 @@ import (
 	"kcl-lang.io/kcl-go/pkg/env"
 	"kcl-lang.io/kcl-go/pkg/logger"
 	"kcl-lang.io/kcl-go/pkg/path"
-	"kcl-lang.io/lib"
+	"kcl-lang.io/lib/go/install"
 )
 
 func init() {
@@ -46,7 +46,7 @@ func installKclArtifact() {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}
 	// Install lib
-	err = lib.InstallKclvm(path)
+	err = install.InstallKclvm(path)
 	if err != nil {
 		logger.GetLogger().Warningf("install kclvm failed: %s", err.Error())
 	}

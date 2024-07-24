@@ -397,6 +397,7 @@ service KclvmService {
 	///     "id": 1
 	/// }
 	/// ```
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	rpc BuildProgram(BuildProgram_Args) returns (BuildProgram_Result);
 
 	/// Execute the KCL artifact with args. **Note that it is not thread safe.**
@@ -430,6 +431,7 @@ service KclvmService {
 	///     "id": 1
 	/// }
 	/// ```
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	rpc ExecArtifact(ExecArtifact_Args) returns (ExecProgram_Result);
 
 	/// Override KCL file with args.

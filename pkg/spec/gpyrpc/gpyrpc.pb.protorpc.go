@@ -213,7 +213,9 @@ func PROTORPC_DialBuiltinServiceTimeout(network, addr string, timeout time.Durat
 type PROTORPC_KclvmService interface {
 	Ping(in *Ping_Args, out *Ping_Result) error
 	ExecProgram(in *ExecProgram_Args, out *ExecProgram_Result) error
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	BuildProgram(in *BuildProgram_Args, out *BuildProgram_Result) error
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	ExecArtifact(in *ExecArtifact_Args, out *ExecProgram_Result) error
 	ParseProgram(in *ParseProgram_Args, out *ParseProgram_Result) error
 	ListOptions(in *ParseProgram_Args, out *ListOptions_Result) error
@@ -390,6 +392,7 @@ func (c *PROTORPC_KclvmServiceClient) AsyncExecProgram(in *ExecProgram_Args, out
 	)
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *PROTORPC_KclvmServiceClient) BuildProgram(in *BuildProgram_Args) (out *BuildProgram_Result, err error) {
 	if in == nil {
 		in = new(BuildProgram_Args)
@@ -418,6 +421,7 @@ func (c *PROTORPC_KclvmServiceClient) BuildProgram(in *BuildProgram_Args) (out *
 	return out, nil
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *PROTORPC_KclvmServiceClient) AsyncBuildProgram(in *BuildProgram_Args, out *BuildProgram_Result, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
 		in = new(BuildProgram_Args)
@@ -429,6 +433,7 @@ func (c *PROTORPC_KclvmServiceClient) AsyncBuildProgram(in *BuildProgram_Args, o
 	)
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *PROTORPC_KclvmServiceClient) ExecArtifact(in *ExecArtifact_Args) (out *ExecProgram_Result, err error) {
 	if in == nil {
 		in = new(ExecArtifact_Args)
@@ -457,6 +462,7 @@ func (c *PROTORPC_KclvmServiceClient) ExecArtifact(in *ExecArtifact_Args) (out *
 	return out, nil
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *PROTORPC_KclvmServiceClient) AsyncExecArtifact(in *ExecArtifact_Args, out *ExecProgram_Result, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
 		in = new(ExecArtifact_Args)

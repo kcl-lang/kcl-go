@@ -6558,6 +6558,7 @@ type KclvmServiceClient interface {
 	// /     "id": 1
 	// / }
 	// / ```
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	BuildProgram(ctx context.Context, in *BuildProgram_Args, opts ...grpc.CallOption) (*BuildProgram_Result, error)
 	// / Execute the KCL artifact with args. **Note that it is not thread safe.**
 	// /
@@ -6590,6 +6591,7 @@ type KclvmServiceClient interface {
 	// /     "id": 1
 	// / }
 	// / ```
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	ExecArtifact(ctx context.Context, in *ExecArtifact_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error)
 	// / Override KCL file with args.
 	// /
@@ -7033,6 +7035,7 @@ func (c *kclvmServiceClient) ExecProgram(ctx context.Context, in *ExecProgram_Ar
 	return out, nil
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *kclvmServiceClient) BuildProgram(ctx context.Context, in *BuildProgram_Args, opts ...grpc.CallOption) (*BuildProgram_Result, error) {
 	out := new(BuildProgram_Result)
 	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/BuildProgram", in, out, opts...)
@@ -7042,6 +7045,7 @@ func (c *kclvmServiceClient) BuildProgram(ctx context.Context, in *BuildProgram_
 	return out, nil
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *kclvmServiceClient) ExecArtifact(ctx context.Context, in *ExecArtifact_Args, opts ...grpc.CallOption) (*ExecProgram_Result, error) {
 	out := new(ExecProgram_Result)
 	err := c.cc.Invoke(ctx, "/gpyrpc.KclvmService/ExecArtifact", in, out, opts...)
@@ -7488,6 +7492,7 @@ type KclvmServiceServer interface {
 	// /     "id": 1
 	// / }
 	// / ```
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	BuildProgram(context.Context, *BuildProgram_Args) (*BuildProgram_Result, error)
 	// / Execute the KCL artifact with args. **Note that it is not thread safe.**
 	// /
@@ -7520,6 +7525,7 @@ type KclvmServiceServer interface {
 	// /     "id": 1
 	// / }
 	// / ```
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	ExecArtifact(context.Context, *ExecArtifact_Args) (*ExecProgram_Result, error)
 	// / Override KCL file with args.
 	// /
@@ -7911,9 +7917,11 @@ func (*UnimplementedKclvmServiceServer) ListVariables(context.Context, *ListVari
 func (*UnimplementedKclvmServiceServer) ExecProgram(context.Context, *ExecProgram_Args) (*ExecProgram_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecProgram not implemented")
 }
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (*UnimplementedKclvmServiceServer) BuildProgram(context.Context, *BuildProgram_Args) (*BuildProgram_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildProgram not implemented")
 }
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (*UnimplementedKclvmServiceServer) ExecArtifact(context.Context, *ExecArtifact_Args) (*ExecProgram_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecArtifact not implemented")
 }
@@ -8102,6 +8110,7 @@ func _KclvmService_ExecProgram_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func _KclvmService_BuildProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BuildProgram_Args)
 	if err := dec(in); err != nil {
@@ -8120,6 +8129,7 @@ func _KclvmService_BuildProgram_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func _KclvmService_ExecArtifact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExecArtifact_Args)
 	if err := dec(in); err != nil {

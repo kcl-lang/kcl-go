@@ -20,6 +20,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"kcl-lang.io/kcl-go/pkg/3rdparty/dlopen"
+	"kcl-lang.io/kcl-go/pkg/env"
 	"kcl-lang.io/kcl-go/pkg/plugin"
 	"kcl-lang.io/kcl-go/pkg/service"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
@@ -85,7 +86,7 @@ func cApiCall[I interface {
 
 	defer C.free(unsafe.Pointer(cIn))
 
-	cOut, cOutSize := KclvmServiceCall(c.client, cCallName, cIn)
+	cOut, cOutSize := KclvmServiceCall(c.client, cCallName, cIn, C.size_t(len(inBytes)))
 
 	defer KclvmServiceFreeString(cOut)
 
@@ -117,10 +118,13 @@ func (c *NativeServiceClient) ExecProgram(in *gpyrpc.ExecProgram_Args) (*gpyrpc.
 	return cApiCall[*gpyrpc.ExecProgram_Args, *gpyrpc.ExecProgram_Result](c, "KclvmService.ExecProgram", in)
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *NativeServiceClient) BuildProgram(in *gpyrpc.BuildProgram_Args) (*gpyrpc.BuildProgram_Result, error) {
+	env.EnableFastEvalMode()
 	return cApiCall[*gpyrpc.BuildProgram_Args, *gpyrpc.BuildProgram_Result](c, "KclvmService.BuildProgram", in)
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *NativeServiceClient) ExecArtifact(in *gpyrpc.ExecArtifact_Args) (*gpyrpc.ExecProgram_Result, error) {
 	return cApiCall[*gpyrpc.ExecArtifact_Args, *gpyrpc.ExecProgram_Result](c, "KclvmService.ExecArtifact", in)
 }

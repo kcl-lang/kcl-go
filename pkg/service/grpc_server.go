@@ -43,9 +43,13 @@ func (p *_KclvmServiceImpl) Ping(ctx context.Context, args *gpyrpc.Ping_Args) (*
 func (p *_KclvmServiceImpl) ExecProgram(ctx context.Context, args *gpyrpc.ExecProgram_Args) (*gpyrpc.ExecProgram_Result, error) {
 	return p.c.ExecProgram(args)
 }
+
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (p *_KclvmServiceImpl) BuildProgram(ctx context.Context, args *gpyrpc.BuildProgram_Args) (*gpyrpc.BuildProgram_Result, error) {
 	return p.c.BuildProgram(args)
 }
+
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (p *_KclvmServiceImpl) ExecArtifact(ctx context.Context, args *gpyrpc.ExecArtifact_Args) (*gpyrpc.ExecProgram_Result, error) {
 	return p.c.ExecArtifact(args)
 }
