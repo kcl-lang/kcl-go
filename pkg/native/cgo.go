@@ -24,9 +24,9 @@ void kclvm_service_free_string(void *f,const char * res) {
 	return free_string(res);
 }
 const char* kclvm_service_call_with_length(void *f,kclvm_service* c,const char * method,const char * args,size_t args_len,size_t * result_len){
-	const char* (*service_call_with_length)(kclvm_service*,const char *,const char *,size_t *);
-	service_call_with_length = (const char* (*)(kclvm_service*,const char *,const char *,size_t *))f;
-	return service_call_with_length(c,method,args,result_len);
+	const char* (*service_call_with_length)(kclvm_service*,const char *,const char *,size_t,size_t *);
+	service_call_with_length = (const char* (*)(kclvm_service*,const char *,const char *,size_t,size_t *))f;
+	return service_call_with_length(c,method,args,args_len,result_len);
 }
 */
 import "C"

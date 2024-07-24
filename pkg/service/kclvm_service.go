@@ -5,7 +5,9 @@ import "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 type KclvmService interface {
 	Ping(in *gpyrpc.Ping_Args) (out *gpyrpc.Ping_Result, err error)
 	ExecProgram(in *gpyrpc.ExecProgram_Args) (out *gpyrpc.ExecProgram_Result, err error)
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	BuildProgram(in *gpyrpc.BuildProgram_Args) (out *gpyrpc.BuildProgram_Result, err error)
+	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 	ExecArtifact(in *gpyrpc.ExecArtifact_Args) (out *gpyrpc.ExecProgram_Result, err error)
 	ParseFile(in *gpyrpc.ParseFile_Args) (out *gpyrpc.ParseFile_Result, err error)
 	ParseProgram(in *gpyrpc.ParseProgram_Args) (out *gpyrpc.ParseProgram_Result, err error)

@@ -6,7 +6,6 @@ package native
 import (
 	"fmt"
 	"io"
-	"path"
 	"strings"
 	"testing"
 	"time"
@@ -57,70 +56,6 @@ func TestExecProgramWithPluginError(t *testing.T) {
 	}
 	if !strings.Contains(result.ErrMessage, "strconv.ParseInt: parsing \"<nil>\": invalid syntax") {
 		t.Fatal(result.ErrMessage)
-	}
-}
-
-func TestExecArtifactWithPlugin(t *testing.T) {
-	output := path.Join(t.TempDir(), "example")
-	client := NewNativeServiceClient()
-	// BuildProgram
-	buildResult, err := client.BuildProgram(&gpyrpc.BuildProgram_Args{
-		ExecArgs: &gpyrpc.ExecProgram_Args{
-			KFilenameList: []string{"main.k"},
-			KCodeList:     []string{code},
-		},
-		Output: output,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	// ExecArtifact
-	execResult, err := client.ExecArtifact(&gpyrpc.ExecArtifact_Args{
-		ExecArgs: &gpyrpc.ExecProgram_Args{
-			Args: []*gpyrpc.Argument{
-				{
-					Name:  "a",
-					Value: "1",
-				},
-				{
-					Name:  "b",
-					Value: "2",
-				},
-			},
-		},
-		Path: buildResult.Path,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if execResult.ErrMessage != "" {
-		t.Fatal("error message must be empty")
-	}
-}
-
-func TestBuildProgramError(t *testing.T) {
-	src := `
-a = 1
-  b = 2
-`
-	output := path.Join(t.TempDir(), "example")
-	client := NewNativeServiceClient()
-	// BuildProgram
-	buildResult, err := client.BuildProgram(&gpyrpc.BuildProgram_Args{
-		ExecArgs: &gpyrpc.ExecProgram_Args{
-			KFilenameList: []string{"main.k"},
-			KCodeList:     []string{src},
-		},
-		Output: output,
-	})
-	if err == nil {
-		t.Errorf("The BuildProgram should return compilation failure reason")
-	}
-	if !strings.Contains(err.Error(), "InvalidSyntax") {
-		t.Errorf("Unexpected error message: %q", err.Error())
-	}
-	if buildResult != nil {
-		t.Errorf("The BuildProgram should return nil if compilation fails")
 	}
 }
 

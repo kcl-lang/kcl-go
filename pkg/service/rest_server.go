@@ -159,6 +159,7 @@ func (p *restServer) handle_ExecProgram(w http.ResponseWriter, r *http.Request, 
 	})
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (p *restServer) handle_BuildProgram(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var args = new(gpyrpc.BuildProgram_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
@@ -166,6 +167,7 @@ func (p *restServer) handle_BuildProgram(w http.ResponseWriter, r *http.Request,
 	})
 }
 
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (p *restServer) handle_ExecArtifact(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var args = new(gpyrpc.ExecArtifact_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
