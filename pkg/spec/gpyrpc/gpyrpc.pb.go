@@ -7917,10 +7917,12 @@ func (*UnimplementedKclvmServiceServer) ListVariables(context.Context, *ListVari
 func (*UnimplementedKclvmServiceServer) ExecProgram(context.Context, *ExecProgram_Args) (*ExecProgram_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecProgram not implemented")
 }
+
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (*UnimplementedKclvmServiceServer) BuildProgram(context.Context, *BuildProgram_Args) (*BuildProgram_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildProgram not implemented")
 }
+
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (*UnimplementedKclvmServiceServer) ExecArtifact(context.Context, *ExecArtifact_Args) (*ExecProgram_Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecArtifact not implemented")

@@ -7,7 +7,7 @@ require (
 	github.com/chai2010/protorpc v1.1.4
 	github.com/getkin/kin-openapi v0.126.0
 	github.com/goccy/go-yaml v1.12.0
-	github.com/gofrs/flock v0.12.0
+	github.com/gofrs/flock v0.12.1
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
 	github.com/iancoleman/strcase v0.3.0
@@ -22,7 +22,7 @@ require (
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/kpm v0.9.2
+	kcl-lang.io/kpm v0.9.3
 	kcl-lang.io/lib v0.10.0-alpha.1
 )
 

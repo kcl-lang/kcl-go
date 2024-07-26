@@ -20,6 +20,7 @@ import (
 )
 
 func init() {
+	env.EnableFastEvalMode()
 	if !env.GetDisableInstallArtifact() {
 		installKclArtifact()
 	}
