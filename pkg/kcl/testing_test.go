@@ -17,14 +17,3 @@ func tAssert(tb testing.TB, condition bool, args ...interface{}) {
 		}
 	}
 }
-
-func tAssertf(tb testing.TB, condition bool, format string, a ...interface{}) {
-	if !condition {
-		tb.Helper()
-		if msg := fmt.Sprintf(format, a...); msg != "" {
-			tb.Fatalf("tAssert failed, %s", msg)
-		} else {
-			tb.Fatalf("tAssert failed")
-		}
-	}
-}

@@ -7,9 +7,11 @@ on:
       - "releases/*"
 jobs:
   build-and-test:
+    # Ref: https://github.com/actions/runner-images/tree/main/images/macos
+    # Note: The arch of macos-13-xlarge and macos-14 is arm64
     strategy:
       matrix:
-        os: [ macos-12, macos-13 ]
+        os: [ macos-12, macos-13, macos-13-xlarge, macos-14 ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Git checkout

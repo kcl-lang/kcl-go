@@ -1,130 +1,69 @@
-// Copyright The KCL Authors. All rights reserved.
+//go:build native
+// +build native
 
 package kcl
 
 import (
 	"fmt"
-	"path/filepath"
-	"reflect"
-	"sort"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"kcl-lang.io/kcl-go/pkg/tools/list"
+	assert2 "github.com/stretchr/testify/assert"
+
+	"kcl-lang.io/kcl-go/pkg/plugin"
+	_ "kcl-lang.io/kcl-go/pkg/plugin/hello_plugin"
 )
 
-var _ = fmt.Sprint
+const code = `
+import kcl_plugin.hello
 
-const case_path = "../../testdata/main.k"
-
-func TestKCLResultMap(t *testing.T) {
-	var data = map[string]interface{}{
-		"key1": "value1",
-		"key2": "value2",
-	}
-	result := NewResult(data)
-	m, _ := result.ToMap()
-	tAssert(t, m["key1"] == "value1", m)
-	tAssert(t, m["key2"] == "value2", m)
-}
-
-func TestKCLResultInt(t *testing.T) {
-	result := NewResult(1)
-	m, _ := result.ToInt()
-	tAssert(t, *m == 1)
-}
-
-func TestRun(t *testing.T) {
-	const k_code = `
 name = "kcl"
-i = 123
-f = 1.5
+sum = hello.add(option("a"), option("b"))
+`
+const codeWithPlugin = `
+import kcl_plugin.my_plugin
+
+value1 = my_plugin.config_append({key1 = "value1"}, "key2", "value2")
+value2 = my_plugin.list_append([1, 2, 3], 4)
 `
 
-	result, err := RunFiles([]string{case_path}, WithCode(k_code))
-	tAssert(t, err == nil, err)
-	tAssert(t, result != nil)
-
-	opts := WithCode(k_code)
-	opts.Merge(WithKFilenames(case_path))
-	result, err = RunWithOpts(opts)
-	tAssert(t, result != nil)
-	tAssert(t, err == nil, err)
-
-	result, err = Run(case_path, WithCode(k_code))
-	tAssert(t, err == nil, err)
-	tAssert(t, result.Len() > 0)
-	tAssert(t, result.First().Get("name") == "kcl")
-
-	var s string
-	var i int
-	var f float64
-
-	_, err = result.Get(0).GetValue("name", &s)
-	tAssert(t, err == nil, err)
-	tAssert(t, s == "kcl", s)
-
-	_, err = result.Get(0).GetValue("i", &i)
-	tAssert(t, err == nil, err)
-	tAssert(t, i == 123, i)
-
-	_, err = result.Get(0).GetValue("f", &f)
-	tAssert(t, err == nil, err)
-	tAssert(t, f == 1.5, f)
-
-	_, err = result.Tail().GetValue("name", &s)
-	tAssert(t, err == nil, err)
-	tAssert(t, s == "kcl", s)
-
-	result.First().YAMLString()
-	result.Tail().JSONString()
+func TestNativeRun(t *testing.T) {
+	yaml := MustRun("main.k", WithCode(code), WithOptions("a=1", "b=2")).GetRawYamlResult()
+	fmt.Println(yaml)
 }
 
-// go test -run=TestRun_failed
-func TestRun_failed(t *testing.T) {
-	_, err := Run(case_path, WithCode(`x = {`))
-	tAssert(t, err != nil, err)
+func ExampleNativeRunPaths() {
+	yaml := MustRunPaths([]string{"testdata/1.k", "testdata/2.k"}).GetRawYamlResult()
+	fmt.Println(yaml)
+
+	// output:
+	// a: b
+	// c: d
 }
 
-func TestGetSchemaType(t *testing.T) {
-	const k_code = `a=1`
+func TestNativeRunWithPlugin(t *testing.T) {
+	plugin.RegisterPlugin(plugin.Plugin{
+		Name: "my_plugin",
+		MethodMap: map[string]plugin.MethodSpec{
+			"config_append": {
+				Body: func(args *plugin.MethodArgs) (*plugin.MethodResult, error) {
+					config := args.MapArg(0)
+					k := args.StrArg(1)
+					v := args.StrArg(2)
+					config[k] = v
+					return &plugin.MethodResult{V: config}, nil
+				},
+			},
+			"list_append": {
+				Body: func(args *plugin.MethodArgs) (*plugin.MethodResult, error) {
+					values := args.ListArg(0)
+					v := args.Arg(1)
+					values = append(values, v)
+					return &plugin.MethodResult{V: values}, nil
+				},
+			},
+		},
+	})
 
-	result, err := GetSchemaType("main.k", k_code, "")
-	tAssert(t, err == nil)
-	_ = result
-}
-
-func TestListUpstreamFiles(t *testing.T) {
-	deps, err := list.ListUpStreamFiles("./testdata/complicate", &list.DepOptions{Files: []string{"appops/projectA/base/base.k", "appops/projectA/dev/main.k", "base/render/server/server_render.k"}})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expect := []string{
-		"base/frontend/server/server.k",
-		"base/frontend/container/container.k",
-		"base/frontend/container/container_port.k",
-		"base/frontend/server",
-		"base/frontend/container",
-	}
-
-	sort.Strings(deps)
-	sort.Strings(expect)
-
-	if !reflect.DeepEqual(deps, expect) {
-		t.Fatalf("\nexpect = %v\ngot    = %v", expect, deps)
-	}
-}
-
-func TestGetFullSchemaType(t *testing.T) {
-	testPath := filepath.Join(".", "testdata", "get_schema_ty")
-	tys, err := GetFullSchemaType(
-		[]string{filepath.Join(testPath, "aaa")},
-		"",
-		WithExternalPkgs(fmt.Sprintf("bbb=%s", filepath.Join(testPath, "bbb"))),
-	)
-	assert.Equal(t, err, nil)
-	assert.Equal(t, len(tys), 1)
-	assert.Equal(t, tys[0].Filename, filepath.Join("testdata", "get_schema_ty", "bbb", "main.k"))
-	assert.Equal(t, tys[0].SchemaName, "B")
+	yaml := MustRun("main.k", WithCode(codeWithPlugin)).GetRawYamlResult()
+	assert2.Equal(t, yaml, "value1:\n  key1: value1\n  key2: value2\nvalue2:\n- 1\n- 2\n- 3\n- 4")
 }
