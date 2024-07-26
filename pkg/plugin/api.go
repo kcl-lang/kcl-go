@@ -3,19 +3,9 @@
 package plugin
 
 import (
-	"os"
 	"strings"
 	"sync"
 )
-
-// Debug flag for kcl-plugin
-var DebugMode = false
-
-func init() {
-	if s := strings.ToLower(os.Getenv("KCLVM_PLUGIN_DEBUG")); s != "" && s != "false" && s != "0" {
-		DebugMode = true
-	}
-}
 
 var pluginManager struct {
 	allPlugin     map[string]Plugin
