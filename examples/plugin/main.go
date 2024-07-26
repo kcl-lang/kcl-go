@@ -1,5 +1,5 @@
-//go:build native
-// +build native
+//go:build !rpc
+// +build !rpc
 
 package main
 

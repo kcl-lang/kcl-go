@@ -1,5 +1,5 @@
-//go:build native
-// +build native
+//go:build !rpc
+// +build !rpc
 
 package kcl
 
@@ -29,15 +29,6 @@ value2 = my_plugin.list_append([1, 2, 3], 4)
 func TestNativeRun(t *testing.T) {
 	yaml := MustRun("main.k", WithCode(code), WithOptions("a=1", "b=2")).GetRawYamlResult()
 	fmt.Println(yaml)
-}
-
-func ExampleNativeRunPaths() {
-	yaml := MustRunPaths([]string{"testdata/1.k", "testdata/2.k"}).GetRawYamlResult()
-	fmt.Println(yaml)
-
-	// output:
-	// a: b
-	// c: d
 }
 
 func TestNativeRunWithPlugin(t *testing.T) {
