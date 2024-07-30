@@ -87,6 +87,11 @@ type KclPackage struct {
 	SubPackageList    []*KclPackage     `json:"subPackageList,omitempty"` // the sub package list sorted by name in the KCL package
 }
 
+// RenderSwaggerV2 renders swagger v2 definitions to generated documents.
+func (g *GenContext) RenderSwaggerV2(spec *SwaggerV2Spec) error {
+	return g.render(spec)
+}
+
 func (g *GenContext) render(spec *SwaggerV2Spec) error {
 	// make directory
 	err := os.MkdirAll(g.Target, 0755)
