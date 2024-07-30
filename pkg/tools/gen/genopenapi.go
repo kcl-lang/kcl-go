@@ -170,7 +170,6 @@ func ExportSwaggerV2Spec(path string) (*SwaggerV2Spec, error) {
 		for _, t := range p {
 			id := SchemaId(packagePath, t.KclType)
 			spec.Definitions[id] = GetKclOpenAPIType(packagePath, t.KclType, false)
-			fmt.Printf("exporting openAPI spec from schema %s\n", id)
 		}
 	}
 	return spec, nil
