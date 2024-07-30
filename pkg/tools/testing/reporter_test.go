@@ -10,8 +10,9 @@ func TestPrettyReporter(t *testing.T) {
 	result := TestResult{
 		Info: []TestCaseInfo{
 			{
-				Name:     "test_foo",
-				Duration: 1024,
+				Name:       "test_foo",
+				Duration:   1024,
+				LogMessage: "log message",
 			},
 			{
 				Name:       "test_bar",
@@ -30,6 +31,7 @@ func TestPrettyReporter(t *testing.T) {
 	}
 
 	exp := `test_foo: PASS (1ms)
+log message
 test_bar: FAIL (2ms)
 Error: assert failed
 --------------------------------------------------------------------------------

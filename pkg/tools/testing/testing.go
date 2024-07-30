@@ -40,6 +40,9 @@ func (t *TestCaseInfo) Skip() bool {
 
 func (t *TestCaseInfo) Format() string {
 	status := fmt.Sprintf("%s: %s (%dms)", t.Name, t.StatusString(), t.Duration/1000)
+	if t.LogMessage != "" {
+		return fmt.Sprintf("%s\n%s", status, t.LogMessage)
+	}
 	if t.Fail() {
 		return fmt.Sprintf("%s\n%s", status, t.ErrMessage)
 	}
