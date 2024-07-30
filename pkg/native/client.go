@@ -20,7 +20,6 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"kcl-lang.io/kcl-go/pkg/3rdparty/dlopen"
-	"kcl-lang.io/kcl-go/pkg/env"
 	"kcl-lang.io/kcl-go/pkg/plugin"
 	"kcl-lang.io/kcl-go/pkg/service"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
@@ -120,7 +119,6 @@ func (c *NativeServiceClient) ExecProgram(in *gpyrpc.ExecProgram_Args) (*gpyrpc.
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (c *NativeServiceClient) BuildProgram(in *gpyrpc.BuildProgram_Args) (*gpyrpc.BuildProgram_Result, error) {
-	env.EnableFastEvalMode()
 	return cApiCall[*gpyrpc.BuildProgram_Args, *gpyrpc.BuildProgram_Result](c, "KclvmService.BuildProgram", in)
 }
 

@@ -1,18 +1,24 @@
 package gen
 
 import (
+	"errors"
 	"fmt"
 	htmlTmpl "html/template"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	kpm "kcl-lang.io/kpm/pkg/api"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 
 	"os"
 	"path/filepath"
 	"strings"
 
 	kcl "kcl-lang.io/kcl-go"
+
+	api "kcl-lang.io/kcl-go/pkg/kcl"
 )
+
+// No kcl files
+var ErrNoKclFiles = errors.New("No input KCL files")
 
 const (
 	ExtensionKclType        = "x-kcl-type"
@@ -20,6 +26,83 @@ const (
 	ExtensionKclUnionTypes  = "x-kcl-union-types"
 	ExtensionKclDictKeyType = "x-kcl-dict-key-type"
 )
+
+// An additional field 'Name' is added to the original 'KclType'.
+//
+// 'Name' is the name of the kcl type.
+//
+// 'RelPath' is the relative path to the package home path.
+type NamedKclType struct {
+	*gpyrpc.KclType
+	Name    string
+	RelPath string
+}
+
+// IsSchema returns true if the type is schema.
+func IsSchema(kt *NamedKclType) bool {
+	return kt.Type == "schema"
+}
+
+// IsSchemaType returns true if the type is schema type.
+func IsSchemaType(kt *NamedKclType) bool {
+	return IsSchema(kt) && kt.SchemaName == kt.Name
+}
+
+// IsSchemaInstance returns true if the type is schema instance.
+func IsSchemaInstance(kt *NamedKclType) bool {
+	return IsSchema(kt) && kt.SchemaName != kt.Name
+}
+
+// IsSchemaNamed returns true if the type is schema and the name is equal to the given name.
+func IsSchemaNamed(kt *NamedKclType, name string) bool {
+	return IsSchema(kt) && kt.Name == name
+}
+
+// Get all schema type mapping within the root path.
+func GetSchemaTypeMappingByPath(root string) (map[string]map[string]*NamedKclType, error) {
+	schemaTypes := make(map[string]map[string]*NamedKclType)
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			filteredTypeMap := make(map[string]*NamedKclType)
+			opts := kcl.NewOption()
+			schemaTypeMap, err := api.GetFullSchemaTypeMapping([]string{path}, "", *opts)
+			if err != nil && err.Error() != ErrNoKclFiles.Error() {
+				return err
+			}
+			relPath, err := filepath.Rel(root, path)
+			if err != nil {
+				return err
+			}
+			if len(schemaTypeMap) != 0 && schemaTypeMap != nil {
+				for kName, kType := range schemaTypeMap {
+					kTy := &NamedKclType{
+						KclType: kType,
+						Name:    kName,
+						RelPath: relPath,
+					}
+					if IsSchemaType(kTy) {
+						filteredTypeMap[kName] = kTy
+					}
+				}
+				if len(filteredTypeMap) > 0 {
+					schemaTypes[relPath] = filteredTypeMap
+				}
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return schemaTypes, nil
+}
 
 // ExportOpenAPIV3Spec exports open api v3 spec of a kcl package
 func ExportOpenAPIV3Spec(pkgPath string) (*openapi3.T, error) {
@@ -69,23 +152,15 @@ func ExportOpenAPITypeToSchema(ty *KclOpenAPIType) *openapi3.SchemaRef {
 	return s
 }
 
-// ExportSwaggerV2Spec extracts the swagger v2 representation of a kcl package
-func ExportSwaggerV2Spec(pkgPath string) (*SwaggerV2Spec, error) {
-	pkg, err := kpm.GetKclPackage(pkgPath)
-	if err != nil {
-		return nil, fmt.Errorf("filePath is not a KCL package: %s", err)
-	}
-
+// ExportSwaggerV2Spec extracts the swagger v2 representation of a
+// kcl package without the external dependencies in kcl.mod
+func ExportSwaggerV2Spec(path string) (*SwaggerV2Spec, error) {
 	spec := &SwaggerV2Spec{
 		Swagger:     "2.0",
 		Definitions: make(map[string]*KclOpenAPIType),
 		Paths:       map[string]interface{}{},
-		Info: SpecInfo{
-			Title:   pkg.GetPkgName(),
-			Version: pkg.GetVersion(),
-		},
 	}
-	pkgMapping, err := pkg.GetAllSchemaTypeMapping()
+	pkgMapping, err := GetSchemaTypeMappingByPath(path)
 	if err != nil {
 		return spec, err
 	}
