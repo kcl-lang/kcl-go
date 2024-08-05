@@ -1,6 +1,6 @@
 // Copyright The KCL Authors. All rights reserved.
 
-package kclvm_test
+package kcl_test
 
 import (
 	"bytes"
@@ -21,7 +21,7 @@ import (
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
-const tEnvNumCpu = "KCLVM_GO_API_TEST_NUM_CPU"
+const tEnvNumCpu = "KCL_GO_API_TEST_NUM_CPU"
 
 func TestMain(m *testing.M) {
 	flag.Parse()
@@ -79,10 +79,10 @@ a2 = App {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if expect, got := "__main__.App", result.First().Get("a1._type"); expect != got {
+	if expect, got := "App", result.First().Get("a1._type"); expect != got {
 		t.Fatalf("expect = %v, got = %v", expect, got)
 	}
-	if expect, got := "__main__.App", result.First().Get("a2._type"); expect != got {
+	if expect, got := "App", result.First().Get("a2._type"); expect != got {
 		t.Fatalf("expect = %v, got = %v", expect, got)
 	}
 	if expect, got := "default", result.First().Get("a1.image"); expect != got {

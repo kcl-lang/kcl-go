@@ -14,7 +14,7 @@ import (
 	"kcl-lang.io/kcl-go/pkg/runtime"
 )
 
-const tEnvNumCpu = "KCLVM_GO_API_TEST_NUM_CPU"
+const tEnvNumCpu = "KCL_GO_API_TEST_NUM_CPU"
 const tRestServerAddr = "127.0.0.1:7001"
 
 func TestMain(m *testing.M) {

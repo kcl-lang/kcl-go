@@ -1,6 +1,6 @@
 // Copyright The KCL Authors. All rights reserved.
 
-package kclvm
+package kcl
 
 import "kcl-lang.io/kcl-go/scripts"
 

@@ -1,8 +1,8 @@
 // Copyright The KCL Authors. All rights reserved.
 
-package kclvm
+package kcl
 
-// KCLVM_GO_API_TEST_NUM_CPU=1 go test -bench=.
+// KCL_GO_API_TEST_NUM_CPU=1 go test -bench=.
 
 import (
 	"os"
