@@ -1,6 +1,6 @@
 // Copyright The KCL Authors. All rights reserved.
 
-package kclvm_test
+package kcl_test
 
 import (
 	"fmt"

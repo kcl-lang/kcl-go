@@ -1,6 +1,6 @@
-// Copyright 2023 The KCL Authors. All rights reserved.
+// Copyright The KCL Authors. All rights reserved.
 
-// Package kclvm
+// Package kcl
 /*
 KCL Go SDK
 
@@ -28,7 +28,7 @@ KCL Go SDK
 	│WithDisableNone  │         │                 │           │                 │
 	└─────────────────┘         └─────────────────┘           └─────────────────┘
 */
-package kclvm
+package kcl
 
 import (
 	"io"
