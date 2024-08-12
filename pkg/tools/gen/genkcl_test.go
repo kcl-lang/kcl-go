@@ -15,7 +15,6 @@ func TestGenKcl(t *testing.T) {
 	var buf bytes.Buffer
 	opts := &GenKclOptions{}
 	err := GenKcl(&buf, "./testdata/genkcldata.go", nil, opts)
-	// err := GenKcl(&buf, "demo", code, opts)
 	if err != nil {
 		log.Fatal(err)
 	}
