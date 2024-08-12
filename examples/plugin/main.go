@@ -1,5 +1,5 @@
-//go:build !rpc
-// +build !rpc
+//go:build cgo
+// +build cgo
 
 package main
 

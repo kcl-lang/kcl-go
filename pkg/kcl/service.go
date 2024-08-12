@@ -1,5 +1,5 @@
-//go:build !rpc
-// +build !rpc
+//go:build !rpc && cgo
+// +build !rpc,cgo
 
 package kcl
 
