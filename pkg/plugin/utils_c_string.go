@@ -1,5 +1,8 @@
 // Copyright 2023 The KCL Authors. All rights reserved.
 
+//go:build cgo
+// +build cgo
+
 package plugin
 
 // #include <stdlib.h>
