@@ -183,7 +183,8 @@ func (ctx *genKclTypeContext) convertSchemaFromGoPackage() ([]convertResult, err
 		name := s.name
 		if _, ok := ctx.resultMap[name]; !ok {
 			result := convertResult{IsSchema: true}
-			ctx.resultMap[name] = result
+			result.schema.Name = name
+			result.schema.Description = s.doc
 			for _, field := range s.fields {
 				typeName := ctx.typeName(name, field.name, field.ty)
 				fieldName := formatName(field.name)
@@ -192,15 +193,13 @@ func (ctx *genKclTypeContext) convertSchemaFromGoPackage() ([]convertResult, err
 					fieldName = tagName
 					typeName = tagTy
 				}
-				result.schema.Name = name
-				result.schema.Description = s.doc
 				result.schema.Properties = append(result.Properties, property{
 					Name:        fieldName,
 					Type:        typeName,
 					Description: s.fieldDocs[field.name],
 				})
-				ctx.resultMap[name] = result
 			}
+			ctx.resultMap[name] = result
 		}
 	}
 	// Append anonymous structs

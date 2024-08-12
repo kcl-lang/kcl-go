@@ -16,19 +16,19 @@ import (
 	"kcl-lang.io/kcl-go/pkg/source"
 )
 
-type castingOption int
+type CastingOption int
 
 const (
-	originalName castingOption = iota
-	snakeCase
-	camelCase
+	OriginalName CastingOption = iota
+	SnakeCase
+	CamelCase
 )
 
 type context struct {
 	imports       map[string]struct{}
 	resultMap     map[string]convertResult
 	paths         []string
-	castingOption castingOption
+	castingOption CastingOption
 }
 
 type convertContext struct {
@@ -47,11 +47,11 @@ type convertResult struct {
 	property
 }
 
-func convertPropertyName(name string, option castingOption) string {
+func convertPropertyName(name string, option CastingOption) string {
 	switch option {
-	case snakeCase:
+	case SnakeCase:
 		return strcase.ToSnake(name)
-	case camelCase:
+	case CamelCase:
 		return strcase.ToCamel(name)
 	default:
 		return name

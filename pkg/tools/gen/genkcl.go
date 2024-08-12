@@ -11,7 +11,7 @@ import (
 
 type GenKclOptions struct {
 	Mode                  Mode
-	CastingOption         castingOption
+	CastingOption         CastingOption
 	UseIntegersForNumbers bool
 }
 
