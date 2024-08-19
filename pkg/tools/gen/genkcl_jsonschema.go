@@ -385,35 +385,123 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			}
 		case *jsonschema.AllOf:
 			schs := *v
+			var validations []*validation
+			_, req := required[name]
 			for i := 0; i < len(schs); i++ {
 				sch := schs[i]
 				for _, key := range sch.OrderedKeywords {
-					if _, ok := s.Keywords[key]; !ok {
-						s.OrderedKeywords = append(s.OrderedKeywords, key)
-						s.Keywords[key] = sch.Keywords[key]
-					} else {
-						switch v := sch.Keywords[key].(type) {
-						case *jsonschema.Type:
-						case *jsonschema.Ref:
-							refSch := v.ResolveRef(ctx.rootSchema)
-							if refSch == nil || refSch.OrderedKeywords == nil {
-								logger.GetLogger().Warningf("failed to resolve ref: %s", v.Reference)
-								continue
+					switch v := sch.Keywords[key].(type) {
+					case *jsonschema.Minimum:
+						validations = append(validations, &validation{
+							Name:             name,
+							Required:         req,
+							Minimum:          (*float64)(v),
+							ExclusiveMinimum: false,
+						})
+					case *jsonschema.Maximum:
+						validations = append(validations, &validation{
+							Name:             name,
+							Required:         req,
+							Maximum:          (*float64)(v),
+							ExclusiveMaximum: false,
+						})
+					case *jsonschema.ExclusiveMinimum:
+						validations = append(validations, &validation{
+							Name:             name,
+							Required:         req,
+							Minimum:          (*float64)(v),
+							ExclusiveMinimum: true,
+						})
+					case *jsonschema.ExclusiveMaximum:
+						validations = append(validations, &validation{
+							Name:             name,
+							Required:         req,
+							Maximum:          (*float64)(v),
+							ExclusiveMaximum: true,
+						})
+					case *jsonschema.MinLength:
+						validations = append(validations, &validation{
+							Name:      name,
+							Required:  req,
+							MinLength: (*int)(v),
+						})
+					case *jsonschema.MaxLength:
+						validations = append(validations, &validation{
+							Name:      name,
+							Required:  req,
+							MaxLength: (*int)(v),
+						})
+					case *jsonschema.Pattern:
+						validations = append(validations, &validation{
+							Name:     name,
+							Required: req,
+							Regex:    (*regexp.Regexp)(v),
+						})
+						ctx.imports["regex"] = struct{}{}
+					case *jsonschema.MultipleOf:
+						vInt := int(*v)
+						if float64(vInt) != float64(*v) {
+							logger.GetLogger().Warningf("unsupported multipleOf value: %f", *v)
+							continue
+						}
+						result.Validations = append(result.Validations, validation{
+							Name:       name,
+							Required:   req,
+							MultiplyOf: &vInt,
+						})
+					case *jsonschema.UniqueItems:
+						if *v {
+							result.Validations = append(result.Validations, validation{
+								Name:     name,
+								Required: req,
+								Unique:   true,
+							})
+						}
+					case *jsonschema.MinItems:
+						result.Validations = append(result.Validations, validation{
+							Name:      name,
+							Required:  req,
+							MinLength: (*int)(v),
+						})
+					case *jsonschema.MaxItems:
+						result.Validations = append(result.Validations, validation{
+							Name:      name,
+							Required:  req,
+							MaxLength: (*int)(v),
+						})
+					default:
+						if _, ok := s.Keywords[key]; !ok {
+							s.OrderedKeywords = append(s.OrderedKeywords, key)
+							s.Keywords[key] = sch.Keywords[key]
+						} else {
+							switch v := sch.Keywords[key].(type) {
+							case *jsonschema.Type:
+							case *jsonschema.Ref:
+								refSch := v.ResolveRef(ctx.rootSchema)
+								if refSch == nil || refSch.OrderedKeywords == nil {
+									logger.GetLogger().Warningf("failed to resolve ref: %s", v.Reference)
+									continue
+								}
+								schs = append(schs, refSch)
+							case *jsonschema.Properties:
+								props := *s.Keywords[key].(*jsonschema.Properties)
+								props = append(props, *v...)
+								s.Keywords[key] = &props
+							case *jsonschema.Required:
+								reqs := *s.Keywords[key].(*jsonschema.Required)
+								reqs = append(reqs, *v...)
+								s.Keywords[key] = &reqs
+							default:
+								logger.GetLogger().Warningf("failed to merge allOf: unsupported keyword %s", key)
 							}
-							schs = append(schs, refSch)
-						case *jsonschema.Properties:
-							props := *s.Keywords[key].(*jsonschema.Properties)
-							props = append(props, *v...)
-							s.Keywords[key] = &props
-						case *jsonschema.Required:
-							reqs := *s.Keywords[key].(*jsonschema.Required)
-							reqs = append(reqs, *v...)
-							s.Keywords[key] = &reqs
-						default:
-							logger.GetLogger().Warningf("failed to merge allOf: unsupported keyword %s", key)
 						}
 					}
 				}
+			}
+			if len(validations) > 0 {
+				result.Validations = append(result.Validations, validation{
+					AllOf: validations,
+				})
 			}
 			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
 				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
@@ -448,6 +536,13 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 
 	if result.HasIndexSignature && result.IndexSignature.validation != nil {
 		result.Validations = append(result.Validations, *result.IndexSignature.validation)
+	}
+	// Update AllOf validation required fields
+	for i := range result.Validations {
+		for j := range result.Validations[i].AllOf {
+			result.Validations[i].AllOf[j].Name = result.Validations[i].Name
+			result.Validations[i].AllOf[j].Required = result.Validations[i].Required
+		}
 	}
 	result.property.Name = convertPropertyName(result.Name, ctx.castingOption)
 	result.property.Description = result.Description
