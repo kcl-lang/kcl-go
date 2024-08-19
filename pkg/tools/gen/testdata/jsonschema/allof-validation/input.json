@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/config",
+  "description": "Schema for representing a config information.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "allOf": [
+        {
+          "pattern": "198.160"
+        },
+        {
+          "pattern": "198.161"
+        },
+        {
+          "pattern": "198.162"
+        }
+      ]
+    },
+    "price": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

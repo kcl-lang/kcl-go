@@ -20,4 +20,7 @@
     {{- if .Unique }}
         isunique({{ formatName .Name }}){{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
+    {{- if .AllOf }}
+    {{- template "validator" .AllOf }}
+    {{- end }}
 {{- end -}}
