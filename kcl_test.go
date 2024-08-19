@@ -21,6 +21,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	kcl "kcl-lang.io/kcl-go"
+	api "kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -432,6 +433,17 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 		},
 	}, result)
 }
+
+func TestGetSchemaTypeFromFolder(t *testing.T) {
+	result, err := api.GetFullSchemaType([]string{"testdata/get_schema_type"}, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, result[0].SchemaName, "Base")
+	assert2.Equal(t, result[1].SchemaName, "Schema")
+	assert2.Equal(t, result[1].BaseSchema.SchemaName, "Base")
+}
+
 func TestListUpStreamFiles(t *testing.T) {
 	files, err := kcl.ListUpStreamFiles("./testdata/", &kcl.ListDepsOptions{Files: []string{"main.k", "app0/before/base.k", "app0/main.k"}})
 	if err != nil {
