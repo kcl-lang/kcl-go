@@ -435,13 +435,18 @@ func TestGetSchemaTypeMapping(t *testing.T) {
 }
 
 func TestGetSchemaTypeFromFolder(t *testing.T) {
-	result, err := api.GetFullSchemaType([]string{"testdata/get_schema_type"}, "")
+	result, err := api.GetFullSchemaTypeMapping([]string{"testdata/get_schema_type"}, "")
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert2.Equal(t, result[0].SchemaName, "Base")
-	assert2.Equal(t, result[1].SchemaName, "Schema")
-	assert2.Equal(t, result[1].BaseSchema.SchemaName, "Base")
+	assert2.Equal(t, result["Base"].SchemaName, "Base")
+	assert2.Equal(t, len(result["Base"].Properties), 1)
+	assert2.Equal(t, result["Base"].Properties["name"].Type, "str")
+	assert2.Equal(t, result["Schema"].SchemaName, "Schema")
+	assert2.Equal(t, result["Schema"].BaseSchema.SchemaName, "Base")
+	assert2.Equal(t, len(result["Schema"].Properties), 2)
+	assert2.Equal(t, result["Schema"].Properties["name"].Type, "str")
+	assert2.Equal(t, result["Schema"].Properties["info"].Type, "str")
 }
 
 func TestListUpStreamFiles(t *testing.T) {
