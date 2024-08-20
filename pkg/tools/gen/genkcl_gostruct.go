@@ -33,9 +33,17 @@ type field struct {
 type genKclTypeContext struct {
 	context
 	// Go package path.
-	pkgPath   string
+	pkgPath string
+	// Go structs in all package path
 	goStructs map[*types.TypeName]goStruct
-	oneFile   bool
+	// All pkg path -> package mapping
+	packages map[string]*packages.Package
+	// Semantic type -> AST struct type mapping
+	tyMapping map[types.Type]*ast.StructType
+	// Semantic type -> AST struct type mapping
+	tySpecMapping map[string]string
+	// Generate all go structs into one KCL file.
+	oneFile bool
 }
 
 func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ interface{}) error {
@@ -46,7 +54,11 @@ func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ int
 			imports:   make(map[string]struct{}),
 			paths:     []string{},
 		},
-		oneFile: true,
+		goStructs:     map[*types.TypeName]goStruct{},
+		packages:      map[string]*packages.Package{},
+		tyMapping:     map[types.Type]*ast.StructType{},
+		tySpecMapping: map[string]string{},
+		oneFile:       true,
 	}
 	results, err := ctx.convertSchemaFromGoPackage()
 	if err != nil {
@@ -64,8 +76,8 @@ func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ int
 	return k.genKcl(w, kclSch)
 }
 
-func (ctx *genKclTypeContext) typeName(defName string, fieldName string, ty types.Type) typeInterface {
-	switch ty := ty.(type) {
+func (ctx *genKclTypeContext) typeName(pkgPath, defName, fieldName string, typ types.Type) typeInterface {
+	switch ty := typ.(type) {
 	case *types.Basic:
 		switch ty.Kind() {
 		case types.Bool, types.UntypedBool:
@@ -97,53 +109,97 @@ func (ctx *genKclTypeContext) typeName(defName string, fieldName string, ty type
 			return typePrimitive(typAny)
 		}
 	case *types.Pointer:
-		return ctx.typeName(defName, fieldName, ty.Elem())
+		return ctx.typeName(pkgPath, defName, fieldName, ty.Elem())
 	case *types.Named:
 		obj := ty.Obj()
-		switch {
-		case obj.Pkg().Path() == "time" && obj.Name() == "Time":
-			return typePrimitive(typStr)
-		case obj.Pkg().Path() == "time" && obj.Name() == "Duration":
-			return typePrimitive(typInt)
-		case obj.Pkg().Path() == "math/big" && obj.Name() == "Int":
-			return typePrimitive(typInt)
-		default:
-			if _, ok := ctx.goStructs[obj]; !ok {
-				return ctx.typeName(defName, fieldName, ty.Underlying())
-			} else {
-				return typeCustom{
-					Name: obj.Name(),
+		if obj != nil {
+			pkg := obj.Pkg()
+			switch {
+			case pkg != nil && pkg.Path() == "time" && obj.Name() == "Time":
+				return typePrimitive(typStr)
+			case pkg != nil && pkg.Path() == "time" && obj.Name() == "Duration":
+				return typePrimitive(typInt)
+			case pkg != nil && pkg.Path() == "math/big" && obj.Name() == "Int":
+				return typePrimitive(typInt)
+			default:
+				// Struct from external package in the Go module
+				if _, ok := ctx.goStructs[obj]; !ok {
+					if pkg != nil {
+						// Record external package type information
+						pkgPath := pkg.Path()
+						if ctx.oneFile {
+							ty := ctx.typeName(pkgPath, strcase.ToCamel(pkg.Name()), obj.Name(), ty.Underlying())
+							return ty
+						} else {
+							// Struct from current package
+							ty := typeCustom{
+								Name: pkgPath + "." + obj.Name(),
+							}
+							return ty
+						}
+					} else {
+						ty := ctx.typeName(pkgPath, defName, obj.Name(), ty.Underlying())
+						return ty
+					}
+				} else {
+					// Struct from current package
+					return typeCustom{
+						Name: obj.Name(),
+					}
 				}
 			}
+		} else {
+			return typePrimitive(typAny)
 		}
 	case *types.Array:
 		return typeArray{
-			Items: ctx.typeName(defName, fieldName, ty.Elem()),
+			Items: ctx.typeName(pkgPath, defName, fieldName, ty.Elem()),
 		}
 	case *types.Slice:
 		return typeArray{
-			Items: ctx.typeName(defName, fieldName, ty.Elem()),
+			Items: ctx.typeName(pkgPath, defName, fieldName, ty.Elem()),
 		}
 	case *types.Map:
 		return typeDict{
-			Key:   ctx.typeName(defName, fieldName, ty.Key()),
-			Value: ctx.typeName(defName, fieldName, ty.Elem()),
+			Key:   ctx.typeName(pkgPath, defName, fieldName, ty.Key()),
+			Value: ctx.typeName(pkgPath, defName, fieldName, ty.Elem()),
 		}
 	case *types.Struct:
 		schemaName := fmt.Sprintf("%s%s", defName, strcase.ToCamel(fieldName))
 		if _, ok := ctx.resultMap[schemaName]; !ok {
 			result := convertResult{IsSchema: true}
 			ctx.resultMap[schemaName] = result
-			for i := 0; i < ty.NumFields(); i++ {
-				sf := ty.Field(i)
-				typeName := ctx.typeName(schemaName, sf.Name(), sf.Type())
-				result.schema.Name = schemaName
-				result.schema.Properties = append(result.Properties, property{
-					Name: formatName(sf.Name()),
-					Type: typeName,
-				})
-				ctx.resultMap[schemaName] = result
+			description := ""
+			if doc, ok := ctx.tySpecMapping[pkgPath+"."+fieldName]; ok {
+				description = doc
 			}
+			result.schema.Description = description
+			result.schema.Name = schemaName
+			fields, fieldDocs := ctx.getStructFieldsAndDocs(typ)
+			for _, field := range fields {
+				typeName := ctx.typeName(pkgPath, schemaName, field.name, field.ty)
+				fieldName := formatName(field.name)
+				fieldDoc := ""
+				if doc, ok := fieldDocs[fieldName]; ok {
+					fieldDoc = doc
+				}
+				// Use alias name and type defined in the `kcl` or `json`` tag
+				tagName, tagTy, err := parserGoStructFieldTag(field.tag)
+				if err == nil {
+					if tagName != "" {
+						fieldName = tagName
+					}
+					if tagTy != nil {
+						typeName = tagTy
+					}
+				}
+				result.schema.Properties = append(result.Properties, property{
+					Name:        fieldName,
+					Type:        typeName,
+					Description: fieldDoc,
+				})
+			}
+			ctx.resultMap[schemaName] = result
 		}
 		return typeCustom{
 			Name: schemaName,
@@ -151,7 +207,7 @@ func (ctx *genKclTypeContext) typeName(defName string, fieldName string, ty type
 	case *types.Union:
 		var types []typeInterface
 		for i := 0; i < ty.Len(); i++ {
-			types = append(types, ctx.typeName(defName, fieldName, ty.Term(i).Type()))
+			types = append(types, ctx.typeName(pkgPath, defName, fieldName, ty.Term(i).Type()))
 		}
 		return typeUnion{
 			Items: types,
@@ -162,7 +218,7 @@ func (ctx *genKclTypeContext) typeName(defName string, fieldName string, ty type
 		}
 		var types []typeInterface
 		for i := 0; i < ty.NumEmbeddeds(); i++ {
-			types = append(types, ctx.typeName(defName, fieldName, ty.EmbeddedType(i)))
+			types = append(types, ctx.typeName(pkgPath, defName, fieldName, ty.EmbeddedType(i)))
 		}
 		return typeUnion{
 			Items: types,
@@ -173,25 +229,30 @@ func (ctx *genKclTypeContext) typeName(defName string, fieldName string, ty type
 }
 
 func (ctx *genKclTypeContext) convertSchemaFromGoPackage() ([]convertResult, error) {
-	structs, error := fetchStructs(ctx.pkgPath)
-	ctx.goStructs = structs
-	if error != nil {
-		return nil, error
+	err := ctx.fetchStructs(ctx.pkgPath)
+	if err != nil {
+		return nil, err
 	}
 	var results []convertResult
-	for _, s := range structs {
+	for _, s := range ctx.goStructs {
 		name := s.name
 		if _, ok := ctx.resultMap[name]; !ok {
 			result := convertResult{IsSchema: true}
 			result.schema.Name = name
 			result.schema.Description = s.doc
+			ctx.resultMap[name] = result
 			for _, field := range s.fields {
-				typeName := ctx.typeName(name, field.name, field.ty)
+				typeName := ctx.typeName(ctx.pkgPath, name, field.name, field.ty)
 				fieldName := formatName(field.name)
+				// Use alias name and type defined in the `kcl` or `json`` tag
 				tagName, tagTy, err := parserGoStructFieldTag(field.tag)
-				if err == nil && tagName != "" && tagTy != nil {
-					fieldName = tagName
-					typeName = tagTy
+				if err == nil {
+					if tagName != "" {
+						fieldName = tagName
+					}
+					if tagTy != nil {
+						typeName = tagTy
+					}
 				}
 				result.schema.Properties = append(result.Properties, property{
 					Name:        fieldName,
@@ -211,26 +272,87 @@ func (ctx *genKclTypeContext) convertSchemaFromGoPackage() ([]convertResult, err
 	return results, nil
 }
 
-func fetchStructs(pkgPath string) (map[*types.TypeName]goStruct, error) {
-	cfg := &packages.Config{Mode: packages.NeedTypes | packages.NeedDeps | packages.NeedSyntax | packages.NeedTypesInfo}
+func (ctx *genKclTypeContext) recordTypeInfo(pkg *packages.Package) {
+	for _, f := range pkg.Syntax {
+		ast.Inspect(f, func(n ast.Node) bool {
+			switch n := n.(type) {
+			case *ast.StructType:
+				ctx.tyMapping[pkg.TypesInfo.TypeOf(n)] = n
+			case *ast.GenDecl:
+				if n.Tok == token.TYPE {
+					for _, spec := range n.Specs {
+						if typeSpec, ok := spec.(*ast.TypeSpec); ok {
+							if n.Doc != nil && typeSpec.Name != nil {
+								// <pkg_path>.<name>
+								ctx.tySpecMapping[pkg.PkgPath+"."+typeSpec.Name.String()] = n.Doc.Text()
+							}
+						}
+					}
+				}
+			}
+			return true
+		})
+	}
+}
+
+func (ctx *genKclTypeContext) addPackage(p *packages.Package) {
+	if pkg, ok := ctx.packages[p.PkgPath]; ok {
+		if p != pkg {
+			panic(fmt.Sprintf("duplicate package %s", p.PkgPath))
+		}
+		return
+	}
+	ctx.packages[p.PkgPath] = p
+	ctx.recordTypeInfo(p)
+	for _, pkg := range p.Imports {
+		ctx.addPackage(pkg)
+	}
+}
+
+func (ctx *genKclTypeContext) fetchStructs(pkgPath string) error {
+	cfg := &packages.Config{
+		Mode: packages.NeedName | packages.NeedCompiledGoFiles |
+			packages.NeedImports | packages.NeedDeps | packages.NeedTypes |
+			packages.NeedSyntax | packages.NeedTypesInfo | packages.NeedModule,
+	}
 	pkgs, err := packages.Load(cfg, pkgPath)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	structs := make(map[*types.TypeName]goStruct)
+	// Check Go module loader errors
+	var errs []string
 	for _, pkg := range pkgs {
-		astFiles := pkg.Syntax
-		scope := pkg.Types.Scope()
-		for _, name := range scope.Names() {
-			obj := scope.Lookup(name)
-			if obj, ok := obj.(*types.TypeName); ok {
-				named, _ := obj.Type().(*types.Named)
-				if structType, ok := named.Underlying().(*types.Struct); ok {
-					structDoc := getStructDoc(name, astFiles)
-					fields, fieldDocs := getStructFieldsAndDocs(structType, name, astFiles)
+		if len(pkg.Errors) > 0 {
+			for _, e := range pkg.Errors {
+				errs = append(errs, fmt.Sprintf("\t%s: %v", pkg.PkgPath, e))
+			}
+		}
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("could not load Go packages:\n%s", strings.Join(errs, "\n"))
+	}
+	for _, p := range pkgs {
+		ctx.addPackage(p)
+	}
+	for _, pkg := range pkgs {
+		ctx.fetchStructsFromPkg(pkg)
+	}
+	return nil
+}
+
+func (ctx *genKclTypeContext) fetchStructsFromPkg(pkg *packages.Package) error {
+	ctx.recordTypeInfo(pkg)
+	scope := pkg.Types.Scope()
+	for _, name := range scope.Names() {
+		obj := scope.Lookup(name)
+		if obj, ok := obj.(*types.TypeName); ok {
+			if named, ok := obj.Type().(*types.Named); ok {
+				if _, ok := named.Underlying().(*types.Struct); ok {
 					pkgPath := named.Obj().Pkg().Path()
 					pkgName := named.Obj().Pkg().Name()
-					structs[named.Obj()] = goStruct{
+					structDoc := ctx.getStructDoc(pkgPath, name)
+					fields, fieldDocs := ctx.getStructFieldsAndDocs(obj.Type())
+					ctx.goStructs[named.Obj()] = goStruct{
 						pkgPath:   pkgPath,
 						pkgName:   pkgName,
 						name:      name,
@@ -242,58 +364,53 @@ func fetchStructs(pkgPath string) (map[*types.TypeName]goStruct, error) {
 			}
 		}
 	}
-	return structs, nil
+
+	return nil
 }
 
-func getStructDoc(structName string, astFiles []*ast.File) string {
-	for _, file := range astFiles {
-		for _, decl := range file.Decls {
-			if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.TYPE {
-				for _, spec := range genDecl.Specs {
-					if typeSpec, ok := spec.(*ast.TypeSpec); ok && typeSpec.Name.Name == structName {
-						if genDecl.Doc != nil {
-							return genDecl.Doc.Text()
-						}
-					}
-				}
-			}
-		}
+func (ctx *genKclTypeContext) getStructDoc(pkgName, structName string) string {
+	if spec, ok := ctx.tySpecMapping[pkgName+"."+structName]; ok {
+		return spec
 	}
 	return ""
 }
 
-func getStructFieldsAndDocs(structType *types.Struct, structName string, astFiles []*ast.File) ([]field, map[string]string) {
+func (ctx *genKclTypeContext) getStructFieldsAndDocs(typ types.Type) ([]field, map[string]string) {
+	switch ty := typ.(type) {
+	case *types.Pointer:
+		return ctx.getStructFieldsAndDocs(ty.Elem())
+	case *types.Named:
+		if structType, ok := ty.Underlying().(*types.Struct); ok {
+			return ctx.getStructTypeFieldsAndDocs(structType)
+		}
+	case *types.Struct:
+		return ctx.getStructTypeFieldsAndDocs(ty)
+	}
+	return nil, nil
+}
+
+func (ctx *genKclTypeContext) getStructTypeFieldsAndDocs(structType *types.Struct) ([]field, map[string]string) {
 	fieldDocs := make(map[string]string)
 	var fields []field
 	for i := 0; i < structType.NumFields(); i++ {
 		f := structType.Field(i)
 		var tag string
-		for _, file := range astFiles {
-			for _, decl := range file.Decls {
-				if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.TYPE {
-					for _, spec := range genDecl.Specs {
-						if typeSpec, ok := spec.(*ast.TypeSpec); ok && typeSpec.Name.Name == structName {
-							if structType, ok := typeSpec.Type.(*ast.StructType); ok {
-								for _, field := range structType.Fields.List {
-									for _, fieldName := range field.Names {
-										if fieldName.Name == f.Name() {
-											if field.Doc != nil {
-												fieldDocs[fieldName.Name] = field.Doc.Text()
-											}
-											if field.Tag != nil {
-												tag = field.Tag.Value
-											}
-										}
-									}
-								}
-							}
+		if structType, ok := ctx.tyMapping[structType]; ok {
+			for _, field := range structType.Fields.List {
+				for _, fieldName := range field.Names {
+					if fieldName.Name == f.Name() {
+						if field.Doc != nil {
+							fieldDocs[fieldName.Name] = field.Doc.Text()
+						}
+						if field.Tag != nil {
+							tag = field.Tag.Value
 						}
 					}
 				}
 			}
 		}
 		if f.Embedded() {
-			embeddedFields, embeddedFieldDocs := getEmbeddedFieldsAndDocs(f.Type(), astFiles, structName)
+			embeddedFields, embeddedFieldDocs := ctx.getEmbeddedFieldsAndDocs(f.Type())
 			fields = append(fields, embeddedFields...)
 			for k, v := range embeddedFieldDocs {
 				fieldDocs[k] = v
@@ -311,18 +428,18 @@ func getStructFieldsAndDocs(structType *types.Struct, structName string, astFile
 	return fields, fieldDocs
 }
 
-func getEmbeddedFieldsAndDocs(t types.Type, astFiles []*ast.File, structName string) ([]field, map[string]string) {
+func (ctx *genKclTypeContext) getEmbeddedFieldsAndDocs(typ types.Type) ([]field, map[string]string) {
 	fieldDocs := make(map[string]string)
 	var fields []field
-	switch t := t.(type) {
+	switch ty := typ.(type) {
 	case *types.Pointer:
-		fields, fieldDocs = getEmbeddedFieldsAndDocs(t.Elem(), astFiles, structName)
+		fields, fieldDocs = ctx.getEmbeddedFieldsAndDocs(ty.Elem())
 	case *types.Named:
-		if structType, ok := t.Underlying().(*types.Struct); ok {
-			fields, fieldDocs = getStructFieldsAndDocs(structType, structName, astFiles)
+		if _, ok := ty.Underlying().(*types.Struct); ok {
+			fields, fieldDocs = ctx.getStructFieldsAndDocs(typ)
 		}
 	case *types.Struct:
-		fields, fieldDocs = getStructFieldsAndDocs(t, structName, astFiles)
+		fields, fieldDocs = ctx.getStructFieldsAndDocs(typ)
 	}
 	return fields, fieldDocs
 }
@@ -335,8 +452,22 @@ func parserGoStructFieldTag(tag string) (string, typeInterface, error) {
 	}
 	value, ok := lookupTag(sp[1], "kcl")
 	if !ok {
-		return "", nil, errors.New("not found tag key named kcl")
+		value, ok = lookupTag(sp[1], "json")
+		if !ok {
+			value, ok = lookupTag(sp[1], "yaml")
+			if !ok {
+				return "", nil, errors.New("not found tag key named json, yaml or kcl")
+			}
+		}
+		// Deal json or yaml tags
+		tagInfos := strings.Split(value, ",")
+		if len(tagInfos) > 0 {
+			return tagInfos[0], nil, nil
+		} else {
+			return "", nil, errors.New("invalid tag key named json")
+		}
 	}
+	// Deal kcl tags
 	reg := "name=.*,type=.*"
 	match, err := regexp.Match(reg, []byte(value))
 	if err != nil {

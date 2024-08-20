@@ -5,7 +5,7 @@ schema Database:
 
     Attributes
     ----------
-    type: str, default is Undefined, required. 
+    $type: str, default is Undefined, required. 
         Type defines the local deployment mode or the specific cloud vendor that 
         provides the relational database service (rds). 
     engine: str, default is Undefined, required. 

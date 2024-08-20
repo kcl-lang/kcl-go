@@ -59,7 +59,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
                             readOnlyRootFilesystem = True
                             runAsNonRoot = True
                             seccompProfile = {
-                                type = "RuntimeDefault"
+                                $type = "RuntimeDefault"
                             }
                         }
                     }
@@ -95,7 +95,7 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
                             readOnlyRootFilesystem = True
                             runAsNonRoot = True
                             seccompProfile = {
-                                type = "RuntimeDefault"
+                                $type = "RuntimeDefault"
                             }
                         }
                         ports = [

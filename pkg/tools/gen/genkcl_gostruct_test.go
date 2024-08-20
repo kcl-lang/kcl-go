@@ -30,16 +30,16 @@ schema Argument:
 
     Attributes
     ----------
-    Name : str, optional
+    name : str, optional
         Name of the argument.
 
-    Value : str, optional
+    value : str, optional
         Value of the argument.
 
     """
 
-    Name?: str
-    Value?: str
+    name?: str
+    value?: str
 
 schema BuildProgram_Args:
     r"""
@@ -48,16 +48,16 @@ schema BuildProgram_Args:
 
     Attributes
     ----------
-    ExecArgs : ExecProgram_Args, optional
+    exec_args : ExecProgram_Args, optional
         Arguments for executing the program.
 
-    Output : str, optional
+    output : str, optional
         Output path.
 
     """
 
-    ExecArgs?: ExecProgram_Args
-    Output?: str
+    exec_args?: ExecProgram_Args
+    output?: str
 
 schema BuildProgram_Result:
     r"""
@@ -66,12 +66,12 @@ schema BuildProgram_Result:
 
     Attributes
     ----------
-    Path : str, optional
+    path : str, optional
         Path of the built program.
 
     """
 
-    Path?: str
+    path?: str
 
 schema CliConfig:
     r"""
@@ -80,56 +80,56 @@ schema CliConfig:
 
     Attributes
     ----------
-    Files : [str], optional
+    files : [str], optional
         List of files.
 
-    Output : str, optional
+    output : str, optional
         Output path.
 
-    Overrides : [str], optional
+    overrides : [str], optional
         List of overrides.
 
-    PathSelector : [str], optional
+    path_selector : [str], optional
         Path selectors.
 
-    StrictRangeCheck : bool, optional
+    strict_range_check : bool, optional
         Flag for strict range check.
 
-    DisableNone : bool, optional
+    disable_none : bool, optional
         Flag to disable none values.
 
-    Verbose : int, optional
+    verbose : int, optional
         Verbose level.
 
-    Debug : bool, optional
+    debug : bool, optional
         Debug flag.
 
-    SortKeys : bool, optional
+    sort_keys : bool, optional
         Flag to sort keys in YAML/JSON results.
 
-    ShowHidden : bool, optional
+    show_hidden : bool, optional
         Flag to show hidden attributes.
 
-    IncludeSchemaTypePath : bool, optional
+    include_schema_type_path : bool, optional
         Flag to include schema type path in results.
 
-    FastEval : bool, optional
+    fast_eval : bool, optional
         Flag for fast evaluation.
 
     """
 
-    Files?: [str]
-    Output?: str
-    Overrides?: [str]
-    PathSelector?: [str]
-    StrictRangeCheck?: bool
-    DisableNone?: bool
-    Verbose?: int
-    Debug?: bool
-    SortKeys?: bool
-    ShowHidden?: bool
-    IncludeSchemaTypePath?: bool
-    FastEval?: bool
+    files?: [str]
+    output?: str
+    overrides?: [str]
+    path_selector?: [str]
+    strict_range_check?: bool
+    disable_none?: bool
+    verbose?: int
+    debug?: bool
+    sort_keys?: bool
+    show_hidden?: bool
+    include_schema_type_path?: bool
+    fast_eval?: bool
 
 schema Decorator:
     r"""
@@ -138,20 +138,20 @@ schema Decorator:
 
     Attributes
     ----------
-    Name : str, optional
+    name : str, optional
         Name of the decorator.
 
-    Arguments : [str], optional
+    arguments : [str], optional
         Arguments for the decorator.
 
-    Keywords : {str:str}, optional
+    keywords : {str:str}, optional
         Keyword arguments for the decorator as a map with keyword name as key.
 
     """
 
-    Name?: str
-    Arguments?: [str]
-    Keywords?: {str:str}
+    name?: str
+    arguments?: [str]
+    keywords?: {str:str}
 
 schema Error:
     r"""
@@ -160,20 +160,20 @@ schema Error:
 
     Attributes
     ----------
-    Level : str, optional
+    level : str, optional
         Level of the error (e.g., "Error", "Warning").
 
-    Code : str, optional
+    code : str, optional
         Error code. (e.g., "E1001")
 
-    Messages : [Message], optional
+    messages : [Message], optional
         List of error messages.
 
     """
 
-    Level?: str
-    Code?: str
-    Messages?: [Message]
+    level?: str
+    code?: str
+    messages?: [Message]
 
 schema Example:
     r"""
@@ -182,20 +182,20 @@ schema Example:
 
     Attributes
     ----------
-    Summary : str, optional
+    summary : str, optional
         Short description for the example.
 
-    Description : str, optional
+    description : str, optional
         Long description for the example.
 
-    Value : str, optional
+    value : str, optional
         Embedded literal example.
 
     """
 
-    Summary?: str
-    Description?: str
-    Value?: str
+    summary?: str
+    description?: str
+    value?: str
 
 schema ExecArtifact_Args:
     r"""
@@ -204,16 +204,16 @@ schema ExecArtifact_Args:
 
     Attributes
     ----------
-    Path : str, optional
+    path : str, optional
         Path of the artifact.
 
-    ExecArgs : ExecProgram_Args, optional
+    exec_args : ExecProgram_Args, optional
         Arguments for executing the program.
 
     """
 
-    Path?: str
-    ExecArgs?: ExecProgram_Args
+    path?: str
+    exec_args?: ExecProgram_Args
 
 schema ExecProgram_Args:
     r"""
@@ -222,80 +222,80 @@ schema ExecProgram_Args:
 
     Attributes
     ----------
-    WorkDir : str, optional
+    work_dir : str, optional
         Working directory.
 
-    KFilenameList : [str], optional
+    k_filename_list : [str], optional
         List of KCL filenames.
 
-    KCodeList : [str], optional
+    k_code_list : [str], optional
         List of KCL codes.
 
-    Args : [Argument], optional
+    args : [Argument], optional
         Arguments for the program.
 
-    Overrides : [str], optional
+    overrides : [str], optional
         Override configurations.
 
-    DisableYamlResult : bool, optional
+    disable_yaml_result : bool, optional
         Flag to disable YAML result.
 
-    PrintOverrideAst : bool, optional
+    print_override_ast : bool, optional
         Flag to print override AST.
 
-    StrictRangeCheck : bool, optional
+    strict_range_check : bool, optional
         Flag for strict range check.
 
-    DisableNone : bool, optional
+    disable_none : bool, optional
         Flag to disable none values.
 
-    Verbose : int, optional
+    verbose : int, optional
         Verbose level.
 
-    Debug : int, optional
+    debug : int, optional
         Debug level.
 
-    SortKeys : bool, optional
+    sort_keys : bool, optional
         Flag to sort keys in YAML/JSON results.
 
-    ExternalPkgs : [ExternalPkg], optional
+    external_pkgs : [ExternalPkg], optional
         External packages path.
 
-    IncludeSchemaTypePath : bool, optional
+    include_schema_type_path : bool, optional
         Flag to include schema type path in results.
 
-    CompileOnly : bool, optional
+    compile_only : bool, optional
         Flag to compile only without execution.
 
-    ShowHidden : bool, optional
+    show_hidden : bool, optional
         Flag to show hidden attributes.
 
-    PathSelector : [str], optional
+    path_selector : [str], optional
         Path selectors for results.
 
-    FastEval : bool, optional
+    fast_eval : bool, optional
         Flag for fast evaluation.
 
     """
 
-    WorkDir?: str
-    KFilenameList?: [str]
-    KCodeList?: [str]
-    Args?: [Argument]
-    Overrides?: [str]
-    DisableYamlResult?: bool
-    PrintOverrideAst?: bool
-    StrictRangeCheck?: bool
-    DisableNone?: bool
-    Verbose?: int
-    Debug?: int
-    SortKeys?: bool
-    ExternalPkgs?: [ExternalPkg]
-    IncludeSchemaTypePath?: bool
-    CompileOnly?: bool
-    ShowHidden?: bool
-    PathSelector?: [str]
-    FastEval?: bool
+    work_dir?: str
+    k_filename_list?: [str]
+    k_code_list?: [str]
+    args?: [Argument]
+    overrides?: [str]
+    disable_yaml_result?: bool
+    print_override_ast?: bool
+    strict_range_check?: bool
+    disable_none?: bool
+    verbose?: int
+    debug?: int
+    sort_keys?: bool
+    external_pkgs?: [ExternalPkg]
+    include_schema_type_path?: bool
+    compile_only?: bool
+    show_hidden?: bool
+    path_selector?: [str]
+    fast_eval?: bool
 
 schema ExecProgram_Result:
     r"""
@@ -304,24 +304,24 @@ schema ExecProgram_Result:
 
     Attributes
     ----------
-    JsonResult : str, optional
+    json_result : str, optional
         Result in JSON format.
 
-    YamlResult : str, optional
+    yaml_result : str, optional
         Result in YAML format.
 
-    LogMessage : str, optional
+    log_message : str, optional
         Log message from execution.
 
-    ErrMessage : str, optional
+    err_message : str, optional
         Error message from execution.
 
     """
 
-    JsonResult?: str
-    YamlResult?: str
-    LogMessage?: str
-    ErrMessage?: str
+    json_result?: str
+    yaml_result?: str
+    log_message?: str
+    err_message?: str
 
 schema ExternalPkg:
     r"""
@@ -331,16 +331,16 @@ schema ExternalPkg:
 
     Attributes
     ----------
-    PkgName : str, optional
+    pkg_name : str, optional
         Name of the package.
 
-    PkgPath : str, optional
+    pkg_path : str, optional
         Path of the package.
 
     """
 
-    PkgName?: str
-    PkgPath?: str
+    pkg_name?: str
+    pkg_path?: str
 
 schema FormatCode_Args:
     r"""
@@ -349,12 +349,12 @@ schema FormatCode_Args:
 
     Attributes
     ----------
-    Source : str, optional
+    source : str, optional
         Source code to be formatted.
 
     """
 
-    Source?: str
+    source?: str
 
 schema FormatCode_Result:
     r"""
@@ -363,12 +363,12 @@ schema FormatCode_Result:
 
     Attributes
     ----------
-    Formatted : [int], optional
+    formatted : [int], optional
         Formatted code as bytes.
 
     """
 
-    Formatted?: [int]
+    formatted?: [int]
 
 schema FormatPath_Args:
     r"""
@@ -377,12 +377,12 @@ schema FormatPath_Args:
 
     Attributes
     ----------
-    Path : str, optional
+    path : str, optional
         Path of the file to format.
 
     """
 
-    Path?: str
+    path?: str
 
 schema FormatPath_Result:
     r"""
@@ -391,12 +391,12 @@ schema FormatPath_Result:
 
     Attributes
     ----------
-    ChangedPaths : [str], optional
+    changed_paths : [str], optional
         List of changed file paths.
 
     """
 
-    ChangedPaths?: [str]
+    changed_paths?: [str]
 
 schema GetSchemaTypeMapping_Args:
     r"""
@@ -405,16 +405,16 @@ schema GetSchemaTypeMapping_Args:
 
     Attributes
     ----------
-    ExecArgs : ExecProgram_Args, optional
+    exec_args : ExecProgram_Args, optional
         Arguments for executing the program.
 
-    SchemaName : str, optional
+    schema_name : str, optional
         Name of the schema.
 
     """
 
-    ExecArgs?: ExecProgram_Args
-    SchemaName?: str
+    exec_args?: ExecProgram_Args
+    schema_name?: str
 
 schema GetSchemaTypeMapping_Result:
     r"""
@@ -423,12 +423,12 @@ schema GetSchemaTypeMapping_Result:
 
     Attributes
     ----------
-    SchemaTypeMapping : {str:KclType}, optional
+    schema_type_mapping : {str:KclType}, optional
         Map of schema type mappings.
 
     """
 
-    SchemaTypeMapping?: {str:KclType}
+    schema_type_mapping?: {str:KclType}
 
 schema GetVersion_Args:
     r"""
@@ -444,24 +444,24 @@ schema GetVersion_Result:
 
     Attributes
     ----------
-    Version : str, optional
+    version : str, optional
         KCL version.
 
-    Checksum : str, optional
+    checksum : str, optional
         Checksum of the KCL version.
 
-    GitSha : str, optional
+    git_sha : str, optional
         Git Git SHA of the KCL code repo.
 
-    VersionInfo : str, optional
+    version_info : str, optional
         Detailed version information as a string.
 
     """
 
-    Version?: str
-    Checksum?: str
-    GitSha?: str
-    VersionInfo?: str
+    version?: str
+    checksum?: str
+    git_sha?: str
+    version_info?: str
 
 schema KclType:
     r"""
@@ -470,72 +470,72 @@ schema KclType:
 
     Attributes
     ----------
-    Type : str, optional
+    $type : str, optional
         Type name (e.g., schema, dict, list, str, int, float, bool, any, union, number_multiplier).
 
-    UnionTypes : [KclType], optional
+    union_types : [KclType], optional
         Union types if applicable.
 
-    Default : str, optional
+    default : str, optional
         Default value of the type.
 
-    SchemaName : str, optional
+    schema_name : str, optional
         Name of the schema if applicable.
 
-    SchemaDoc : str, optional
+    schema_doc : str, optional
         Documentation for the schema.
 
-    Properties : {str:KclType}, optional
+    properties : {str:KclType}, optional
         Properties of the schema as a map with property name as key.
 
-    Required : [str], optional
+    required : [str], optional
         List of required schema properties.
 
-    Key : KclType, optional
+    key : KclType, optional
         Key type if the KclType is a dictionary.
 
-    Item : KclType, optional
+    item : KclType, optional
         Item type if the KclType is a list or dictionary.
 
-    Line : int, optional
+    line : int, optional
         Line number where the type is defined.
 
-    Decorators : [Decorator], optional
+    decorators : [Decorator], optional
         List of decorators for the schema.
 
-    Filename : str, optional
+    filename : str, optional
         Absolute path of the file where the attribute is located.
 
-    PkgPath : str, optional
+    pkg_path : str, optional
         Path of the package where the attribute is located.
 
-    Description : str, optional
+    description : str, optional
         Documentation for the attribute.
 
-    Examples : {str:Example}, optional
+    examples : {str:Example}, optional
         Map of examples with example name as key.
 
-    BaseSchema : KclType, optional
+    base_schema : KclType, optional
         Base schema if applicable.
 
     """
 
-    Type?: str
-    UnionTypes?: [KclType]
-    Default?: str
-    SchemaName?: str
-    SchemaDoc?: str
-    Properties?: {str:KclType}
-    Required?: [str]
-    Key?: KclType
-    Item?: KclType
-    Line?: int
-    Decorators?: [Decorator]
-    Filename?: str
-    PkgPath?: str
-    Description?: str
-    Examples?: {str:Example}
-    BaseSchema?: KclType
+    $type?: str
+    union_types?: [KclType]
+    default?: str
+    schema_name?: str
+    schema_doc?: str
+    properties?: {str:KclType}
+    required?: [str]
+    key?: KclType
+    item?: KclType
+    line?: int
+    decorators?: [Decorator]
+    filename?: str
+    pkg_path?: str
+    description?: str
+    examples?: {str:Example}
+    base_schema?: KclType
 
 schema KeyValuePair:
     r"""
@@ -544,16 +544,16 @@ schema KeyValuePair:
 
     Attributes
     ----------
-    Key : str, optional
+    key : str, optional
         Key of the pair.
 
-    Value : str, optional
+    value : str, optional
         Value of the pair.
 
     """
 
-    Key?: str
-    Value?: str
+    key?: str
+    value?: str
 
 schema LintPath_Args:
     r"""
@@ -562,12 +562,12 @@ schema LintPath_Args:
 
     Attributes
     ----------
-    Paths : [str], optional
+    paths : [str], optional
         Paths of the files to lint.
 
     """
 
-    Paths?: [str]
+    paths?: [str]
 
 schema LintPath_Result:
     r"""
@@ -576,12 +576,12 @@ schema LintPath_Result:
 
     Attributes
     ----------
-    Results : [str], optional
+    results : [str], optional
         List of lint results.
 
     """
 
-    Results?: [str]
+    results?: [str]
 
 schema ListDepFiles_Args:
     r"""
@@ -590,24 +590,24 @@ schema ListDepFiles_Args:
 
     Attributes
     ----------
-    WorkDir : str, optional
+    work_dir : str, optional
         Working directory.
 
-    UseAbsPath : bool, optional
+    use_abs_path : bool, optional
         Flag to use absolute paths.
 
-    IncludeAll : bool, optional
+    include_all : bool, optional
         Flag to include all files.
 
-    UseFastParser : bool, optional
+    use_fast_parser : bool, optional
         Flag to use fast parser.
 
     """
 
-    WorkDir?: str
-    UseAbsPath?: bool
-    IncludeAll?: bool
-    UseFastParser?: bool
+    work_dir?: str
+    use_abs_path?: bool
+    include_all?: bool
+    use_fast_parser?: bool
 
 schema ListDepFiles_Result:
     r"""
@@ -616,20 +616,20 @@ schema ListDepFiles_Result:
 
     Attributes
     ----------
-    Pkgroot : str, optional
+    pkgroot : str, optional
         Root package path.
 
-    Pkgpath : str, optional
+    pkgpath : str, optional
         Package path.
 
-    Files : [str], optional
+    files : [str], optional
         List of file paths in the package.
 
     """
 
-    Pkgroot?: str
-    Pkgpath?: str
-    Files?: [str]
+    pkgroot?: str
+    pkgpath?: str
+    files?: [str]
 
 schema ListMethod_Args:
     r"""
@@ -645,12 +645,12 @@ schema ListMethod_Result:
 
     Attributes
     ----------
-    MethodNameList : [str], optional
+    method_name_list : [str], optional
         List of available method names.
 
     """
 
-    MethodNameList?: [str]
+    method_name_list?: [str]
 
 schema ListOptions_Result:
     r"""
@@ -659,12 +659,12 @@ schema ListOptions_Result:
 
     Attributes
     ----------
-    Options : [OptionHelp], optional
+    options : [OptionHelp], optional
         List of available options.
 
     """
 
-    Options?: [OptionHelp]
+    options?: [OptionHelp]
 
 schema ListVariables_Args:
     r"""
@@ -673,20 +673,20 @@ schema ListVariables_Args:
 
     Attributes
     ----------
-    Files : [str], optional
+    files : [str], optional
         Files to be processed.
 
-    Specs : [str], optional
+    specs : [str], optional
         Specifications for variables.
 
-    Options : ListVariables_Options, optional
+    options : ListVariables_Options, optional
         Options for listing variables.
 
     """
 
-    Files?: [str]
-    Specs?: [str]
-    Options?: ListVariables_Options
+    files?: [str]
+    specs?: [str]
+    options?: ListVariables_Options
 
 schema ListVariables_Options:
     r"""
@@ -695,12 +695,12 @@ schema ListVariables_Options:
 
     Attributes
     ----------
-    MergeProgram : bool, optional
+    merge_program : bool, optional
         Flag to merge program configuration.
 
     """
 
-    MergeProgram?: bool
+    merge_program?: bool
 
 schema ListVariables_Result:
     r"""
@@ -709,20 +709,20 @@ schema ListVariables_Result:
 
     Attributes
     ----------
-    Variables : {str:VariableList}, optional
+    variables : {str:VariableList}, optional
         Map of variable lists by file.
 
-    UnsupportedCodes : [str], optional
+    unsupported_codes : [str], optional
         List of unsupported codes.
 
-    ParseErrors : [Error], optional
+    parse_errors : [Error], optional
         List of parse errors encountered.
 
     """
 
-    Variables?: {str:VariableList}
-    UnsupportedCodes?: [str]
-    ParseErrors?: [Error]
+    variables?: {str:VariableList}
+    unsupported_codes?: [str]
+    parse_errors?: [Error]
 
 schema LoadPackage_Args:
     r"""
@@ -731,24 +731,24 @@ schema LoadPackage_Args:
 
     Attributes
     ----------
-    ParseArgs : ParseProgram_Args, optional
+    parse_args : ParseProgram_Args, optional
         Arguments for parsing the program.
 
-    ResolveAst : bool, optional
+    resolve_ast : bool, optional
         Flag indicating whether to resolve AST.
 
-    LoadBuiltin : bool, optional
+    load_builtin : bool, optional
         Flag indicating whether to load built-in modules.
 
-    WithAstIndex : bool, optional
+    with_ast_index : bool, optional
         Flag indicating whether to include AST index.
 
     """
 
-    ParseArgs?: ParseProgram_Args
-    ResolveAst?: bool
-    LoadBuiltin?: bool
-    WithAstIndex?: bool
+    parse_args?: ParseProgram_Args
+    resolve_ast?: bool
+    load_builtin?: bool
+    with_ast_index?: bool
 
 schema LoadPackage_Result:
     r"""
@@ -757,48 +757,48 @@ schema LoadPackage_Result:
 
     Attributes
     ----------
-    Program : str, optional
+    program : str, optional
         Program Abstract Syntax Tree (AST) in JSON format.
 
-    Paths : [str], optional
+    paths : [str], optional
         Returns the files in the order they should be compiled.
 
-    ParseErrors : [Error], optional
+    parse_errors : [Error], optional
         List of parse errors.
 
-    TypeErrors : [Error], optional
+    type_errors : [Error], optional
         List of type errors.
 
-    Scopes : {str:Scope}, optional
+    scopes : {str:Scope}, optional
         Map of scopes with scope index as key.
 
-    Symbols : {str:Symbol}, optional
+    symbols : {str:Symbol}, optional
         Map of symbols with symbol index as key.
 
-    NodeSymbolMap : {str:SymbolIndex}, optional
+    node_symbol_map : {str:SymbolIndex}, optional
         Map of node-symbol associations with AST index UUID as key.
 
-    SymbolNodeMap : {str:str}, optional
+    symbol_node_map : {str:str}, optional
         Map of symbol-node associations with symbol index as key.
 
-    FullyQualifiedNameMap : {str:SymbolIndex}, optional
+    fully_qualified_name_map : {str:SymbolIndex}, optional
         Map of fully qualified names with symbol index as key.
 
-    PkgScopeMap : {str:ScopeIndex}, optional
+    pkg_scope_map : {str:ScopeIndex}, optional
         Map of package scope with package path as key.
 
     """
 
-    Program?: str
-    Paths?: [str]
-    ParseErrors?: [Error]
-    TypeErrors?: [Error]
-    Scopes?: {str:Scope}
-    Symbols?: {str:Symbol}
-    NodeSymbolMap?: {str:SymbolIndex}
-    SymbolNodeMap?: {str:str}
-    FullyQualifiedNameMap?: {str:SymbolIndex}
-    PkgScopeMap?: {str:ScopeIndex}
+    program?: str
+    paths?: [str]
+    parse_errors?: [Error]
+    type_errors?: [Error]
+    scopes?: {str:Scope}
+    symbols?: {str:Symbol}
+    node_symbol_map?: {str:SymbolIndex}
+    symbol_node_map?: {str:str}
+    fully_qualified_name_map?: {str:SymbolIndex}
+    pkg_scope_map?: {str:ScopeIndex}
 
 schema LoadSettingsFiles_Args:
     r"""
@@ -807,16 +807,16 @@ schema LoadSettingsFiles_Args:
 
     Attributes
     ----------
-    WorkDir : str, optional
+    work_dir : str, optional
         Working directory.
 
-    Files : [str], optional
+    files : [str], optional
         Setting files to load.
 
     """
 
-    WorkDir?: str
-    Files?: [str]
+    work_dir?: str
+    files?: [str]
 
 schema LoadSettingsFiles_Result:
     r"""
@@ -825,16 +825,16 @@ schema LoadSettingsFiles_Result:
 
     Attributes
     ----------
-    KclCliConfigs : CliConfig, optional
+    kcl_cli_configs : CliConfig, optional
         KCL CLI configuration.
 
-    KclOptions : [KeyValuePair], optional
+    kcl_options : [KeyValuePair], optional
         List of KCL options as key-value pairs.
 
     """
 
-    KclCliConfigs?: CliConfig
-    KclOptions?: [KeyValuePair]
+    kcl_cli_configs?: CliConfig
+    kcl_options?: [KeyValuePair]
 
 schema MapEntry:
     r"""
@@ -843,16 +843,16 @@ schema MapEntry:
 
     Attributes
     ----------
-    Key : str, optional
+    key : str, optional
         Key of the map entry.
 
-    Value : Variable, optional
+    value : Variable, optional
         Value of the map entry.
 
     """
 
-    Key?: str
-    Value?: Variable
+    key?: str
+    value?: Variable
 
 schema Message:
     r"""
@@ -861,16 +861,16 @@ schema Message:
 
     Attributes
     ----------
-    Msg : str, optional
+    msg : str, optional
         The error message text.
 
-    Pos : Position, optional
+    pos : Position, optional
         The position in the source code where the error occurred.
 
     """
 
-    Msg?: str
-    Pos?: Position
+    msg?: str
+    pos?: Position
 
 schema OptionHelp:
     r"""
@@ -879,28 +879,28 @@ schema OptionHelp:
 
     Attributes
     ----------
-    Name : str, optional
+    name : str, optional
         Name of the option.
 
-    Type : str, optional
+    $type : str, optional
         Type of the option.
 
-    Required : bool, optional
+    required : bool, optional
         Flag indicating if the option is required.
 
-    DefaultValue : str, optional
+    default_value : str, optional
         Default value of the option.
 
-    Help : str, optional
+    help : str, optional
         Help text for the option.
 
     """
 
-    Name?: str
-    Type?: str
-    Required?: bool
-    DefaultValue?: str
-    Help?: str
+    name?: str
+    $type?: str
+    required?: bool
+    default_value?: str
+    help?: str
 
 schema OverrideFile_Args:
     r"""
@@ -909,20 +909,20 @@ schema OverrideFile_Args:
 
     Attributes
     ----------
-    File : str, optional
+    file : str, optional
         Path of the file to override.
 
-    Specs : [str], optional
+    specs : [str], optional
         List of override specifications.
 
-    ImportPaths : [str], optional
+    import_paths : [str], optional
         List of import paths.
 
     """
 
-    File?: str
-    Specs?: [str]
-    ImportPaths?: [str]
+    file?: str
+    specs?: [str]
+    import_paths?: [str]
 
 schema OverrideFile_Result:
     r"""
@@ -931,16 +931,16 @@ schema OverrideFile_Result:
 
     Attributes
     ----------
-    Result : bool, optional
+    result : bool, optional
         Result of the override operation.
 
-    ParseErrors : [Error], optional
+    parse_errors : [Error], optional
         List of parse errors encountered.
 
     """
 
-    Result?: bool
-    ParseErrors?: [Error]
+    result?: bool
+    parse_errors?: [Error]
 
 schema ParseFile_Args:
     r"""
@@ -949,20 +949,20 @@ schema ParseFile_Args:
 
     Attributes
     ----------
-    Path : str, optional
+    path : str, optional
         Path of the file to be parsed.
 
-    Source : str, optional
+    source : str, optional
         Source code to be parsed.
 
-    ExternalPkgs : [ExternalPkg], optional
+    external_pkgs : [ExternalPkg], optional
         External packages path.
 
     """
 
-    Path?: str
-    Source?: str
-    ExternalPkgs?: [ExternalPkg]
+    path?: str
+    source?: str
+    external_pkgs?: [ExternalPkg]
 
 schema ParseFile_Result:
     r"""
@@ -971,20 +971,20 @@ schema ParseFile_Result:
 
     Attributes
     ----------
-    AstJson : str, optional
+    ast_json : str, optional
         Abstract Syntax Tree (AST) in JSON format.
 
-    Deps : [str], optional
+    deps : [str], optional
         File dependency paths.
 
-    Errors : [Error], optional
+    errors : [Error], optional
         List of parse errors.
 
     """
 
-    AstJson?: str
-    Deps?: [str]
-    Errors?: [Error]
+    ast_json?: str
+    deps?: [str]
+    errors?: [Error]
 
 schema ParseProgram_Args:
     r"""
@@ -993,20 +993,20 @@ schema ParseProgram_Args:
 
     Attributes
     ----------
-    Paths : [str], optional
+    paths : [str], optional
         Paths of the program files to be parsed.
 
-    Sources : [str], optional
+    sources : [str], optional
         Source codes to be parsed.
 
-    ExternalPkgs : [ExternalPkg], optional
+    external_pkgs : [ExternalPkg], optional
         External packages path.
 
     """
 
-    Paths?: [str]
-    Sources?: [str]
-    ExternalPkgs?: [ExternalPkg]
+    paths?: [str]
+    sources?: [str]
+    external_pkgs?: [ExternalPkg]
 
 schema ParseProgram_Result:
     r"""
@@ -1015,20 +1015,20 @@ schema ParseProgram_Result:
 
     Attributes
     ----------
-    AstJson : str, optional
+    ast_json : str, optional
         Abstract Syntax Tree (AST) in JSON format.
 
-    Paths : [str], optional
+    paths : [str], optional
         Returns the files in the order they should be compiled.
 
-    Errors : [Error], optional
+    errors : [Error], optional
         List of parse errors.
 
     """
 
-    AstJson?: str
-    Paths?: [str]
-    Errors?: [Error]
+    ast_json?: str
+    paths?: [str]
+    errors?: [Error]
 
 schema Ping_Args:
     r"""
@@ -1037,12 +1037,12 @@ schema Ping_Args:
 
     Attributes
     ----------
-    Value : str, optional
+    value : str, optional
         Value to be sent in the ping request.
 
     """
 
-    Value?: str
+    value?: str
 
 schema Ping_Result:
     r"""
@@ -1051,12 +1051,12 @@ schema Ping_Result:
 
     Attributes
     ----------
-    Value : str, optional
+    value : str, optional
         Value received in the ping response.
 
     """
 
-    Value?: str
+    value?: str
 
 schema Position:
     r"""
@@ -1065,20 +1065,20 @@ schema Position:
 
     Attributes
     ----------
-    Line : int, optional
+    line : int, optional
         Line number.
 
-    Column : int, optional
+    column : int, optional
         Column number.
 
-    Filename : str, optional
+    filename : str, optional
         Filename the position refers to.
 
     """
 
-    Line?: int
-    Column?: int
-    Filename?: str
+    line?: int
+    column?: int
+    filename?: str
 
 schema RenameCode_Args:
     r"""
@@ -1087,24 +1087,24 @@ schema RenameCode_Args:
 
     Attributes
     ----------
-    PackageRoot : str, optional
+    package_root : str, optional
         File path to the package root.
 
-    SymbolPath : str, optional
+    symbol_path : str, optional
         Path to the target symbol to be renamed.
 
-    SourceCodes : {str:str}, optional
+    source_codes : {str:str}, optional
         Map of source code with filename as key and code as value.
 
-    NewName : str, optional
+    new_name : str, optional
         New name of the symbol.
 
     """
 
-    PackageRoot?: str
-    SymbolPath?: str
-    SourceCodes?: {str:str}
-    NewName?: str
+    package_root?: str
+    symbol_path?: str
+    source_codes?: {str:str}
+    new_name?: str
 
 schema RenameCode_Result:
     r"""
@@ -1113,12 +1113,12 @@ schema RenameCode_Result:
 
     Attributes
     ----------
-    ChangedCodes : {str:str}, optional
+    changed_codes : {str:str}, optional
         Map of changed code with filename as key and modified code as value.
 
     """
 
-    ChangedCodes?: {str:str}
+    changed_codes?: {str:str}
 
 schema Rename_Args:
     r"""
@@ -1127,24 +1127,24 @@ schema Rename_Args:
 
     Attributes
     ----------
-    PackageRoot : str, optional
+    package_root : str, optional
         File path to the package root.
 
-    SymbolPath : str, optional
+    symbol_path : str, optional
         Path to the target symbol to be renamed.
 
-    FilePaths : [str], optional
+    file_paths : [str], optional
         Paths to the source code files.
 
-    NewName : str, optional
+    new_name : str, optional
         New name of the symbol.
 
     """
 
-    PackageRoot?: str
-    SymbolPath?: str
-    FilePaths?: [str]
-    NewName?: str
+    package_root?: str
+    symbol_path?: str
+    file_paths?: [str]
+    new_name?: str
 
 schema Rename_Result:
     r"""
@@ -1153,12 +1153,12 @@ schema Rename_Result:
 
     Attributes
     ----------
-    ChangedFiles : [str], optional
+    changed_files : [str], optional
         List of file paths that got changed.
 
     """
 
-    ChangedFiles?: [str]
+    changed_files?: [str]
 
 schema Scope:
     r"""
@@ -1167,28 +1167,28 @@ schema Scope:
 
     Attributes
     ----------
-    Kind : str, optional
+    kind : str, optional
         Type of the scope.
 
-    Parent : ScopeIndex, optional
+    parent : ScopeIndex, optional
         Parent scope.
 
-    Owner : SymbolIndex, optional
+    owner : SymbolIndex, optional
         Owner of the scope.
 
-    Children : [ScopeIndex], optional
+    children : [ScopeIndex], optional
         Children of the scope.
 
-    Defs : [SymbolIndex], optional
+    defs : [SymbolIndex], optional
         Definitions in the scope.
 
     """
 
-    Kind?: str
-    Parent?: ScopeIndex
-    Owner?: SymbolIndex
-    Children?: [ScopeIndex]
-    Defs?: [SymbolIndex]
+    kind?: str
+    parent?: ScopeIndex
+    owner?: SymbolIndex
+    children?: [ScopeIndex]
+    defs?: [SymbolIndex]
 
 schema ScopeIndex:
     r"""
@@ -1197,20 +1197,20 @@ schema ScopeIndex:
 
     Attributes
     ----------
-    I : int, optional
+    i : int, optional
         Index identifier.
 
-    G : int, optional
+    g : int, optional
         Global identifier.
 
-    Kind : str, optional
+    kind : str, optional
         Type of the scope.
 
     """
 
-    I?: int
-    G?: int
-    Kind?: str
+    i?: int
+    g?: int
+    kind?: str
 
 schema Symbol:
     r"""
@@ -1219,32 +1219,32 @@ schema Symbol:
 
     Attributes
     ----------
-    Ty : KclType, optional
+    ty : KclType, optional
         Type of the symbol.
 
-    Name : str, optional
+    name : str, optional
         Name of the symbol.
 
-    Owner : SymbolIndex, optional
+    owner : SymbolIndex, optional
         Owner of the symbol.
 
-    Def : SymbolIndex, optional
+    def : SymbolIndex, optional
         Definition of the symbol.
 
-    Attrs : [SymbolIndex], optional
+    attrs : [SymbolIndex], optional
         Attributes of the symbol.
 
-    IsGlobal : bool, optional
+    is_global : bool, optional
         Flag indicating if the symbol is global.
 
     """
 
-    Ty?: KclType
-    Name?: str
-    Owner?: SymbolIndex
-    Def?: SymbolIndex
-    Attrs?: [SymbolIndex]
-    IsGlobal?: bool
+    ty?: KclType
+    name?: str
+    owner?: SymbolIndex
+    def?: SymbolIndex
+    attrs?: [SymbolIndex]
+    is_global?: bool
 
 schema SymbolIndex:
     r"""
@@ -1253,20 +1253,20 @@ schema SymbolIndex:
 
     Attributes
     ----------
-    I : int, optional
+    i : int, optional
         Index identifier.
 
-    G : int, optional
+    g : int, optional
         Global identifier.
 
-    Kind : str, optional
+    kind : str, optional
         Type of the symbol or scope.
 
     """
 
-    I?: int
-    G?: int
-    Kind?: str
+    i?: int
+    g?: int
+    kind?: str
 
 schema TestCaseInfo:
     r"""
@@ -1275,24 +1275,24 @@ schema TestCaseInfo:
 
     Attributes
     ----------
-    Name : str, optional
+    name : str, optional
         Name of the test case.
 
-    Error : str, optional
+    error : str, optional
         Error message if any.
 
-    Duration : int, optional
+    duration : int, optional
         Duration of the test case in microseconds.
 
-    LogMessage : str, optional
+    log_message : str, optional
         Log message from the test case.
 
     """
 
-    Name?: str
-    Error?: str
-    Duration?: int
-    LogMessage?: str
+    name?: str
+    error?: str
+    duration?: int
+    log_message?: str
 
 schema Test_Args:
     r"""
@@ -1301,24 +1301,24 @@ schema Test_Args:
 
     Attributes
     ----------
-    ExecArgs : ExecProgram_Args, optional
+    exec_args : ExecProgram_Args, optional
         Execution program arguments.
 
-    PkgList : [str], optional
+    pkg_list : [str], optional
         List of KCL package paths to be tested.
 
-    RunRegexp : str, optional
+    run_regexp : str, optional
         Regular expression for filtering tests to run.
 
-    FailFast : bool, optional
+    fail_fast : bool, optional
         Flag to stop the test run on the first failure.
 
     """
 
-    ExecArgs?: ExecProgram_Args
-    PkgList?: [str]
-    RunRegexp?: str
-    FailFast?: bool
+    exec_args?: ExecProgram_Args
+    pkg_list?: [str]
+    run_regexp?: str
+    fail_fast?: bool
 
 schema Test_Result:
     r"""
@@ -1327,12 +1327,12 @@ schema Test_Result:
 
     Attributes
     ----------
-    Info : [TestCaseInfo], optional
+    info : [TestCaseInfo], optional
         List of test case information.
 
     """
 
-    Info?: [TestCaseInfo]
+    info?: [TestCaseInfo]
 
 schema UnimplementedBuiltinServiceServer:
     r"""
@@ -1355,16 +1355,16 @@ schema UpdateDependencies_Args:
 
     Attributes
     ----------
-    ManifestPath : str, optional
+    manifest_path : str, optional
         Path to the manifest file.
 
-    Vendor : bool, optional
+    vendor : bool, optional
         Flag to vendor dependencies locally.
 
     """
 
-    ManifestPath?: str
-    Vendor?: bool
+    manifest_path?: str
+    vendor?: bool
 
 schema UpdateDependencies_Result:
     r"""
@@ -1373,12 +1373,12 @@ schema UpdateDependencies_Result:
 
     Attributes
     ----------
-    ExternalPkgs : [ExternalPkg], optional
+    external_pkgs : [ExternalPkg], optional
         List of external packages updated.
 
     """
 
-    ExternalPkgs?: [ExternalPkg]
+    external_pkgs?: [ExternalPkg]
 
 schema ValidateCode_Args:
     r"""
@@ -1387,36 +1387,36 @@ schema ValidateCode_Args:
 
     Attributes
     ----------
-    Datafile : str, optional
+    datafile : str, optional
         Path to the data file.
 
-    Data : str, optional
+    data : str, optional
         Data content.
 
-    File : str, optional
+    file : str, optional
         Path to the code file.
 
-    Code : str, optional
+    code : str, optional
         Source code content.
 
-    Schema : str, optional
+    $schema : str, optional
         Name of the schema.
 
-    AttributeName : str, optional
+    attribute_name : str, optional
         Name of the attribute.
 
-    Format : str, optional
+    format : str, optional
         Format of the validation (e.g., "json", "yaml").
 
     """
 
-    Datafile?: str
-    Data?: str
-    File?: str
-    Code?: str
-    Schema?: str
-    AttributeName?: str
-    Format?: str
+    datafile?: str
+    data?: str
+    file?: str
+    code?: str
+    $schema?: str
+    attribute_name?: str
+    format?: str
 
 schema ValidateCode_Result:
     r"""
@@ -1425,16 +1425,16 @@ schema ValidateCode_Result:
 
     Attributes
     ----------
-    Success : bool, optional
+    success : bool, optional
         Flag indicating if validation was successful.
 
-    ErrMessage : str, optional
+    err_message : str, optional
         Error message from validation.
 
     """
 
-    Success?: bool
-    ErrMessage?: str
+    success?: bool
+    err_message?: str
 
 schema Variable:
     r"""
@@ -1443,28 +1443,28 @@ schema Variable:
 
     Attributes
     ----------
-    Value : str, optional
+    value : str, optional
         Value of the variable.
 
-    TypeName : str, optional
+    type_name : str, optional
         Type name of the variable.
 
-    OpSym : str, optional
+    op_sym : str, optional
         Operation symbol associated with the variable.
 
-    ListItems : [Variable], optional
+    list_items : [Variable], optional
         List items if the variable is a list.
 
-    DictEntries : [MapEntry], optional
+    dict_entries : [MapEntry], optional
         Dictionary entries if the variable is a dictionary.
 
     """
 
-    Value?: str
-    TypeName?: str
-    OpSym?: str
-    ListItems?: [Variable]
-    DictEntries?: [MapEntry]
+    value?: str
+    type_name?: str
+    op_sym?: str
+    list_items?: [Variable]
+    dict_entries?: [MapEntry]
 
 schema VariableList:
     r"""
@@ -1473,12 +1473,12 @@ schema VariableList:
 
     Attributes
     ----------
-    Variables : [Variable], optional
+    variables : [Variable], optional
         List of variables.
 
     """
 
-    Variables?: [Variable]
+    variables?: [Variable]
 
 schema builtinServiceClient:
     r"""
@@ -1491,6 +1491,890 @@ schema kclvmServiceClient:
     kclvmServiceClient
     """
 
+
+`
+	assert2.Equal(t, strings.ReplaceAll(kclCode, "\r\n", "\n"), strings.ReplaceAll(expectedKclCodeFromField, "\r\n", "\n"))
+}
+
+func TestGenKclFromKclGoPackage(t *testing.T) {
+	var buf bytes.Buffer
+	opts := &GenKclOptions{
+		Mode: ModeGoStruct,
+	}
+	err := GenKcl(&buf, "../../kcl", nil, opts)
+	if err != nil {
+		log.Fatal(err)
+	}
+	kclCode := buf.String()
+	expectedKclCodeFromField := `"""
+This file was generated by the KCL auto-gen tool. DO NOT EDIT.
+Editing this file might prove futile when you re-run the KCL auto-gen generate command.
+"""
+
+schema GpyrpcArgument:
+    r"""
+    Message representing a key-value argument for KCL.
+    kcl main.k -D name=value
+
+
+    Attributes
+    ----------
+    name : str, optional
+        Name of the argument.
+
+    value : str, optional
+        Value of the argument.
+
+    """
+
+    name?: str
+    value?: str
+
+schema GpyrpcDecorator:
+    r"""
+    Message representing a decorator in KCL.
+
+
+    Attributes
+    ----------
+    name : str, optional
+        Name of the decorator.
+
+    arguments : [str], optional
+        Arguments for the decorator.
+
+    keywords : {str:str}, optional
+        Keyword arguments for the decorator as a map with keyword name as key.
+
+    """
+
+    name?: str
+    arguments?: [str]
+    keywords?: {str:str}
+
+schema GpyrpcExample:
+    r"""
+    Message representing an example in KCL.
+
+
+    Attributes
+    ----------
+    summary : str, optional
+        Short description for the example.
+
+    description : str, optional
+        Long description for the example.
+
+    value : str, optional
+        Embedded literal example.
+
+    """
+
+    summary?: str
+    description?: str
+    value?: str
+
+schema GpyrpcExternalPkg:
+    r"""
+    Message representing an external package for KCL.
+    kcl main.k -E pkg_name=pkg_path
+
+
+    Attributes
+    ----------
+    pkg_name : str, optional
+        Name of the package.
+
+    pkg_path : str, optional
+        Path of the package.
+
+    """
+
+    pkg_name?: str
+    pkg_path?: str
+
+schema KCLResult:
+    r"""
+    KCLResult denotes the result for the Run API.
+
+    """
+
+
+schema KCLResultList:
+    r"""
+    KCLResultList
+    """
+
+
+schema KclType:
+    r"""
+    Message representing a KCL type.
+
+
+    Attributes
+    ----------
+    $type : str, optional
+        Type name (e.g., schema, dict, list, str, int, float, bool, any, union, number_multiplier).
+
+    union_types : [KclType], optional
+        Union types if applicable.
+
+    default : str, optional
+        Default value of the type.
+
+    schema_name : str, optional
+        Name of the schema if applicable.
+
+    schema_doc : str, optional
+        Documentation for the schema.
+
+    properties : {str:KclType}, optional
+        Properties of the schema as a map with property name as key.
+
+    required : [str], optional
+        List of required schema properties.
+
+    key : KclType, optional
+        Key type if the KclType is a dictionary.
+
+    item : KclType, optional
+        Item type if the KclType is a list or dictionary.
+
+    line : int, optional
+        Line number where the type is defined.
+
+    decorators : [GpyrpcDecorator], optional
+        List of decorators for the schema.
+
+    filename : str, optional
+        Absolute path of the file where the attribute is located.
+
+    pkg_path : str, optional
+        Path of the package where the attribute is located.
+
+    description : str, optional
+        Documentation for the attribute.
+
+    examples : {str:GpyrpcExample}, optional
+        Map of examples with example name as key.
+
+    base_schema : KclType, optional
+        Base schema if applicable.
+
+    """
+
+    $type?: str
+    union_types?: [KclType]
+    default?: str
+    schema_name?: str
+    schema_doc?: str
+    properties?: {str:KclType}
+    required?: [str]
+    key?: KclType
+    item?: KclType
+    line?: int
+    decorators?: [GpyrpcDecorator]
+    filename?: str
+    pkg_path?: str
+    description?: str
+    examples?: {str:GpyrpcExample}
+    base_schema?: KclType
+
+schema Option:
+    r"""
+    Option
+
+    Attributes
+    ----------
+    work_dir : str, optional
+        Working directory.
+
+    k_filename_list : [str], optional
+        List of KCL filenames.
+
+    k_code_list : [str], optional
+        List of KCL codes.
+
+    args : [GpyrpcArgument], optional
+        Arguments for the program.
+
+    overrides : [str], optional
+        Override configurations.
+
+    disable_yaml_result : bool, optional
+        Flag to disable YAML result.
+
+    print_override_ast : bool, optional
+        Flag to print override AST.
+
+    strict_range_check : bool, optional
+        Flag for strict range check.
+
+    disable_none : bool, optional
+        Flag to disable none values.
+
+    verbose : int, optional
+        Verbose level.
+
+    debug : int, optional
+        Debug level.
+
+    sort_keys : bool, optional
+        Flag to sort keys in YAML/JSON results.
+
+    external_pkgs : [GpyrpcExternalPkg], optional
+        External packages path.
+
+    include_schema_type_path : bool, optional
+        Flag to include schema type path in results.
+
+    compile_only : bool, optional
+        Flag to compile only without execution.
+
+    show_hidden : bool, optional
+        Flag to show hidden attributes.
+
+    path_selector : [str], optional
+        Path selectors for results.
+
+    fast_eval : bool, optional
+        Flag for fast evaluation.
+
+    Err : any, optional
+    """
+
+    work_dir?: str
+    k_filename_list?: [str]
+    k_code_list?: [str]
+    args?: [GpyrpcArgument]
+    overrides?: [str]
+    disable_yaml_result?: bool
+    print_override_ast?: bool
+    strict_range_check?: bool
+    disable_none?: bool
+    verbose?: int
+    debug?: int
+    sort_keys?: bool
+    external_pkgs?: [GpyrpcExternalPkg]
+    include_schema_type_path?: bool
+    compile_only?: bool
+    show_hidden?: bool
+    path_selector?: [str]
+    fast_eval?: bool
+    Err?: any
+
+schema VersionResult:
+    r"""
+    VersionResult
+
+    Attributes
+    ----------
+    version : str, optional
+        KCL version.
+
+    checksum : str, optional
+        Checksum of the KCL version.
+
+    git_sha : str, optional
+        Git Git SHA of the KCL code repo.
+
+    version_info : str, optional
+        Detailed version information as a string.
+
+    """
+
+    version?: str
+    checksum?: str
+    git_sha?: str
+    version_info?: str
+
+schema typeAttributeHook:
+    r"""
+    typeAttributeHook
+    """
+
+
+`
+	assert2.Equal(t, strings.ReplaceAll(kclCode, "\r\n", "\n"), strings.ReplaceAll(expectedKclCodeFromField, "\r\n", "\n"))
+}
+
+func TestGenKclFromKclGoLoaderPackage(t *testing.T) {
+	var buf bytes.Buffer
+	opts := &GenKclOptions{
+		Mode: ModeGoStruct,
+	}
+	err := GenKcl(&buf, "../../loader", nil, opts)
+	if err != nil {
+		log.Fatal(err)
+	}
+	kclCode := buf.String()
+	expectedKclCodeFromField := `"""
+This file was generated by the KCL auto-gen tool. DO NOT EDIT.
+Editing this file might prove futile when you re-run the KCL auto-gen generate command.
+"""
+
+schema GpyrpcDecorator:
+    r"""
+    Message representing a decorator in KCL.
+
+
+    Attributes
+    ----------
+    name : str, optional
+        Name of the decorator.
+
+    arguments : [str], optional
+        Arguments for the decorator.
+
+    keywords : {str:str}, optional
+        Keyword arguments for the decorator as a map with keyword name as key.
+
+    """
+
+    name?: str
+    arguments?: [str]
+    keywords?: {str:str}
+
+schema GpyrpcError:
+    r"""
+    Message representing an error.
+
+
+    Attributes
+    ----------
+    level : str, optional
+        Level of the error (e.g., "Error", "Warning").
+
+    code : str, optional
+        Error code. (e.g., "E1001")
+
+    messages : [GpyrpcMessage], optional
+        List of error messages.
+
+    """
+
+    level?: str
+    code?: str
+    messages?: [GpyrpcMessage]
+
+schema GpyrpcExample:
+    r"""
+    Message representing an example in KCL.
+
+
+    Attributes
+    ----------
+    summary : str, optional
+        Short description for the example.
+
+    description : str, optional
+        Long description for the example.
+
+    value : str, optional
+        Embedded literal example.
+
+    """
+
+    summary?: str
+    description?: str
+    value?: str
+
+schema GpyrpcExternalPkg:
+    r"""
+    Message representing an external package for KCL.
+    kcl main.k -E pkg_name=pkg_path
+
+
+    Attributes
+    ----------
+    pkg_name : str, optional
+        Name of the package.
+
+    pkg_path : str, optional
+        Path of the package.
+
+    """
+
+    pkg_name?: str
+    pkg_path?: str
+
+schema GpyrpcKclType:
+    r"""
+    Message representing a KCL type.
+
+
+    Attributes
+    ----------
+    $type : str, optional
+        Type name (e.g., schema, dict, list, str, int, float, bool, any, union, number_multiplier).
+
+    union_types : [GpyrpcKclType], optional
+        Union types if applicable.
+
+    default : str, optional
+        Default value of the type.
+
+    schema_name : str, optional
+        Name of the schema if applicable.
+
+    schema_doc : str, optional
+        Documentation for the schema.
+
+    properties : {str:GpyrpcKclType}, optional
+        Properties of the schema as a map with property name as key.
+
+    required : [str], optional
+        List of required schema properties.
+
+    key : GpyrpcKclType, optional
+        Key type if the KclType is a dictionary.
+
+    item : GpyrpcKclType, optional
+        Item type if the KclType is a list or dictionary.
+
+    line : int, optional
+        Line number where the type is defined.
+
+    decorators : [GpyrpcDecorator], optional
+        List of decorators for the schema.
+
+    filename : str, optional
+        Absolute path of the file where the attribute is located.
+
+    pkg_path : str, optional
+        Path of the package where the attribute is located.
+
+    description : str, optional
+        Documentation for the attribute.
+
+    examples : {str:GpyrpcExample}, optional
+        Map of examples with example name as key.
+
+    base_schema : GpyrpcKclType, optional
+        Base schema if applicable.
+
+    """
+
+    $type?: str
+    union_types?: [GpyrpcKclType]
+    default?: str
+    schema_name?: str
+    schema_doc?: str
+    properties?: {str:GpyrpcKclType}
+    required?: [str]
+    key?: GpyrpcKclType
+    item?: GpyrpcKclType
+    line?: int
+    decorators?: [GpyrpcDecorator]
+    filename?: str
+    pkg_path?: str
+    description?: str
+    examples?: {str:GpyrpcExample}
+    base_schema?: GpyrpcKclType
+
+schema GpyrpcListVariablesOptions:
+    r"""
+    Message for list variables options.
+
+
+    Attributes
+    ----------
+    merge_program : bool, optional
+        Flag to merge program configuration.
+
+    """
+
+    merge_program?: bool
+
+schema GpyrpcMapEntry:
+    r"""
+    Message representing a map entry.
+
+
+    Attributes
+    ----------
+    key : str, optional
+        Key of the map entry.
+
+    value : GpyrpcVariable, optional
+        Value of the map entry.
+
+    """
+
+    key?: str
+    value?: GpyrpcVariable
+
+schema GpyrpcMessage:
+    r"""
+    Message representing a detailed error message with a position.
+
+
+    Attributes
+    ----------
+    msg : str, optional
+        The error message text.
+
+    pos : GpyrpcPosition, optional
+        The position in the source code where the error occurred.
+
+    """
+
+    msg?: str
+    pos?: GpyrpcPosition
+
+schema GpyrpcOptionHelp:
+    r"""
+    Message representing a help option.
+
+
+    Attributes
+    ----------
+    name : str, optional
+        Name of the option.
+
+    $type : str, optional
+        Type of the option.
+
+    required : bool, optional
+        Flag indicating if the option is required.
+
+    default_value : str, optional
+        Default value of the option.
+
+    help : str, optional
+        Help text for the option.
+
+    """
+
+    name?: str
+    $type?: str
+    required?: bool
+    default_value?: str
+    help?: str
+
+schema GpyrpcPosition:
+    r"""
+    Message representing a position in the source code.
+
+
+    Attributes
+    ----------
+    line : int, optional
+        Line number.
+
+    column : int, optional
+        Column number.
+
+    filename : str, optional
+        Filename the position refers to.
+
+    """
+
+    line?: int
+    column?: int
+    filename?: str
+
+schema GpyrpcScope:
+    r"""
+    Message representing a scope in KCL.
+
+
+    Attributes
+    ----------
+    kind : str, optional
+        Type of the scope.
+
+    parent : GpyrpcScopeIndex, optional
+        Parent scope.
+
+    owner : GpyrpcSymbolIndex, optional
+        Owner of the scope.
+
+    children : [GpyrpcScopeIndex], optional
+        Children of the scope.
+
+    defs : [GpyrpcSymbolIndex], optional
+        Definitions in the scope.
+
+    """
+
+    kind?: str
+    parent?: GpyrpcScopeIndex
+    owner?: GpyrpcSymbolIndex
+    children?: [GpyrpcScopeIndex]
+    defs?: [GpyrpcSymbolIndex]
+
+schema GpyrpcScopeIndex:
+    r"""
+    Message representing a scope index.
+
+
+    Attributes
+    ----------
+    i : int, optional
+        Index identifier.
+
+    g : int, optional
+        Global identifier.
+
+    kind : str, optional
+        Type of the scope.
+
+    """
+
+    i?: int
+    g?: int
+    kind?: str
+
+schema GpyrpcSymbol:
+    r"""
+    Message representing a symbol in KCL.
+
+
+    Attributes
+    ----------
+    ty : GpyrpcKclType, optional
+        Type of the symbol.
+
+    name : str, optional
+        Name of the symbol.
+
+    owner : GpyrpcSymbolIndex, optional
+        Owner of the symbol.
+
+    def : GpyrpcSymbolIndex, optional
+        Definition of the symbol.
+
+    attrs : [GpyrpcSymbolIndex], optional
+        Attributes of the symbol.
+
+    is_global : bool, optional
+        Flag indicating if the symbol is global.
+
+    """
+
+    ty?: GpyrpcKclType
+    name?: str
+    owner?: GpyrpcSymbolIndex
+    def?: GpyrpcSymbolIndex
+    attrs?: [GpyrpcSymbolIndex]
+    is_global?: bool
+
+schema GpyrpcSymbolIndex:
+    r"""
+    Message representing a symbol index.
+
+
+    Attributes
+    ----------
+    i : int, optional
+        Index identifier.
+
+    g : int, optional
+        Global identifier.
+
+    kind : str, optional
+        Type of the symbol or scope.
+
+    """
+
+    i?: int
+    g?: int
+    kind?: str
+
+schema GpyrpcVariable:
+    r"""
+    Message representing a variable.
+
+
+    Attributes
+    ----------
+    value : str, optional
+        Value of the variable.
+
+    type_name : str, optional
+        Type name of the variable.
+
+    op_sym : str, optional
+        Operation symbol associated with the variable.
+
+    list_items : [GpyrpcVariable], optional
+        List items if the variable is a list.
+
+    dict_entries : [GpyrpcMapEntry], optional
+        Dictionary entries if the variable is a dictionary.
+
+    """
+
+    value?: str
+    type_name?: str
+    op_sym?: str
+    list_items?: [GpyrpcVariable]
+    dict_entries?: [GpyrpcMapEntry]
+
+schema GpyrpcVariableList:
+    r"""
+    Message representing a list of variables.
+
+
+    Attributes
+    ----------
+    variables : [GpyrpcVariable], optional
+        List of variables.
+
+    """
+
+    variables?: [GpyrpcVariable]
+
+schema ListOptionsArgs:
+    r"""
+    ListOptionsArgs
+
+    Attributes
+    ----------
+    paths : [str], optional
+        Paths of the program files to be parsed.
+
+    sources : [str], optional
+        Source codes to be parsed.
+
+    external_pkgs : [GpyrpcExternalPkg], optional
+        External packages path.
+
+    """
+
+    paths?: [str]
+    sources?: [str]
+    external_pkgs?: [GpyrpcExternalPkg]
+
+schema ListOptionsResult:
+    r"""
+    ListOptionsResult
+
+    Attributes
+    ----------
+    options : [GpyrpcOptionHelp], optional
+        List of available options.
+
+    """
+
+    options?: [GpyrpcOptionHelp]
+
+schema ListVariablesArgs:
+    r"""
+    ListVariablesArgs
+
+    Attributes
+    ----------
+    files : [str], optional
+        Files to be processed.
+
+    specs : [str], optional
+        Specifications for variables.
+
+    options : GpyrpcListVariablesOptions, optional
+        Options for listing variables.
+
+    """
+
+    files?: [str]
+    specs?: [str]
+    options?: GpyrpcListVariablesOptions
+
+schema ListVariablesResult:
+    r"""
+    ListVariablesResult
+
+    Attributes
+    ----------
+    variables : {str:GpyrpcVariableList}, optional
+        Map of variable lists by file.
+
+    unsupported_codes : [str], optional
+        List of unsupported codes.
+
+    parse_errors : [GpyrpcError], optional
+        List of parse errors encountered.
+
+    """
+
+    variables?: {str:GpyrpcVariableList}
+    unsupported_codes?: [str]
+    parse_errors?: [GpyrpcError]
+
+schema LoadPackageArgs:
+    r"""
+    LoadPackageArgs
+
+    Attributes
+    ----------
+    parse_args : ParseProgram_Args, optional
+        Arguments for parsing the program.
+
+    resolve_ast : bool, optional
+        Flag indicating whether to resolve AST.
+
+    load_builtin : bool, optional
+        Flag indicating whether to load built-in modules.
+
+    with_ast_index : bool, optional
+        Flag indicating whether to include AST index.
+
+    """
+
+    parse_args?: ParseProgram_Args
+    resolve_ast?: bool
+    load_builtin?: bool
+    with_ast_index?: bool
+
+schema LoadPackageResult:
+    r"""
+    LoadPackageResult
+
+    Attributes
+    ----------
+    program : str, optional
+        Program Abstract Syntax Tree (AST) in JSON format.
+
+    paths : [str], optional
+        Returns the files in the order they should be compiled.
+
+    parse_errors : [GpyrpcError], optional
+        List of parse errors.
+
+    type_errors : [GpyrpcError], optional
+        List of type errors.
+
+    scopes : {str:GpyrpcScope}, optional
+        Map of scopes with scope index as key.
+
+    symbols : {str:GpyrpcSymbol}, optional
+        Map of symbols with symbol index as key.
+
+    node_symbol_map : {str:GpyrpcSymbolIndex}, optional
+        Map of node-symbol associations with AST index UUID as key.
+
+    symbol_node_map : {str:str}, optional
+        Map of symbol-node associations with symbol index as key.
+
+    fully_qualified_name_map : {str:GpyrpcSymbolIndex}, optional
+        Map of fully qualified names with symbol index as key.
+
+    pkg_scope_map : {str:GpyrpcScopeIndex}, optional
+        Map of package scope with package path as key.
+
+    """
+
+    program?: str
+    paths?: [str]
+    parse_errors?: [GpyrpcError]
+    type_errors?: [GpyrpcError]
+    scopes?: {str:GpyrpcScope}
+    symbols?: {str:GpyrpcSymbol}
+    node_symbol_map?: {str:GpyrpcSymbolIndex}
+    symbol_node_map?: {str:str}
+    fully_qualified_name_map?: {str:GpyrpcSymbolIndex}
+    pkg_scope_map?: {str:GpyrpcScopeIndex}
 
 `
 	assert2.Equal(t, strings.ReplaceAll(kclCode, "\r\n", "\n"), strings.ReplaceAll(expectedKclCodeFromField, "\r\n", "\n"))

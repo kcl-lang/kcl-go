@@ -13,7 +13,7 @@ schema Secret:
 
     Attributes
     ----------
-    type: str, default is Undefined, required.
+    $type: str, default is Undefined, required.
         Type of secret, used to facilitate programmatic handling of secret data.
     params: {str,str}, default is Undefined, optional.
         Collection of parameters used to facilitate programmatic handling of secret data.

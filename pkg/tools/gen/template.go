@@ -123,6 +123,7 @@ var kclKeywords = map[string]struct{}{
 	"else":      {},
 	"elif":      {},
 	"for":       {},
+	"type":      {},
 	"schema":    {},
 	"mixin":     {},
 	"protocol":  {},

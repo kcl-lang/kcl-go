@@ -28,7 +28,7 @@ schema TopLevelDefinitionConfigsItems0:
         The monaco identifier for this config - is used in references and for some generated IDs in Dynatrace environments.
     config : TopLevelDefinitionConfigsItems0Config, required
         The actual configuration to be applied
-    type : str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type, required
+    $type : str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type, required
         The type of this configuration
     groupOverrides : [TopLevelDefinitionConfigsItems0GroupOverridesItems0], optional
         GroupOverrides overwrite specific parts of the Config when deploying it to any environment in a given group.
@@ -38,7 +38,7 @@ schema TopLevelDefinitionConfigsItems0:
 
     id: str
     config: TopLevelDefinitionConfigsItems0Config
-    type: str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type
+    $type: str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type
     groupOverrides?: [TopLevelDefinitionConfigsItems0GroupOverridesItems0]
     environmentOverrides?: [TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0]
 
