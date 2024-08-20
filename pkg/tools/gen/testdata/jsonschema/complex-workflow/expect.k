@@ -1568,7 +1568,7 @@ schema WorkflowOnOneOf2WorkflowCallInputsPatternProperties0:
         A string shown to users using the deprecated input.
     required : bool, required
         A boolean to indicate whether the action requires the input parameter. Set to true when the parameter is required.
-    type : "boolean" | "number" | "string", required
+    $type : "boolean" | "number" | "string", required
         Required if input is defined for the on.workflow_call keyword. The value of this parameter is a string specifying the data type of the input. This must be one of: boolean, number, or string.
     default : bool | float | str, optional
         The default value is used when an input parameter isn't specified in a workflow file.
@@ -1577,7 +1577,7 @@ schema WorkflowOnOneOf2WorkflowCallInputsPatternProperties0:
     description?: str
     deprecationMessage?: str
     required: bool
-    type: "boolean" | "number" | "string"
+    $type: "boolean" | "number" | "string"
     default?: bool | float | str
 
 schema WorkflowOnOneOf2WorkflowCallSecrets:
@@ -1641,7 +1641,7 @@ schema WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties0:
         A boolean to indicate whether the action requires the input parameter. Set to true when the parameter is required.
     default : any, optional
         A string representing the default value. The default value is used when an input parameter isn't specified in a workflow file.
-    type : "string" | "choice" | "boolean" | "environment", optional
+    $type : "string" | "choice" | "boolean" | "environment", optional
         A string representing the type of the input.
     options : [str], optional
         The options of the dropdown list, if the type is a choice.
@@ -1651,7 +1651,7 @@ schema WorkflowOnOneOf2WorkflowDispatchInputsPatternProperties0:
     deprecationMessage?: str
     required: bool
     default?: any
-    type?: "string" | "choice" | "boolean" | "environment"
+    $type?: "string" | "choice" | "boolean" | "environment"
     options?: [str]
 
     check:

@@ -21,13 +21,13 @@ schema ShopProductsOneOf0:
 
     Attributes
     ----------
-    type : "clothing", required, default is "clothing"
+    $type : "clothing", required, default is "clothing"
     material : str, optional
     name : str, required
     price : float, optional
     """
 
-    type: "clothing" = "clothing"
+    $type: "clothing" = "clothing"
     material?: str
     name: str
     price?: float
@@ -41,13 +41,13 @@ schema ShopProductsOneOf1Items0:
 
     Attributes
     ----------
-    type : "clothing", required, default is "clothing"
+    $type : "clothing", required, default is "clothing"
     material : str, optional
     name : str, required
     price : float, optional
     """
 
-    type: "clothing" = "clothing"
+    $type: "clothing" = "clothing"
     material?: str
     name: str
     price?: float

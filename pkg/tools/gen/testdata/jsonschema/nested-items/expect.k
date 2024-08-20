@@ -57,13 +57,13 @@ schema MonacoManifestSchemaEnvironmentGroupsItems0EnvironmentsItems0Url:
 
     Attributes
     ----------
-    type : str, optional
+    $type : str, optional
         Optional Type of URL definition.
     value : str, optional
         The value of the URL, based on type either an URL or environment variable name
     """
 
-    type?: str
+    $type?: str
     value?: str
 
 schema MonacoManifestSchemaProjectsItems0:
@@ -74,13 +74,13 @@ schema MonacoManifestSchemaProjectsItems0:
     ----------
     name : str, required
         The name of this project
-    type : str, optional
+    $type : str, optional
         Optional Type of this project. Default: Simple
     path : str, optional
         Optional filepath of the project relative to the manifest.yaml location. Defaults to name
     """
 
     name: str
-    type?: str
+    $type?: str
     path?: str
 
