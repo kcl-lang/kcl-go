@@ -149,6 +149,9 @@ a2 = App {
 	defer os.Remove(testdata_main_k)
 
 	kfile, err = os.Create(testdata_main_k)
+	if err != nil {
+		t.Fatal(err)
+	}
 	kfile.Close()
 
 	result, err = kcl.Run(testdata_main_k,
@@ -186,8 +189,9 @@ a1 = App {
     name = "a1-app"
     image = "new-a1-image"
 }
-
-a2 = App {image = "new-a2-image:v123"}`)
+a2 = App {
+    image = "new-a2-image:v123"
+}`)
 
 	got := strings.TrimSpace(string(data))
 	got = strings.ReplaceAll(got, "\r\n", "\n")
