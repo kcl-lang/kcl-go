@@ -7,7 +7,11 @@ on:
       - "releases/*"
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    # Ref: https://github.com/actions/runner-images/tree/main/images/macos
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, ubuntu-22.04, ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
@@ -23,7 +27,6 @@ jobs:
       - name: CGO_ENABLED=1 go test
         run: CGO_ENABLED=1 go test ./...
 
-      # Parallel tests
       - run: go test -v -coverprofile=profile.cov ./...
       - uses: shogo82148/actions-goveralls@v1
         with:
