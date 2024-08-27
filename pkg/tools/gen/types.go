@@ -31,7 +31,6 @@ func getKclTypeName(typ *pb.KclType) string {
 	if isLit, _, litValue := IsLitType(typ); isLit {
 		return litValue
 	}
-
 	switch typ.Type {
 	case typSchema:
 		return typ.SchemaName
@@ -47,7 +46,6 @@ func getKclTypeName(typ *pb.KclType) string {
 		return "float"
 	case typBool:
 		return "bool"
-
 	case typAny:
 		return "any"
 	case typUnion:
@@ -167,12 +165,13 @@ type schema struct {
 
 // property is a kcl schema property definition.
 type property struct {
-	Name         string
-	Required     bool
-	Description  string
-	Type         typeInterface
-	HasDefault   bool
-	DefaultValue interface{}
+	Name           string
+	Required       bool
+	Description    string
+	Type           typeInterface
+	isJsonNullType bool
+	HasDefault     bool
+	DefaultValue   interface{}
 }
 
 // validation is a kcl schema validation definition.
@@ -194,9 +193,9 @@ type validation struct {
 // indexSignature is a kcl schema index signature definition.
 // It can be used to construct a dict with type.
 type indexSignature struct {
-	Alias      string
-	Type       typeInterface
-	validation *validation
+	Alias       string
+	Type        typeInterface
+	Validations []validation
 }
 
 // data is a kcl data definition.
