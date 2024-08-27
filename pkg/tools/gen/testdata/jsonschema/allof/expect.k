@@ -10,34 +10,14 @@ schema Shop:
 
     Attributes
     ----------
-    products : ShopProductsOneOf0 | [ShopProductsOneOf1Items0] | "empty", optional
+    products : Clothing | [Clothing] | "empty", optional
     """
 
-    products?: ShopProductsOneOf0 | [ShopProductsOneOf1Items0] | "empty"
+    products?: Clothing | [Clothing] | "empty"
 
-schema ShopProductsOneOf0:
+schema Clothing:
     r"""
-    ShopProductsOneOf0
-
-    Attributes
-    ----------
-    $type : "clothing", required, default is "clothing"
-    material : str, optional
-    name : str, required
-    price : float, optional
-    """
-
-    $type: "clothing" = "clothing"
-    material?: str
-    name: str
-    price?: float
-
-    check:
-        price >= 0 if price
-
-schema ShopProductsOneOf1Items0:
-    r"""
-    ShopProductsOneOf1Items0
+    Clothing
 
     Attributes
     ----------

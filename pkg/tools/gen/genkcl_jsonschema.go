@@ -67,7 +67,6 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 	if err = js.UnmarshalJSON(code); err != nil {
 		return err
 	}
-
 	// convert json schema to kcl schema
 	ctx := convertContext{
 		rootSchema: js,
@@ -78,13 +77,11 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 		},
 		pathObjects: []*jsonschema.Schema{},
 	}
+	kclSch := kclFile{}
 	result := convertSchemaFromJsonSchema(&ctx, js,
 		strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename)))
-	if !result.IsSchema {
-		panic("result is not schema")
-	}
-	kclSch := kclFile{
-		Schemas: []schema{result.schema},
+	if result.IsSchema {
+		kclSch.Schemas = append(kclSch.Schemas, result.schema)
 	}
 	for _, imp := range getSortedKeys(ctx.imports) {
 		kclSch.Imports = append(kclSch.Imports, kImport{PkgPath: imp})
@@ -94,8 +91,7 @@ func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src
 			kclSch.Schemas = append(kclSch.Schemas, ctx.resultMap[key].schema)
 		}
 	}
-
-	// generate kcl schema code
+	// Generate kcl schema code
 	return k.genKcl(w, kclSch)
 }
 
@@ -106,13 +102,11 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 		return convertResult{IsSchema: false}
 	}
 
-	// for the name of the result, we prefer $id, then title, then name in parameter
-	// if none of them exists, "MyType" as default
+	// For the name of the result, we prefer $id, then name in the function parameter.
+	// if none of them exists, "AnonymousType" as default
 	if id, ok := s.Keywords["$id"].(*jsonschema.ID); ok {
 		lastSlashIndex := strings.LastIndex(string(*id), "/")
 		name = strings.Replace(string(*id)[lastSlashIndex+1:], ".json", "", -1)
-	} else if title, ok := s.Keywords["title"].(*jsonschema.Title); ok {
-		name = string(*title)
 	}
 	if name == "" {
 		name = "AnonymousType"
@@ -130,6 +124,8 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 	}()
 
 	isArray := false
+	isJsonNullType := false
+	reference := ""
 	typeList := typeUnion{}
 	required := make(map[string]struct{})
 	for i := 0; i < len(s.OrderedKeywords); i++ {
@@ -150,6 +146,8 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 				case "array":
 					isArray = true
 					continue
+				case "null":
+					isJsonNullType = true
 				}
 			}
 			typeList.Items = append(typeList.Items, jsonTypesToKclTypes(v.Vals))
@@ -215,10 +213,12 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 					result.IndexSignature = indexSignature{
 						Alias: "key",
 						Type:  propSch.property.Type,
-						validation: &validation{
-							Required: true,
-							Name:     "key",
-							Regex:    prop.Re,
+						Validations: []validation{
+							{
+								Required: true,
+								Name:     "key",
+								Regex:    prop.Re,
+							},
 						},
 					}
 					ctx.imports["regex"] = struct{}{}
@@ -261,41 +261,48 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			for i := 0; i < len(schs); i++ {
 				sch := schs[i]
 				for _, key := range sch.OrderedKeywords {
+					// If not existed in the current schema, inherit from the ref schema.
 					if _, ok := s.Keywords[key]; !ok {
 						s.OrderedKeywords = append(s.OrderedKeywords, key)
 						s.Keywords[key] = sch.Keywords[key]
 					} else {
 						switch v := sch.Keywords[key].(type) {
-						case *jsonschema.Type:
-						case *jsonschema.Description:
-						case *jsonschema.Comment:
 						case *jsonschema.Ref:
 							refSch := v.ResolveRef(ctx.rootSchema)
 							if refSch == nil || refSch.OrderedKeywords == nil {
-								logger.GetLogger().Warningf("failed to resolve ref: %s.", v.Reference)
+								logger.GetLogger().Warningf("failed to resolve ref: %s, path: %s", v.Reference, strings.Join(ctx.paths, "/"))
 								continue
 							}
 							schs = append(schs, refSch)
 						case *jsonschema.Properties:
 							props := *s.Keywords[key].(*jsonschema.Properties)
-							props = append(props, *v...)
+							for _, p := range *v {
+								if r, _ := props.Get(p.Key); r == nil {
+									props = append(props, p)
+								}
+							}
 							s.Keywords[key] = &props
+						case *jsonschema.AdditionalProperties:
+							prop := *s.Keywords[key].(*jsonschema.AdditionalProperties)
+							s.Keywords[key] = &prop
+						case *jsonschema.PropertyNames:
+							prop := *s.Keywords[key].(*jsonschema.PropertyNames)
+							s.Keywords[key] = &prop
 						case *jsonschema.Required:
 							reqs := *s.Keywords[key].(*jsonschema.Required)
-							reqs = append(reqs, *v...)
+							reqs = append(*v, reqs...)
 							s.Keywords[key] = &reqs
 						case *jsonschema.Items:
 							items := *s.Keywords[key].(*jsonschema.Items)
-							items.Schemas = append(items.Schemas, v.Schemas...)
+							items.Schemas = append(v.Schemas, items.Schemas...)
 							s.Keywords[key] = &items
-						case *jsonschema.MinItems:
-						case *jsonschema.Pattern:
 						default:
-							logger.GetLogger().Warningf("failed to merge ref: unsupported keyword %s. Paths: %s", key, strings.Join(ctx.paths, "/"))
+							logger.GetLogger().Warningf("failed to merge ref: unsupported keyword %s in ref, path: %s", key, strings.Join(ctx.paths, "/"))
 						}
 					}
 				}
 			}
+			reference = v.Reference
 			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
 				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
 			})
@@ -316,6 +323,95 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 					Type: typePrimitive(typAny),
 				}
 			case jsonschema.SchemaTypeFalse:
+			}
+		case *jsonschema.PropertyNames:
+			if result.HasIndexSignature && result.IndexSignature.Alias != "" {
+				var validations []validation
+				for _, key := range v.OrderedKeywords {
+					switch v := v.Keywords[key].(type) {
+					case *jsonschema.Minimum:
+						validations = append(validations, validation{
+							Name:             result.IndexSignature.Alias,
+							Required:         true,
+							Minimum:          (*float64)(v),
+							ExclusiveMinimum: false,
+						})
+					case *jsonschema.Maximum:
+						validations = append(validations, validation{
+							Name:             result.IndexSignature.Alias,
+							Required:         true,
+							Maximum:          (*float64)(v),
+							ExclusiveMaximum: false,
+						})
+					case *jsonschema.ExclusiveMinimum:
+						validations = append(validations, validation{
+							Name:             result.IndexSignature.Alias,
+							Required:         true,
+							Minimum:          (*float64)(v),
+							ExclusiveMinimum: true,
+						})
+					case *jsonschema.ExclusiveMaximum:
+						validations = append(validations, validation{
+							Name:             result.IndexSignature.Alias,
+							Required:         true,
+							Maximum:          (*float64)(v),
+							ExclusiveMaximum: true,
+						})
+					case *jsonschema.MinLength:
+						validations = append(validations, validation{
+							Name:      result.IndexSignature.Alias,
+							Required:  true,
+							MinLength: (*int)(v),
+						})
+					case *jsonschema.MaxLength:
+						validations = append(validations, validation{
+							Name:      result.IndexSignature.Alias,
+							Required:  true,
+							MaxLength: (*int)(v),
+						})
+					case *jsonschema.Pattern:
+						validations = append(validations, validation{
+							Name:     result.IndexSignature.Alias,
+							Required: true,
+							Regex:    (*regexp.Regexp)(v),
+						})
+						ctx.imports["regex"] = struct{}{}
+					case *jsonschema.MultipleOf:
+						vInt := int(*v)
+						if float64(vInt) != float64(*v) {
+							logger.GetLogger().Warningf("unsupported multipleOf value: %f", *v)
+							continue
+						}
+						result.Validations = append(result.Validations, validation{
+							Name:       result.IndexSignature.Alias,
+							Required:   true,
+							MultiplyOf: &vInt,
+						})
+					case *jsonschema.UniqueItems:
+						if *v {
+							result.Validations = append(result.Validations, validation{
+								Name:     result.IndexSignature.Alias,
+								Required: true,
+								Unique:   true,
+							})
+						}
+					case *jsonschema.MinItems:
+						result.Validations = append(result.Validations, validation{
+							Name:      result.IndexSignature.Alias,
+							Required:  true,
+							MinLength: (*int)(v),
+						})
+					case *jsonschema.MaxItems:
+						result.Validations = append(result.Validations, validation{
+							Name:      result.IndexSignature.Alias,
+							Required:  true,
+							MaxLength: (*int)(v),
+						})
+					default:
+
+					}
+				}
+				result.IndexSignature.Validations = append(result.IndexSignature.Validations, validations...)
 			}
 		case *jsonschema.Minimum:
 			result.Validations = append(result.Validations, validation{
@@ -379,7 +475,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 				if item.IsSchema {
 					ctx.resultMap[item.schema.Name] = item
 					typeList.Items = append(typeList.Items, typeCustom{Name: item.schema.Name})
-				} else {
+				} else if !item.isJsonNullType {
 					typeList.Items = append(typeList.Items, item.Type)
 				}
 			}
@@ -475,7 +571,6 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 							s.Keywords[key] = sch.Keywords[key]
 						} else {
 							switch v := sch.Keywords[key].(type) {
-							case *jsonschema.Type:
 							case *jsonschema.Ref:
 								refSch := v.ResolveRef(ctx.rootSchema)
 								if refSch == nil || refSch.OrderedKeywords == nil {
@@ -485,14 +580,28 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 								schs = append(schs, refSch)
 							case *jsonschema.Properties:
 								props := *s.Keywords[key].(*jsonschema.Properties)
-								props = append(props, *v...)
+								for _, p := range *v {
+									if r, _ := props.Get(p.Key); r == nil {
+										props = append(props, p)
+									}
+								}
 								s.Keywords[key] = &props
+							case *jsonschema.AdditionalProperties:
+								prop := *s.Keywords[key].(*jsonschema.AdditionalProperties)
+								s.Keywords[key] = &prop
+							case *jsonschema.PropertyNames:
+								prop := *s.Keywords[key].(*jsonschema.PropertyNames)
+								s.Keywords[key] = &prop
+							case *jsonschema.Items:
+								items := *s.Keywords[key].(*jsonschema.Items)
+								items.Schemas = append(v.Schemas, items.Schemas...)
+								s.Keywords[key] = &items
 							case *jsonschema.Required:
 								reqs := *s.Keywords[key].(*jsonschema.Required)
 								reqs = append(reqs, *v...)
 								s.Keywords[key] = &reqs
 							default:
-								logger.GetLogger().Warningf("failed to merge allOf: unsupported keyword %s", key)
+								logger.GetLogger().Warningf("failed to merge allOf: unsupported keyword %s in allOf, path: %s", key, strings.Join(ctx.paths, "/"))
 							}
 						}
 					}
@@ -506,17 +615,28 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
 				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
 			})
+		case *jsonschema.ReadOnly:
+			// Do nothing for the readOnly keyword.
+			logger.GetLogger().Infof("unsupported keyword: %s, path: %s, omit it", k, strings.Join(ctx.paths, "/"))
+		case *jsonschema.Format:
+			logger.GetLogger().Warningf("unsupported keyword: %s, path: %s, see the issue: https://github.com/kcl-lang/kcl-go/issues/375", k, strings.Join(ctx.paths, "/"))
 		default:
-			logger.GetLogger().Warningf("unknown Keyword: %s", k)
+			logger.GetLogger().Warningf("unsupported keyword: %s, path: %s", k, strings.Join(ctx.paths, "/"))
 		}
 	}
 
 	if result.IsSchema {
-		var s strings.Builder
-		for _, p := range ctx.paths {
-			s.WriteString(strcase.ToCamel(p))
+		// We use the reference schema id as the generated schema name
+		if reference != "" {
+			lastSlashIndex := strings.LastIndex(reference, "/")
+			result.schema.Name = convertPropertyName(strings.Replace(string(reference)[lastSlashIndex+1:], ".json", "", -1), CamelCase)
+		} else {
+			var s strings.Builder
+			for _, p := range ctx.paths {
+				s.WriteString(strcase.ToCamel(p))
+			}
+			result.schema.Name = s.String()
 		}
-		result.schema.Name = s.String()
 		result.schema.Description = result.Description
 		typeList.Items = append(typeList.Items, typeCustom{Name: result.schema.Name})
 		if len(result.Properties) == 0 && !result.HasIndexSignature {
@@ -533,9 +653,9 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 	} else {
 		result.Type = typePrimitive(typAny)
 	}
-
-	if result.HasIndexSignature && result.IndexSignature.validation != nil {
-		result.Validations = append(result.Validations, *result.IndexSignature.validation)
+	result.isJsonNullType = isJsonNullType
+	if result.HasIndexSignature && len(result.IndexSignature.Validations) > 0 {
+		result.Validations = append(result.Validations, result.IndexSignature.Validations...)
 	}
 	// Update AllOf validation required fields
 	for i := range result.Validations {
@@ -544,6 +664,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			result.Validations[i].AllOf[j].Required = result.Validations[i].Required
 		}
 	}
+
 	result.property.Name = convertPropertyName(result.Name, ctx.castingOption)
 	result.property.Description = result.Description
 	return result
@@ -552,7 +673,14 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 func jsonTypesToKclTypes(t []string) typeInterface {
 	var kclTypes typeUnion
 	for _, v := range t {
-		kclTypes.Items = append(kclTypes.Items, jsonTypeToKclType(v))
+		// Skip the `type | null` format.
+		if v != "null" {
+			kclTypes.Items = append(kclTypes.Items, jsonTypeToKclType(v))
+		}
+	}
+	// If no any items in the union types, return the `any` type.
+	if len(kclTypes.Items) == 0 {
+		return typePrimitive(typAny)
 	}
 	return kclTypes
 }
@@ -567,9 +695,15 @@ func jsonTypeToKclType(t string) typeInterface {
 		return typePrimitive(typInt)
 	case "number":
 		return typePrimitive(typFloat)
+	case "array":
+		return typeArray{Items: typePrimitive(typAny)}
+	case "object":
+		return typePrimitive(typAny)
+	case "null":
+		return typePrimitive(typAny)
 	default:
-		logger.GetLogger().Warningf("unknown type: %s", t)
-		return typePrimitive(typStr)
+		logger.GetLogger().Warningf("unknown type: %s, use the any type", t)
+		return typePrimitive(typAny)
 	}
 }
 
