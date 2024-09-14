@@ -1,3 +1,6 @@
+//go:build rpc || !cgo
+// +build rpc !cgo
+
 package service
 
 import (

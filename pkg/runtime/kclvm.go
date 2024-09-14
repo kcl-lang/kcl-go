@@ -1,3 +1,6 @@
+//go:build rpc || !cgo
+// +build rpc !cgo
+
 // Copyright The KCL Authors. All rights reserved.
 
 package runtime
@@ -20,7 +23,6 @@ import (
 )
 
 func init() {
-	env.EnableFastEvalMode()
 	if !env.GetDisableInstallArtifact() {
 		installKclArtifact()
 	}
