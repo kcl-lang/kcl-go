@@ -36,7 +36,6 @@ import (
 	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/loader"
 	"kcl-lang.io/kcl-go/pkg/parser"
-	"kcl-lang.io/kcl-go/pkg/runtime"
 	"kcl-lang.io/kcl-go/pkg/tools/format"
 	"kcl-lang.io/kcl-go/pkg/tools/lint"
 	"kcl-lang.io/kcl-go/pkg/tools/list"
@@ -70,16 +69,6 @@ type (
 	ParseProgramArgs         = parser.ParseProgramArgs
 	ParseProgramResult       = parser.ParseProgramResult
 )
-
-// InitKclvmPath init kclvm path.
-func InitKclvmPath(kclvmRoot string) {
-	runtime.InitKclvmRoot(kclvmRoot)
-}
-
-// InitKclvmRuntime init kclvm process.
-func InitKclvmRuntime(n int) {
-	runtime.InitRuntime(n)
-}
 
 // MustRun is like Run but panics if return any error.
 func MustRun(path string, opts ...Option) *KCLResultList {

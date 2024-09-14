@@ -115,5 +115,5 @@ gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntN
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-kcl-lang.io/lib v0.10.0-rc.1 h1:HRHMW2ane3mjKMVBUQQVvln9Z7FDkUJVXRWEVXPtP+w=
-kcl-lang.io/lib v0.10.0-rc.1/go.mod h1:tu+tzwGgHLzYZSIxUG/ntipStrxZd6OvutWYPTxS7cs=
+kcl-lang.io/lib v0.10.0-rc.2 h1:zMiwQVKzKqLD0gRPuKdDgX0MzbcWe8a+IlsXhhWeUvk=
+kcl-lang.io/lib v0.10.0-rc.2/go.mod h1:tu+tzwGgHLzYZSIxUG/ntipStrxZd6OvutWYPTxS7cs=

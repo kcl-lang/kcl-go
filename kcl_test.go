@@ -7,12 +7,10 @@ package kcl_test
 
 import (
 	"bytes"
-	"flag"
 	"os"
 	"path/filepath"
 	"reflect"
 	"sort"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -24,21 +22,6 @@ import (
 	api "kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
-
-const tEnvNumCpu = "KCL_GO_API_TEST_NUM_CPU"
-
-func TestMain(m *testing.M) {
-	flag.Parse()
-
-	if s := os.Getenv(tEnvNumCpu); s != "" {
-		if x, err := strconv.Atoi(s); err == nil {
-			println(tEnvNumCpu, "=", s)
-			kcl.InitKclvmRuntime(x)
-		}
-	}
-
-	os.Exit(m.Run())
-}
 
 func TestStreamResult(t *testing.T) {
 	file, err := filepath.Abs("./testdata/stream/one_stream.k")
