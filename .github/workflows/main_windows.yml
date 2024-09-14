@@ -9,7 +9,7 @@ jobs:
   build-and-test:
     strategy:
       matrix:
-        os: [ windows-latest, windows-2019 ]
+        os: [ windows-latest ]
         cgo: [ '1', '0' ]
     runs-on: ${{ matrix.os }}
     steps:
