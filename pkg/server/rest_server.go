@@ -1,6 +1,6 @@
 // Copyright The KCL Authors. All rights reserved.
 
-package server
+package service
 
 import (
 	"encoding/json"
