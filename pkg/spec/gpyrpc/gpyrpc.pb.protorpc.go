@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/chai2010/protorpc"
-	"google.golang.org/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 var (

@@ -1,6 +1,3 @@
-//go:build rpc || !cgo
-// +build rpc !cgo
-
 // Copyright The KCL Authors. All rights reserved.
 
 package runtime

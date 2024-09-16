@@ -22,7 +22,7 @@ func init() {
 					for i := range args.Args {
 						ss = append(ss, args.StrArg(i))
 					}
-					return &MethodResult{V: strings.Join(ss, ".")}, nil
+					return &MethodResult{strings.Join(ss, ".")}, nil
 				},
 			},
 			"panic": {
@@ -36,6 +36,9 @@ func init() {
 }
 
 func TestPlugin_strings_join(t *testing.T) {
+	if !CgoEnabled {
+		t.Skip("cgo disabled")
+	}
 	result_json := Invoke("kcl_plugin.strings.join", []interface{}{"KCL", "KCL", 123}, nil)
 	if result_json != `"KCL.KCL.123"` {
 		t.Fatal(result_json)
@@ -43,6 +46,9 @@ func TestPlugin_strings_join(t *testing.T) {
 }
 
 func TestPlugin_strings_panic(t *testing.T) {
+	if !CgoEnabled {
+		t.Skip("cgo disabled")
+	}
 	result_json := Invoke("kcl_plugin.strings.panic", []interface{}{"KCL", "KCL", 123}, nil)
 	if result_json != `{"__kcl_PanicInfo__":"[KCL KCL 123]"}` {
 		t.Fatal(result_json)

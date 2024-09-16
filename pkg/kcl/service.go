@@ -4,13 +4,13 @@
 package kcl
 
 import (
-	"kcl-lang.io/lib/go/api"
-	"kcl-lang.io/lib/go/native"
+	"kcl-lang.io/kcl-go/pkg/native"
+	"kcl-lang.io/kcl-go/pkg/service"
 )
 
 // Service returns the interaction interface between KCL Go SDK and KCL Rust core.
 // When `go build tags=rpc` is opened, use the default RPC interaction logic to avoid CGO usage.
 // When closed, use CGO and dynamic libraries to interact.
-func Service() api.ServiceClient {
+func Service() service.KclvmService {
 	return native.NewNativeServiceClient()
 }

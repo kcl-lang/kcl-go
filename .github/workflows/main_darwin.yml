@@ -12,7 +12,6 @@ jobs:
     strategy:
       matrix:
         os: [ macos-12, macos-13, macos-13-xlarge, macos-14 ]
-        cgo: [ '1', '0' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Git checkout
@@ -23,7 +22,5 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Go test
-        env:
-          CGO_ENABLED: ${{ matrix.cgo }}
-        run: go test ./...
+      # Parallel tests
+      - run: go test ./...

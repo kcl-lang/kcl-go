@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-20.04, ubuntu-22.04, ubuntu-latest ]
-        cgo: [ '1', '0' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Git checkout
@@ -22,10 +21,11 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Go test
-        env:
-          CGO_ENABLED: ${{ matrix.cgo }}
-        run: go test ./...
+      - name: CGO_ENABLED=0 go test
+        run: CGO_ENABLED=0 go test ./...
+
+      - name: CGO_ENABLED=1 go test
+        run: CGO_ENABLED=1 go test ./...
 
       - run: go test -v -coverprofile=profile.cov ./...
       - uses: shogo82148/actions-goveralls@v1
