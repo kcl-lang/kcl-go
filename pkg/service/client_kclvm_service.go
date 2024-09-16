@@ -63,7 +63,7 @@ func (p *KclvmServiceClient) ExecProgram(args *gpyrpc.ExecProgram_Args) (resp *g
 	return
 }
 
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (p *KclvmServiceClient) BuildProgram(args *gpyrpc.BuildProgram_Args) (resp *gpyrpc.BuildProgram_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).BuildProgram(args)
@@ -72,7 +72,7 @@ func (p *KclvmServiceClient) BuildProgram(args *gpyrpc.BuildProgram_Args) (resp 
 	return
 }
 
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
 func (p *KclvmServiceClient) ExecArtifact(args *gpyrpc.ExecArtifact_Args) (resp *gpyrpc.ExecProgram_Result, err error) {
 	p.Runtime.DoTask(func(c *rpc.Client, stderr io.Reader) {
 		resp, err = p.getClient(c).ExecArtifact(args)
