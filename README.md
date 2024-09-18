@@ -122,6 +122,8 @@ three = hello.add(1,2)  # hello.add is written by Go
 `
 ```
 
+> Note: CGO is required when using plugins
+
 ## Documents
 
 See the [KCL website](https://kcl-lang.io)

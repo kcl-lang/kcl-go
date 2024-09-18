@@ -7,7 +7,6 @@ require (
 	github.com/chai2010/protorpc v1.1.4
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/goccy/go-yaml v1.12.0
-	github.com/gofrs/flock v0.12.1
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
 	github.com/iancoleman/strcase v0.3.0
@@ -23,8 +22,10 @@ require (
 	google.golang.org/grpc v1.66.2
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/lib v0.10.0
+	kcl-lang.io/lib v0.10.1-rc.1
 )
+
+require github.com/ebitengine/purego v0.7.1 // indirect
 
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
