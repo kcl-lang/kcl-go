@@ -71,8 +71,6 @@ github.com/perimeterx/marshmallow v1.1.5 h1:a2LALqQ1BlHM8PZblsDdidgv1mWi1DgC2UmX
 github.com/perimeterx/marshmallow v1.1.5/go.mod h1:dsXbUu8CRzfYP5a87xpp0xq9S3u0Vchtcl8we9tYaXw=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/powerman/rpc-codec v1.2.2 h1:BK0JScZivljhwW/vLLhZLtUgqSxc/CD3sHEs8LiwwKw=
-github.com/powerman/rpc-codec v1.2.2/go.mod h1:3Qr/y/+u3CwcSww9tfJMRn/95lB2qUdUeIQe7BYlLDo=
 github.com/protocolbuffers/txtpbfmt v0.0.0-20240416193709-1e18ef0a7fdc h1:DRZwH75/E4a2SOr7+gKZ99OEhmjzBzAhgyTnzo1TepY=
 github.com/protocolbuffers/txtpbfmt v0.0.0-20240416193709-1e18ef0a7fdc/go.mod h1:jgxiZysxFPM+iWKwQwPR+y+Jvo54ARd4EisXxKYpB5c=
 github.com/qri-io/jsonpointer v0.1.1 h1:prVZBZLL6TW5vsSB9fFHFAMBLI4b0ri5vribQlTJiBA=
@@ -115,5 +113,5 @@ gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntN
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-kcl-lang.io/lib v0.10.1-rc.1 h1:GJwg9PuKn+jaSITc9vEDACljRihgwYlwWPoijl7W9q8=
-kcl-lang.io/lib v0.10.1-rc.1/go.mod h1:MfVEiCo3Yr6jZqwSo84WmjFZdqNRtXMbGtDwUM27kTY=
+kcl-lang.io/lib v0.10.1-rc.3 h1:+3sCOLV3ay9JHwvaZKOJgX9hwb2MO5OiGbAtsNLH5E4=
+kcl-lang.io/lib v0.10.1-rc.3/go.mod h1:MfVEiCo3Yr6jZqwSo84WmjFZdqNRtXMbGtDwUM27kTY=
