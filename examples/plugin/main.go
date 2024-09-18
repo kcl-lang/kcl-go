@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	// Note we use `native.MustRun` here instead of `kcl.MustRun`, because it needs the cgo feature.
 	yaml := kcl.MustRun("main.k", kcl.WithCode(code)).GetRawYamlResult()
 	fmt.Println(yaml)
 }

@@ -7,13 +7,11 @@ require (
 	github.com/chai2010/protorpc v1.1.4
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/goccy/go-yaml v1.12.0
-	github.com/gofrs/flock v0.12.1
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/powerman/rpc-codec v1.2.2
 	github.com/protocolbuffers/txtpbfmt v0.0.0-20240416193709-1e18ef0a7fdc
 	github.com/qri-io/jsonpointer v0.1.1
 	github.com/stretchr/testify v1.9.0
@@ -23,13 +21,14 @@ require (
 	google.golang.org/grpc v1.66.2
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/lib v0.10.0
+	kcl-lang.io/lib v0.10.1-rc.3
 )
 
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/ebitengine/purego v0.7.1 // indirect
 	github.com/emicklei/proto v1.13.2
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect

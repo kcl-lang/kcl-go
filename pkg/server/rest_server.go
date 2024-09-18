@@ -1,6 +1,6 @@
 // Copyright The KCL Authors. All rights reserved.
 
-package service
+package server
 
 import (
 	"encoding/json"
@@ -13,7 +13,9 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"kcl-lang.io/kcl-go/pkg/3rdparty/grpc_gateway_util"
+	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
+	"kcl-lang.io/lib/go/api"
 )
 
 var _ = fmt.Sprint
@@ -27,8 +29,7 @@ type RestfulResult struct {
 type restServer struct {
 	address string
 	router  *httprouter.Router
-	builtin *BuiltinServiceClient
-	c       *KclvmServiceClient
+	service api.ServiceClient
 }
 
 func RunRestServer(address string) error {
@@ -43,8 +44,7 @@ func newRestServer(address string) *restServer {
 	p := &restServer{
 		address: address,
 		router:  httprouter.New(),
-		builtin: NewBuiltinServiceClient(),
-		c:       newKclvmServiceClient(),
+		service: kcl.Service(),
 	}
 	p.initHttpRrouter()
 	return p
@@ -57,7 +57,6 @@ func (p *restServer) Run() error {
 
 func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
-	p.router.GET("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
 	p.router.GET("/api:protorpc/KclvmService.ExecProgram", p.handle_ExecProgram)
 	p.router.GET("/api:protorpc/KclvmService.BuildProgram", p.handle_BuildProgram)
@@ -80,7 +79,6 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/KclvmService.GetVersion", p.handle_GetVersion)
 
 	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
-	p.router.POST("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
 	p.router.POST("/api:protorpc/KclvmService.ExecProgram", p.handle_ExecProgram)
 	p.router.POST("/api:protorpc/KclvmService.BuildProgram", p.handle_BuildProgram)
@@ -138,165 +136,158 @@ func (p *restServer) handle(
 	}
 }
 
-func (p *restServer) handle_Ping(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_Ping(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.Ping_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.builtin.Ping(args)
+		return p.service.Ping(args)
 	})
 }
 
-func (p *restServer) handle_ListMethod(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	var args = new(gpyrpc.ListMethod_Args)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.builtin.ListMethod(args)
-	})
-}
-
-func (p *restServer) handle_ExecProgram(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_ExecProgram(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.ExecProgram_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ExecProgram(args)
+		return p.service.ExecProgram(args)
 	})
 }
 
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
-func (p *restServer) handle_BuildProgram(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
+func (p *restServer) handle_BuildProgram(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.BuildProgram_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.BuildProgram(args)
+		return p.service.BuildProgram(args)
 	})
 }
 
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecutProgram method and will be removed in v0.11.0.
-func (p *restServer) handle_ExecArtifact(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
+func (p *restServer) handle_ExecArtifact(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.ExecArtifact_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ExecArtifact(args)
+		return p.service.ExecArtifact(args)
 	})
 }
 
-func (p *restServer) handle_ParseFile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_ParseFile(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.ParseFile_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ParseFile(args)
+		return p.service.ParseFile(args)
 	})
 }
 
-func (p *restServer) handle_ParseProgram(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_ParseProgram(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.ParseProgram_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ParseProgram(args)
+		return p.service.ParseProgram(args)
 	})
 }
 
-func (p *restServer) handle_ListOptions(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_ListOptions(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.ParseProgram_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ListOptions(args)
+		return p.service.ListOptions(args)
 	})
 }
 
-func (p *restServer) handle_ListVariables(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_ListVariables(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.ListVariables_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ListVariables(args)
+		return p.service.ListVariables(args)
 	})
 }
 
-func (p *restServer) handle_LoadPackage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_LoadPackage(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.LoadPackage_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.LoadPackage(args)
+		return p.service.LoadPackage(args)
 	})
 }
 
-func (p *restServer) handle_FormatCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_FormatCode(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.FormatCode_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.FormatCode(args)
+		return p.service.FormatCode(args)
 	})
 }
 
-func (p *restServer) handle_FormatPath(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_FormatPath(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	var args = new(gpyrpc.FormatPath_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.FormatPath(args)
+		return p.service.FormatPath(args)
 	})
 }
 
-func (p *restServer) handle_LintPath(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_LintPath(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.LintPath_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.LintPath(args)
+		return p.service.LintPath(args)
 	})
 }
 
-func (p *restServer) handle_OverrideFile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_OverrideFile(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.OverrideFile_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.OverrideFile(args)
+		return p.service.OverrideFile(args)
 	})
 }
 
-func (p *restServer) handle_GetSchemaTypeMapping(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_GetSchemaTypeMapping(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.GetSchemaTypeMapping_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.GetSchemaTypeMapping(args)
+		return p.service.GetSchemaTypeMapping(args)
 	})
 }
 
-func (p *restServer) handle_ValidateCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_ValidateCode(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.ValidateCode_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ValidateCode(args)
+		return p.service.ValidateCode(args)
 	})
 }
 
-func (p *restServer) handle_ListDepFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_ListDepFiles(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.ListDepFiles_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.ListDepFiles(args)
+		return p.service.ListDepFiles(args)
 	})
 }
 
-func (p *restServer) handle_LoadSettingsFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_LoadSettingsFiles(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.LoadSettingsFiles_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.LoadSettingsFiles(args)
+		return p.service.LoadSettingsFiles(args)
 	})
 }
 
-func (p *restServer) handle_Rename(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_Rename(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.Rename_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.Rename(args)
+		return p.service.Rename(args)
 	})
 }
 
-func (p *restServer) handle_RenameCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_RenameCode(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.RenameCode_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.RenameCode(args)
+		return p.service.RenameCode(args)
 	})
 }
 
-func (p *restServer) handle_Test(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_Test(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.Test_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.Test(args)
+		return p.service.Test(args)
 	})
 }
 
-func (p *restServer) handle_UpdateDependencies(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_UpdateDependencies(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.UpdateDependencies_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.UpdateDependencies(args)
+		return p.service.UpdateDependencies(args)
 	})
 }
 
-func (p *restServer) handle_GetVersion(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (p *restServer) handle_GetVersion(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.GetVersion_Args)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.c.GetVersion(args)
+		return p.service.GetVersion(args)
 	})
 }
