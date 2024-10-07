@@ -5,7 +5,7 @@ go 1.23
 require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
-	github.com/getkin/kin-openapi v0.127.0
+	github.com/getkin/kin-openapi v0.128.0
 	github.com/goccy/go-yaml v1.12.0
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
