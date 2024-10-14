@@ -38,11 +38,13 @@ func instance() *EnvSettings {
 }
 
 // GetLibHome returns the LibHome value from the singleton instance of EnvSettings.
+// Deprecated: use KCL_LIB_HOME env to set the kcl lib home
 func GetLibHome() string {
 	return instance().LibHome
 }
 
 // SetLibHome sets the LibHome value in the singleton instance of EnvSettings.
+// Deprecated: use KCL_LIB_HOME env to get the kcl lib home
 func SetLibHome(value string) {
 	mu.Lock()
 	defer mu.Unlock()
