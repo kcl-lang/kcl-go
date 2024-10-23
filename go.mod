@@ -22,7 +22,7 @@ require (
 	google.golang.org/grpc v1.67.1
 	google.golang.org/protobuf v1.35.1
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/lib v0.10.3
+	kcl-lang.io/lib v0.10.4
 )
 
 require (
