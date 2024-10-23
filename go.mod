@@ -1,12 +1,12 @@
 module kcl-lang.io/kcl-go
 
-go 1.23
+go 1.22.0
 
 require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
 	github.com/emicklei/proto v1.13.2
-	github.com/getkin/kin-openapi v0.128.0
+	github.com/getkin/kin-openapi v0.127.0
 	github.com/goccy/go-yaml v1.12.0
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
@@ -17,12 +17,12 @@ require (
 	github.com/qri-io/jsonpointer v0.1.1
 	github.com/stretchr/testify v1.9.0
 	github.com/wk8/go-ordered-map/v2 v2.1.8
-	github.com/yuin/goldmark v1.7.8
-	golang.org/x/tools v0.26.0
-	google.golang.org/grpc v1.67.1
-	google.golang.org/protobuf v1.35.1
+	github.com/yuin/goldmark v1.7.4
+	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d
+	google.golang.org/grpc v1.65.0
+	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/lib v0.10.4
+	kcl-lang.io/lib v0.10.5-rc.1
 )
 
 require (
