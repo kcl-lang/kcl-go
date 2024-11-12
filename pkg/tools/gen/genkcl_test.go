@@ -196,9 +196,10 @@ func TestGenKclFromJson(t *testing.T) {
 
 func TestGenKclFromYaml(t *testing.T) {
 	type testCase struct {
-		name   string
-		input  string
-		expect string
+		name           string
+		input          string
+		expect         string
+		expectFilepath string
 	}
 	var cases []testCase
 
@@ -212,9 +213,10 @@ func TestGenKclFromYaml(t *testing.T) {
 		input := filepath.Join(casesPath, caseFile.Name(), "input.yaml")
 		expectFilepath := filepath.Join(casesPath, caseFile.Name(), "expect.k")
 		cases = append(cases, testCase{
-			name:   caseFile.Name(),
-			input:  input,
-			expect: readFileString(t, expectFilepath),
+			name:           caseFile.Name(),
+			input:          input,
+			expect:         readFileString(t, expectFilepath),
+			expectFilepath: expectFilepath,
 		})
 	}
 

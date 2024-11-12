@@ -114,7 +114,6 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
         draft = False
         footer = r"""## Docker Images
 * `kusionstack/{{ .ProjectName }}:{{ .Tag }}`
-
 """
     }
     dockers = [
