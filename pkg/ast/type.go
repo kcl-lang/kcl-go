@@ -101,8 +101,8 @@ func (s *StrLiteralType) LiteralTypeName() string { return "Str" }
 // FunctionType represents a function type
 type FunctionType struct {
 	Value struct {
-		ParamsTy []*Node[Type] `json:"paramsTy,omitempty"`
-		RetTy    *Node[Type]   `json:"retTy,omitempty"`
+		ParamsTy []*Node[Type] `json:"params_ty,omitempty"`
+		RetTy    *Node[Type]   `json:"ret_ty,omitempty"`
 	} `json:"value"`
 }
 
