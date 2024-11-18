@@ -11,6 +11,7 @@ import (
 
 	kcl "kcl-lang.io/kcl-go"
 	"kcl-lang.io/kcl-go/pkg/native"
+	"kcl-lang.io/kcl-go/pkg/parser"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -211,6 +212,14 @@ age = option("age")
 	// Output:
 	// age: 1
 	// name: kcl
+}
+
+func ExampleParseFile() {
+	result, err := parser.ParseFile("testdata/main.k", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result)
 }
 
 func ExampleParseProgram() {
