@@ -15,9 +15,10 @@ const goAnyType = "interface{}"
 var _ Generator = &goGenerator{}
 
 type GenGoOptions struct {
-	Package  string
-	AnyType  string
-	UseValue bool
+	Package    string
+	AnyType    string
+	UseValue   bool
+	RenameFunc func(string) string
 }
 
 // GenGo translate kcl schema type to go struct.
@@ -26,7 +27,8 @@ func GenGo(w io.Writer, filename string, src interface{}, opts *GenGoOptions) er
 }
 
 type goGenerator struct {
-	opts *GenGoOptions
+	opts       *GenGoOptions
+	renameFunc func(string) string
 }
 
 func newGoGenerator(opts *GenGoOptions) *goGenerator {
@@ -35,9 +37,16 @@ func newGoGenerator(opts *GenGoOptions) *goGenerator {
 			AnyType: goAnyType,
 		}
 	}
-	return &goGenerator{
-		opts: opts,
+	generator := &goGenerator{
+		opts:       opts,
+		renameFunc: opts.RenameFunc,
 	}
+	if generator.renameFunc == nil {
+		generator.renameFunc = func(name string) string {
+			return name
+		}
+	}
+	return generator
 }
 
 func (g *goGenerator) GenFromSource(w io.Writer, filename string, src interface{}) error {
@@ -94,7 +103,7 @@ func (g *goGenerator) GenSchema(w io.Writer, typ *pb.KclType) {
 
 		goTagInfo := fmt.Sprintf(`kcl:"name=%s,type=%s"`, fieldName, g.GetFieldTag(fieldType))
 		goFieldDefines = append(goFieldDefines,
-			fmt.Sprintf("%s %s %s", fieldName, goFieldType, "`"+goTagInfo+"`"),
+			fmt.Sprintf("%s %s %s", g.renameFunc(fieldName), goFieldType, "`"+goTagInfo+"`"),
 		)
 		goFieldDocs = append(goFieldDocs,
 			fmt.Sprintf("// kcl-type: %s", kclFieldType),
