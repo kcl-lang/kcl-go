@@ -394,6 +394,7 @@ func (enc *Encoder) eArrayOfTables(key Key, rv reflect.Value) {
 }
 
 func (enc *Encoder) eTable(key Key, rv reflect.Value) {
+	inTable := enc.inTable
 	enc.inTable = true
 	if len(key) == 1 {
 		// Output an extra newline between top-level tables.
@@ -406,7 +407,7 @@ func (enc *Encoder) eTable(key Key, rv reflect.Value) {
 		enc.newline()
 	}
 	enc.eMapOrStruct(key, rv, false)
-	enc.inTable = false
+	enc.inTable = inTable
 }
 
 func (enc *Encoder) eMapOrStruct(key Key, rv reflect.Value, inline bool) {

@@ -121,12 +121,17 @@ c_key = "value3"
 			if err != nil && tt.expectErr != nil {
 				if err.Error() != tt.expectErr.Error() {
 					t.Fatalf("expected error: %v, got: %v", tt.expectErr, err)
+				} else {
+					return
+				}
+			} else if err == nil && tt.expectErr == nil {
+				if got := string(tomlData); got != tt.expectedTOML {
+					t.Errorf("expected:\n%s\ngot:\n%s", tt.expectedTOML, got)
+				} else {
+					t.Fatalf("expected error: %v, got: %v", tt.expectErr, err)
 				}
 			}
 
-			if got := string(tomlData); got != tt.expectedTOML {
-				t.Errorf("expected:\n%s\ngot:\n%s", tt.expectedTOML, got)
-			}
 		})
 	}
 }
