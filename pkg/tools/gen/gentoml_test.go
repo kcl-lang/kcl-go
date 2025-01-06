@@ -30,22 +30,24 @@ c_key = "value3"
 		{
 			name: "Nested MapSlice",
 			data: &yaml.MapSlice{
+				{Key: "outer_key2", Value: "outer_value2"},
 				{Key: "outer_key1", Value: yaml.MapSlice{
 					{Key: "inner_key1", Value: "inner_value1"},
 					{Key: "inner_key2", Value: "inner_value2"},
 				}},
-				{Key: "outer_key2", Value: "outer_value2"},
 			},
-			expectedTOML: `[outer_key1]
+			expectedTOML: `outer_key2 = "outer_value2"
+
+[outer_key1]
   inner_key1 = "inner_value1"
   inner_key2 = "inner_value2"
-outer_key2 = "outer_value2"
 `,
 			expectErr: nil,
 		},
 		{
 			name: "Nested MapSlice with Slice",
 			data: &yaml.MapSlice{
+				{Key: "simple_key", Value: "simple_value"},
 				{Key: "key_with_slices", Value: []yaml.MapSlice{
 					{
 						{Key: "inner_key1", Value: "value1"},
@@ -54,10 +56,9 @@ outer_key2 = "outer_value2"
 						{Key: "inner_key2", Value: "value2"},
 					},
 				}},
-				{Key: "simple_key", Value: "simple_value"},
 			},
-			expectedTOML: `key_with_slices = [{inner_key1 = "value1"}, {inner_key2 = "value2"}]
-simple_key = "simple_value"
+			expectedTOML: `simple_key = "simple_value"
+key_with_slices = [{inner_key1 = "value1"}, {inner_key2 = "value2"}]
 `,
 			expectErr: nil,
 		},
@@ -86,16 +87,16 @@ simple_key = "simple_value"
 			name: "Simple MapSlice",
 			data: &yaml.MapSlice{
 				{Key: "b_key", Value: "value1"},
+				{Key: "c_key", Value: "value3"},
 				{Key: "a_key", Value: map[string]string{
 					"a_a_key": "value2",
 				}},
-				{Key: "c_key", Value: "value3"},
 			},
 			expectedTOML: `b_key = "value1"
+c_key = "value3"
 
 [a_key]
   a_a_key = "value2"
-c_key = "value3"
 `,
 			expectErr: nil,
 		},
