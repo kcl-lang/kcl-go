@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -100,13 +101,27 @@ c_key = "value3"
 `,
 			expectErr: nil,
 		},
+
+		{
+			name: "Table Test",
+			data: &yaml.MapSlice{
+				{Key: "a_key", Value: map[string]string{
+					"a_a_key": "value2",
+				}},
+				{Key: "b_key", Value: "value1"},
+			},
+			expectedTOML: "",
+			expectErr:    fmt.Errorf("unsupported to define 'b_key' after a table, ref: https://toml.io/en/v1.0.0#table"),
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tomlData, err := toml.Marshal(tt.data)
-			if err != tt.expectErr {
-				t.Fatalf("expected error: %v, got: %v", tt.expectErr, err)
+			if err != nil && tt.expectErr != nil {
+				if err.Error() != tt.expectErr.Error() {
+					t.Fatalf("expected error: %v, got: %v", tt.expectErr, err)
+				}
 			}
 
 			if got := string(tomlData); got != tt.expectedTOML {
