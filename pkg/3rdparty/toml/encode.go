@@ -127,9 +127,11 @@ func Marshal(v any) ([]byte, error) {
 // NOTE: only exported keys are encoded due to the use of reflection. Unexported
 // keys are silently discarded.
 type Encoder struct {
-	Indent     string // string for a single indentation level; default is two spaces.
-	hasWritten bool   // written any output to w yet?
-	w          *bufio.Writer
+	Indent          string // string for a single indentation level; default is two spaces.
+	hasWritten      bool   // written any output to w yet?
+	hasWrittenTable bool   // table must at end of file
+	inTable         bool
+	w               *bufio.Writer
 }
 
 // NewEncoder create a new Encoder.
@@ -168,6 +170,7 @@ func (enc *Encoder) encode(key Key, rv reflect.Value) {
 	// If we can marshal the type to text, then we use that. This prevents the
 	// encoder for handling these types as generic structs (or whatever the
 	// underlying type of a TextMarshaler is).
+
 	switch {
 	case isMarshaler(rv):
 		enc.writeKeyValue(key, rv, false)
@@ -183,6 +186,18 @@ func (enc *Encoder) encode(key Key, rv reflect.Value) {
 	}
 
 	k := rv.Kind()
+
+	// https://toml.io/en/v1.0.0#table
+	// Under a table,  and until the next header or EOF, are the key/values of that table.
+	// Therefore, if a table has been defined and is not within the scope of this table, only other tables are allowed to appear
+	if !enc.inTable && enc.hasWrittenTable {
+		switch k {
+		case reflect.Map, reflect.Struct:
+		default:
+			encPanic(fmt.Errorf("unsupported to define '%s' after a table, ref: https://toml.io/en/v1.0.0#table", key))
+		}
+	}
+
 	switch k {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32,
 		reflect.Int64,
@@ -379,16 +394,19 @@ func (enc *Encoder) eArrayOfTables(key Key, rv reflect.Value) {
 }
 
 func (enc *Encoder) eTable(key Key, rv reflect.Value) {
+	enc.inTable = true
 	if len(key) == 1 {
 		// Output an extra newline between top-level tables.
 		// (The newline isn't written if nothing else has been written though.)
 		enc.newline()
 	}
 	if len(key) > 0 {
+		enc.hasWrittenTable = true
 		enc.wf("%s[%s]", enc.indentStr(key), key)
 		enc.newline()
 	}
 	enc.eMapOrStruct(key, rv, false)
+	enc.inTable = false
 }
 
 func (enc *Encoder) eMapOrStruct(key Key, rv reflect.Value, inline bool) {
