@@ -10,7 +10,7 @@ jobs:
     # Ref: https://github.com/actions/runner-images/tree/main/images/macos
     strategy:
       matrix:
-        os: [ ubuntu-20.04, ubuntu-22.04, ubuntu-latest ]
+        os: [ ubuntu-22.04, ubuntu-latest ]
         cgo: [ '1', '0' ]
     runs-on: ${{ matrix.os }}
     steps:
