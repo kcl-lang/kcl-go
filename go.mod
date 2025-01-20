@@ -7,7 +7,7 @@ require (
 	github.com/chai2010/protorpc v1.1.4
 	github.com/emicklei/proto v1.14.0
 	github.com/getkin/kin-openapi v0.128.0
-	github.com/goccy/go-yaml v1.15.13
+	github.com/goccy/go-yaml v1.15.15
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
 	github.com/iancoleman/strcase v0.3.0
