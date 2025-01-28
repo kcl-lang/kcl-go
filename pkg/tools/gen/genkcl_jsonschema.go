@@ -619,7 +619,54 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			// Do nothing for the readOnly keyword.
 			logger.GetLogger().Infof("unsupported keyword: %s, path: %s, omit it", k, strings.Join(ctx.paths, "/"))
 		case *jsonschema.Format:
-			logger.GetLogger().Warningf("unsupported keyword: %s, path: %s, see the issue: https://github.com/kcl-lang/kcl-go/issues/375", k, strings.Join(ctx.paths, "/"))
+			format := string(*v)
+			switch format {
+			case "date-time":
+				result.Validations = append(result.Validations, validation{
+					Name:     result.Name,
+					Required: true,
+					Regex:    regexp.MustCompile(`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$`),
+				})
+			case "email":
+				result.Validations = append(result.Validations, validation{
+					Name:     result.Name,
+					Required: true,
+					Regex:    regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`),
+				})
+			case "hostname":
+				result.Validations = append(result.Validations, validation{
+					Name:     result.Name,
+					Required: true,
+					Regex:    regexp.MustCompile(`^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]))*$`),
+				})
+			case "ipv4":
+				result.Validations = append(result.Validations, validation{
+					Name:     result.Name,
+					Required: true,
+					Regex:    regexp.MustCompile(`^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$`),
+				})
+			case "ipv6":
+				result.Validations = append(result.Validations, validation{
+					Name:     result.Name,
+					Required: true,
+					Regex:    regexp.MustCompile(`^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$`),
+				})
+			case "uri":
+				result.Validations = append(result.Validations, validation{
+					Name:     result.Name,
+					Required: true,
+					Regex:    regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9+-.]*://[^/?#]+(?:/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$`),
+				})
+			case "uuid":
+				result.Validations = append(result.Validations, validation{
+					Name:     result.Name,
+					Required: true,
+					Regex:    regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`),
+				})
+			default:
+				logger.GetLogger().Warningf("unsupported format: %s, path: %s", format, strings.Join(ctx.paths, "/"))
+			}
+			ctx.imports["regex"] = struct{}{}
 		default:
 			logger.GetLogger().Warningf("unsupported keyword: %s, path: %s", k, strings.Join(ctx.paths, "/"))
 		}
