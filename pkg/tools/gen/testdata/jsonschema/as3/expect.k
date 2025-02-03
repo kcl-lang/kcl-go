@@ -51,6 +51,7 @@ schema Adc:
     [...str]: Tenant
 
     check:
+        regex.match("$schema", r"^[a-zA-Z][a-zA-Z0-9+-.]*://[^/?#]+(?:/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$") if "$schema"
         len(id) <= 255 if id
         len(id) >= 0 if id
         regex.match(id, r"^[^\x00-\x20\x22'<>\x5c^`|\x7f]*$") if id
@@ -213,6 +214,7 @@ schema As3:
     patchBody?: [As3PatchItem | As3PatchItem]
 
     check:
+        regex.match("$schema", r"^[a-zA-Z][a-zA-Z0-9+-.]*://[^/?#]+(?:/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$") if "$schema"
         redeployAge <= 15 if redeployAge
         redeployAge >= 0 if redeployAge
         historyLimit <= 15 if historyLimit
@@ -336,6 +338,9 @@ schema As3OneOf0DeclarationConstants:
     version?: float | str
     timestamp?: str
     [...str]: bool | int | float | str | [any] | any
+
+    check:
+        regex.match(timestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if timestamp
 
 schema As3OneOf0DeclarationTarget:
     r"""
@@ -486,6 +491,9 @@ schema As3OneOf1Constants:
     timestamp?: str
     [...str]: bool | int | float | str | [any] | any
 
+    check:
+        regex.match(timestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if timestamp
+
 schema As3OneOf1Target:
     r"""
     Trusted target for config when configuring with BIG-IQ
@@ -624,6 +632,9 @@ schema As3OneOf3Items0DeclarationConstants:
     version?: float | str
     timestamp?: str
     [...str]: bool | int | float | str | [any] | any
+
+    check:
+        regex.match(timestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if timestamp
 
 schema As3OneOf3Items0DeclarationTarget:
     r"""
@@ -789,6 +800,9 @@ schema As3OneOf4Items0Constants:
     timestamp?: str
     [...str]: bool | int | float | str | [any] | any
 
+    check:
+        regex.match(timestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if timestamp
+
 schema As3OneOf4Items0Target:
     r"""
     Trusted target for config when configuring with BIG-IQ
@@ -871,6 +885,9 @@ schema Controls:
     trace?: bool = False
     traceResponse?: bool = False
     userAgent?: str
+
+    check:
+        regex.match(archiveTimestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if archiveTimestamp
 
 schema Tenant:
     r"""
