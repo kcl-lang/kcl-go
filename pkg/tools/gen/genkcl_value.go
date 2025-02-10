@@ -52,6 +52,7 @@ type printer struct {
 	writer       io.Writer
 	listInline   bool
 	configInline bool
+	escape       bool
 }
 
 func (p *printer) writeIndent() {
@@ -243,7 +244,7 @@ func (p *printer) walkValue(v any) error {
 		p.writeConfigEnd()
 	case reflect.String:
 		value := val.String()
-		if isStringEscaped(value) {
+		if isStringEscaped(value) && p.escape {
 			if value[len(value)-1] == '"' {
 				// if the string ends with '"' then we need to add a space after the closing triple quote
 				p.write(fmt.Sprintf(`r"""%s """`, value))
