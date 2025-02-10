@@ -2,6 +2,7 @@ package gen
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -142,11 +143,14 @@ func TestGenKclFromJsonSchema(t *testing.T) {
 	for _, testcase := range cases {
 		t.Run(testcase.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			err := GenKcl(&buf, testcase.input, nil, &GenKclOptions{})
+			err := GenKcl(&buf, testcase.input, nil, &GenKclOptions{
+				Mode: ModeJsonSchema,
+			})
 			if err != nil {
 				t.Fatal(err)
 			}
 			result := buf.Bytes()
+			fmt.Printf("result: %v\n", string(result))
 			assert2.Equal(t, testcase.expect, string(bytes.ReplaceAll(result, []byte("\r\n"), []byte("\n"))))
 		})
 	}
