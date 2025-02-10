@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "properties": {
+        "foo": {
+            "type": "string",
+            "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque pellentesque ligula consequat, aliquam elit vitae, dapibus velit. Donec posuere venenatis diam, et viverra mi facilisis nec. Mauris eget velit eu risus ornare accumsan. Suspendisse rutrum vehicula tellus. Morbi lobortis lorem eget odio consequat dapibus. Etiam metus arcu, tincidunt id enim eget, mollis tempor purus. Sed finibus ante id odio dignissim mollis. Fusce auctor sit amet risus nec dictum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec ornare orci nec fermentum accumsan. Vivamus fermentum dolor non ligula consequat, vitae pellentesque quam accumsan. Ut lobortis facilisis pharetra. Nullam tristique orci in nisi tempor, ut consequat metus molestie.\n\nSuspendisse justo quam, fermentum id ultrices sed, fringilla non eros. Ut leo risus, efficitur id posuere sit amet, sagittis vitae risus. Nullam mattis arcu quis ligula tempus ullamcorper. Donec vel nibh vel sem fermentum efficitur id a velit. Maecenas congue iaculis arcu et consectetur. Maecenas gravida nisl vitae eros dignissim, rutrum malesuada felis pulvinar. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;\n\nCurabitur vitae augue et sapien pulvinar scelerisque. Proin eleifend varius feugiat. Nullam sagittis ante at ligula pharetra, vitae molestie turpis aliquet. Donec vitae odio nec tortor accumsan condimentum. Phasellus suscipit semper tortor, ac sodales orci varius non. Praesent iaculis ultrices dui in fringilla. Sed tristique libero sed sapien sagittis eleifend.\n\nCurabitur id fermentum ex, ac aliquam ligula. Duis tellus neque, luctus eu tristique eget, viverra vitae magna. Maecenas facilisis mauris quam, eu sodales elit vulputate quis. Suspendisse nulla ipsum, auctor ut efficitur sed, rhoncus ut nisi. Donec viverra libero a rhoncus bibendum. Nullam sit amet metus nisi. Nunc venenatis eu ante quis egestas.\n\nUt sollicitudin pellentesque sem in consectetur. Nunc imperdiet lacus in venenatis consectetur. Vestibulum sed turpis tempor, mattis velit eu, hendrerit quam. Morbi ac pretium orci, ut mattis felis. Phasellus id faucibus orci, lobortis bibendum eros. Nunc nec libero consectetur, elementum tortor vitae, cursus orci. Curabitur nisl velit, auctor eu rutrum id, suscipit cursus est."
+        }
+    },
+    "required": [
+        "foo"
+    ]
+}
