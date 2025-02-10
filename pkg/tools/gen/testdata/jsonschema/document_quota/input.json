@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "properties": {
+        "foo": {
+            "type": "string",
+            "default": "more \"quotes\""
+        }
+    },
+    "required": [
+        "foo"
+    ]
+}

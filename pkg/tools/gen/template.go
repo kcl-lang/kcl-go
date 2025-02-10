@@ -29,10 +29,11 @@ var (
 )
 
 var funcs = template.FuncMap{
-	"formatType":  formatType,
-	"formatValue": formatValue,
-	"formatName":  formatName,
-	"indentLines": indentLines,
+	"formatType":            formatType,
+	"formatValue":           formatValue,
+	"formatValueWithEscape": formatValueWithEscape,
+	"formatName":            formatName,
+	"indentLines":           indentLines,
 	"isKclData": func(v interface{}) bool {
 		_, ok := v.([]data)
 		return ok
@@ -92,12 +93,13 @@ func formatType(t typeInterface) string {
 	return typAny
 }
 
-func formatValue(v interface{}) string {
+func formatValueWithEscape(v interface{}, escape bool) string {
 	var buf bytes.Buffer
 	p := &printer{
 		listInline:   true,
 		configInline: true,
 		writer:       &buf,
+		escape:       escape,
 	}
 	err := p.walkValue(v)
 	if err != nil {
@@ -105,6 +107,10 @@ func formatValue(v interface{}) string {
 	} else {
 		return buf.String()
 	}
+}
+
+func formatValue(v interface{}) string {
+	return formatValueWithEscape(v, true)
 }
 
 var kclKeywords = map[string]struct{}{

@@ -10,7 +10,7 @@
     ----------
   {{- range .Properties }}
     {{ formatName .Name }} : {{ formatType .Type }}, {{ if .Required }}required{{ else }}optional{{ end }}
-    {{- if .HasDefault }}, default is {{ formatValue .DefaultValue }}{{ end }}
+    {{- if .HasDefault }}, default is {{ formatValueWithEscape .DefaultValue false}}{{ end }}
     {{- if .Description }}{{ "\n" }}{{ indentLines .Description "        " }}{{ end }}
   {{- end -}}
 
