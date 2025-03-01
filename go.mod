@@ -9,7 +9,7 @@ require (
 	github.com/getkin/kin-openapi v0.129.0
 	github.com/goccy/go-yaml v1.15.23
 	github.com/golang/protobuf v1.5.4
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mitchellh/mapstructure v1.5.0
