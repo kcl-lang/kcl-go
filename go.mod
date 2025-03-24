@@ -6,7 +6,7 @@ require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
 	github.com/emicklei/proto v1.14.0
-	github.com/getkin/kin-openapi v0.130.0
+	github.com/getkin/kin-openapi v0.131.0
 	github.com/goccy/go-yaml v1.16.0
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.7.0
