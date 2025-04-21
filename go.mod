@@ -17,7 +17,7 @@ require (
 	github.com/qri-io/jsonpointer v0.1.1
 	github.com/stretchr/testify v1.10.0
 	github.com/wk8/go-ordered-map/v2 v2.1.8
-	github.com/yuin/goldmark v1.7.8
+	github.com/yuin/goldmark v1.7.10
 	golang.org/x/tools v0.30.0
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.6
