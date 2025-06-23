@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
-	github.com/emicklei/proto v1.14.1
+	github.com/emicklei/proto v1.14.2
 	github.com/getkin/kin-openapi v0.132.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/golang/protobuf v1.5.4
