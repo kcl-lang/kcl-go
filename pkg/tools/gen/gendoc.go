@@ -282,13 +282,17 @@ func (g *GenContext) renderPackage(spec *SwaggerV2Spec, parentDir string) error 
 	switch strings.ToLower(string(g.Format)) {
 	case string(Markdown):
 		docFileName := fmt.Sprintf("%s.%s", pkgName, g.Format)
+
+		// Escape pipe symbols in all string fields of the package before templating
+		escapedPkg := DeepEscapePipesInPackage(pkg)
+
 		var buf bytes.Buffer
 		err := g.Template.ExecuteTemplate(&buf, "packageDoc", struct {
 			EscapeHtml bool
 			Data       *KclPackage
 		}{
 			EscapeHtml: g.EscapeHtml,
-			Data:       pkg,
+			Data:       escapedPkg,
 		})
 		if err != nil {
 			return fmt.Errorf("failed to render package %s with template, err: %s", pkg.Name, err)

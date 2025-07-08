@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	assert2 "github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	assert2 "github.com/stretchr/testify/assert"
 )
 
 func TestIndexContent(t *testing.T) {
@@ -248,4 +249,18 @@ func readLines(path string) ([]string, error) {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
+}
+
+func TestDeepEscapePipesInSchema_EnumPipeEscaping(t *testing.T) {
+	schema := &KclOpenAPIType{
+		Enum: []string{"A|B", "C", "D|E|F"},
+	}
+
+	escaped := deepEscapePipesInSchema(schema)
+
+	assert2.Equal(t, []string{"A\\|B", "C", "D\\|E\\|F"}, escaped.Enum)
+	assert2.Equal(t, schema.Default, escaped.Default)
+	assert2.Equal(t, schema.Description, escaped.Description)
+	assert2.Equal(t, schema.ExternalDocs, escaped.ExternalDocs)
+	assert2.Equal(t, schema.Ref, escaped.Ref)
 }
