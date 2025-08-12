@@ -20,7 +20,7 @@ require (
 	github.com/yuin/goldmark v1.7.12
 	golang.org/x/tools v0.36.0
 	google.golang.org/grpc v1.74.2
-	google.golang.org/protobuf v1.36.6
+	google.golang.org/protobuf v1.36.7
 	gopkg.in/yaml.v3 v3.0.1
 	kcl-lang.io/lib v0.11.2
 )
