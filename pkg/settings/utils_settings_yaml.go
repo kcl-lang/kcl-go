@@ -43,6 +43,115 @@ type ConfigStruct struct {
 type KeyValueStruct struct {
 	Key   string      `yaml:"key"`
 	Value interface{} `yaml:"value"`
+	// Store the original YAML value node to preserve order (the node under key: "value")
+	originalValueNode *yaml.Node `yaml:"-"`
+}
+
+// enhanceWithOrderInfo adds order-preserving information to settings from YAML nodes
+func enhanceWithOrderInfo(settings *SettingsFile, rootNode *yaml.Node) error {
+	if len(rootNode.Content) == 0 {
+		return nil
+	}
+
+	// Find the kcl_options section in the node tree
+	optionsNode := findOptionsNode(rootNode.Content[0])
+	if optionsNode == nil {
+		return nil
+	}
+
+	// Map the original value nodes to the parsed options
+	if optionsNode.Kind == yaml.SequenceNode {
+		for i, optionNode := range optionsNode.Content {
+			if i < len(settings.Options) {
+				if optionNode != nil && optionNode.Kind == yaml.MappingNode {
+					if val := getMappingValueNode(optionNode, "value"); val != nil {
+						settings.Options[i].originalValueNode = val
+					}
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+// findOptionsNode finds the kcl_options node in the YAML tree
+func findOptionsNode(node *yaml.Node) *yaml.Node {
+	if node.Kind != yaml.MappingNode {
+		return nil
+	}
+
+	for i := 0; i < len(node.Content); i += 2 {
+		keyNode := node.Content[i]
+		valueNode := node.Content[i+1]
+
+		if keyNode.Value == "kcl_options" {
+			return valueNode
+		}
+	}
+
+	return nil
+}
+
+// getMappingValueNode returns the value node for the provided key in a mapping node.
+func getMappingValueNode(node *yaml.Node, key string) *yaml.Node {
+	if node == nil || node.Kind != yaml.MappingNode {
+		return nil
+	}
+	for i := 0; i < len(node.Content); i += 2 {
+		k := node.Content[i]
+		v := node.Content[i+1]
+		if k != nil && k.Value == key {
+			return v
+		}
+	}
+	return nil
+}
+
+// nodeToOrderedJSON converts any YAML node to JSON while preserving order
+func nodeToOrderedJSON(node *yaml.Node) (string, error) {
+	switch node.Kind {
+	case yaml.MappingNode:
+		var pairs []string
+		for i := 0; i < len(node.Content); i += 2 {
+			keyNode := node.Content[i]
+			valueNode := node.Content[i+1]
+
+			key := keyNode.Value
+			valueJSON, err := nodeToOrderedJSON(valueNode)
+			if err != nil {
+				continue
+			}
+
+			pairs = append(pairs, fmt.Sprintf("%q:%s", key, valueJSON))
+		}
+		return "{" + strings.Join(pairs, ",") + "}", nil
+
+	case yaml.SequenceNode:
+		var items []string
+		for _, itemNode := range node.Content {
+			itemJSON, err := nodeToOrderedJSON(itemNode)
+			if err != nil {
+				continue
+			}
+			items = append(items, itemJSON)
+		}
+		return "[" + strings.Join(items, ",") + "]", nil
+
+	case yaml.ScalarNode:
+		var value interface{}
+		if err := node.Decode(&value); err != nil {
+			return fmt.Sprintf("%q", node.Value), nil
+		}
+		jsonBytes, err := json.Marshal(value)
+		if err != nil {
+			return fmt.Sprintf("%q", node.Value), nil
+		}
+		return string(jsonBytes), nil
+
+	default:
+		return "null", nil
+	}
 }
 
 func LoadFile(filename string, src interface{}) (f *SettingsFile, err error) {
@@ -77,9 +186,22 @@ func LoadFile(filename string, src interface{}) (f *SettingsFile, err error) {
 		return &SettingsFile{Filename: filename}, nil
 	}
 
+	// First parse with Node API to preserve order
+	var rootNode yaml.Node
+	if err := yaml.Unmarshal([]byte(code), &rootNode); err != nil {
+		return nil, err
+	}
+
+	// Also parse normally for basic structure
 	var settings SettingsFile
 	if err := yaml.Unmarshal([]byte(code), &settings); err != nil {
 		return nil, err
+	}
+
+	// Enhance the settings with order-preserving information
+	if err := enhanceWithOrderInfo(&settings, &rootNode); err != nil {
+		// If enhancement fails, continue with regular settings
+		// The order preservation is a best-effort feature
 	}
 
 	settings.Filename = filename
@@ -152,10 +274,26 @@ func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
 
 		switch v := t.Value.(type) {
 		case map[string]interface{}:
-			if s, err := json.Marshal(v); err == nil {
-				val = string(s)
+			// Check if we should preserve order or sort keys
+			if !settings.Config.SortKeys && t.originalValueNode != nil {
+				// Preserve original YAML order when sort_keys is false
+				if s, err := nodeToOrderedJSON(t.originalValueNode); err == nil {
+					val = s
+				} else {
+					// Fallback to regular JSON marshaling (which sorts)
+					if s, err := json.Marshal(v); err == nil {
+						val = string(s)
+					} else {
+						val = fmt.Sprint(v)
+					}
+				}
 			} else {
-				val = fmt.Sprint(v)
+				// Use regular JSON marshaling (which sorts) when sort_keys is true
+				if s, err := json.Marshal(v); err == nil {
+					val = string(s)
+				} else {
+					val = fmt.Sprint(v)
+				}
 			}
 		case []interface{}:
 			if s, err := json.Marshal(v); err == nil {
