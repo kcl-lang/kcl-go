@@ -36,13 +36,13 @@ jobs:
           components: clippy, rustfmt
 
       - name: Build KCL
-        run: export PATH=$PATH:$PWD/../_build/dist/Darwin/kclvm/bin:/usr/local/opt/llvm@12/bin && make build
+        run: export PATH=$PATH:$PWD/../_build/dist/Darwin/kcl/bin:/usr/local/opt/llvm@12/bin && make build
         shell: bash
 
       - uses: actions/upload-artifact@v3
         with:
           name: kcl-darwin-amd64-nightly
-          path: _build/dist/Darwin/kclvm
+          path: _build/dist/Darwin/kcl
 
   linux-release:
     name: Build and release on linux
@@ -76,7 +76,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: kcl-linux-amd64-nightly
-          path: _build/dist/ubuntu/kclvm
+          path: _build/dist/ubuntu/kcl
 
       - name: Copy Dockerfile to the current work directory
         run: cp scripts/docker/kcl/Dockerfile .
@@ -90,7 +90,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: kcllang/kclvm
+          images: kcllang/kcl
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
@@ -104,7 +104,7 @@ jobs:
     runs-on: windows-latest
     env:
       LLVM_SYS_120_PREFIX: "C:/LLVM"
-      KCLVM_CLANG: "C:/LLVM/bin/clang.exe"
+      KCL_CLANG: "C:/LLVM/bin/clang.exe"
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
@@ -126,10 +126,10 @@ jobs:
 
       - run: .\scripts\build-windows\build.ps1
 
-      - run: echo ";$(pwd)\scripts\build-windows\_output\kclvm-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - run: echo ";$(pwd)\scripts\build-windows\_output\kcl-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         working-directory: .
 
       - uses: actions/upload-artifact@v3
         with:
           name: kcl-windows-nightly
-          path: scripts/build-windows/_output/kclvm-windows
+          path: scripts/build-windows/_output/kcl-windows

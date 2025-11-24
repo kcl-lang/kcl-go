@@ -15,14 +15,14 @@ var (
 )
 
 type Hook interface {
-	Do(o *Option, r *gpyrpc.ExecProgram_Result) error
+	Do(o *Option, r *gpyrpc.ExecProgramResult) error
 }
 
 type Hooks []Hook
 
 type typeAttributeHook struct{}
 
-func (t *typeAttributeHook) Do(o *Option, r *gpyrpc.ExecProgram_Result) error {
+func (t *typeAttributeHook) Do(o *Option, r *gpyrpc.ExecProgramResult) error {
 	// Deal the `_type` attribute
 	if o != nil && r != nil && !o.fullTypePath && o.IncludeSchemaTypePath {
 		return resultTypeAttributeHook(r)
@@ -30,7 +30,7 @@ func (t *typeAttributeHook) Do(o *Option, r *gpyrpc.ExecProgram_Result) error {
 	return nil
 }
 
-func resultTypeAttributeHook(r *gpyrpc.ExecProgram_Result) error {
+func resultTypeAttributeHook(r *gpyrpc.ExecProgramResult) error {
 	// Modify the _type fields
 	var data []map[string]interface{}
 	var mapData map[string]interface{}
@@ -50,7 +50,7 @@ func resultTypeAttributeHook(r *gpyrpc.ExecProgram_Result) error {
 	return nil
 }
 
-func marshal(r *gpyrpc.ExecProgram_Result, value interface{}) {
+func marshal(r *gpyrpc.ExecProgramResult, value interface{}) {
 	// Marshal the modified Node back to YAML
 	yamlOutput, _ := yaml.Marshal(value)
 	// Marshal the modified Node back to JSON

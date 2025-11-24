@@ -14,7 +14,7 @@ const (
 
 func OverrideFile(file string, specs, importPaths []string) (result bool, err error) {
 	svc := kcl.Service()
-	resp, err := svc.OverrideFile(&gpyrpc.OverrideFile_Args{
+	resp, err := svc.OverrideFile(&gpyrpc.OverrideFileArgs{
 		File:        file,
 		Specs:       specs,
 		ImportPaths: importPaths,

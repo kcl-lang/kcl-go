@@ -384,7 +384,7 @@ func getValues(myMap map[string]*gpyrpc.KclType) []*gpyrpc.KclType {
 	return values
 }
 
-func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgram_Result, logger io.Writer, hooks Hooks) (*KCLResultList, error) {
+func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgramResult, logger io.Writer, hooks Hooks) (*KCLResultList, error) {
 	for _, hook := range hooks {
 		hook.Do(o, resp)
 	}
@@ -434,7 +434,7 @@ func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultLis
 	}
 
 	svc := Service()
-	resp, err := svc.ExecProgram(args.ExecProgram_Args)
+	resp, err := svc.ExecProgram(args.ExecProgramArgs)
 	if err != nil {
 		return nil, err
 	}

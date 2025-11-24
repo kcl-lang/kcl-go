@@ -208,8 +208,8 @@ func LoadFile(filename string, src interface{}) (f *SettingsFile, err error) {
 	return &settings, nil
 }
 
-func (settings *SettingsFile) To_ExecProgram_Args() *gpyrpc.ExecProgram_Args {
-	args := &gpyrpc.ExecProgram_Args{
+func (settings *SettingsFile) To_ExecProgramArgs() *gpyrpc.ExecProgramArgs {
+	args := &gpyrpc.ExecProgramArgs{
 		KFilenameList: []string{},
 		KCodeList:     []string{},
 

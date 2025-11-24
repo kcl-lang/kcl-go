@@ -13,7 +13,7 @@ import (
 )
 
 type Option struct {
-	*gpyrpc.ExecProgram_Args
+	*gpyrpc.ExecProgramArgs
 	logger       io.Writer
 	fullTypePath bool
 	Err          error
@@ -22,7 +22,7 @@ type Option struct {
 // NewOption returns a new Option.
 func NewOption() *Option {
 	return &Option{
-		ExecProgram_Args: new(gpyrpc.ExecProgram_Args),
+		ExecProgramArgs: new(gpyrpc.ExecProgramArgs),
 	}
 }
 
@@ -157,7 +157,7 @@ func WithSettings(filename string) Option {
 		return Option{Err: fmt.Errorf("kcl.WithSettings(%q): %v", filename, err)}
 	}
 	var opt = NewOption()
-	opt.ExecProgram_Args = f.To_ExecProgram_Args()
+	opt.ExecProgramArgs = f.To_ExecProgramArgs()
 	return *opt
 }
 
@@ -202,7 +202,7 @@ func WithShowHidden(showHidden bool) Option {
 // Merge will merge all options into one.
 func (p *Option) Merge(opts ...Option) *Option {
 	for _, opt := range opts {
-		if opt.ExecProgram_Args == nil {
+		if opt.ExecProgramArgs == nil {
 			continue
 		}
 

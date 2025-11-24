@@ -32,8 +32,8 @@ var (
 )
 
 type PROTORPC_BuiltinService interface {
-	Ping(in *Ping_Args, out *Ping_Result) error
-	ListMethod(in *ListMethod_Args, out *ListMethod_Result) error
+	Ping(in *PingArgs, out *PingResult) error
+	ListMethod(in *ListMethodArgs, out *ListMethodResult) error
 }
 
 // PROTORPC_AcceptBuiltinServiceClient accepts connections on the listener and serves requests
@@ -114,9 +114,9 @@ func PROTORPC_NewBuiltinServiceClient(conn io.ReadWriteCloser) *PROTORPC_Builtin
 	return &PROTORPC_BuiltinServiceClient{c}
 }
 
-func (c *PROTORPC_BuiltinServiceClient) Ping(in *Ping_Args) (out *Ping_Result, err error) {
+func (c *PROTORPC_BuiltinServiceClient) Ping(in *PingArgs) (out *PingResult, err error) {
 	if in == nil {
-		in = new(Ping_Args)
+		in = new(PingArgs)
 	}
 
 	type Validator interface {
@@ -128,7 +128,7 @@ func (c *PROTORPC_BuiltinServiceClient) Ping(in *Ping_Args) (out *Ping_Result, e
 		}
 	}
 
-	out = new(Ping_Result)
+	out = new(PingResult)
 	if err = c.Call("BuiltinService.Ping", in, out); err != nil {
 		return nil, err
 	}
@@ -142,9 +142,9 @@ func (c *PROTORPC_BuiltinServiceClient) Ping(in *Ping_Args) (out *Ping_Result, e
 	return out, nil
 }
 
-func (c *PROTORPC_BuiltinServiceClient) AsyncPing(in *Ping_Args, out *Ping_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_BuiltinServiceClient) AsyncPing(in *PingArgs, out *PingResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Ping_Args)
+		in = new(PingArgs)
 	}
 	return c.Go(
 		"BuiltinService.Ping",
@@ -153,9 +153,9 @@ func (c *PROTORPC_BuiltinServiceClient) AsyncPing(in *Ping_Args, out *Ping_Resul
 	)
 }
 
-func (c *PROTORPC_BuiltinServiceClient) ListMethod(in *ListMethod_Args) (out *ListMethod_Result, err error) {
+func (c *PROTORPC_BuiltinServiceClient) ListMethod(in *ListMethodArgs) (out *ListMethodResult, err error) {
 	if in == nil {
-		in = new(ListMethod_Args)
+		in = new(ListMethodArgs)
 	}
 
 	type Validator interface {
@@ -167,7 +167,7 @@ func (c *PROTORPC_BuiltinServiceClient) ListMethod(in *ListMethod_Args) (out *Li
 		}
 	}
 
-	out = new(ListMethod_Result)
+	out = new(ListMethodResult)
 	if err = c.Call("BuiltinService.ListMethod", in, out); err != nil {
 		return nil, err
 	}
@@ -181,9 +181,9 @@ func (c *PROTORPC_BuiltinServiceClient) ListMethod(in *ListMethod_Args) (out *Li
 	return out, nil
 }
 
-func (c *PROTORPC_BuiltinServiceClient) AsyncListMethod(in *ListMethod_Args, out *ListMethod_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_BuiltinServiceClient) AsyncListMethod(in *ListMethodArgs, out *ListMethodResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ListMethod_Args)
+		in = new(ListMethodArgs)
 	}
 	return c.Go(
 		"BuiltinService.ListMethod",
@@ -210,38 +210,38 @@ func PROTORPC_DialBuiltinServiceTimeout(network, addr string, timeout time.Durat
 	return &PROTORPC_BuiltinServiceClient{c}, nil
 }
 
-type PROTORPC_KclvmService interface {
-	Ping(in *Ping_Args, out *Ping_Result) error
-	ExecProgram(in *ExecProgram_Args, out *ExecProgram_Result) error
+type PROTORPC_KclService interface {
+	Ping(in *PingArgs, out *PingResult) error
+	ExecProgram(in *ExecProgramArgs, out *ExecProgramResult) error
 	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-	BuildProgram(in *BuildProgram_Args, out *BuildProgram_Result) error
+	BuildProgram(in *BuildProgramArgs, out *BuildProgramResult) error
 	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-	ExecArtifact(in *ExecArtifact_Args, out *ExecProgram_Result) error
-	ParseProgram(in *ParseProgram_Args, out *ParseProgram_Result) error
-	ListOptions(in *ParseProgram_Args, out *ListOptions_Result) error
-	ListVariables(in *ListVariables_Args, out *ListVariables_Result) error
-	LoadPackage(in *LoadPackage_Args, out *LoadPackage_Result) error
-	FormatCode(in *FormatCode_Args, out *FormatCode_Result) error
-	FormatPath(in *FormatPath_Args, out *FormatPath_Result) error
-	LintPath(in *LintPath_Args, out *LintPath_Result) error
-	OverrideFile(in *OverrideFile_Args, out *OverrideFile_Result) error
-	GetSchemaTypeMapping(in *GetSchemaTypeMapping_Args, out *GetSchemaTypeMapping_Result) error
-	ValidateCode(in *ValidateCode_Args, out *ValidateCode_Result) error
-	ListDepFiles(in *ListDepFiles_Args, out *ListDepFiles_Result) error
-	LoadSettingsFiles(in *LoadSettingsFiles_Args, out *LoadSettingsFiles_Result) error
-	Rename(in *Rename_Args, out *Rename_Result) error
-	RenameCode(in *RenameCode_Args, out *RenameCode_Result) error
-	Test(in *Test_Args, out *Test_Result) error
-	UpdateDependencies(in *UpdateDependencies_Args, out *UpdateDependencies_Result) error
-	GetVersion(in *GetVersion_Args, out *GetVersion_Result) error
+	ExecArtifact(in *ExecArtifactArgs, out *ExecProgramResult) error
+	ParseProgram(in *ParseProgramArgs, out *ParseProgramResult) error
+	ListOptions(in *ParseProgramArgs, out *ListOptionsResult) error
+	ListVariables(in *ListVariablesArgs, out *ListVariablesResult) error
+	LoadPackage(in *LoadPackageArgs, out *LoadPackageResult) error
+	FormatCode(in *FormatCodeArgs, out *FormatCodeResult) error
+	FormatPath(in *FormatPathArgs, out *FormatPathResult) error
+	LintPath(in *LintPathArgs, out *LintPathResult) error
+	OverrideFile(in *OverrideFileArgs, out *OverrideFileResult) error
+	GetSchemaTypeMapping(in *GetSchemaTypeMappingArgs, out *GetSchemaTypeMappingResult) error
+	ValidateCode(in *ValidateCodeArgs, out *ValidateCodeResult) error
+	ListDepFiles(in *ListDepFilesArgs, out *ListDepFilesResult) error
+	LoadSettingsFiles(in *LoadSettingsFilesArgs, out *LoadSettingsFilesResult) error
+	Rename(in *RenameArgs, out *RenameResult) error
+	RenameCode(in *RenameCodeArgs, out *RenameCodeResult) error
+	Test(in *TestArgs, out *TestResult) error
+	UpdateDependencies(in *UpdateDependenciesArgs, out *UpdateDependenciesResult) error
+	GetVersion(in *GetVersionArgs, out *GetVersionResult) error
 }
 
-// PROTORPC_AcceptKclvmServiceClient accepts connections on the listener and serves requests
+// PROTORPC_AcceptKclServiceClient accepts connections on the listener and serves requests
 // for each incoming connection.  Accept blocks; the caller typically
 // invokes it in a go statement.
-func PROTORPC_AcceptKclvmServiceClient(lis net.Listener, x PROTORPC_KclvmService) {
+func PROTORPC_AcceptKclServiceClient(lis net.Listener, x PROTORPC_KclService) {
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("KclvmService", x); err != nil {
+	if err := srv.RegisterName("KclService", x); err != nil {
 		log.Fatal(err)
 	}
 
@@ -254,26 +254,26 @@ func PROTORPC_AcceptKclvmServiceClient(lis net.Listener, x PROTORPC_KclvmService
 	}
 }
 
-// PROTORPC_RegisterKclvmService publish the given PROTORPC_KclvmService implementation on the server.
-func PROTORPC_RegisterKclvmService(srv *rpc.Server, x PROTORPC_KclvmService) error {
-	if err := srv.RegisterName("KclvmService", x); err != nil {
+// PROTORPC_RegisterKclService publish the given PROTORPC_KclService implementation on the server.
+func PROTORPC_RegisterKclService(srv *rpc.Server, x PROTORPC_KclService) error {
+	if err := srv.RegisterName("KclService", x); err != nil {
 		return err
 	}
 	return nil
 }
 
-// PROTORPC_NewKclvmServiceServer returns a new PROTORPC_KclvmService Server.
-func PROTORPC_NewKclvmServiceServer(x PROTORPC_KclvmService) *rpc.Server {
+// PROTORPC_NewKclServiceServer returns a new PROTORPC_KclService Server.
+func PROTORPC_NewKclServiceServer(x PROTORPC_KclService) *rpc.Server {
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("KclvmService", x); err != nil {
+	if err := srv.RegisterName("KclService", x); err != nil {
 		log.Fatal(err)
 	}
 	return srv
 }
 
-// PROTORPC_ListenAndServeKclvmService listen announces on the local network address laddr
-// and serves the given KclvmService implementation.
-func PROTORPC_ListenAndServeKclvmService(network, addr string, x PROTORPC_KclvmService) error {
+// PROTORPC_ListenAndServeKclService listen announces on the local network address laddr
+// and serves the given KclService implementation.
+func PROTORPC_ListenAndServeKclService(network, addr string, x PROTORPC_KclService) error {
 	lis, err := net.Listen(network, addr)
 	if err != nil {
 		return err
@@ -281,7 +281,7 @@ func PROTORPC_ListenAndServeKclvmService(network, addr string, x PROTORPC_KclvmS
 	defer lis.Close()
 
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("KclvmService", x); err != nil {
+	if err := srv.RegisterName("KclService", x); err != nil {
 		return err
 	}
 
@@ -294,29 +294,29 @@ func PROTORPC_ListenAndServeKclvmService(network, addr string, x PROTORPC_KclvmS
 	}
 }
 
-// PROTORPC_ServeKclvmService serves the given PROTORPC_KclvmService implementation.
-func PROTORPC_ServeKclvmService(conn io.ReadWriteCloser, x PROTORPC_KclvmService) {
+// PROTORPC_ServeKclService serves the given PROTORPC_KclService implementation.
+func PROTORPC_ServeKclService(conn io.ReadWriteCloser, x PROTORPC_KclService) {
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("KclvmService", x); err != nil {
+	if err := srv.RegisterName("KclService", x); err != nil {
 		log.Fatal(err)
 	}
 	srv.ServeCodec(protorpc.NewServerCodec(conn))
 }
 
-type PROTORPC_KclvmServiceClient struct {
+type PROTORPC_KclServiceClient struct {
 	*rpc.Client
 }
 
-// PROTORPC_NewKclvmServiceClient returns a PROTORPC_KclvmService stub to handle
-// requests to the set of PROTORPC_KclvmService at the other end of the connection.
-func PROTORPC_NewKclvmServiceClient(conn io.ReadWriteCloser) *PROTORPC_KclvmServiceClient {
+// PROTORPC_NewKclServiceClient returns a PROTORPC_KclService stub to handle
+// requests to the set of PROTORPC_KclService at the other end of the connection.
+func PROTORPC_NewKclServiceClient(conn io.ReadWriteCloser) *PROTORPC_KclServiceClient {
 	c := rpc.NewClientWithCodec(protorpc.NewClientCodec(conn))
-	return &PROTORPC_KclvmServiceClient{c}
+	return &PROTORPC_KclServiceClient{c}
 }
 
-func (c *PROTORPC_KclvmServiceClient) Ping(in *Ping_Args) (out *Ping_Result, err error) {
+func (c *PROTORPC_KclServiceClient) Ping(in *PingArgs) (out *PingResult, err error) {
 	if in == nil {
-		in = new(Ping_Args)
+		in = new(PingArgs)
 	}
 
 	type Validator interface {
@@ -328,8 +328,8 @@ func (c *PROTORPC_KclvmServiceClient) Ping(in *Ping_Args) (out *Ping_Result, err
 		}
 	}
 
-	out = new(Ping_Result)
-	if err = c.Call("KclvmService.Ping", in, out); err != nil {
+	out = new(PingResult)
+	if err = c.Call("KclService.Ping", in, out); err != nil {
 		return nil, err
 	}
 
@@ -342,20 +342,20 @@ func (c *PROTORPC_KclvmServiceClient) Ping(in *Ping_Args) (out *Ping_Result, err
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncPing(in *Ping_Args, out *Ping_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncPing(in *PingArgs, out *PingResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Ping_Args)
+		in = new(PingArgs)
 	}
 	return c.Go(
-		"KclvmService.Ping",
+		"KclService.Ping",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) ExecProgram(in *ExecProgram_Args) (out *ExecProgram_Result, err error) {
+func (c *PROTORPC_KclServiceClient) ExecProgram(in *ExecProgramArgs) (out *ExecProgramResult, err error) {
 	if in == nil {
-		in = new(ExecProgram_Args)
+		in = new(ExecProgramArgs)
 	}
 
 	type Validator interface {
@@ -367,8 +367,8 @@ func (c *PROTORPC_KclvmServiceClient) ExecProgram(in *ExecProgram_Args) (out *Ex
 		}
 	}
 
-	out = new(ExecProgram_Result)
-	if err = c.Call("KclvmService.ExecProgram", in, out); err != nil {
+	out = new(ExecProgramResult)
+	if err = c.Call("KclService.ExecProgram", in, out); err != nil {
 		return nil, err
 	}
 
@@ -381,21 +381,21 @@ func (c *PROTORPC_KclvmServiceClient) ExecProgram(in *ExecProgram_Args) (out *Ex
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncExecProgram(in *ExecProgram_Args, out *ExecProgram_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncExecProgram(in *ExecProgramArgs, out *ExecProgramResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ExecProgram_Args)
+		in = new(ExecProgramArgs)
 	}
 	return c.Go(
-		"KclvmService.ExecProgram",
+		"KclService.ExecProgram",
 		in, out,
 		done,
 	)
 }
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (c *PROTORPC_KclvmServiceClient) BuildProgram(in *BuildProgram_Args) (out *BuildProgram_Result, err error) {
+func (c *PROTORPC_KclServiceClient) BuildProgram(in *BuildProgramArgs) (out *BuildProgramResult, err error) {
 	if in == nil {
-		in = new(BuildProgram_Args)
+		in = new(BuildProgramArgs)
 	}
 
 	type Validator interface {
@@ -407,49 +407,8 @@ func (c *PROTORPC_KclvmServiceClient) BuildProgram(in *BuildProgram_Args) (out *
 		}
 	}
 
-	out = new(BuildProgram_Result)
-	if err = c.Call("KclvmService.BuildProgram", in, out); err != nil {
-		return nil, err
-	}
-
-	if x, ok := proto.Message(out).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return out, err
-		}
-	}
-
-	return out, nil
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (c *PROTORPC_KclvmServiceClient) AsyncBuildProgram(in *BuildProgram_Args, out *BuildProgram_Result, done chan *rpc.Call) *rpc.Call {
-	if in == nil {
-		in = new(BuildProgram_Args)
-	}
-	return c.Go(
-		"KclvmService.BuildProgram",
-		in, out,
-		done,
-	)
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (c *PROTORPC_KclvmServiceClient) ExecArtifact(in *ExecArtifact_Args) (out *ExecProgram_Result, err error) {
-	if in == nil {
-		in = new(ExecArtifact_Args)
-	}
-
-	type Validator interface {
-		Validate() error
-	}
-	if x, ok := proto.Message(in).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return nil, err
-		}
-	}
-
-	out = new(ExecProgram_Result)
-	if err = c.Call("KclvmService.ExecArtifact", in, out); err != nil {
+	out = new(BuildProgramResult)
+	if err = c.Call("KclService.BuildProgram", in, out); err != nil {
 		return nil, err
 	}
 
@@ -463,20 +422,21 @@ func (c *PROTORPC_KclvmServiceClient) ExecArtifact(in *ExecArtifact_Args) (out *
 }
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (c *PROTORPC_KclvmServiceClient) AsyncExecArtifact(in *ExecArtifact_Args, out *ExecProgram_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncBuildProgram(in *BuildProgramArgs, out *BuildProgramResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ExecArtifact_Args)
+		in = new(BuildProgramArgs)
 	}
 	return c.Go(
-		"KclvmService.ExecArtifact",
+		"KclService.BuildProgram",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) ParseFile(in *ParseFile_Args) (out *ParseFile_Result, err error) {
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
+func (c *PROTORPC_KclServiceClient) ExecArtifact(in *ExecArtifactArgs) (out *ExecProgramResult, err error) {
 	if in == nil {
-		in = new(ParseFile_Args)
+		in = new(ExecArtifactArgs)
 	}
 
 	type Validator interface {
@@ -488,8 +448,8 @@ func (c *PROTORPC_KclvmServiceClient) ParseFile(in *ParseFile_Args) (out *ParseF
 		}
 	}
 
-	out = new(ParseFile_Result)
-	if err = c.Call("KclvmService.ParseFile", in, out); err != nil {
+	out = new(ExecProgramResult)
+	if err = c.Call("KclService.ExecArtifact", in, out); err != nil {
 		return nil, err
 	}
 
@@ -502,20 +462,21 @@ func (c *PROTORPC_KclvmServiceClient) ParseFile(in *ParseFile_Args) (out *ParseF
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncParseFile(in *ParseFile_Args, out *ParseFile_Result, done chan *rpc.Call) *rpc.Call {
+// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
+func (c *PROTORPC_KclServiceClient) AsyncExecArtifact(in *ExecArtifactArgs, out *ExecProgramResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ParseFile_Args)
+		in = new(ExecArtifactArgs)
 	}
 	return c.Go(
-		"KclvmService.ParseFile",
+		"KclService.ExecArtifact",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) ParseProgram(in *ParseProgram_Args) (out *ParseProgram_Result, err error) {
+func (c *PROTORPC_KclServiceClient) ParseFile(in *ParseFileArgs) (out *ParseFileResult, err error) {
 	if in == nil {
-		in = new(ParseProgram_Args)
+		in = new(ParseFileArgs)
 	}
 
 	type Validator interface {
@@ -527,8 +488,8 @@ func (c *PROTORPC_KclvmServiceClient) ParseProgram(in *ParseProgram_Args) (out *
 		}
 	}
 
-	out = new(ParseProgram_Result)
-	if err = c.Call("KclvmService.ParseProgram", in, out); err != nil {
+	out = new(ParseFileResult)
+	if err = c.Call("KclService.ParseFile", in, out); err != nil {
 		return nil, err
 	}
 
@@ -541,20 +502,20 @@ func (c *PROTORPC_KclvmServiceClient) ParseProgram(in *ParseProgram_Args) (out *
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncParseProgram(in *ParseProgram_Args, out *ParseProgram_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncParseFile(in *ParseFileArgs, out *ParseFileResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ParseProgram_Args)
+		in = new(ParseFileArgs)
 	}
 	return c.Go(
-		"KclvmService.ParseProgram",
+		"KclService.ParseFile",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) ListOptions(in *ParseProgram_Args) (out *ListOptions_Result, err error) {
+func (c *PROTORPC_KclServiceClient) ParseProgram(in *ParseProgramArgs) (out *ParseProgramResult, err error) {
 	if in == nil {
-		in = new(ParseProgram_Args)
+		in = new(ParseProgramArgs)
 	}
 
 	type Validator interface {
@@ -566,8 +527,8 @@ func (c *PROTORPC_KclvmServiceClient) ListOptions(in *ParseProgram_Args) (out *L
 		}
 	}
 
-	out = new(ListOptions_Result)
-	if err = c.Call("KclvmService.ListOptions", in, out); err != nil {
+	out = new(ParseProgramResult)
+	if err = c.Call("KclService.ParseProgram", in, out); err != nil {
 		return nil, err
 	}
 
@@ -580,20 +541,20 @@ func (c *PROTORPC_KclvmServiceClient) ListOptions(in *ParseProgram_Args) (out *L
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncListOptions(in *ParseProgram_Args, out *ListOptions_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncParseProgram(in *ParseProgramArgs, out *ParseProgramResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ParseProgram_Args)
+		in = new(ParseProgramArgs)
 	}
 	return c.Go(
-		"KclvmService.ListOptions",
+		"KclService.ParseProgram",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) ListVariables(in *ListVariables_Args) (out *ListVariables_Result, err error) {
+func (c *PROTORPC_KclServiceClient) ListOptions(in *ParseProgramArgs) (out *ListOptionsResult, err error) {
 	if in == nil {
-		in = new(ListVariables_Args)
+		in = new(ParseProgramArgs)
 	}
 
 	type Validator interface {
@@ -605,8 +566,8 @@ func (c *PROTORPC_KclvmServiceClient) ListVariables(in *ListVariables_Args) (out
 		}
 	}
 
-	out = new(ListVariables_Result)
-	if err = c.Call("KclvmService.ListVariables", in, out); err != nil {
+	out = new(ListOptionsResult)
+	if err = c.Call("KclService.ListOptions", in, out); err != nil {
 		return nil, err
 	}
 
@@ -619,20 +580,20 @@ func (c *PROTORPC_KclvmServiceClient) ListVariables(in *ListVariables_Args) (out
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncListVariables(in *ListVariables_Args, out *ListVariables_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncListOptions(in *ParseProgramArgs, out *ListOptionsResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ListVariables_Args)
+		in = new(ParseProgramArgs)
 	}
 	return c.Go(
-		"KclvmService.ListVariables",
+		"KclService.ListOptions",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) LoadPackage(in *LoadPackage_Args) (out *LoadPackage_Result, err error) {
+func (c *PROTORPC_KclServiceClient) ListVariables(in *ListVariablesArgs) (out *ListVariablesResult, err error) {
 	if in == nil {
-		in = new(LoadPackage_Args)
+		in = new(ListVariablesArgs)
 	}
 
 	type Validator interface {
@@ -644,8 +605,8 @@ func (c *PROTORPC_KclvmServiceClient) LoadPackage(in *LoadPackage_Args) (out *Lo
 		}
 	}
 
-	out = new(LoadPackage_Result)
-	if err = c.Call("KclvmService.LoadPackage", in, out); err != nil {
+	out = new(ListVariablesResult)
+	if err = c.Call("KclService.ListVariables", in, out); err != nil {
 		return nil, err
 	}
 
@@ -658,20 +619,20 @@ func (c *PROTORPC_KclvmServiceClient) LoadPackage(in *LoadPackage_Args) (out *Lo
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncLoadPackage(in *LoadPackage_Args, out *LoadPackage_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncListVariables(in *ListVariablesArgs, out *ListVariablesResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(LoadPackage_Args)
+		in = new(ListVariablesArgs)
 	}
 	return c.Go(
-		"KclvmService.LoadPackage",
+		"KclService.ListVariables",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) FormatCode(in *FormatCode_Args) (out *FormatCode_Result, err error) {
+func (c *PROTORPC_KclServiceClient) LoadPackage(in *LoadPackageArgs) (out *LoadPackageResult, err error) {
 	if in == nil {
-		in = new(FormatCode_Args)
+		in = new(LoadPackageArgs)
 	}
 
 	type Validator interface {
@@ -683,8 +644,8 @@ func (c *PROTORPC_KclvmServiceClient) FormatCode(in *FormatCode_Args) (out *Form
 		}
 	}
 
-	out = new(FormatCode_Result)
-	if err = c.Call("KclvmService.FormatCode", in, out); err != nil {
+	out = new(LoadPackageResult)
+	if err = c.Call("KclService.LoadPackage", in, out); err != nil {
 		return nil, err
 	}
 
@@ -697,20 +658,20 @@ func (c *PROTORPC_KclvmServiceClient) FormatCode(in *FormatCode_Args) (out *Form
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncFormatCode(in *FormatCode_Args, out *FormatCode_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncLoadPackage(in *LoadPackageArgs, out *LoadPackageResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(FormatCode_Args)
+		in = new(LoadPackageArgs)
 	}
 	return c.Go(
-		"KclvmService.FormatCode",
+		"KclService.LoadPackage",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) FormatPath(in *FormatPath_Args) (out *FormatPath_Result, err error) {
+func (c *PROTORPC_KclServiceClient) FormatCode(in *FormatCodeArgs) (out *FormatCodeResult, err error) {
 	if in == nil {
-		in = new(FormatPath_Args)
+		in = new(FormatCodeArgs)
 	}
 
 	type Validator interface {
@@ -722,8 +683,8 @@ func (c *PROTORPC_KclvmServiceClient) FormatPath(in *FormatPath_Args) (out *Form
 		}
 	}
 
-	out = new(FormatPath_Result)
-	if err = c.Call("KclvmService.FormatPath", in, out); err != nil {
+	out = new(FormatCodeResult)
+	if err = c.Call("KclService.FormatCode", in, out); err != nil {
 		return nil, err
 	}
 
@@ -736,20 +697,20 @@ func (c *PROTORPC_KclvmServiceClient) FormatPath(in *FormatPath_Args) (out *Form
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncFormatPath(in *FormatPath_Args, out *FormatPath_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncFormatCode(in *FormatCodeArgs, out *FormatCodeResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(FormatPath_Args)
+		in = new(FormatCodeArgs)
 	}
 	return c.Go(
-		"KclvmService.FormatPath",
+		"KclService.FormatCode",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) LintPath(in *LintPath_Args) (out *LintPath_Result, err error) {
+func (c *PROTORPC_KclServiceClient) FormatPath(in *FormatPathArgs) (out *FormatPathResult, err error) {
 	if in == nil {
-		in = new(LintPath_Args)
+		in = new(FormatPathArgs)
 	}
 
 	type Validator interface {
@@ -761,8 +722,8 @@ func (c *PROTORPC_KclvmServiceClient) LintPath(in *LintPath_Args) (out *LintPath
 		}
 	}
 
-	out = new(LintPath_Result)
-	if err = c.Call("KclvmService.LintPath", in, out); err != nil {
+	out = new(FormatPathResult)
+	if err = c.Call("KclService.FormatPath", in, out); err != nil {
 		return nil, err
 	}
 
@@ -775,20 +736,20 @@ func (c *PROTORPC_KclvmServiceClient) LintPath(in *LintPath_Args) (out *LintPath
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncLintPath(in *LintPath_Args, out *LintPath_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncFormatPath(in *FormatPathArgs, out *FormatPathResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(LintPath_Args)
+		in = new(FormatPathArgs)
 	}
 	return c.Go(
-		"KclvmService.LintPath",
+		"KclService.FormatPath",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) OverrideFile(in *OverrideFile_Args) (out *OverrideFile_Result, err error) {
+func (c *PROTORPC_KclServiceClient) LintPath(in *LintPathArgs) (out *LintPathResult, err error) {
 	if in == nil {
-		in = new(OverrideFile_Args)
+		in = new(LintPathArgs)
 	}
 
 	type Validator interface {
@@ -800,8 +761,8 @@ func (c *PROTORPC_KclvmServiceClient) OverrideFile(in *OverrideFile_Args) (out *
 		}
 	}
 
-	out = new(OverrideFile_Result)
-	if err = c.Call("KclvmService.OverrideFile", in, out); err != nil {
+	out = new(LintPathResult)
+	if err = c.Call("KclService.LintPath", in, out); err != nil {
 		return nil, err
 	}
 
@@ -814,20 +775,20 @@ func (c *PROTORPC_KclvmServiceClient) OverrideFile(in *OverrideFile_Args) (out *
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncOverrideFile(in *OverrideFile_Args, out *OverrideFile_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncLintPath(in *LintPathArgs, out *LintPathResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(OverrideFile_Args)
+		in = new(LintPathArgs)
 	}
 	return c.Go(
-		"KclvmService.OverrideFile",
+		"KclService.LintPath",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) GetSchemaTypeMapping(in *GetSchemaTypeMapping_Args) (out *GetSchemaTypeMapping_Result, err error) {
+func (c *PROTORPC_KclServiceClient) OverrideFile(in *OverrideFileArgs) (out *OverrideFileResult, err error) {
 	if in == nil {
-		in = new(GetSchemaTypeMapping_Args)
+		in = new(OverrideFileArgs)
 	}
 
 	type Validator interface {
@@ -839,8 +800,8 @@ func (c *PROTORPC_KclvmServiceClient) GetSchemaTypeMapping(in *GetSchemaTypeMapp
 		}
 	}
 
-	out = new(GetSchemaTypeMapping_Result)
-	if err = c.Call("KclvmService.GetSchemaTypeMapping", in, out); err != nil {
+	out = new(OverrideFileResult)
+	if err = c.Call("KclService.OverrideFile", in, out); err != nil {
 		return nil, err
 	}
 
@@ -853,20 +814,20 @@ func (c *PROTORPC_KclvmServiceClient) GetSchemaTypeMapping(in *GetSchemaTypeMapp
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncGetSchemaTypeMapping(in *GetSchemaTypeMapping_Args, out *GetSchemaTypeMapping_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncOverrideFile(in *OverrideFileArgs, out *OverrideFileResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(GetSchemaTypeMapping_Args)
+		in = new(OverrideFileArgs)
 	}
 	return c.Go(
-		"KclvmService.GetSchemaTypeMapping",
+		"KclService.OverrideFile",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) ValidateCode(in *ValidateCode_Args) (out *ValidateCode_Result, err error) {
+func (c *PROTORPC_KclServiceClient) GetSchemaTypeMapping(in *GetSchemaTypeMappingArgs) (out *GetSchemaTypeMappingResult, err error) {
 	if in == nil {
-		in = new(ValidateCode_Args)
+		in = new(GetSchemaTypeMappingArgs)
 	}
 
 	type Validator interface {
@@ -878,8 +839,8 @@ func (c *PROTORPC_KclvmServiceClient) ValidateCode(in *ValidateCode_Args) (out *
 		}
 	}
 
-	out = new(ValidateCode_Result)
-	if err = c.Call("KclvmService.ValidateCode", in, out); err != nil {
+	out = new(GetSchemaTypeMappingResult)
+	if err = c.Call("KclService.GetSchemaTypeMapping", in, out); err != nil {
 		return nil, err
 	}
 
@@ -892,20 +853,20 @@ func (c *PROTORPC_KclvmServiceClient) ValidateCode(in *ValidateCode_Args) (out *
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncValidateCode(in *ValidateCode_Args, out *ValidateCode_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncGetSchemaTypeMapping(in *GetSchemaTypeMappingArgs, out *GetSchemaTypeMappingResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ValidateCode_Args)
+		in = new(GetSchemaTypeMappingArgs)
 	}
 	return c.Go(
-		"KclvmService.ValidateCode",
+		"KclService.GetSchemaTypeMapping",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) ListDepFiles(in *ListDepFiles_Args) (out *ListDepFiles_Result, err error) {
+func (c *PROTORPC_KclServiceClient) ValidateCode(in *ValidateCodeArgs) (out *ValidateCodeResult, err error) {
 	if in == nil {
-		in = new(ListDepFiles_Args)
+		in = new(ValidateCodeArgs)
 	}
 
 	type Validator interface {
@@ -917,8 +878,8 @@ func (c *PROTORPC_KclvmServiceClient) ListDepFiles(in *ListDepFiles_Args) (out *
 		}
 	}
 
-	out = new(ListDepFiles_Result)
-	if err = c.Call("KclvmService.ListDepFiles", in, out); err != nil {
+	out = new(ValidateCodeResult)
+	if err = c.Call("KclService.ValidateCode", in, out); err != nil {
 		return nil, err
 	}
 
@@ -931,20 +892,20 @@ func (c *PROTORPC_KclvmServiceClient) ListDepFiles(in *ListDepFiles_Args) (out *
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncListDepFiles(in *ListDepFiles_Args, out *ListDepFiles_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncValidateCode(in *ValidateCodeArgs, out *ValidateCodeResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(ListDepFiles_Args)
+		in = new(ValidateCodeArgs)
 	}
 	return c.Go(
-		"KclvmService.ListDepFiles",
+		"KclService.ValidateCode",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) LoadSettingsFiles(in *LoadSettingsFiles_Args) (out *LoadSettingsFiles_Result, err error) {
+func (c *PROTORPC_KclServiceClient) ListDepFiles(in *ListDepFilesArgs) (out *ListDepFilesResult, err error) {
 	if in == nil {
-		in = new(LoadSettingsFiles_Args)
+		in = new(ListDepFilesArgs)
 	}
 
 	type Validator interface {
@@ -956,8 +917,8 @@ func (c *PROTORPC_KclvmServiceClient) LoadSettingsFiles(in *LoadSettingsFiles_Ar
 		}
 	}
 
-	out = new(LoadSettingsFiles_Result)
-	if err = c.Call("KclvmService.LoadSettingsFiles", in, out); err != nil {
+	out = new(ListDepFilesResult)
+	if err = c.Call("KclService.ListDepFiles", in, out); err != nil {
 		return nil, err
 	}
 
@@ -970,20 +931,20 @@ func (c *PROTORPC_KclvmServiceClient) LoadSettingsFiles(in *LoadSettingsFiles_Ar
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncLoadSettingsFiles(in *LoadSettingsFiles_Args, out *LoadSettingsFiles_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncListDepFiles(in *ListDepFilesArgs, out *ListDepFilesResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(LoadSettingsFiles_Args)
+		in = new(ListDepFilesArgs)
 	}
 	return c.Go(
-		"KclvmService.LoadSettingsFiles",
+		"KclService.ListDepFiles",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) Rename(in *Rename_Args) (out *Rename_Result, err error) {
+func (c *PROTORPC_KclServiceClient) LoadSettingsFiles(in *LoadSettingsFilesArgs) (out *LoadSettingsFilesResult, err error) {
 	if in == nil {
-		in = new(Rename_Args)
+		in = new(LoadSettingsFilesArgs)
 	}
 
 	type Validator interface {
@@ -995,8 +956,8 @@ func (c *PROTORPC_KclvmServiceClient) Rename(in *Rename_Args) (out *Rename_Resul
 		}
 	}
 
-	out = new(Rename_Result)
-	if err = c.Call("KclvmService.Rename", in, out); err != nil {
+	out = new(LoadSettingsFilesResult)
+	if err = c.Call("KclService.LoadSettingsFiles", in, out); err != nil {
 		return nil, err
 	}
 
@@ -1009,20 +970,20 @@ func (c *PROTORPC_KclvmServiceClient) Rename(in *Rename_Args) (out *Rename_Resul
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncRename(in *Rename_Args, out *Rename_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncLoadSettingsFiles(in *LoadSettingsFilesArgs, out *LoadSettingsFilesResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Rename_Args)
+		in = new(LoadSettingsFilesArgs)
 	}
 	return c.Go(
-		"KclvmService.RenameCode",
+		"KclService.LoadSettingsFiles",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) RenameCode(in *RenameCode_Args) (out *RenameCode_Result, err error) {
+func (c *PROTORPC_KclServiceClient) Rename(in *RenameArgs) (out *RenameResult, err error) {
 	if in == nil {
-		in = new(RenameCode_Args)
+		in = new(RenameArgs)
 	}
 
 	type Validator interface {
@@ -1034,8 +995,8 @@ func (c *PROTORPC_KclvmServiceClient) RenameCode(in *RenameCode_Args) (out *Rena
 		}
 	}
 
-	out = new(RenameCode_Result)
-	if err = c.Call("KclvmService.RenameCode", in, out); err != nil {
+	out = new(RenameResult)
+	if err = c.Call("KclService.Rename", in, out); err != nil {
 		return nil, err
 	}
 
@@ -1048,20 +1009,20 @@ func (c *PROTORPC_KclvmServiceClient) RenameCode(in *RenameCode_Args) (out *Rena
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncRenameCode(in *RenameCode_Args, out *RenameCode_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncRename(in *RenameArgs, out *RenameResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(RenameCode_Args)
+		in = new(RenameArgs)
 	}
 	return c.Go(
-		"KclvmService.RenameCode",
+		"KclService.RenameCode",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) Test(in *Test_Args) (out *Test_Result, err error) {
+func (c *PROTORPC_KclServiceClient) RenameCode(in *RenameCodeArgs) (out *RenameCodeResult, err error) {
 	if in == nil {
-		in = new(Test_Args)
+		in = new(RenameCodeArgs)
 	}
 
 	type Validator interface {
@@ -1073,8 +1034,8 @@ func (c *PROTORPC_KclvmServiceClient) Test(in *Test_Args) (out *Test_Result, err
 		}
 	}
 
-	out = new(Test_Result)
-	if err = c.Call("KclvmService.Test", in, out); err != nil {
+	out = new(RenameCodeResult)
+	if err = c.Call("KclService.RenameCode", in, out); err != nil {
 		return nil, err
 	}
 
@@ -1087,20 +1048,20 @@ func (c *PROTORPC_KclvmServiceClient) Test(in *Test_Args) (out *Test_Result, err
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncTest(in *Test_Args, out *Test_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncRenameCode(in *RenameCodeArgs, out *RenameCodeResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Test_Args)
+		in = new(RenameCodeArgs)
 	}
 	return c.Go(
-		"KclvmService.Test",
+		"KclService.RenameCode",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) UpdateDependencies(in *UpdateDependencies_Args) (out *UpdateDependencies_Result, err error) {
+func (c *PROTORPC_KclServiceClient) Test(in *TestArgs) (out *TestResult, err error) {
 	if in == nil {
-		in = new(UpdateDependencies_Args)
+		in = new(TestArgs)
 	}
 
 	type Validator interface {
@@ -1112,8 +1073,8 @@ func (c *PROTORPC_KclvmServiceClient) UpdateDependencies(in *UpdateDependencies_
 		}
 	}
 
-	out = new(UpdateDependencies_Result)
-	if err = c.Call("KclvmService.UpdateDependencies", in, out); err != nil {
+	out = new(TestResult)
+	if err = c.Call("KclService.Test", in, out); err != nil {
 		return nil, err
 	}
 
@@ -1126,20 +1087,20 @@ func (c *PROTORPC_KclvmServiceClient) UpdateDependencies(in *UpdateDependencies_
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncUpdateDependencies(in *UpdateDependencies_Args, out *UpdateDependencies_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncTest(in *TestArgs, out *TestResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(UpdateDependencies_Args)
+		in = new(TestArgs)
 	}
 	return c.Go(
-		"KclvmService.UpdateDependencies",
+		"KclService.Test",
 		in, out,
 		done,
 	)
 }
 
-func (c *PROTORPC_KclvmServiceClient) GetVersion(in *GetVersion_Args) (out *GetVersion_Result, err error) {
+func (c *PROTORPC_KclServiceClient) UpdateDependencies(in *UpdateDependenciesArgs) (out *UpdateDependenciesResult, err error) {
 	if in == nil {
-		in = new(GetVersion_Args)
+		in = new(UpdateDependenciesArgs)
 	}
 
 	type Validator interface {
@@ -1151,8 +1112,8 @@ func (c *PROTORPC_KclvmServiceClient) GetVersion(in *GetVersion_Args) (out *GetV
 		}
 	}
 
-	out = new(GetVersion_Result)
-	if err = c.Call("KclvmService.GetVersion", in, out); err != nil {
+	out = new(UpdateDependenciesResult)
+	if err = c.Call("KclService.UpdateDependencies", in, out); err != nil {
 		return nil, err
 	}
 
@@ -1165,31 +1126,70 @@ func (c *PROTORPC_KclvmServiceClient) GetVersion(in *GetVersion_Args) (out *GetV
 	return out, nil
 }
 
-func (c *PROTORPC_KclvmServiceClient) AsyncGetVersion(in *GetVersion_Args, out *GetVersion_Result, done chan *rpc.Call) *rpc.Call {
+func (c *PROTORPC_KclServiceClient) AsyncUpdateDependencies(in *UpdateDependenciesArgs, out *UpdateDependenciesResult, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(GetVersion_Args)
+		in = new(UpdateDependenciesArgs)
 	}
 	return c.Go(
-		"KclvmService.GetVersion",
+		"KclService.UpdateDependencies",
 		in, out,
 		done,
 	)
 }
 
-// PROTORPC_DialKclvmService connects to an PROTORPC_KclvmService at the specified network address.
-func PROTORPC_DialKclvmService(network, addr string) (*PROTORPC_KclvmServiceClient, error) {
+func (c *PROTORPC_KclServiceClient) GetVersion(in *GetVersionArgs) (out *GetVersionResult, err error) {
+	if in == nil {
+		in = new(GetVersionArgs)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(GetVersionResult)
+	if err = c.Call("KclService.GetVersion", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *PROTORPC_KclServiceClient) AsyncGetVersion(in *GetVersionArgs, out *GetVersionResult, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(GetVersionArgs)
+	}
+	return c.Go(
+		"KclService.GetVersion",
+		in, out,
+		done,
+	)
+}
+
+// PROTORPC_DialKclService connects to an PROTORPC_KclService at the specified network address.
+func PROTORPC_DialKclService(network, addr string) (*PROTORPC_KclServiceClient, error) {
 	c, err := protorpc.Dial(network, addr)
 	if err != nil {
 		return nil, err
 	}
-	return &PROTORPC_KclvmServiceClient{c}, nil
+	return &PROTORPC_KclServiceClient{c}, nil
 }
 
-// PROTORPC_DialKclvmServiceTimeout connects to an PROTORPC_KclvmService at the specified network address.
-func PROTORPC_DialKclvmServiceTimeout(network, addr string, timeout time.Duration) (*PROTORPC_KclvmServiceClient, error) {
+// PROTORPC_DialKclServiceTimeout connects to an PROTORPC_KclService at the specified network address.
+func PROTORPC_DialKclServiceTimeout(network, addr string, timeout time.Duration) (*PROTORPC_KclServiceClient, error) {
 	c, err := protorpc.DialTimeout(network, addr, timeout)
 	if err != nil {
 		return nil, err
 	}
-	return &PROTORPC_KclvmServiceClient{c}, nil
+	return &PROTORPC_KclServiceClient{c}, nil
 }

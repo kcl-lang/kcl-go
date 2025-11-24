@@ -2,7 +2,7 @@ package list
 
 import "strings"
 
-// TODO: read from kclvm rust.
+// TODO: read from kcl core.
 var standardSystemModules = map[string]struct{}{
 	"collection": {},
 	"net":        {},

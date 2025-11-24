@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestLoadFile_to_ExecProgram_Args(t *testing.T) {
+func TestLoadFile_to_ExecProgramArgs(t *testing.T) {
 	s := `
 kcl_cli_configs:
   file:
@@ -23,7 +23,7 @@ kcl_cli_configs:
 	}
 
 	pwd, _ := os.Getwd()
-	x := f.To_ExecProgram_Args()
+	x := f.To_ExecProgramArgs()
 
 	tAssertEQ(t, len(x.KFilenameList), 4)
 	tAssertEQ(t, x.KFilenameList[0], "C:/abs_file.k")

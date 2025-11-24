@@ -21,43 +21,43 @@ type Error = api.Error
 type Message = api.Message
 
 // Message for ping request arguments.
-type Ping_Args = api.Ping_Args
+type PingArgs = api.PingArgs
 
 // Message for ping response.
-type Ping_Result = api.Ping_Result
+type PingResult = api.PingResult
 
 // Message for version request arguments. Empty message.
-type GetVersion_Args = api.GetVersion_Args
+type GetVersionArgs = api.GetVersionArgs
 
 // Message for version response.
-type GetVersion_Result = api.GetVersion_Result
+type GetVersionResult = api.GetVersionResult
 
 // Message for list method request arguments. Empty message.
-type ListMethod_Args = api.ListMethod_Args
+type ListMethodArgs = api.ListMethodArgs
 
 // Message for list method response.
-type ListMethod_Result = api.ListMethod_Result
+type ListMethodResult = api.ListMethodResult
 
 // Message for parse file request arguments.
-type ParseFile_Args = api.ParseFile_Args
+type ParseFileArgs = api.ParseFileArgs
 
 // Message for parse file response.
-type ParseFile_Result = api.ParseFile_Result
+type ParseFileResult = api.ParseFileResult
 
 // Message for parse program request arguments.
-type ParseProgram_Args = api.ParseProgram_Args
+type ParseProgramArgs = api.ParseProgramArgs
 
 // Message for parse program response.
-type ParseProgram_Result = api.ParseProgram_Result
+type ParseProgramResult = api.ParseProgramResult
 
 // Message for load package request arguments.
-type LoadPackage_Args = api.LoadPackage_Args
+type LoadPackageArgs = api.LoadPackageArgs
 
 // Message for load package response.
-type LoadPackage_Result = api.LoadPackage_Result
+type LoadPackageResult = api.LoadPackageResult
 
 // Message for list options response.
-type ListOptions_Result = api.ListOptions_Result
+type ListOptionsResult = api.ListOptionsResult
 
 // Message representing a help option.
 type OptionHelp = api.OptionHelp
@@ -75,55 +75,55 @@ type SymbolIndex = api.SymbolIndex
 type ScopeIndex = api.ScopeIndex
 
 // Message for execute program request arguments.
-type ExecProgram_Args = api.ExecProgram_Args
+type ExecProgramArgs = api.ExecProgramArgs
 
 // Message for execute program response.
-type ExecProgram_Result = api.ExecProgram_Result
+type ExecProgramResult = api.ExecProgramResult
 
 // Message for build program request arguments.
-type BuildProgram_Args = api.BuildProgram_Args
+type BuildProgramArgs = api.BuildProgramArgs
 
 // Message for build program response.
-type BuildProgram_Result = api.BuildProgram_Result
+type BuildProgramResult = api.BuildProgramResult
 
 // Message for execute artifact request arguments.
-type ExecArtifact_Args = api.ExecArtifact_Args
+type ExecArtifactArgs = api.ExecArtifactArgs
 
 // Message for format code request arguments.
-type FormatCode_Args = api.FormatCode_Args
+type FormatCodeArgs = api.FormatCodeArgs
 
 // Message for format code response.
-type FormatCode_Result = api.FormatCode_Result
+type FormatCodeResult = api.FormatCodeResult
 
 // Message for format file path request arguments.
-type FormatPath_Args = api.FormatPath_Args
+type FormatPathArgs = api.FormatPathArgs
 
 // Message for format file path response.
-type FormatPath_Result = api.FormatPath_Result
+type FormatPathResult = api.FormatPathResult
 
 // Message for lint file path request arguments.
-type LintPath_Args = api.LintPath_Args
+type LintPathArgs = api.LintPathArgs
 
 // Message for lint file path response.
-type LintPath_Result = api.LintPath_Result
+type LintPathResult = api.LintPathResult
 
 // Message for override file request arguments.
-type OverrideFile_Args = api.OverrideFile_Args
+type OverrideFileArgs = api.OverrideFileArgs
 
 // Message for override file response.
-type OverrideFile_Result = api.OverrideFile_Result
+type OverrideFileResult = api.OverrideFileResult
 
 // Message for list variables options.
-type ListVariables_Options = api.ListVariables_Options
+type ListVariablesOptions = api.ListVariablesOptions
 
 // Message representing a list of variables.
 type VariableList = api.VariableList
 
 // Message for list variables request arguments.
-type ListVariables_Args = api.ListVariables_Args
+type ListVariablesArgs = api.ListVariablesArgs
 
 // Message for list variables response.
-type ListVariables_Result = api.ListVariables_Result
+type ListVariablesResult = api.ListVariablesResult
 
 // Message representing a variable.
 type Variable = api.Variable
@@ -132,31 +132,31 @@ type Variable = api.Variable
 type MapEntry = api.MapEntry
 
 // Message for get schema type mapping request arguments.
-type GetSchemaTypeMapping_Args = api.GetSchemaTypeMapping_Args
+type GetSchemaTypeMappingArgs = api.GetSchemaTypeMappingArgs
 
 // Message for get schema type mapping response.
-type GetSchemaTypeMapping_Result = api.GetSchemaTypeMapping_Result
+type GetSchemaTypeMappingResult = api.GetSchemaTypeMappingResult
 
 // Message for validate code request arguments.
-type ValidateCode_Args = api.ValidateCode_Args
+type ValidateCodeArgs = api.ValidateCodeArgs
 
 // Message for validate code response.
-type ValidateCode_Result = api.ValidateCode_Result
+type ValidateCodeResult = api.ValidateCodeResult
 
 // Message representing a position in the source code.
 type Position = api.Position
 
 // Message for list dependency files request arguments.
-type ListDepFiles_Args = api.ListDepFiles_Args
+type ListDepFilesArgs = api.ListDepFilesArgs
 
 // Message for list dependency files response.
-type ListDepFiles_Result = api.ListDepFiles_Result
+type ListDepFilesResult = api.ListDepFilesResult
 
 // Message for load settings files request arguments.
-type LoadSettingsFiles_Args = api.LoadSettingsFiles_Args
+type LoadSettingsFilesArgs = api.LoadSettingsFilesArgs
 
 // Message for load settings files response.
-type LoadSettingsFiles_Result = api.LoadSettingsFiles_Result
+type LoadSettingsFilesResult = api.LoadSettingsFilesResult
 
 // Message representing KCL CLI configuration.
 type CliConfig = api.CliConfig
@@ -165,31 +165,31 @@ type CliConfig = api.CliConfig
 type KeyValuePair = api.KeyValuePair
 
 // Message for rename request arguments.
-type Rename_Args = api.Rename_Args
+type RenameArgs = api.RenameArgs
 
 // Message for rename response.
-type Rename_Result = api.Rename_Result
+type RenameResult = api.RenameResult
 
 // Message for rename code request arguments.
-type RenameCode_Args = api.RenameCode_Args
+type RenameCodeArgs = api.RenameCodeArgs
 
 // Message for rename code response.
-type RenameCode_Result = api.RenameCode_Result
+type RenameCodeResult = api.RenameCodeResult
 
 // Message for test request arguments.
-type Test_Args = api.Test_Args
+type TestArgs = api.TestArgs
 
 // Message for test response.
-type Test_Result = api.Test_Result
+type TestResult = api.TestResult
 
 // Message representing information about a single test case.
 type TestCaseInfo = api.TestCaseInfo
 
 // Message for update dependencies request arguments.
-type UpdateDependencies_Args = api.UpdateDependencies_Args
+type UpdateDependenciesArgs = api.UpdateDependenciesArgs
 
 // Message for update dependencies response.
-type UpdateDependencies_Result = api.UpdateDependencies_Result
+type UpdateDependenciesResult = api.UpdateDependenciesResult
 
 // Message representing a KCL type.
 type KclType = api.KclType

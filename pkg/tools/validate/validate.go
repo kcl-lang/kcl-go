@@ -28,7 +28,7 @@ func Validate(dataFile, schemaFile string, opts *ValidateOptions) (ok bool, err 
 		opts = &ValidateOptions{}
 	}
 	svc := kcl.Service()
-	resp, err := svc.ValidateCode(&gpyrpc.ValidateCode_Args{
+	resp, err := svc.ValidateCode(&gpyrpc.ValidateCodeArgs{
 		File:          schemaFile,
 		Data:          string(data),
 		Schema:        opts.Schema,
@@ -50,7 +50,7 @@ func ValidateCode(data, code string, opts *ValidateOptions) (ok bool, err error)
 		opts = &ValidateOptions{}
 	}
 	svc := kcl.Service()
-	resp, err := svc.ValidateCode(&gpyrpc.ValidateCode_Args{
+	resp, err := svc.ValidateCode(&gpyrpc.ValidateCodeArgs{
 		Data:          data,
 		Code:          code,
 		Schema:        opts.Schema,
@@ -72,7 +72,7 @@ func ValidateCodeFile(dataFile, data, code string, opts *ValidateOptions) (ok bo
 		opts = &ValidateOptions{}
 	}
 	svc := kcl.Service()
-	resp, err := svc.ValidateCode(&gpyrpc.ValidateCode_Args{
+	resp, err := svc.ValidateCode(&gpyrpc.ValidateCodeArgs{
 		Datafile:      dataFile,
 		Data:          data,
 		Code:          code,
