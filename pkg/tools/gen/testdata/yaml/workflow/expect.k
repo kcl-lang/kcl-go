@@ -148,7 +148,7 @@ sudo ln -sf /usr/bin/clang-12 /usr/bin/clang
             "runs-on" = "windows-latest"
             env = {
                 LLVM_SYS_120_PREFIX = "C:/LLVM"
-                KCLVM_CLANG = "C:/LLVM/bin/clang.exe"
+                KCL_CLANG = "C:/LLVM/bin/clang.exe"
             }
             steps = [
                 {

@@ -8,9 +8,9 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// KclvmServiceServer is the server API for KclvmService service.
-type KclvmServiceServer interface {
-	// / Ping KclvmService, return the same value as the parameter
+// KclServiceServer is the server API for KclService service.
+type KclServiceServer interface {
+	// / Ping KclService, return the same value as the parameter
 	// /
 	// / # Examples
 	// /
@@ -734,574 +734,574 @@ type KclvmServiceServer interface {
 	UpdateDependencies(context.Context, *UpdateDependenciesArgs) (*UpdateDependenciesResult, error)
 }
 
-// UnimplementedKclvmServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedKclvmServiceServer struct {
+// UnimplementedKclServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedKclServiceServer struct {
 }
 
-func (*UnimplementedKclvmServiceServer) Ping(context.Context, *PingArgs) (*PingResult, error) {
+func (*UnimplementedKclServiceServer) Ping(context.Context, *PingArgs) (*PingResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (*UnimplementedKclvmServiceServer) GetVersion(context.Context, *GetVersionArgs) (*GetVersionResult, error) {
+func (*UnimplementedKclServiceServer) GetVersion(context.Context, *GetVersionArgs) (*GetVersionResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVersion not implemented")
 }
-func (*UnimplementedKclvmServiceServer) ParseProgram(context.Context, *ParseProgramArgs) (*ParseProgramResult, error) {
+func (*UnimplementedKclServiceServer) ParseProgram(context.Context, *ParseProgramArgs) (*ParseProgramResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParseProgram not implemented")
 }
-func (*UnimplementedKclvmServiceServer) ParseFile(context.Context, *ParseFileArgs) (*ParseFileResult, error) {
+func (*UnimplementedKclServiceServer) ParseFile(context.Context, *ParseFileArgs) (*ParseFileResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParseFile not implemented")
 }
-func (*UnimplementedKclvmServiceServer) LoadPackage(context.Context, *LoadPackageArgs) (*LoadPackageResult, error) {
+func (*UnimplementedKclServiceServer) LoadPackage(context.Context, *LoadPackageArgs) (*LoadPackageResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadPackage not implemented")
 }
-func (*UnimplementedKclvmServiceServer) ListOptions(context.Context, *ParseProgramArgs) (*ListOptionsResult, error) {
+func (*UnimplementedKclServiceServer) ListOptions(context.Context, *ParseProgramArgs) (*ListOptionsResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOptions not implemented")
 }
-func (*UnimplementedKclvmServiceServer) ListVariables(context.Context, *ListVariablesArgs) (*ListVariablesResult, error) {
+func (*UnimplementedKclServiceServer) ListVariables(context.Context, *ListVariablesArgs) (*ListVariablesResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListVariables not implemented")
 }
-func (*UnimplementedKclvmServiceServer) ExecProgram(context.Context, *ExecProgramArgs) (*ExecProgramResult, error) {
+func (*UnimplementedKclServiceServer) ExecProgram(context.Context, *ExecProgramArgs) (*ExecProgramResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecProgram not implemented")
 }
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (*UnimplementedKclvmServiceServer) BuildProgram(context.Context, *BuildProgramArgs) (*BuildProgramResult, error) {
+func (*UnimplementedKclServiceServer) BuildProgram(context.Context, *BuildProgramArgs) (*BuildProgramResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildProgram not implemented")
 }
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (*UnimplementedKclvmServiceServer) ExecArtifact(context.Context, *ExecArtifactArgs) (*ExecProgramResult, error) {
+func (*UnimplementedKclServiceServer) ExecArtifact(context.Context, *ExecArtifactArgs) (*ExecProgramResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecArtifact not implemented")
 }
-func (*UnimplementedKclvmServiceServer) OverrideFile(context.Context, *OverrideFileArgs) (*OverrideFileResult, error) {
+func (*UnimplementedKclServiceServer) OverrideFile(context.Context, *OverrideFileArgs) (*OverrideFileResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OverrideFile not implemented")
 }
-func (*UnimplementedKclvmServiceServer) GetSchemaTypeMapping(context.Context, *GetSchemaTypeMappingArgs) (*GetSchemaTypeMappingResult, error) {
+func (*UnimplementedKclServiceServer) GetSchemaTypeMapping(context.Context, *GetSchemaTypeMappingArgs) (*GetSchemaTypeMappingResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSchemaTypeMapping not implemented")
 }
-func (*UnimplementedKclvmServiceServer) FormatCode(context.Context, *FormatCodeArgs) (*FormatCodeResult, error) {
+func (*UnimplementedKclServiceServer) FormatCode(context.Context, *FormatCodeArgs) (*FormatCodeResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FormatCode not implemented")
 }
-func (*UnimplementedKclvmServiceServer) FormatPath(context.Context, *FormatPathArgs) (*FormatPathResult, error) {
+func (*UnimplementedKclServiceServer) FormatPath(context.Context, *FormatPathArgs) (*FormatPathResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FormatPath not implemented")
 }
-func (*UnimplementedKclvmServiceServer) LintPath(context.Context, *LintPathArgs) (*LintPathResult, error) {
+func (*UnimplementedKclServiceServer) LintPath(context.Context, *LintPathArgs) (*LintPathResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LintPath not implemented")
 }
-func (*UnimplementedKclvmServiceServer) ValidateCode(context.Context, *ValidateCodeArgs) (*ValidateCodeResult, error) {
+func (*UnimplementedKclServiceServer) ValidateCode(context.Context, *ValidateCodeArgs) (*ValidateCodeResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateCode not implemented")
 }
-func (*UnimplementedKclvmServiceServer) ListDepFiles(context.Context, *ListDepFilesArgs) (*ListDepFilesResult, error) {
+func (*UnimplementedKclServiceServer) ListDepFiles(context.Context, *ListDepFilesArgs) (*ListDepFilesResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDepFiles not implemented")
 }
-func (*UnimplementedKclvmServiceServer) LoadSettingsFiles(context.Context, *LoadSettingsFilesArgs) (*LoadSettingsFilesResult, error) {
+func (*UnimplementedKclServiceServer) LoadSettingsFiles(context.Context, *LoadSettingsFilesArgs) (*LoadSettingsFilesResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadSettingsFiles not implemented")
 }
-func (*UnimplementedKclvmServiceServer) Rename(context.Context, *RenameArgs) (*RenameResult, error) {
+func (*UnimplementedKclServiceServer) Rename(context.Context, *RenameArgs) (*RenameResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Rename not implemented")
 }
-func (*UnimplementedKclvmServiceServer) RenameCode(context.Context, *RenameCodeArgs) (*RenameCodeResult, error) {
+func (*UnimplementedKclServiceServer) RenameCode(context.Context, *RenameCodeArgs) (*RenameCodeResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RenameCode not implemented")
 }
-func (*UnimplementedKclvmServiceServer) Test(context.Context, *TestArgs) (*TestResult, error) {
+func (*UnimplementedKclServiceServer) Test(context.Context, *TestArgs) (*TestResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
 }
-func (*UnimplementedKclvmServiceServer) UpdateDependencies(context.Context, *UpdateDependenciesArgs) (*UpdateDependenciesResult, error) {
+func (*UnimplementedKclServiceServer) UpdateDependencies(context.Context, *UpdateDependenciesArgs) (*UpdateDependenciesResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDependencies not implemented")
 }
 
-func RegisterKclvmServiceServer(s *grpc.Server, srv KclvmServiceServer) {
-	s.RegisterService(&_KclvmService_serviceDesc, srv)
+func RegisterKclServiceServer(s *grpc.Server, srv KclServiceServer) {
+	s.RegisterService(&_KclService_serviceDesc, srv)
 }
 
-func _KclvmService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PingArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).Ping(ctx, in)
+		return srv.(KclServiceServer).Ping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/Ping",
+		FullMethod: "/gpyrpc.KclService/Ping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).Ping(ctx, req.(*PingArgs))
+		return srv.(KclServiceServer).Ping(ctx, req.(*PingArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_GetVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_GetVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetVersionArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).GetVersion(ctx, in)
+		return srv.(KclServiceServer).GetVersion(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/GetVersion",
+		FullMethod: "/gpyrpc.KclService/GetVersion",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).GetVersion(ctx, req.(*GetVersionArgs))
+		return srv.(KclServiceServer).GetVersion(ctx, req.(*GetVersionArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_ParseProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ParseProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ParseProgramArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ParseProgram(ctx, in)
+		return srv.(KclServiceServer).ParseProgram(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ParseProgram",
+		FullMethod: "/gpyrpc.KclService/ParseProgram",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ParseProgram(ctx, req.(*ParseProgramArgs))
+		return srv.(KclServiceServer).ParseProgram(ctx, req.(*ParseProgramArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_ParseFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ParseFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ParseFileArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ParseFile(ctx, in)
+		return srv.(KclServiceServer).ParseFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ParseFile",
+		FullMethod: "/gpyrpc.KclService/ParseFile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ParseFile(ctx, req.(*ParseFileArgs))
+		return srv.(KclServiceServer).ParseFile(ctx, req.(*ParseFileArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_LoadPackage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_LoadPackage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoadPackageArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).LoadPackage(ctx, in)
+		return srv.(KclServiceServer).LoadPackage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/LoadPackage",
+		FullMethod: "/gpyrpc.KclService/LoadPackage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).LoadPackage(ctx, req.(*LoadPackageArgs))
+		return srv.(KclServiceServer).LoadPackage(ctx, req.(*LoadPackageArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_ListOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ListOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ParseProgramArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ListOptions(ctx, in)
+		return srv.(KclServiceServer).ListOptions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ListOptions",
+		FullMethod: "/gpyrpc.KclService/ListOptions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ListOptions(ctx, req.(*ParseProgramArgs))
+		return srv.(KclServiceServer).ListOptions(ctx, req.(*ParseProgramArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_ListVariables_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ListVariables_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListVariablesArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ListVariables(ctx, in)
+		return srv.(KclServiceServer).ListVariables(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ListVariables",
+		FullMethod: "/gpyrpc.KclService/ListVariables",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ListVariables(ctx, req.(*ListVariablesArgs))
+		return srv.(KclServiceServer).ListVariables(ctx, req.(*ListVariablesArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_ExecProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ExecProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExecProgramArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ExecProgram(ctx, in)
+		return srv.(KclServiceServer).ExecProgram(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ExecProgram",
+		FullMethod: "/gpyrpc.KclService/ExecProgram",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ExecProgram(ctx, req.(*ExecProgramArgs))
+		return srv.(KclServiceServer).ExecProgram(ctx, req.(*ExecProgramArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func _KclvmService_BuildProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_BuildProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BuildProgramArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).BuildProgram(ctx, in)
+		return srv.(KclServiceServer).BuildProgram(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/BuildProgram",
+		FullMethod: "/gpyrpc.KclService/BuildProgram",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).BuildProgram(ctx, req.(*BuildProgramArgs))
+		return srv.(KclServiceServer).BuildProgram(ctx, req.(*BuildProgramArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func _KclvmService_ExecArtifact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ExecArtifact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExecArtifactArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ExecArtifact(ctx, in)
+		return srv.(KclServiceServer).ExecArtifact(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ExecArtifact",
+		FullMethod: "/gpyrpc.KclService/ExecArtifact",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ExecArtifact(ctx, req.(*ExecArtifactArgs))
+		return srv.(KclServiceServer).ExecArtifact(ctx, req.(*ExecArtifactArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_OverrideFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_OverrideFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OverrideFileArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).OverrideFile(ctx, in)
+		return srv.(KclServiceServer).OverrideFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/OverrideFile",
+		FullMethod: "/gpyrpc.KclService/OverrideFile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).OverrideFile(ctx, req.(*OverrideFileArgs))
+		return srv.(KclServiceServer).OverrideFile(ctx, req.(*OverrideFileArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_GetSchemaTypeMapping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_GetSchemaTypeMapping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSchemaTypeMappingArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).GetSchemaTypeMapping(ctx, in)
+		return srv.(KclServiceServer).GetSchemaTypeMapping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/GetSchemaTypeMapping",
+		FullMethod: "/gpyrpc.KclService/GetSchemaTypeMapping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).GetSchemaTypeMapping(ctx, req.(*GetSchemaTypeMappingArgs))
+		return srv.(KclServiceServer).GetSchemaTypeMapping(ctx, req.(*GetSchemaTypeMappingArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_FormatCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_FormatCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FormatCodeArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).FormatCode(ctx, in)
+		return srv.(KclServiceServer).FormatCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/FormatCode",
+		FullMethod: "/gpyrpc.KclService/FormatCode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).FormatCode(ctx, req.(*FormatCodeArgs))
+		return srv.(KclServiceServer).FormatCode(ctx, req.(*FormatCodeArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_FormatPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_FormatPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FormatPathArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).FormatPath(ctx, in)
+		return srv.(KclServiceServer).FormatPath(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/FormatPath",
+		FullMethod: "/gpyrpc.KclService/FormatPath",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).FormatPath(ctx, req.(*FormatPathArgs))
+		return srv.(KclServiceServer).FormatPath(ctx, req.(*FormatPathArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_LintPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_LintPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LintPathArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).LintPath(ctx, in)
+		return srv.(KclServiceServer).LintPath(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/LintPath",
+		FullMethod: "/gpyrpc.KclService/LintPath",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).LintPath(ctx, req.(*LintPathArgs))
+		return srv.(KclServiceServer).LintPath(ctx, req.(*LintPathArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_ValidateCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ValidateCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ValidateCodeArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ValidateCode(ctx, in)
+		return srv.(KclServiceServer).ValidateCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ValidateCode",
+		FullMethod: "/gpyrpc.KclService/ValidateCode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ValidateCode(ctx, req.(*ValidateCodeArgs))
+		return srv.(KclServiceServer).ValidateCode(ctx, req.(*ValidateCodeArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_ListDepFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ListDepFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListDepFilesArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).ListDepFiles(ctx, in)
+		return srv.(KclServiceServer).ListDepFiles(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/ListDepFiles",
+		FullMethod: "/gpyrpc.KclService/ListDepFiles",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).ListDepFiles(ctx, req.(*ListDepFilesArgs))
+		return srv.(KclServiceServer).ListDepFiles(ctx, req.(*ListDepFilesArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_LoadSettingsFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_LoadSettingsFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoadSettingsFilesArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).LoadSettingsFiles(ctx, in)
+		return srv.(KclServiceServer).LoadSettingsFiles(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/LoadSettingsFiles",
+		FullMethod: "/gpyrpc.KclService/LoadSettingsFiles",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).LoadSettingsFiles(ctx, req.(*LoadSettingsFilesArgs))
+		return srv.(KclServiceServer).LoadSettingsFiles(ctx, req.(*LoadSettingsFilesArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_Rename_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_Rename_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RenameArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).Rename(ctx, in)
+		return srv.(KclServiceServer).Rename(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/Rename",
+		FullMethod: "/gpyrpc.KclService/Rename",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).Rename(ctx, req.(*RenameArgs))
+		return srv.(KclServiceServer).Rename(ctx, req.(*RenameArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_RenameCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_RenameCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RenameCodeArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).RenameCode(ctx, in)
+		return srv.(KclServiceServer).RenameCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/RenameCode",
+		FullMethod: "/gpyrpc.KclService/RenameCode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).RenameCode(ctx, req.(*RenameCodeArgs))
+		return srv.(KclServiceServer).RenameCode(ctx, req.(*RenameCodeArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TestArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).Test(ctx, in)
+		return srv.(KclServiceServer).Test(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/Test",
+		FullMethod: "/gpyrpc.KclService/Test",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).Test(ctx, req.(*TestArgs))
+		return srv.(KclServiceServer).Test(ctx, req.(*TestArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclvmService_UpdateDependencies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_UpdateDependencies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateDependenciesArgs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KclvmServiceServer).UpdateDependencies(ctx, in)
+		return srv.(KclServiceServer).UpdateDependencies(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gpyrpc.KclvmService/UpdateDependencies",
+		FullMethod: "/gpyrpc.KclService/UpdateDependencies",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KclvmServiceServer).UpdateDependencies(ctx, req.(*UpdateDependenciesArgs))
+		return srv.(KclServiceServer).UpdateDependencies(ctx, req.(*UpdateDependenciesArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _KclvmService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "gpyrpc.KclvmService",
-	HandlerType: (*KclvmServiceServer)(nil),
+var _KclService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "gpyrpc.KclService",
+	HandlerType: (*KclServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Ping",
-			Handler:    _KclvmService_Ping_Handler,
+			Handler:    _KclService_Ping_Handler,
 		},
 		{
 			MethodName: "GetVersion",
-			Handler:    _KclvmService_GetVersion_Handler,
+			Handler:    _KclService_GetVersion_Handler,
 		},
 		{
 			MethodName: "ParseProgram",
-			Handler:    _KclvmService_ParseProgram_Handler,
+			Handler:    _KclService_ParseProgram_Handler,
 		},
 		{
 			MethodName: "ParseFile",
-			Handler:    _KclvmService_ParseFile_Handler,
+			Handler:    _KclService_ParseFile_Handler,
 		},
 		{
 			MethodName: "LoadPackage",
-			Handler:    _KclvmService_LoadPackage_Handler,
+			Handler:    _KclService_LoadPackage_Handler,
 		},
 		{
 			MethodName: "ListOptions",
-			Handler:    _KclvmService_ListOptions_Handler,
+			Handler:    _KclService_ListOptions_Handler,
 		},
 		{
 			MethodName: "ListVariables",
-			Handler:    _KclvmService_ListVariables_Handler,
+			Handler:    _KclService_ListVariables_Handler,
 		},
 		{
 			MethodName: "ExecProgram",
-			Handler:    _KclvmService_ExecProgram_Handler,
+			Handler:    _KclService_ExecProgram_Handler,
 		},
 		{
 			MethodName: "BuildProgram",
-			Handler:    _KclvmService_BuildProgram_Handler,
+			Handler:    _KclService_BuildProgram_Handler,
 		},
 		{
 			MethodName: "ExecArtifact",
-			Handler:    _KclvmService_ExecArtifact_Handler,
+			Handler:    _KclService_ExecArtifact_Handler,
 		},
 		{
 			MethodName: "OverrideFile",
-			Handler:    _KclvmService_OverrideFile_Handler,
+			Handler:    _KclService_OverrideFile_Handler,
 		},
 		{
 			MethodName: "GetSchemaTypeMapping",
-			Handler:    _KclvmService_GetSchemaTypeMapping_Handler,
+			Handler:    _KclService_GetSchemaTypeMapping_Handler,
 		},
 		{
 			MethodName: "FormatCode",
-			Handler:    _KclvmService_FormatCode_Handler,
+			Handler:    _KclService_FormatCode_Handler,
 		},
 		{
 			MethodName: "FormatPath",
-			Handler:    _KclvmService_FormatPath_Handler,
+			Handler:    _KclService_FormatPath_Handler,
 		},
 		{
 			MethodName: "LintPath",
-			Handler:    _KclvmService_LintPath_Handler,
+			Handler:    _KclService_LintPath_Handler,
 		},
 		{
 			MethodName: "ValidateCode",
-			Handler:    _KclvmService_ValidateCode_Handler,
+			Handler:    _KclService_ValidateCode_Handler,
 		},
 		{
 			MethodName: "ListDepFiles",
-			Handler:    _KclvmService_ListDepFiles_Handler,
+			Handler:    _KclService_ListDepFiles_Handler,
 		},
 		{
 			MethodName: "LoadSettingsFiles",
-			Handler:    _KclvmService_LoadSettingsFiles_Handler,
+			Handler:    _KclService_LoadSettingsFiles_Handler,
 		},
 		{
 			MethodName: "Rename",
-			Handler:    _KclvmService_Rename_Handler,
+			Handler:    _KclService_Rename_Handler,
 		},
 		{
 			MethodName: "RenameCode",
-			Handler:    _KclvmService_RenameCode_Handler,
+			Handler:    _KclService_RenameCode_Handler,
 		},
 		{
 			MethodName: "Test",
-			Handler:    _KclvmService_Test_Handler,
+			Handler:    _KclService_Test_Handler,
 		},
 		{
 			MethodName: "UpdateDependencies",
-			Handler:    _KclvmService_UpdateDependencies_Handler,
+			Handler:    _KclService_UpdateDependencies_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

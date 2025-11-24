@@ -25,6 +25,9 @@ test:
 fmt:
 	go fmt ./...
 
+build:
+	go build ./...
+
 gen-doc:
 	go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest
 	gomarkdoc --output api.md .
