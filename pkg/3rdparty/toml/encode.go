@@ -248,9 +248,9 @@ func (enc *Encoder) eElement(rv reflect.Value) {
 		}
 		switch v.Location() {
 		default:
-			enc.wf(v.Format(format))
+			enc.wf("%s", v.Format(format))
 		case internal.LocalDatetime, internal.LocalDate, internal.LocalTime:
-			enc.wf(v.In(time.UTC).Format(format))
+			enc.wf("%s", v.In(time.UTC).Format(format))
 		}
 		return
 	case Marshaler:
@@ -303,11 +303,11 @@ func (enc *Encoder) eElement(rv reflect.Value) {
 	case reflect.String:
 		enc.writeQuoted(rv.String())
 	case reflect.Bool:
-		enc.wf(strconv.FormatBool(rv.Bool()))
+		enc.wf("%s", strconv.FormatBool(rv.Bool()))
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		enc.wf(strconv.FormatInt(rv.Int(), 10))
+		enc.wf("%s", strconv.FormatInt(rv.Int(), 10))
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		enc.wf(strconv.FormatUint(rv.Uint(), 10))
+		enc.wf("%s", strconv.FormatUint(rv.Uint(), 10))
 	case reflect.Float32:
 		f := rv.Float()
 		if math.IsNaN(f) {
@@ -321,7 +321,7 @@ func (enc *Encoder) eElement(rv reflect.Value) {
 			}
 			enc.wf("inf")
 		} else {
-			enc.wf(floatAddDecimal(strconv.FormatFloat(f, 'f', -1, 32)))
+			enc.wf("%s", floatAddDecimal(strconv.FormatFloat(f, 'f', -1, 32)))
 		}
 	case reflect.Float64:
 		f := rv.Float()
@@ -336,7 +336,7 @@ func (enc *Encoder) eElement(rv reflect.Value) {
 			}
 			enc.wf("inf")
 		} else {
-			enc.wf(floatAddDecimal(strconv.FormatFloat(f, 'f', -1, 64)))
+			enc.wf("%s", floatAddDecimal(strconv.FormatFloat(f, 'f', -1, 64)))
 		}
 	case reflect.Array, reflect.Slice:
 		enc.eArrayOrSliceElement(rv)
