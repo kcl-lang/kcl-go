@@ -13,7 +13,7 @@ func TestLoadFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f.To_ExecProgram_Args()
+	f.To_ExecProgramArgs()
 	_ = f
 }
 
@@ -24,7 +24,7 @@ func _TestLoadFile_testFormat(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f.To_ExecProgram_Args()
+	f.To_ExecProgramArgs()
 	_ = f
 }
 

@@ -23,7 +23,7 @@ sum = hello.add(option("a"), option("b"))
 
 func TestExecProgramWithPlugin(t *testing.T) {
 	client := NewNativeServiceClient()
-	result, err := client.ExecProgram(&gpyrpc.ExecProgram_Args{
+	result, err := client.ExecProgram(&gpyrpc.ExecProgramArgs{
 		KFilenameList: []string{"main.k"},
 		KCodeList:     []string{code},
 		Args: []*gpyrpc.Argument{
@@ -47,7 +47,7 @@ func TestExecProgramWithPlugin(t *testing.T) {
 
 func TestExecProgramWithPluginError(t *testing.T) {
 	client := NewNativeServiceClient()
-	result, err := client.ExecProgram(&gpyrpc.ExecProgram_Args{
+	result, err := client.ExecProgram(&gpyrpc.ExecProgramArgs{
 		KFilenameList: []string{"main.k"},
 		KCodeList:     []string{code},
 	})
@@ -122,7 +122,7 @@ func ParseFileASTJson(filename string, src interface{}) (result string, err erro
 		}
 	}
 	client := NewNativeServiceClient()
-	resp, err := client.ParseFile(&gpyrpc.ParseFile_Args{
+	resp, err := client.ParseFile(&gpyrpc.ParseFileArgs{
 		Path:   filename,
 		Source: code,
 	})

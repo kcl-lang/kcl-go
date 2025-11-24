@@ -4,12 +4,12 @@ import (
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
-type VersionResult = gpyrpc.GetVersion_Result
+type VersionResult = gpyrpc.GetVersionResult
 
 // GetVersion returns the KCL service version information.
 func GetVersion() (*VersionResult, error) {
 	svc := Service()
-	resp, err := svc.GetVersion(&gpyrpc.GetVersion_Args{})
+	resp, err := svc.GetVersion(&gpyrpc.GetVersionArgs{})
 	if err != nil {
 		return nil, err
 	}

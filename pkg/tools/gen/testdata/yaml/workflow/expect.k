@@ -57,14 +57,14 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
                 }
                 {
                     name = "Build KCL"
-                    run = r"""export PATH=$PATH:$PWD/../_build/dist/Darwin/kclvm/bin:/usr/local/opt/llvm@12/bin && make build"""
+                    run = r"""export PATH=$PATH:$PWD/../_build/dist/Darwin/kcl/bin:/usr/local/opt/llvm@12/bin && make build"""
                     shell = "bash"
                 }
                 {
                     uses = "actions/upload-artifact@v3"
                     with = {
                         name = "kcl-darwin-amd64-nightly"
-                        path = "_build/dist/Darwin/kclvm"
+                        path = "_build/dist/Darwin/kcl"
                     }
                 }
             ]
@@ -107,7 +107,7 @@ sudo ln -sf /usr/bin/clang-12 /usr/bin/clang
                     uses = "actions/upload-artifact@v3"
                     with = {
                         name = "kcl-linux-amd64-nightly"
-                        path = "_build/dist/ubuntu/kclvm"
+                        path = "_build/dist/ubuntu/kcl"
                     }
                 }
                 {
@@ -128,7 +128,7 @@ sudo ln -sf /usr/bin/clang-12 /usr/bin/clang
                     id = "meta"
                     uses = "docker/metadata-action@v4"
                     with = {
-                        images = "kcllang/kclvm"
+                        images = "kcllang/kcl"
                     }
                 }
                 {
@@ -186,14 +186,14 @@ sudo ln -sf /usr/bin/clang-12 /usr/bin/clang
                     run = r""".\scripts\build-windows\build.ps1"""
                 }
                 {
-                    run = r"""echo ";$(pwd)\scripts\build-windows\_output\kclvm-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append"""
+                    run = r"""echo ";$(pwd)\scripts\build-windows\_output\kcl-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append"""
                     "working-directory" = "."
                 }
                 {
                     uses = "actions/upload-artifact@v3"
                     with = {
                         name = "kcl-windows-nightly"
-                        path = "scripts/build-windows/_output/kclvm-windows"
+                        path = "scripts/build-windows/_output/kcl-windows"
                     }
                 }
             ]

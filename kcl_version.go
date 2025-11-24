@@ -4,5 +4,5 @@ package kcl
 
 import "kcl-lang.io/kcl-go/scripts"
 
-// KclvmAbiVersion is the current kclvm ABI version.
-const KclvmAbiVersion = scripts.KclvmAbiVersion
+// KclAbiVersion is the current kcl ABI version.
+const KclAbiVersion = scripts.KclAbiVersion

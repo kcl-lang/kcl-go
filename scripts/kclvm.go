@@ -3,46 +3,46 @@
 package scripts
 
 type (
-	KclvmTripleType  string
-	KclvmVersionType string
+	KclTripleType  string
+	KclVersionType string
 )
 
 const (
-	KclvmTripleType_unknown      KclvmTripleType = ""
-	KclvmTripleType_linux_amd64  KclvmTripleType = "linux-amd64"
-	KclvmTripleType_linux_arm64  KclvmTripleType = "linux-arm64"
-	KclvmTripleType_darwin_amd64 KclvmTripleType = "darwin-amd64"
-	KclvmTripleType_darwin_arm64 KclvmTripleType = "darwin-arm64"
-	KclvmTripleType_windows      KclvmTripleType = "windows"
+	KclTripleType_unknown      KclTripleType = ""
+	KclTripleType_linux_amd64  KclTripleType = "linux-amd64"
+	KclTripleType_linux_arm64  KclTripleType = "linux-arm64"
+	KclTripleType_darwin_amd64 KclTripleType = "darwin-amd64"
+	KclTripleType_darwin_arm64 KclTripleType = "darwin-arm64"
+	KclTripleType_windows      KclTripleType = "windows"
 )
 
 const (
-	KclvmAbiVersion         KclvmVersionType = KclvmVersionType_v0_11_2
-	KclvmVersionType_latest                  = KclvmVersionType_v0_11_2
+	KclAbiVersion         KclVersionType = KclVersionType_v0_12_0_rc1
+	KclVersionType_latest                = KclVersionType_v0_12_0_rc1
 
-	KclvmVersionType_v0_11_2        KclvmVersionType = "v0.11.2"
-	KclvmVersionType_v0_11_1        KclvmVersionType = "v0.11.1"
-	KclvmVersionType_v0_11_0        KclvmVersionType = "v0.11.0"
-	KclvmVersionType_v0_11_0_alpha1 KclvmVersionType = "v0.11.0-alpha.1"
-	KclvmVersionType_v0_10_0        KclvmVersionType = "v0.10.0"
-	KclvmVersionType_v0_9_0         KclvmVersionType = "v0.9.0"
-	KclvmVersionType_v0_8_0         KclvmVersionType = "v0.8.0"
-	KclvmVersionType_v0_7_5         KclvmVersionType = "v0.7.5"
-	KclvmVersionType_v0_7_4         KclvmVersionType = "v0.7.4"
-	KclvmVersionType_v0_7_3         KclvmVersionType = "v0.7.3"
-	KclvmVersionType_v0_7_2         KclvmVersionType = "v0.7.2"
-	KclvmVersionType_v0_7_1         KclvmVersionType = "v0.7.1"
-	KclvmVersionType_v0_7_0         KclvmVersionType = "v0.7.0"
-	KclvmVersionType_v0_6_0         KclvmVersionType = "v0.6.0"
-	KclvmVersionType_v0_5_6         KclvmVersionType = "v0.5.6"
-	KclvmVersionType_v0_5_5         KclvmVersionType = "v0.5.5"
-	KclvmVersionType_v0_5_4         KclvmVersionType = "v0.5.4"
-	KclvmVersionType_v0_5_3         KclvmVersionType = "v0.5.3"
-	KclvmVersionType_v0_5_2         KclvmVersionType = "v0.5.2"
-	KclvmVersionType_v0_5_1         KclvmVersionType = "v0.5.1"
-	KclvmVersionType_v0_5_0         KclvmVersionType = "v0.5.0"
-	KclvmVersionType_v0_4_6         KclvmVersionType = "v0.4.6"
-	KclvmVersionType_v0_4_5         KclvmVersionType = "v0.4.5"
-	KclvmVersionType_v0_4_4         KclvmVersionType = "v0.4.4"
-	KclvmVersionType_v0_4_3         KclvmVersionType = "v0.4.3"
+	KclVersionType_v0_12_0_rc1 KclVersionType = "v0.12.0-rc.1"
+	KclVersionType_v0_11_2     KclVersionType = "v0.11.2"
+	KclVersionType_v0_11_1     KclVersionType = "v0.11.1"
+	KclVersionType_v0_11_0     KclVersionType = "v0.11.0"
+	KclVersionType_v0_10_0     KclVersionType = "v0.10.0"
+	KclVersionType_v0_9_0      KclVersionType = "v0.9.0"
+	KclVersionType_v0_8_0      KclVersionType = "v0.8.0"
+	KclVersionType_v0_7_5      KclVersionType = "v0.7.5"
+	KclVersionType_v0_7_4      KclVersionType = "v0.7.4"
+	KclVersionType_v0_7_3      KclVersionType = "v0.7.3"
+	KclVersionType_v0_7_2      KclVersionType = "v0.7.2"
+	KclVersionType_v0_7_1      KclVersionType = "v0.7.1"
+	KclVersionType_v0_7_0      KclVersionType = "v0.7.0"
+	KclVersionType_v0_6_0      KclVersionType = "v0.6.0"
+	KclVersionType_v0_5_6      KclVersionType = "v0.5.6"
+	KclVersionType_v0_5_5      KclVersionType = "v0.5.5"
+	KclVersionType_v0_5_4      KclVersionType = "v0.5.4"
+	KclVersionType_v0_5_3      KclVersionType = "v0.5.3"
+	KclVersionType_v0_5_2      KclVersionType = "v0.5.2"
+	KclVersionType_v0_5_1      KclVersionType = "v0.5.1"
+	KclVersionType_v0_5_0      KclVersionType = "v0.5.0"
+	KclVersionType_v0_4_6      KclVersionType = "v0.4.6"
+	KclVersionType_v0_4_5      KclVersionType = "v0.4.5"
+	KclVersionType_v0_4_4      KclVersionType = "v0.4.4"
+	KclVersionType_v0_4_3      KclVersionType = "v0.4.3"
 )

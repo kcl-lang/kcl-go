@@ -16,8 +16,8 @@ func TestGenProto(t *testing.T) {
 	const code = `
 import units
 
-#kclvm/genpb: option go_package = kcl_gen/_/hello
-#kclvm/genpb: option pb_package = kcl_gen._.hello
+#kcl/genpb: option go_package = kcl_gen/_/hello
+#kcl/genpb: option pb_package = kcl_gen._.hello
 
 type NumberMultiplier = units.NumberMultiplier
 

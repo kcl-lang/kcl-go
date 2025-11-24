@@ -6,14 +6,14 @@ import (
 )
 
 type OptionHelps = []*gpyrpc.OptionHelp
-type ListOptionsArgs = gpyrpc.ParseProgram_Args
-type ListOptionsResult = gpyrpc.ListOptions_Result
+type ListOptionsArgs = gpyrpc.ParseProgramArgs
+type ListOptionsResult = gpyrpc.ListOptionsResult
 
 // ListFileOptions provides users with the ability to parse kcl program and get all option
 // calling information.
 func ListFileOptions(filename string) (OptionHelps, error) {
 	svc := kcl.Service()
-	resp, err := svc.ListOptions(&gpyrpc.ParseProgram_Args{
+	resp, err := svc.ListOptions(&gpyrpc.ParseProgramArgs{
 		Paths: []string{filename},
 	})
 	if err != nil {

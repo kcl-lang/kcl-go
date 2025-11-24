@@ -27,7 +27,7 @@ func FormatCode(code interface{}) ([]byte, error) {
 	}
 
 	svc := kcl.Service()
-	resp, err := svc.FormatCode(&gpyrpc.FormatCode_Args{
+	resp, err := svc.FormatCode(&gpyrpc.FormatCodeArgs{
 		Source: codeStr,
 	})
 	if err != nil {
@@ -38,7 +38,7 @@ func FormatCode(code interface{}) ([]byte, error) {
 
 func FormatPath(path string) (changedPaths []string, err error) {
 	svc := kcl.Service()
-	resp, err := svc.FormatPath(&gpyrpc.FormatPath_Args{
+	resp, err := svc.FormatPath(&gpyrpc.FormatPathArgs{
 		Path: path,
 	})
 	if err != nil {

@@ -9,7 +9,7 @@ import (
 
 func LintPath(paths []string) (results []string, err error) {
 	svc := kcl.Service()
-	resp, err := svc.LintPath(&gpyrpc.LintPath_Args{
+	resp, err := svc.LintPath(&gpyrpc.LintPathArgs{
 		Paths: paths,
 	})
 	if err != nil {

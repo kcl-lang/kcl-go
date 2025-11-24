@@ -5,8 +5,8 @@ import (
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
-type LoadPackageArgs = gpyrpc.LoadPackage_Args
-type LoadPackageResult = gpyrpc.LoadPackage_Result
+type LoadPackageArgs = gpyrpc.LoadPackageArgs
+type LoadPackageResult = gpyrpc.LoadPackageResult
 
 // LoadPackage provides users with the ability to parse KCL program and semantic model
 // information including symbols, types, definitions, etc.

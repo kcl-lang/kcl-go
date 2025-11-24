@@ -147,12 +147,12 @@ func (p *pbGenerator) genProtoSchema(w io.Writer, typ *pb.KclType) {
 	}
 }
 
-// #kclvm/genpb: option go_package = kcl_gen/_/hello_k
+// #kcl/genpb: option go_package = kcl_gen/_/hello_k
 func (p *pbGenerator) getOptionGoPackage(code string) string {
-	if !strings.Contains(code, `#kclvm/genpb:`) {
+	if !strings.Contains(code, `#kcl/genpb:`) {
 		return ""
 	}
-	const prefix = `#kclvm/genpb: option go_package =`
+	const prefix = `#kcl/genpb: option go_package =`
 	for _, line := range strings.Split(code, "\n") {
 		if strings.HasPrefix(line, prefix) {
 			return strings.TrimSpace(strings.TrimPrefix(line, prefix))
@@ -161,12 +161,12 @@ func (p *pbGenerator) getOptionGoPackage(code string) string {
 	return ""
 }
 
-// #kclvm/genpb: option pb_package = kcl_gen._.hello_k
+// #kcl/genpb: option pb_package = kcl_gen._.hello_k
 func (p *pbGenerator) getOptionPbPackage(code string) string {
-	if !strings.Contains(code, `#kclvm/genpb:`) {
+	if !strings.Contains(code, `#kcl/genpb:`) {
 		return ""
 	}
-	const prefix = `#kclvm/genpb: option pb_package =`
+	const prefix = `#kcl/genpb: option pb_package =`
 	for _, line := range strings.Split(code, "\n") {
 		if strings.HasPrefix(line, prefix) {
 			return strings.TrimSpace(strings.TrimPrefix(line, prefix))

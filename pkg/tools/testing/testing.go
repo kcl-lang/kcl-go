@@ -70,8 +70,8 @@ func Test(testOpts *TestOptions, opts ...kcl.Option) (TestResult, error) {
 	}
 
 	svc := kcl.Service()
-	resp, err := svc.Test(&gpyrpc.Test_Args{
-		ExecArgs:  args.ExecProgram_Args,
+	resp, err := svc.Test(&gpyrpc.TestArgs{
+		ExecArgs:  args.ExecProgramArgs,
 		PkgList:   testOpts.PkgList,
 		RunRegexp: testOpts.RunRegRxp,
 		FailFast:  testOpts.FailFast,

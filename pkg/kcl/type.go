@@ -62,8 +62,8 @@ func GetFullSchemaTypeMapping(pathList []string, schemaName string, opts ...Opti
 	}
 
 	svc := Service()
-	resp, err := svc.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
-		ExecArgs:   args.ExecProgram_Args,
+	resp, err := svc.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMappingArgs{
+		ExecArgs:   args.ExecProgramArgs,
 		SchemaName: schemaName,
 	})
 
@@ -91,8 +91,8 @@ func GetSchemaTypeMapping(filename string, src any, schemaName string) (map[stri
 		return nil, err
 	}
 	svc := Service()
-	resp, err := svc.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMapping_Args{
-		ExecArgs: &gpyrpc.ExecProgram_Args{
+	resp, err := svc.GetSchemaTypeMapping(&gpyrpc.GetSchemaTypeMappingArgs{
+		ExecArgs: &gpyrpc.ExecProgramArgs{
 			KFilenameList: []string{filename},
 			KCodeList:     []string{string(source)},
 		},

@@ -275,7 +275,7 @@ func ExampleUpdateDependencies() {
 	// helloworld = { oci = "oci://ghcr.io/kcl-lang/helloworld", tag = "0.1.0" }
 	// flask = { git = "https://github.com/kcl-lang/flask-demo-kcl-manifests", commit = "ade147b" }
 
-	result, err := kcl.UpdateDependencies(&gpyrpc.UpdateDependencies_Args{
+	result, err := kcl.UpdateDependencies(&gpyrpc.UpdateDependenciesArgs{
 		ManifestPath: "testdata/update_dependencies",
 	})
 	if err != nil {
@@ -297,7 +297,7 @@ func ExampleUpdateDependencies_execProgram() {
 
 	svc := native.NewNativeServiceClient()
 
-	result, err := svc.UpdateDependencies(&gpyrpc.UpdateDependencies_Args{
+	result, err := svc.UpdateDependencies(&gpyrpc.UpdateDependenciesArgs{
 		ManifestPath: "testdata/update_dependencies",
 	})
 	if err != nil {
@@ -309,7 +309,7 @@ func ExampleUpdateDependencies_execProgram() {
 	// a = helloworld.The_first_kcl_program
 	// fmt.Println(result.ExternalPkgs)
 
-	execResult, err := svc.ExecProgram(&gpyrpc.ExecProgram_Args{
+	execResult, err := svc.ExecProgram(&gpyrpc.ExecProgramArgs{
 		KFilenameList: []string{"testdata/update_dependencies/main.k"},
 		ExternalPkgs:  result.ExternalPkgs,
 	})
