@@ -40,6 +40,20 @@ a = 2
 	// a: 2
 	// b: 1
 }
+
+func ExampleMustRun_rawYaml11String() {
+	const code = `
+on = "on"
+yes = "yes"
+`
+	yaml := kcl.MustRun("test.k", kcl.WithCode(code)).GetRawYamlResult()
+	fmt.Println(yaml)
+
+	// Output:
+	// 'on': 'on'
+	// 'yes': 'yes'
+}
+
 func ExampleMustRun_schemaType() {
 	const code = `
 schema Person:

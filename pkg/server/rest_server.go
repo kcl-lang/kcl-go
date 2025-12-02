@@ -59,8 +59,6 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
 
 	p.router.GET("/api:protorpc/KclService.ExecProgram", p.handle_ExecProgram)
-	p.router.GET("/api:protorpc/KclService.BuildProgram", p.handle_BuildProgram)
-	p.router.GET("/api:protorpc/KclService.ExecArtifact", p.handle_ExecArtifact)
 	p.router.GET("/api:protorpc/KclService.ParseFile", p.handle_ParseFile)
 	p.router.GET("/api:protorpc/KclService.ParseProgram", p.handle_ParseProgram)
 	p.router.GET("/api:protorpc/KclService.ListOptions", p.handle_ListOptions)
@@ -81,8 +79,6 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
 
 	p.router.POST("/api:protorpc/KclService.ExecProgram", p.handle_ExecProgram)
-	p.router.POST("/api:protorpc/KclService.BuildProgram", p.handle_BuildProgram)
-	p.router.POST("/api:protorpc/KclService.ExecArtifact", p.handle_ExecArtifact)
 	p.router.POST("/api:protorpc/KclService.ParseFile", p.handle_ParseFile)
 	p.router.POST("/api:protorpc/KclService.ParseProgram", p.handle_ParseProgram)
 	p.router.POST("/api:protorpc/KclService.ListOptions", p.handle_ListOptions)
@@ -147,22 +143,6 @@ func (p *restServer) handle_ExecProgram(w http.ResponseWriter, r *http.Request, 
 	var args = new(gpyrpc.ExecProgramArgs)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.service.ExecProgram(args)
-	})
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (p *restServer) handle_BuildProgram(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
-	var args = new(gpyrpc.BuildProgramArgs)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.service.BuildProgram(args)
-	})
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (p *restServer) handle_ExecArtifact(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
-	var args = new(gpyrpc.ExecArtifactArgs)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.service.ExecArtifact(args)
 	})
 }
 
