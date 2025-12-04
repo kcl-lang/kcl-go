@@ -11,7 +11,7 @@ jobs:
     # Note: The arch of macos-13-xlarge and macos-14 is arm64
     strategy:
       matrix:
-        os: [ macos-13, macos-13-xlarge, macos-14 ]
+        os: [ macos-13, macos-13-xlarge, macos-14, macos-latest ]
         cgo: [ '1', '0' ]
     runs-on: ${{ matrix.os }}
     steps:
