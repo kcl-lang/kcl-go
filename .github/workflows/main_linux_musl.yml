@@ -1,0 +1,49 @@
+name: build-and-test-linux-musl
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "releases/*"
+jobs:
+  build-and-test:
+    # Ref: https://github.com/actions/runner-images/tree/main/images/macos
+    strategy:
+      matrix:
+        include:
+          # Alpine Linux container configurations
+          - os: alpine-latest
+            runner: ubuntu-latest  # Host runner for the container
+            container: golang:1.24-alpine
+            cgo_enabled: 1
+
+    runs-on: ${{ matrix.runner }}
+    container: ${{ matrix.container }}
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+
+      - name: Install musl dependencies (Alpine container)
+        run: |
+          apk add --no-cache \
+            musl-dev \
+            gcc \
+            git \
+            make
+
+      - name: Setup build tags for Alpine
+        run: |
+          echo "GO_BUILD_TAGS=musl netgo static osusergo" >> $GITHUB_ENV
+          echo "GO_LDFLAGS=-linkmode external -extldflags '-static'" >> $GITHUB_ENV
+
+      - name: Go code test
+        run: |
+          BUILD_TAGS="$GO_BUILD_TAGS"
+          EXTRA_LDFLAGS="$GO_LDFLAGS"
+
+          CGO_ENABLED=${{ matrix.cgo_enabled }} \
+          go test ./... -v \
+            -tags="${BUILD_TAGS}" \
+            -ldflags="${EXTRA_LDFLAGS}"
+        env:
+          CGO_LDFLAGS: ${{ matrix.cgo_enabled == '1' && '-static' || '' }}
