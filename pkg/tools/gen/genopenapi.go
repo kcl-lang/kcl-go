@@ -303,16 +303,22 @@ type KclExample struct {
 
 // KclExtensions defines all the KCL specific extensions patched to OpenAPI
 type KclExtensions struct {
-	XKclModelType   *XKclModelType    `json:"x-kcl-type,omitempty"`
-	XKclDecorators  XKclDecorators    `json:"x-kcl-decorators,omitempty"`
-	XKclUnionTypes  []*KclOpenAPIType `json:"x-kcl-union-types,omitempty"`
-	XKclDictKeyType *KclOpenAPIType   `json:"x-kcl-dict-key-type,omitempty"` // dict key type
+	XKclModelType    *XKclModelType    `json:"x-kcl-type,omitempty"`
+	XKclDecorators   XKclDecorators    `json:"x-kcl-decorators,omitempty"`
+	XKclUnionTypes   []*KclOpenAPIType `json:"x-kcl-union-types,omitempty"`
+	XKclFunctionType *XKclFunctionType `json:"x-kcl-func-type,omitempty"`
+	XKclDictKeyType  *KclOpenAPIType   `json:"x-kcl-dict-key-type,omitempty"` // dict key type
 }
 
 // XKclModelType defines the `x-kcl-type` extension
 type XKclModelType struct {
 	Type   string              `json:"type,omitempty"`   // schema short name
 	Import *KclModelImportInfo `json:"import,omitempty"` // import information
+}
+
+type XKclFunctionType struct {
+	Params   []*KclOpenAPIType `json:"params,omitempty"`
+	ReturnTy *KclOpenAPIType   `json:"return_ty,omitempty"`
 }
 
 // KclModelImportInfo defines how to import the current type
@@ -555,6 +561,9 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 				Value:       example.Value,
 			}
 		}
+		if from.IndexSignature != nil {
+			t.AdditionalProperties = GetKclOpenAPIType(pkgPath, from.IndexSignature.Val, nested)
+		}
 		// todo externalDocs(see also)
 		return &t
 	case typUnion:
@@ -569,6 +578,27 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 			}
 		} else {
 			t.KclExtensions.XKclUnionTypes = tps
+		}
+		return &t
+	case typFunction:
+		t.Type = Object
+		paramsTypes := make([]*KclOpenAPIType, len(from.Function.Params))
+		for i, param := range from.Function.Params {
+			paramsTypes[i] = GetKclOpenAPIType(pkgPath, param.Ty, true)
+		}
+		returnTy := GetKclOpenAPIType(pkgPath, from.Function.ReturnTy, true)
+		if t.KclExtensions == nil {
+			t.KclExtensions = &KclExtensions{
+				XKclFunctionType: &XKclFunctionType{
+					Params:   paramsTypes,
+					ReturnTy: returnTy,
+				},
+			}
+		} else {
+			t.KclExtensions.XKclFunctionType = &XKclFunctionType{
+				Params:   paramsTypes,
+				ReturnTy: returnTy,
+			}
 		}
 		return &t
 	default:

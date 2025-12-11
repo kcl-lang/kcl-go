@@ -92,3 +92,113 @@ func TestExportSwaggerV2Spec(t *testing.T) {
 
 	assert2.Equal(t, expect, got)
 }
+
+func TestExportSwaggerV2SpecWithIndexSignatureAndFunction(t *testing.T) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal("get work directory failed")
+	}
+	pkgPath := filepath.Join(cwd, "testdata", "openapi", "types")
+	got, err := ExportSwaggerV2SpecString(pkgPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expect := `{
+    "definitions": {
+        "AppConfig": {
+            "type": "object",
+            "properties": {
+                "maps": {
+                    "ref": "#/definitions/TestMap"
+                },
+                "my_func": {
+                    "type": "object",
+                    "x-kcl-func-type": {
+                        "params": [
+                            {
+                                "type": "integer",
+                                "format": "int64"
+                            }
+                        ],
+                        "return_ty": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                },
+                "replicas": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            },
+            "required": [
+                "replicas"
+            ],
+            "x-kcl-type": {
+                "type": "AppConfig",
+                "import": {
+                    "alias": "schema.k"
+                }
+            }
+        },
+        "Test": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "x-kcl-type": {
+                "type": "Test",
+                "import": {
+                    "alias": "schema.k"
+                }
+            }
+        },
+        "TestMap": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "surname": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
+                ],
+                "x-kcl-type": {
+                    "type": "Test",
+                    "import": {
+                        "alias": "schema.k"
+                    }
+                }
+            },
+            "x-kcl-type": {
+                "type": "TestMap",
+                "import": {
+                    "alias": "schema.k"
+                }
+            }
+        }
+    },
+    "paths": {},
+    "swagger": "2.0",
+    "info": {
+        "title": "",
+        "version": ""
+    }
+}`
+
+	assert2.Equal(t, expect, got)
+}

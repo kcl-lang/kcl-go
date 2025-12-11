@@ -14,13 +14,14 @@ import (
 )
 
 const (
-	typSchema = "schema"
-	typDict   = "dict"
-	typList   = "list"
-	typStr    = "str"
-	typInt    = "int"
-	typFloat  = "float"
-	typBool   = "bool"
+	typSchema   = "schema"
+	typFunction = "function"
+	typDict     = "dict"
+	typList     = "list"
+	typStr      = "str"
+	typInt      = "int"
+	typFloat    = "float"
+	typBool     = "bool"
 
 	typAny              = "any"
 	typUnion            = "union"
@@ -34,6 +35,12 @@ func getKclTypeName(typ *pb.KclType) string {
 	switch typ.Type {
 	case typSchema:
 		return typ.SchemaName
+	case typFunction:
+		var items []string
+		for _, v := range typ.Function.Params {
+			items = append(items, getKclTypeName(v.Ty))
+		}
+		return "(" + strings.Join(items, ", ") + ") -> " + getKclTypeName(typ.Function.ReturnTy)
 	case typDict:
 		return fmt.Sprintf("{%s:%s}", getKclTypeName(typ.Key), getKclTypeName(typ.Item))
 	case typList:
@@ -84,6 +91,10 @@ func IsLitType(typ *pb.KclType) (ok bool, basicTyp, litValue string) {
 		return true, typNumberMultiplier, typ.Type[i:j]
 	}
 	return
+}
+
+func IsSchemaMap(typ *pb.KclType) bool {
+	return typ.Type == typSchema && typ.BaseSchema == nil && len(typ.Properties) == 0 && typ.IndexSignature != nil
 }
 
 func getSchemaDoc(typ *pb.KclType) (doc string) {
@@ -241,6 +252,19 @@ func (t typeUnion) Format() string {
 		items = append(items, v.Format())
 	}
 	return strings.Join(items, " | ")
+}
+
+type typeFunction struct {
+	Params   []typeInterface
+	ReturnTy typeInterface
+}
+
+func (t typeFunction) Format() string {
+	var items []string
+	for _, v := range t.Params {
+		items = append(items, v.Format())
+	}
+	return "(" + strings.Join(items, ", ") + ") -> " + t.ReturnTy.Format()
 }
 
 type typeDict struct {

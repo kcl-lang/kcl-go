@@ -17,9 +17,11 @@ const (
 )
 
 const (
-	KclAbiVersion         KclVersionType = KclVersionType_v0_12_1
-	KclVersionType_latest                = KclVersionType_v0_12_1
+	KclAbiVersion         KclVersionType = KclVersionType_v0_12_3
+	KclVersionType_latest                = KclVersionType_v0_12_3
 
+	KclVersionType_v0_12_3 KclVersionType = "v0.12.3"
+	KclVersionType_v0_12_2 KclVersionType = "v0.12.2"
 	KclVersionType_v0_12_1 KclVersionType = "v0.12.1"
 	KclVersionType_v0_12_0 KclVersionType = "v0.12.0"
 	KclVersionType_v0_11_2 KclVersionType = "v0.11.2"
