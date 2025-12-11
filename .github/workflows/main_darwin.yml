@@ -8,10 +8,10 @@ on:
 jobs:
   build-and-test:
     # Ref: https://github.com/actions/runner-images/tree/main/images/macos
-    # Note: The arch of macos-13-xlarge and macos-14 is arm64
+    # Note: The arch of macos-14 is arm64
     strategy:
       matrix:
-        os: [ macos-13, macos-13-xlarge, macos-14, macos-latest ]
+        os: [ macos-15-intel, macos-14, macos-latest ]
         cgo: [ '1', '0' ]
     runs-on: ${{ matrix.os }}
     steps:
