@@ -25,6 +25,9 @@ test:
 fmt:
 	go fmt ./...
 
+check:
+	make build
+
 build:
 	go build ./...
 

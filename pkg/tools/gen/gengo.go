@@ -10,7 +10,7 @@ import (
 	pb "kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
-const goAnyType = "interface{}"
+const goAnyType = "any"
 
 var _ Generator = &goGenerator{}
 
@@ -18,6 +18,7 @@ type GenGoOptions struct {
 	Package    string
 	AnyType    string
 	UseValue   bool
+	OmitTag    bool
 	RenameFunc func(string) string
 }
 
@@ -83,6 +84,11 @@ func (g *goGenerator) GenSchema(w io.Writer, typ *pb.KclType) {
 		fmt.Fprint(w, doc)
 	}
 
+	if IsSchemaMap(typ) {
+		fmt.Fprintf(w, "type %s map[%s]%s\n", typ.SchemaName, g.GetTypeName(typ.IndexSignature.Key), g.GetTypeName(typ.IndexSignature.Val))
+		return
+	}
+
 	fmt.Fprintf(w, "type %s struct {\n", typ.SchemaName)
 	defer fmt.Fprintf(w, "}\n")
 
@@ -101,10 +107,17 @@ func (g *goGenerator) GenSchema(w io.Writer, typ *pb.KclType) {
 		goFieldType := g.GetTypeName(fieldType)
 		kclFieldType := getKclTypeName(fieldType)
 
-		goTagInfo := fmt.Sprintf(`kcl:"name=%s,type=%s"`, fieldName, g.GetFieldTag(fieldType))
-		goFieldDefines = append(goFieldDefines,
-			fmt.Sprintf("%s %s %s", g.renameFunc(fieldName), goFieldType, "`"+goTagInfo+"`"),
-		)
+		if g.opts.OmitTag {
+			goFieldDefines = append(goFieldDefines,
+				fmt.Sprintf("%s %s", g.renameFunc(fieldName), goFieldType),
+			)
+		} else {
+			goTagInfo := fmt.Sprintf(`kcl:"name=%s,type=%s"`, fieldName, g.GetFieldTag(fieldType))
+			goFieldDefines = append(goFieldDefines,
+				fmt.Sprintf("%s %s %s", g.renameFunc(fieldName), goFieldType, "`"+goTagInfo+"`"),
+			)
+		}
+
 		goFieldDocs = append(goFieldDocs,
 			fmt.Sprintf("// kcl-type: %s", kclFieldType),
 		)
@@ -142,8 +155,16 @@ func (g *goGenerator) GetTypeName(typ *pb.KclType) string {
 	case typBool:
 		return "bool"
 	case typAny:
-		return g.opts.AnyType
-
+		if g.opts.AnyType != "" {
+			return g.opts.AnyType
+		}
+		return goAnyType
+	case typFunction:
+		var items []string
+		for _, v := range typ.Function.Params {
+			items = append(items, getKclTypeName(v.Ty))
+		}
+		return "func(" + strings.Join(items, ", ") + ") " + getKclTypeName(typ.Function.ReturnTy)
 	case typUnion:
 		var m = make(map[string]bool)
 		for _, t := range typ.UnionTypes {
@@ -154,7 +175,10 @@ func (g *goGenerator) GetTypeName(typ *pb.KclType) string {
 				return k
 			}
 		}
-		return g.opts.AnyType
+		if g.opts.AnyType != "" {
+			return g.opts.AnyType
+		}
+		return goAnyType
 
 	case typNumberMultiplier:
 		return "int"
@@ -192,9 +216,14 @@ func (g *goGenerator) GetFieldTag(typ *pb.KclType) string {
 		return "float"
 	case typBool:
 		return "bool"
-
 	case typAny:
 		return "any"
+	case typFunction:
+		var items []string
+		for _, v := range typ.Function.Params {
+			items = append(items, getKclTypeName(v.Ty))
+		}
+		return "(" + strings.Join(items, ", ") + ") -> " + getKclTypeName(typ.Function.ReturnTy)
 	case typUnion:
 		var ss []string
 		for _, t := range typ.UnionTypes {

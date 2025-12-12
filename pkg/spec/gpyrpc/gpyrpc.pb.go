@@ -194,6 +194,15 @@ type UpdateDependenciesResult = api.UpdateDependenciesResult
 // Message representing a KCL type.
 type KclType = api.KclType
 
+// Message representing a KCL function type.
+type FunctionType = api.FunctionType
+
+// Message representing a KCL function parameter type.
+type Parameter = api.Parameter
+
+// Message representing a KCL schema index signature.
+type IndexSignature = api.IndexSignature
+
 // Message representing a decorator in KCL.
 type Decorator = api.Decorator
 

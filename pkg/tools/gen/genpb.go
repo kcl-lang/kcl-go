@@ -191,10 +191,8 @@ func getPbTypeName(typ *pb.KclType) string {
 		return "double"
 	case typBool:
 		return "bool"
-
 	case typAny:
 		return pbTypAny
-
 	case typUnion:
 		var m = make(map[string]bool)
 		for _, t := range typ.UnionTypes {
@@ -206,10 +204,10 @@ func getPbTypeName(typ *pb.KclType) string {
 			}
 		}
 		return pbTypAny
-
+	case typFunction:
+		return pbTypAny
 	case typNumberMultiplier:
 		return "int64"
-
 	default:
 		if isLit, basicTyp, _ := IsLitType(typ); isLit {
 			switch basicTyp {
