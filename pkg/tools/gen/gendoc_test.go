@@ -155,6 +155,7 @@ func initTestCases(t *testing.T) []*TestCase {
 		"k8s",
 		"pkg",
 		"reimport",
+		"index_func",
 	}
 	tcases := make([]*TestCase, len(sourcePkgs))
 
