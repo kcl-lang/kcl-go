@@ -21,10 +21,11 @@ import (
 var ErrNoKclFiles = errors.New("No input KCL files")
 
 const (
-	ExtensionKclType        = "x-kcl-type"
-	ExtensionKclDecorators  = "x-kcl-decorators"
-	ExtensionKclUnionTypes  = "x-kcl-union-types"
-	ExtensionKclDictKeyType = "x-kcl-dict-key-type"
+	ExtensionKclType             = "x-kcl-type"
+	ExtensionKclDecorators       = "x-kcl-decorators"
+	ExtensionKclUnionTypes       = "x-kcl-union-types"
+	ExtensionKclDictKeyType      = "x-kcl-dict-key-type"
+	ExtensionKclIsIndexSignature = "x-kcl-is-index-signature"
 )
 
 // An additional field 'Name' is added to the original 'KclType'.
@@ -303,11 +304,12 @@ type KclExample struct {
 
 // KclExtensions defines all the KCL specific extensions patched to OpenAPI
 type KclExtensions struct {
-	XKclModelType    *XKclModelType    `json:"x-kcl-type,omitempty"`
-	XKclDecorators   XKclDecorators    `json:"x-kcl-decorators,omitempty"`
-	XKclUnionTypes   []*KclOpenAPIType `json:"x-kcl-union-types,omitempty"`
-	XKclFunctionType *XKclFunctionType `json:"x-kcl-func-type,omitempty"`
-	XKclDictKeyType  *KclOpenAPIType   `json:"x-kcl-dict-key-type,omitempty"` // dict key type
+	XKclModelType        *XKclModelType    `json:"x-kcl-type,omitempty"`
+	XKclDecorators       XKclDecorators    `json:"x-kcl-decorators,omitempty"`
+	XKclUnionTypes       []*KclOpenAPIType `json:"x-kcl-union-types,omitempty"`
+	XKclFunctionType     *XKclFunctionType `json:"x-kcl-func-type,omitempty"`
+	XKclDictKeyType      *KclOpenAPIType   `json:"x-kcl-dict-key-type,omitempty"`      // dict key type
+	XKclIsIndexSignature bool              `json:"x-kcl-is-index-signature,omitempty"` // true if this is a schema index signature
 }
 
 // XKclModelType defines the `x-kcl-type` extension
@@ -339,6 +341,18 @@ type XKclDecorator struct {
 
 // GetKclTypeName get the string representation of a KclOpenAPIType
 func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool, addLink bool, escapeHtml bool) string {
+	// Handle function type first
+	if tpe.KclExtensions != nil && tpe.KclExtensions.XKclFunctionType != nil {
+		fn := tpe.KclExtensions.XKclFunctionType
+		params := make([]string, len(fn.Params))
+		for i, param := range fn.Params {
+			params[i] = param.GetKclTypeName(true, addLink, escapeHtml)
+		}
+		returnTy := fn.ReturnTy.GetKclTypeName(true, addLink, escapeHtml)
+		// Format: (param1, param2) -> returnType
+		return fmt.Sprintf("(%s) -> %s", strings.Join(params, ", "), returnTy)
+	}
+
 	if tpe.Ref != "" {
 		schemaId := Ref2SchemaId(tpe.Ref)
 		schemaName := schemaId[strings.LastIndex(schemaId, ".")+1:]
@@ -347,6 +361,17 @@ func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool, addLink bool, escapeHtml
 		} else {
 			return schemaName
 		}
+	}
+
+	// Handle schema type (object with XKclModelType but no Ref)
+	// This happens for inline schema definitions in index signatures
+	if tpe.Type == Object && tpe.KclExtensions != nil && tpe.KclExtensions.XKclModelType != nil && tpe.KclExtensions.XKclModelType.Type != "" {
+		schemaName := tpe.KclExtensions.XKclModelType.Type
+		// Only add link if it's a top-level schema (not inline)
+		if addLink && tpe.Properties != nil && len(tpe.Properties) > 0 {
+			return fmt.Sprintf("[%s](#%s)", schemaName, strings.ToLower(schemaName))
+		}
+		return schemaName
 	}
 	switch tpe.Type {
 	case String:
@@ -384,8 +409,15 @@ func (tpe *KclOpenAPIType) GetKclTypeName(omitAny bool, addLink bool, escapeHtml
 	case Array:
 		return fmt.Sprintf("[%s]", tpe.Items.GetKclTypeName(true, addLink, escapeHtml))
 	case Object:
+		// Check for index signature (AdditionalProperties with key type)
+		if tpe.AdditionalProperties != nil && tpe.KclExtensions.XKclDictKeyType != nil && tpe.KclExtensions.XKclIsIndexSignature {
+			// Index signature type: [key]: value
+			keyTy := tpe.KclExtensions.XKclDictKeyType.GetKclTypeName(true, addLink, escapeHtml)
+			valueTy := tpe.AdditionalProperties.GetKclTypeName(true, addLink, escapeHtml)
+			return fmt.Sprintf("[%s]: %s", keyTy, valueTy)
+		}
+		// Regular dict type
 		if tpe.AdditionalProperties != nil {
-			// dict type
 			if tpe.KclExtensions.XKclDictKeyType.isAnyType() && tpe.AdditionalProperties.isAnyType() {
 				return "{}"
 			}
@@ -439,6 +471,9 @@ func (tpe *KclOpenAPIType) GetExtensionsMapping() map[string]interface{} {
 		}
 		if tpe.XKclDictKeyType != nil {
 			m[ExtensionKclDictKeyType] = tpe.XKclDictKeyType
+		}
+		if tpe.XKclIsIndexSignature {
+			m[ExtensionKclIsIndexSignature] = tpe.XKclIsIndexSignature
 		}
 	}
 	return m
@@ -563,6 +598,17 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 		}
 		if from.IndexSignature != nil {
 			t.AdditionalProperties = GetKclOpenAPIType(pkgPath, from.IndexSignature.Val, nested)
+			keyTy := GetKclOpenAPIType(pkgPath, from.IndexSignature.Key, true)
+			if t.KclExtensions == nil {
+				t.KclExtensions = &KclExtensions{
+					XKclModelType:        ty,
+					XKclDictKeyType:      keyTy,
+					XKclIsIndexSignature: true,
+				}
+			} else {
+				t.KclExtensions.XKclDictKeyType = keyTy
+				t.KclExtensions.XKclIsIndexSignature = true
+			}
 		}
 		// todo externalDocs(see also)
 		return &t

@@ -189,7 +189,11 @@ func TestExportSwaggerV2SpecWithIndexSignatureAndFunction(t *testing.T) {
                 "import": {
                     "alias": "schema.k"
                 }
-            }
+            },
+            "x-kcl-dict-key-type": {
+                "type": "string"
+            },
+            "x-kcl-is-index-signature": true
         }
     },
     "paths": {},
