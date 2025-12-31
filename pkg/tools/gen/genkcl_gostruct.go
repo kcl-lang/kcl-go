@@ -25,9 +25,10 @@ type goStruct struct {
 }
 
 type field struct {
-	name string
-	ty   types.Type
-	tag  string
+	name      string
+	ty        types.Type
+	tag       string
+	anonymous bool // true for embedded fields
 }
 
 type genKclTypeContext struct {
@@ -184,7 +185,7 @@ func (ctx *genKclTypeContext) typeName(pkgPath, defName, fieldName string, typ t
 					fieldDoc = doc
 				}
 				// Use alias name and type defined in the `kcl` or `json`` tag
-				tagName, tagTy, err := parserGoStructFieldTag(field.tag)
+				tagName, tagTy, _, err := parserGoStructFieldTag(field.tag)
 				if err == nil {
 					if tagName != "" {
 						fieldName = tagName
@@ -245,7 +246,7 @@ func (ctx *genKclTypeContext) convertSchemaFromGoPackage() ([]convertResult, err
 				typeName := ctx.typeName(ctx.pkgPath, name, field.name, field.ty)
 				fieldName := formatName(field.name)
 				// Use alias name and type defined in the `kcl` or `json`` tag
-				tagName, tagTy, err := parserGoStructFieldTag(field.tag)
+				tagName, tagTy, _, err := parserGoStructFieldTag(field.tag)
 				if err == nil {
 					if tagName != "" {
 						fieldName = tagName
@@ -395,25 +396,61 @@ func (ctx *genKclTypeContext) getStructTypeFieldsAndDocs(structType *types.Struc
 	for i := 0; i < structType.NumFields(); i++ {
 		f := structType.Field(i)
 		var tag string
-		if structType, ok := ctx.tyMapping[structType]; ok {
-			for _, field := range structType.Fields.List {
-				for _, fieldName := range field.Names {
-					if fieldName.Name == f.Name() {
-						if field.Doc != nil {
-							fieldDocs[fieldName.Name] = field.Doc.Text()
-						}
+		if astStruct, ok := ctx.tyMapping[structType]; ok {
+			// Match by field position to get the correct tag
+			astFieldIndex := 0
+			for _, field := range astStruct.Fields.List {
+				if len(field.Names) == 0 {
+					// This is an embedded field
+					if astFieldIndex == i {
 						if field.Tag != nil {
 							tag = field.Tag.Value
 						}
+						break
 					}
+					astFieldIndex++
+				} else {
+					// Named fields - check if any match
+					for _, fieldName := range field.Names {
+						if fieldName.Name == f.Name() {
+							if field.Doc != nil {
+								fieldDocs[fieldName.Name] = field.Doc.Text()
+							}
+							if field.Tag != nil {
+								tag = field.Tag.Value
+							}
+							break
+						}
+					}
+					astFieldIndex += len(field.Names)
 				}
 			}
 		}
 		if f.Embedded() {
-			embeddedFields, embeddedFieldDocs := ctx.getEmbeddedFieldsAndDocs(f.Type())
-			fields = append(fields, embeddedFields...)
-			for k, v := range embeddedFieldDocs {
-				fieldDocs[k] = v
+			// Parse tag to check if inline option is present
+			_, _, tagOpts, _ := parserGoStructFieldTag(tag)
+			if tagOpts.inline {
+				// Only inline if the "inline" option is present in the tag
+				embeddedFields, embeddedFieldDocs := ctx.getEmbeddedFieldsAndDocs(f.Type())
+				fields = append(fields, embeddedFields...)
+				for k, v := range embeddedFieldDocs {
+					fieldDocs[k] = v
+				}
+			} else {
+				// Don't inline - treat as a regular field
+				// Use the name from the tag if available
+				fieldName := f.Name()
+				if tagName, _, _, err := parserGoStructFieldTag(tag); err == nil && tagName != "" {
+					fieldName = tagName
+				}
+				if f.Exported() {
+					fields = append(fields, field{
+						name:      fieldName,
+						ty:        f.Type(),
+						tag:       tag,
+						anonymous: true,
+					})
+				}
 			}
 		} else {
 			if f.Exported() {
@@ -444,11 +481,17 @@ func (ctx *genKclTypeContext) getEmbeddedFieldsAndDocs(typ types.Type) ([]field,
 	return fields, fieldDocs
 }
 
-func parserGoStructFieldTag(tag string) (string, typeInterface, error) {
+// tagOptions represents the parsed options from a struct tag
+type tagOptions struct {
+	inline    bool
+	omitempty bool
+}
+
+func parserGoStructFieldTag(tag string) (string, typeInterface, tagOptions, error) {
 	tagMap := make(map[string]string, 0)
 	sp := strings.Split(tag, "`")
 	if len(sp) == 1 {
-		return "", nil, errors.New("this field not found tag string like ``")
+		return "", nil, tagOptions{}, errors.New("this field not found tag string like ``")
 	}
 	value, ok := lookupTag(sp[1], "kcl")
 	if !ok {
@@ -456,25 +499,27 @@ func parserGoStructFieldTag(tag string) (string, typeInterface, error) {
 		if !ok {
 			value, ok = lookupTag(sp[1], "yaml")
 			if !ok {
-				return "", nil, errors.New("not found tag key named json, yaml or kcl")
+				return "", nil, tagOptions{}, errors.New("not found tag key named json, yaml or kcl")
 			}
 		}
 		// Deal json or yaml tags
 		tagInfos := strings.Split(value, ",")
 		if len(tagInfos) > 0 {
-			return tagInfos[0], nil, nil
+			name := tagInfos[0]
+			opts := parseTagOptions(tagInfos[1:])
+			return name, nil, opts, nil
 		} else {
-			return "", nil, errors.New("invalid tag key named json")
+			return "", nil, tagOptions{}, errors.New("invalid tag key named json")
 		}
 	}
 	// Deal kcl tags
 	reg := "name=.*,type=.*"
 	match, err := regexp.Match(reg, []byte(value))
 	if err != nil {
-		return "", nil, err
+		return "", nil, tagOptions{}, err
 	}
 	if !match {
-		return "", nil, errors.New("don't match the kcl tag info, the tag info style is name=NAME,type=TYPE")
+		return "", nil, tagOptions{}, errors.New("don't match the kcl tag info, the tag info style is name=NAME,type=TYPE")
 	}
 	tagInfo := strings.Split(value, ",")
 	for _, s := range tagInfo {
@@ -493,7 +538,21 @@ func parserGoStructFieldTag(tag string) (string, typeInterface, error) {
 	}
 	return tagMap["name"], typeCustom{
 		Name: fieldType,
-	}, nil
+	}, tagOptions{}, nil
+}
+
+// parseTagOptions parses tag options like "inline", "omitempty"
+func parseTagOptions(options []string) tagOptions {
+	var opts tagOptions
+	for _, opt := range options {
+		switch strings.TrimSpace(opt) {
+		case "inline":
+			opts.inline = true
+		case "omitempty":
+			opts.omitempty = true
+		}
+	}
+	return opts
 }
 
 func isLitType(fieldType string) (ok bool, basicTyp, litValue string) {
