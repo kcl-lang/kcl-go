@@ -36,3 +36,24 @@ type Company struct {
 	Employees []*Employee `kcl:"name=employees,type=[Employee]"` // kcl-type: [Employee]
 	Persons   *Person     `kcl:"name=persons,type=Person"`       // kcl-type: Person
 }
+
+// Test inline tag behavior
+type TypeMeta struct {
+	APIVersion string `json:"apiVersion,omitempty"`
+	Kind       string `json:"kind,omitempty"`
+}
+
+type ObjectMeta struct {
+	Name      string `json:"name,omitempty"`
+	Namespace string `json:"namespace,omitempty"`
+}
+
+type AppInline struct {
+	TypeMeta   `json:",inline,omitempty"`
+	ObjectMeta `json:"metadata,omitempty"`
+}
+
+type AppNoInline struct {
+	TypeMeta   `json:",inline"`
+	ObjectMeta `json:"metadata"`
+}
