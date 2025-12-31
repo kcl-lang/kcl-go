@@ -128,6 +128,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 	reference := ""
 	typeList := typeUnion{}
 	required := make(map[string]struct{})
+	hasTypeKeyword := false // Track if we've seen a type keyword
 	for i := 0; i < len(s.OrderedKeywords); i++ {
 		k := s.OrderedKeywords[i]
 		switch v := s.Keywords[k].(type) {
@@ -138,6 +139,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 		case *jsonschema.Description:
 			result.Description = string(*v)
 		case *jsonschema.Type:
+			hasTypeKeyword = true
 			if len(v.Vals) == 1 {
 				switch v.Vals[0] {
 				case "object":
@@ -250,6 +252,16 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			typeList.Items = []typeInterface{typeValue{Value: unmarshalledVal}}
 			result.HasDefault = true
 			result.DefaultValue = unmarshalledVal
+			// Add const as validation only if there's also a type keyword
+			// (e.g., type: string + const: "value" should generate "field == value" check)
+			if hasTypeKeyword {
+				_, req := required[name]
+				result.Validations = append(result.Validations, validation{
+					Name:       name,
+					Required:   req,
+					ConstValue: unmarshalledVal,
+				})
+			}
 		case *jsonschema.Defs:
 		case *jsonschema.Ref:
 			refSch := v.ResolveRef(ctx.rootSchema)
@@ -615,6 +627,240 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
 				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
 			})
+		case *jsonschema.AnyOf:
+			// anyOf is similar to oneOf but allows more than one schema to match
+			// We treat it as a union type for type-level anyOf
+			// If all schemas only contain validations (no explicit types), convert to AnyOf validation
+			schs := *v
+			var allValidationsOnly = true
+			var anyOfValidations []*validation
+			_, req := required[name]
+
+			// Check if this is a required-constraints anyOf (e.g., "field1 or field2 is required")
+			var requiredFields []string
+			var hasRequiredConstraints = true
+			for _, val := range schs {
+				hasRequired := false
+				hasOtherKeywords := false
+				for _, key := range val.OrderedKeywords {
+					if r, ok := val.Keywords[key].(*jsonschema.Required); ok && len(*r) == 1 {
+						requiredFields = append(requiredFields, string((*r)[0]))
+						hasRequired = true
+					} else {
+						// Check if it's a metadata keyword
+						if _, ok := val.Keywords[key].(*jsonschema.Description); ok {
+							continue
+						}
+						if _, ok := val.Keywords[key].(*jsonschema.Title); ok {
+							continue
+						}
+						if _, ok := val.Keywords[key].(*jsonschema.Comment); ok {
+							continue
+						}
+						hasOtherKeywords = true
+					}
+				}
+				if !hasRequired || hasOtherKeywords {
+					hasRequiredConstraints = false
+					break
+				}
+			}
+
+			if hasRequiredConstraints && len(requiredFields) > 0 {
+				// Generate a check using 'or' operator for required fields
+				// e.g., field1 or field2 or field3
+				result.Validations = append(result.Validations, validation{
+					Name:        "",
+					Required:    false,
+					AnyOfFields: requiredFields,
+				})
+				break
+			}
+
+			for i, val := range schs {
+				// Check if this schema is validation-only (format, pattern, const, etc.)
+				// const is NEVER validation-only - it goes into type union
+				// format/pattern are validation-only ONLY when there's no type keyword
+				hasOnlyValidation := false
+				var validationType string // "format", "pattern"
+				var validationValue interface{}
+				var hasTypeKeyword bool
+
+				for _, key := range val.OrderedKeywords {
+					switch v := val.Keywords[key].(type) {
+					case *jsonschema.Format:
+						// Mark as potential validation-only, will be confirmed below
+						if !hasTypeKeyword {
+							hasOnlyValidation = true
+							validationType = "format"
+							validationValue = v
+						}
+					case *jsonschema.Pattern:
+						// Mark as potential validation-only, will be confirmed below
+						if !hasTypeKeyword {
+							hasOnlyValidation = true
+							validationType = "pattern"
+							validationValue = (*regexp.Regexp)(v)
+						}
+					case *jsonschema.Const:
+						// const is NOT validation-only - goes to type union
+						hasOnlyValidation = false
+					case *jsonschema.Type:
+						// Has type keyword, so format/pattern are not validation-only
+						hasTypeKeyword = true
+						hasOnlyValidation = false
+					case *jsonschema.Description, *jsonschema.Title, *jsonschema.Comment:
+						// Metadata keywords are allowed
+						continue
+					default:
+						// Other keywords mean this is not validation-only
+						hasOnlyValidation = false
+					}
+					if !hasOnlyValidation && validationType == "" && !hasTypeKeyword {
+						// Break only if we haven't found a validation type
+						break
+					}
+				}
+
+				if hasOnlyValidation {
+					switch validationType {
+					case "format":
+						// Convert format to regex validation
+						format := string(*(validationValue.(*jsonschema.Format)))
+						var regexPattern *regexp.Regexp
+						switch format {
+						case "hostname":
+							regexPattern = regexp.MustCompile(`^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]))*$`)
+						case "f5ip":
+							regexPattern = regexp.MustCompile(`^[a-fA-F0-9]{1,3}\.[a-fA-F0-9]{1,3}\.[a-fA-F0-9]{1,3}\.[a-fA-F0-9]{1,3}$`)
+						default:
+							// For other formats, don't treat as validation-only
+							hasOnlyValidation = false
+						}
+						if regexPattern != nil {
+							anyOfValidations = append(anyOfValidations, &validation{
+								Name:  name,
+								Regex: regexPattern,
+							})
+							ctx.imports["regex"] = struct{}{}
+						}
+					case "pattern":
+						// Use pattern directly (already a *regexp.Regexp)
+						anyOfValidations = append(anyOfValidations, &validation{
+							Name:  name,
+							Regex: validationValue.(*regexp.Regexp),
+						})
+						ctx.imports["regex"] = struct{}{}
+					}
+				}
+
+				if !hasOnlyValidation {
+					// Process normally
+					item := convertSchemaFromJsonSchema(ctx, val, "anyOf"+strconv.Itoa(i))
+					if item.IsSchema {
+						// Has schema definition, not a validation-only schema
+						allValidationsOnly = false
+						ctx.resultMap[item.schema.Name] = item
+						typeList.Items = append(typeList.Items, typeCustom{Name: item.schema.Name})
+					} else if !item.isJsonNullType {
+						// Check if this is a validation-only schema (no type specified, only validations)
+						if len(item.Validations) > 0 && (item.Type == typePrimitive(typAny) || item.Type == typePrimitive("")) {
+							// This is a validation-only schema, add to AnyOf validations
+							for _, v := range item.Validations {
+								v.Name = name
+								v.Required = req
+								anyOfValidations = append(anyOfValidations, &v)
+							}
+						} else {
+							// Has a type definition, not validation-only
+							// Exception: const values (typeValue or typeUnion with only typeValue) are part of the type union, don't mark as non-validation-only
+							isOnlyConstValue := false
+							if _, ok := item.Type.(typeValue); ok {
+								isOnlyConstValue = true
+							} else if tu, ok := item.Type.(typeUnion); ok && len(tu.Items) == 1 {
+								if _, ok := tu.Items[0].(typeValue); ok {
+									isOnlyConstValue = true
+								}
+							}
+							if !isOnlyConstValue {
+								allValidationsOnly = false
+							}
+							typeList.Items = append(typeList.Items, item.Type)
+						}
+					}
+				}
+			}
+
+			// If all schemas are validation-only, create an AnyOf validation
+			if allValidationsOnly && len(anyOfValidations) > 0 {
+				result.Validations = append(result.Validations, validation{
+					Name:     name,
+					Required: req,
+					AnyOf:    anyOfValidations,
+				})
+			}
+		case *jsonschema.Not:
+			// not negates a schema validation
+			var notValidation *validation
+			_, req := required[name]
+			for _, key := range (*v).OrderedKeywords {
+				switch val := (*v).Keywords[key].(type) {
+				case *jsonschema.Pattern:
+					notValidation = &validation{
+						Name:     name,
+						Required: req,
+						Regex:    (*regexp.Regexp)(val),
+					}
+					ctx.imports["regex"] = struct{}{}
+				case *jsonschema.Minimum:
+					notValidation = &validation{
+						Name:             name,
+						Required:         req,
+						Minimum:          (*float64)(val),
+						ExclusiveMinimum: false,
+					}
+				case *jsonschema.Maximum:
+					notValidation = &validation{
+						Name:             name,
+						Required:         req,
+						Maximum:          (*float64)(val),
+						ExclusiveMaximum: false,
+					}
+				case *jsonschema.ExclusiveMinimum:
+					notValidation = &validation{
+						Name:             name,
+						Required:         req,
+						Minimum:          (*float64)(val),
+						ExclusiveMinimum: true,
+					}
+				case *jsonschema.ExclusiveMaximum:
+					notValidation = &validation{
+						Name:             name,
+						Required:         req,
+						Maximum:          (*float64)(val),
+						ExclusiveMaximum: true,
+					}
+				case *jsonschema.MinLength:
+					notValidation = &validation{
+						Name:      name,
+						Required:  req,
+						MinLength: (*int)(val),
+					}
+				case *jsonschema.MaxLength:
+					notValidation = &validation{
+						Name:      name,
+						Required:  req,
+						MaxLength: (*int)(val),
+					}
+				}
+			}
+			if notValidation != nil {
+				result.Validations = append(result.Validations, validation{
+					Name:     notValidation.Name,
+					Required: notValidation.Required,
+					Not:      notValidation,
+				})
+			}
 		case *jsonschema.ReadOnly:
 			// Do nothing for the readOnly keyword.
 			logger.GetLogger().Infof("unsupported keyword: %s, path: %s, omit it", k, strings.Join(ctx.paths, "/"))

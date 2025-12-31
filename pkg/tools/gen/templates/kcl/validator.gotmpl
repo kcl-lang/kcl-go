@@ -20,7 +20,31 @@
     {{- if .Unique }}
         isunique({{ formatName .Name }}){{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
+    {{- if .ConstValue }}
+        {{ formatName .Name }} == {{ formatValue .ConstValue }}{{ if not .Required }} if {{ formatName .Name }}{{ end }}
+    {{- end }}
     {{- if .AllOf }}
     {{- template "validator" .AllOf }}
     {{- end }}
+    {{- if .AnyOfFields }}
+        {{ range $index, $field := .AnyOfFields }}{{ if $index }} or {{ end }}not isnullish({{ formatName $field }}){{ end }}
+    {{- end -}}
+    {{ if .AnyOf }}
+{{- "\n" -}}{{- $first := true -}}{{- range .AnyOf -}}{{- if not $first -}} or {{ end }}{{- if .Regex }}        regex.match({{ formatName .Name }}, r"{{ .Regex }}"){{ end }}{{- if .Minimum }}        {{ formatName .Name }} {{ if .ExclusiveMinimum }}>{{ end }}>={{ .Minimum }}{{ end }}{{- if .Maximum }}        {{ formatName .Name }} {{ if .ExclusiveMaximum }}<{{ end }}<={{ .Maximum }}{{ end }}{{- if .MinLength }}        len({{ formatName .Name }}) >= {{ .MinLength }}{{ end }}{{- if .MaxLength }}        len({{ formatName .Name }}) <= {{ .MaxLength }}{{ end }}{{- if .ConstValue }}        {{ formatName .Name }} == {{ formatValue .ConstValue }}{{ end }}{{- if or .Regex .Minimum .Maximum .MinLength .MaxLength .ConstValue -}}{{- $first = false -}}{{ end }}{{ end -}} {{ if not .Required }} if {{ formatName .Name }}{{ end }}
+    {{- end -}}
+    {{- if .Not }}
+        {{- if .Not.Regex }}
+        not regex.match({{ formatName .Name }}, r"{{ .Not.Regex }}"){{- end -}}
+        {{- if .Not.Minimum }}
+        not ({{ formatName .Name }} {{ if .Not.ExclusiveMinimum }}>{{ end }}>={{ .Not.Minimum }}){{- end -}}
+        {{- if .Not.Maximum }}
+        not ({{ formatName .Name }} {{ if .Not.ExclusiveMaximum }}<{{ end }}<={{ .Not.Maximum }}){{- end -}}
+        {{- if .Not.MinLength }}
+        not (len({{ formatName .Name }}) >= {{ .Not.MinLength }}){{- end -}}
+        {{- if .Not.MaxLength }}
+        not (len({{ formatName .Name }}) <= {{ .Not.MaxLength }}){{- end -}}
+        {{- if .Not.ConstValue }}
+        not ({{ formatName .Name }} == {{ formatValue .Not.ConstValue }}){{- end -}}
+        {{- if not .Not.Required }} if {{ formatName .Name }}{{ end }}
+    {{- end -}}
 {{- end -}}
