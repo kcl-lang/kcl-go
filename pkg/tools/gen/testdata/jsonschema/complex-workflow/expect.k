@@ -370,13 +370,13 @@ schema WorkflowDefaultsRun:
 
     Attributes
     ----------
-    shell : any, optional
+    shell : str | "bash" | "pwsh" | "python" | "sh" | "cmd" | "powershell", optional
         You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
     "working-directory" : str, optional
         Using the working-directory keyword, you can specify the working directory of where to run the command.
     """
 
-    shell?: any
+    shell?: str | "bash" | "pwsh" | "python" | "sh" | "cmd" | "powershell"
     "working-directory"?: str
 
 schema WorkflowEnvOneOf0:
@@ -424,13 +424,13 @@ schema WorkflowJobsPatternProperties0OneOf0DefaultsRun:
 
     Attributes
     ----------
-    shell : any, optional
+    shell : str | "bash" | "pwsh" | "python" | "sh" | "cmd" | "powershell", optional
         You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
     "working-directory" : str, optional
         Using the working-directory keyword, you can specify the working directory of where to run the command.
     """
 
-    shell?: any
+    shell?: str | "bash" | "pwsh" | "python" | "sh" | "cmd" | "powershell"
     "working-directory"?: str
 
 schema WorkflowJobsPatternProperties0OneOf0EnvOneOf0:
@@ -504,7 +504,7 @@ schema WorkflowJobsPatternProperties0OneOf0StepsItems0:
         Each run keyword represents a new process and shell in the virtual environment. When you provide multi-line commands, each line runs in the same shell.
     "working-directory" : str, optional
         Using the working-directory keyword, you can specify the working directory of where to run the command.
-    shell : any, optional
+    shell : str | "bash" | "pwsh" | "python" | "sh" | "cmd" | "powershell", optional
         You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
     with : WorkflowJobsPatternProperties0OneOf0StepsItems0WithOneOf0 | str | Env, optional
         A map of the input parameters defined by the action. Each input parameter is a key/value pair. Input parameters are set as environment variables. The variable is prefixed with INPUT_ and converted to upper case.
@@ -522,7 +522,7 @@ schema WorkflowJobsPatternProperties0OneOf0StepsItems0:
     uses?: str
     run?: str
     "working-directory"?: str
-    shell?: any
+    shell?: str | "bash" | "pwsh" | "python" | "sh" | "cmd" | "powershell"
     with?: WorkflowJobsPatternProperties0OneOf0StepsItems0WithOneOf0 | str | Env
     env?: WorkflowJobsPatternProperties0OneOf0StepsItems0EnvOneOf0 | str
     "continue-on-error"?: bool | str = False

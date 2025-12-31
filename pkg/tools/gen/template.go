@@ -64,7 +64,12 @@ func init() {
 		if err := tmpl.ExecuteTemplate(buf, name, data); err != nil {
 			return "", err
 		}
-		return buf.String(), nil
+		result := buf.String()
+		// Fix spacing issues in anyOf expressions
+		result = strings.ReplaceAll(result, ")or ", ") or ")
+		result = strings.ReplaceAll(result, ")or  ", ") or ")
+		result = strings.ReplaceAll(result, ")if ", ") if ")
+		return result, nil
 	}
 
 	tmpl = addTemplate(tmpl, "config", configTmpl)
@@ -78,7 +83,30 @@ func init() {
 }
 
 func (k *kclGenerator) genKcl(w io.Writer, s kclFile) error {
-	return tmpl.Execute(w, s)
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, s); err != nil {
+		return err
+	}
+	result := buf.String()
+	// Fix spacing issues in anyOf expressions
+	lines := strings.Split(result, "\n")
+	for i, line := range lines {
+		// Only process validation lines (lines that start with spaces and contain validation patterns)
+		// Check if line looks like a validation (starts with spaces, contains "or" between expressions)
+		if strings.HasPrefix(line, "        ") && (strings.Contains(line, ")or ") || strings.Contains(line, "match(")) {
+			// Fix spacing around "or" in anyOf expressions
+			// Replace "or" followed by multiple spaces with "or " followed by single space
+			re := regexp.MustCompile(`or +`)
+			line = re.ReplaceAllString(line, "or ")
+			// Also fix )or case
+			line = strings.ReplaceAll(line, ")or ", ") or ")
+			lines[i] = line
+		}
+	}
+	result = strings.Join(lines, "\n")
+	result = strings.ReplaceAll(result, ")if ", ") if ")
+	_, err := io.WriteString(w, result)
+	return err
 }
 
 func addTemplate(tmpl *template.Template, name, data string) *template.Template {

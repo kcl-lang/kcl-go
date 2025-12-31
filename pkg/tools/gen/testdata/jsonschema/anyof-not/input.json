@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "type": "object",
+  "properties": {
+    "email_address": {
+      "type": "string",
+      "format": "email"
+    },
+    "github_username": {
+      "type": "string",
+      "not": {
+        "pattern": "example"
+      }
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "anyOf": [
+    { "required": ["email_address"] },
+    { "required": ["github_username"] }
+  ]
+}

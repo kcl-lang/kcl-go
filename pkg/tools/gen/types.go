@@ -198,7 +198,11 @@ type validation struct {
 	Regex            *regexp.Regexp
 	MultiplyOf       *int
 	Unique           bool
+	ConstValue       interface{} // For const validation: field == value
 	AllOf            []*validation
+	AnyOf            []*validation
+	AnyOfFields      []string // For required-constraints anyOf: ["field1", "field2"]
+	Not              *validation
 }
 
 // indexSignature is a kcl schema index signature definition.

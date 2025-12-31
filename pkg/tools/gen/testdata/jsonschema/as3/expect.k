@@ -16,7 +16,7 @@ schema Adc:
         URL of schema against which to validate. Used by validation in your local environment only (via Visual Studio Code, for example)
     updateMode : "complete" | "selective", optional, default is "selective"
         When set to 'selective' (default) BIG-IP AS3 does not modify Tenants not referenced in the declaration.  Otherwise ('complete') BIG-IP AS3 removes unreferenced Tenants.
-    schemaVersion : str, required
+    schemaVersion : str | "3.50.0", required
         Version of ADC Declaration schema this declaration uses
     id : str, optional
         Unique identifier for this declaration (max 255 printable chars with no spaces, quotation marks, angle brackets, nor backslashes)
@@ -39,7 +39,7 @@ schema Adc:
     class: "ADC" = "ADC"
     "$schema"?: str
     updateMode?: "complete" | "selective" = "selective"
-    schemaVersion: str
+    schemaVersion: str | "3.50.0"
     id?: str
     target?: As3OneOf4Items0Target
     label?: str
@@ -51,7 +51,9 @@ schema Adc:
     [...str]: Tenant
 
     check:
+        class == "ADC"
         regex.match("$schema", r"^[a-zA-Z][a-zA-Z0-9+-.]*://[^/?#]+(?:/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$") if "$schema"
+        regex.match(schemaVersion, r"^3[.]([0-9]|[1234][0-9]|5[0])($|[.][0-9]+$)")
         len(id) <= 255 if id
         len(id) >= 0 if id
         regex.match(id, r"^[^\x00-\x20\x22'<>\x5c^`|\x7f]*$") if id
@@ -96,6 +98,7 @@ schema Application:
     [...str]: As3OneOf4Items0AdditionalPropertiesAdditionalPropertiesAdditionalProperties
 
     check:
+        class == "Application"
         len(label) <= 64 if label
         len(label) >= 0 if label
         regex.match(label, r"^[^\x00-\x1f\x22#&*<>?\x5b-\x5d`\x7f]*$") if label
@@ -137,6 +140,9 @@ schema ApplicationShared:
     [...str]: As3OneOf4Items0AdditionalPropertiesSharedAdditionalProperties
 
     check:
+        class == "Application"
+        template == "shared"
+        enable == True if enable
         len(label) <= 64 if label
         len(label) >= 0 if label
         regex.match(label, r"^[^\x00-\x1f\x22#&*<>?\x5b-\x5d`\x7f]*$") if label
@@ -214,11 +220,13 @@ schema As3:
     patchBody?: [As3PatchItem | As3PatchItem]
 
     check:
+        class == "AS3"
         regex.match("$schema", r"^[a-zA-Z][a-zA-Z0-9+-.]*://[^/?#]+(?:/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$") if "$schema"
         redeployAge <= 15 if redeployAge
         redeployAge >= 0 if redeployAge
         historyLimit <= 15 if historyLimit
         historyLimit >= 2 if historyLimit
+        regex.match(targetHost, r"^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]))*$") or regex.match(targetHost, r"^[a-fA-F0-9]{1,3}\.[a-fA-F0-9]{1,3}\.[a-fA-F0-9]{1,3}\.[a-fA-F0-9]{1,3}$") if targetHost
         targetPort <= 65535 if targetPort
         targetPort >= 0 if targetPort
         len(targetUsername) <= 254 if targetUsername
@@ -295,12 +303,14 @@ schema As3OneOf0DeclarationCommon:
     optimisticLockKey?: str = ""
 
     check:
+        class == "Tenant" if class
         len(label) <= 64 if label
         len(label) >= 0 if label
         regex.match(label, r"^[^\x00-\x1f\x22#&*<>?\x5b-\x5d`\x7f]*$") if label
         len(remark) <= 64 if remark
         len(remark) >= 0 if remark
         regex.match(remark, r"^[^\x00-\x1f\x22\x5c\x7f]*$") if remark
+        enable == True if enable
         len(optimisticLockKey) <= 128 if optimisticLockKey
 
 schema As3OneOf0DeclarationCommonSharedAdditionalProperties:
@@ -340,6 +350,7 @@ schema As3OneOf0DeclarationConstants:
     [...str]: bool | int | float | str | [any] | any
 
     check:
+        class == "Constants" if class
         regex.match(timestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if timestamp
 
 schema As3OneOf0DeclarationTarget:
@@ -447,12 +458,14 @@ schema As3OneOf1Common:
     optimisticLockKey?: str = ""
 
     check:
+        class == "Tenant" if class
         len(label) <= 64 if label
         len(label) >= 0 if label
         regex.match(label, r"^[^\x00-\x1f\x22#&*<>?\x5b-\x5d`\x7f]*$") if label
         len(remark) <= 64 if remark
         len(remark) >= 0 if remark
         regex.match(remark, r"^[^\x00-\x1f\x22\x5c\x7f]*$") if remark
+        enable == True if enable
         len(optimisticLockKey) <= 128 if optimisticLockKey
 
 schema As3OneOf1CommonSharedAdditionalProperties:
@@ -492,6 +505,7 @@ schema As3OneOf1Constants:
     [...str]: bool | int | float | str | [any] | any
 
     check:
+        class == "Constants" if class
         regex.match(timestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if timestamp
 
 schema As3OneOf1Target:
@@ -589,12 +603,14 @@ schema As3OneOf3Items0DeclarationCommon:
     optimisticLockKey?: str = ""
 
     check:
+        class == "Tenant" if class
         len(label) <= 64 if label
         len(label) >= 0 if label
         regex.match(label, r"^[^\x00-\x1f\x22#&*<>?\x5b-\x5d`\x7f]*$") if label
         len(remark) <= 64 if remark
         len(remark) >= 0 if remark
         regex.match(remark, r"^[^\x00-\x1f\x22\x5c\x7f]*$") if remark
+        enable == True if enable
         len(optimisticLockKey) <= 128 if optimisticLockKey
 
 schema As3OneOf3Items0DeclarationCommonSharedAdditionalProperties:
@@ -634,6 +650,7 @@ schema As3OneOf3Items0DeclarationConstants:
     [...str]: bool | int | float | str | [any] | any
 
     check:
+        class == "Constants" if class
         regex.match(timestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if timestamp
 
 schema As3OneOf3Items0DeclarationTarget:
@@ -756,12 +773,14 @@ schema As3OneOf4Items0Common:
     optimisticLockKey?: str = ""
 
     check:
+        class == "Tenant" if class
         len(label) <= 64 if label
         len(label) >= 0 if label
         regex.match(label, r"^[^\x00-\x1f\x22#&*<>?\x5b-\x5d`\x7f]*$") if label
         len(remark) <= 64 if remark
         len(remark) >= 0 if remark
         regex.match(remark, r"^[^\x00-\x1f\x22\x5c\x7f]*$") if remark
+        enable == True if enable
         len(optimisticLockKey) <= 128 if optimisticLockKey
 
 schema As3OneOf4Items0CommonSharedAdditionalProperties:
@@ -801,6 +820,7 @@ schema As3OneOf4Items0Constants:
     [...str]: bool | int | float | str | [any] | any
 
     check:
+        class == "Constants" if class
         regex.match(timestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if timestamp
 
 schema As3OneOf4Items0Target:
@@ -851,6 +871,9 @@ schema Constants:
     class: "Constants" = "Constants"
     [...str]: bool | int | float | str | [any] | any
 
+    check:
+        class == "Constants"
+
 schema Controls:
     r"""
     Optional controls configuration
@@ -888,6 +911,7 @@ schema Controls:
 
     check:
         regex.match(archiveTimestamp, r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$") if archiveTimestamp
+        class == "Controls"
 
 schema Tenant:
     r"""
@@ -929,6 +953,7 @@ schema Tenant:
     [...str]: Application
 
     check:
+        class == "Tenant"
         len(label) <= 64 if label
         len(label) >= 0 if label
         regex.match(label, r"^[^\x00-\x1f\x22#&*<>?\x5b-\x5d`\x7f]*$") if label
