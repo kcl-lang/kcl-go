@@ -202,12 +202,17 @@ func WithShowHidden(showHidden bool) Option {
 // Merge will merge all options into one.
 func (p *Option) Merge(opts ...Option) *Option {
 	for _, opt := range opts {
-		if opt.ExecProgramArgs == nil {
+		// Check for errors first, before checking if ExecProgramArgs is nil
+		// This ensures that errors from options like WithSettings are not ignored
+		if opt.Err != nil {
+			p.Err = opt.Err
+			// If there's an error, we should not merge this option
+			// Continue to check other options for additional errors
 			continue
 		}
 
-		if opt.Err != nil {
-			p.Err = opt.Err
+		if opt.ExecProgramArgs == nil {
+			continue
 		}
 
 		if opt.WorkDir != "" {
