@@ -8,7 +8,7 @@ import (
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
-func FormatCode(code interface{}) ([]byte, error) {
+func FormatCode(code any) ([]byte, error) {
 	var codeStr string
 	switch code := code.(type) {
 	case []byte:

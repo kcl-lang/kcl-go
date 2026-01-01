@@ -36,14 +36,14 @@ func init() {
 }
 
 func TestPlugin_strings_join(t *testing.T) {
-	result_json := Invoke("kcl_plugin.strings.join", []interface{}{"KCL", "KCL", 123}, nil)
+	result_json := Invoke("kcl_plugin.strings.join", []any{"KCL", "KCL", 123}, nil)
 	if result_json != `"KCL.KCL.123"` {
 		t.Fatal(result_json)
 	}
 }
 
 func TestPlugin_strings_panic(t *testing.T) {
-	result_json := Invoke("kcl_plugin.strings.panic", []interface{}{"KCL", "KCL", 123}, nil)
+	result_json := Invoke("kcl_plugin.strings.panic", []any{"KCL", "KCL", 123}, nil)
 	if result_json != `{"__kcl_PanicInfo__":"[KCL KCL 123]"}` {
 		t.Fatal(result_json)
 	}

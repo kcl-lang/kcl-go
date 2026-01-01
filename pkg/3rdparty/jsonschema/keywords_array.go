@@ -51,9 +51,9 @@ func (it *Items) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Items
-func (it Items) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (it Items) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Items] Validating")
-	if arr, ok := data.([]interface{}); ok {
+	if arr, ok := data.([]any); ok {
 		if it.Single {
 			subState := currentState.NewSubState()
 			subState.DescendBase("items")
@@ -86,7 +86,7 @@ func (it Items) ValidateKeyword(ctx context.Context, currentState *ValidationSta
 }
 
 // JSONProp implements the JSONPather for Items
-func (it Items) JSONProp(name string) interface{} {
+func (it Items) JSONProp(name string) any {
 	idx, err := strconv.Atoi(name)
 	if err != nil {
 		return nil
@@ -146,9 +146,9 @@ func (m *MaxItems) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MaxItems
-func (m MaxItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MaxItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MaxItems] Validating")
-	if arr, ok := data.([]interface{}); ok {
+	if arr, ok := data.([]any); ok {
 		if len(arr) > int(m) {
 			currentState.AddError(data, fmt.Sprintf("array length %d exceeds %d max", len(arr), m))
 			return
@@ -173,9 +173,9 @@ func (m *MinItems) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MinItems
-func (m MinItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MinItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MinItems] Validating")
-	if arr, ok := data.([]interface{}); ok {
+	if arr, ok := data.([]any); ok {
 		if len(arr) < int(m) {
 			currentState.AddError(data, fmt.Sprintf("array length %d below %d minimum items", len(arr), m))
 			return
@@ -200,10 +200,10 @@ func (u *UniqueItems) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for UniqueItems
-func (u UniqueItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (u UniqueItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[UniqueItems] Validating")
-	if arr, ok := data.([]interface{}); ok {
-		found := []interface{}{}
+	if arr, ok := data.([]any); ok {
+		found := []any{}
 		for _, elem := range arr {
 			for _, f := range found {
 				if reflect.DeepEqual(f, elem) {
@@ -235,10 +235,10 @@ func (c *Contains) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Contains
-func (c *Contains) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (c *Contains) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Contains] Validating")
 	v := Schema(*c)
-	if arr, ok := data.([]interface{}); ok {
+	if arr, ok := data.([]any); ok {
 		valid := false
 		matchCount := 0
 		subState := currentState.NewSubState()
@@ -264,7 +264,7 @@ func (c *Contains) ValidateKeyword(ctx context.Context, currentState *Validation
 }
 
 // JSONProp implements the JSONPather for Contains
-func (c Contains) JSONProp(name string) interface{} {
+func (c Contains) JSONProp(name string) any {
 	return Schema(c).JSONProp(name)
 }
 
@@ -300,9 +300,9 @@ func (m *MaxContains) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MaxContains
-func (m MaxContains) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MaxContains) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MaxContains] Validating")
-	if arr, ok := data.([]interface{}); ok {
+	if arr, ok := data.([]any); ok {
 		if containsCount, ok := currentState.Misc["containsCount"]; ok {
 			if containsCount.(int) > int(m) {
 				currentState.AddError(data, fmt.Sprintf("contained items %d exceeds %d max", len(arr), m))
@@ -328,9 +328,9 @@ func (m *MinContains) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MinContains
-func (m MinContains) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MinContains) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MinContains] Validating")
-	if arr, ok := data.([]interface{}); ok {
+	if arr, ok := data.([]any); ok {
 		if containsCount, ok := currentState.Misc["containsCount"]; ok {
 			if containsCount.(int) < int(m) {
 				currentState.AddError(data, fmt.Sprintf("contained items %d bellow %d min", len(arr), m))
@@ -358,9 +358,9 @@ func (ai *AdditionalItems) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for AdditionalItems
-func (ai *AdditionalItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (ai *AdditionalItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[AdditionalItems] Validating")
-	if arr, ok := data.([]interface{}); ok {
+	if arr, ok := data.([]any); ok {
 		if currentState.LastEvaluatedIndex > -1 && currentState.LastEvaluatedIndex < len(arr) {
 			for i := currentState.LastEvaluatedIndex + 1; i < len(arr); i++ {
 				if ai.SchemaType == SchemaTypeFalse {
@@ -410,9 +410,9 @@ func (ui *UnevaluatedItems) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for UnevaluatedItems
-func (ui *UnevaluatedItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (ui *UnevaluatedItems) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[UnevaluatedItems] Validating")
-	if arr, ok := data.([]interface{}); ok {
+	if arr, ok := data.([]any); ok {
 		if currentState.LastEvaluatedIndex < len(arr) {
 			for i := currentState.LastEvaluatedIndex + 1; i < len(arr); i++ {
 				if ui.SchemaType == SchemaTypeFalse {

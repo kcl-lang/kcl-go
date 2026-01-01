@@ -41,8 +41,8 @@ type ConfigStruct struct {
 }
 
 type KeyValueStruct struct {
-	Key   string      `yaml:"key"`
-	Value interface{} `yaml:"value"`
+	Key   string `yaml:"key"`
+	Value any    `yaml:"value"`
 	// Store the original YAML value node to preserve order (the node under key: "value")
 	originalValueNode *yaml.Node `yaml:"-"`
 }
@@ -139,7 +139,7 @@ func nodeToOrderedJSON(node *yaml.Node) (string, error) {
 		return "[" + strings.Join(items, ",") + "]", nil
 
 	case yaml.ScalarNode:
-		var value interface{}
+		var value any
 		if err := node.Decode(&value); err != nil {
 			return fmt.Sprintf("%q", node.Value), nil
 		}
@@ -154,7 +154,7 @@ func nodeToOrderedJSON(node *yaml.Node) (string, error) {
 	}
 }
 
-func LoadFile(filename string, src interface{}) (f *SettingsFile, err error) {
+func LoadFile(filename string, src any) (f *SettingsFile, err error) {
 	if !filepath.IsAbs(filename) {
 		if s, _ := filepath.Abs(filename); s != "" {
 			filename = s
@@ -273,7 +273,7 @@ func (settings *SettingsFile) To_ExecProgramArgs() *gpyrpc.ExecProgramArgs {
 		var val string
 
 		switch v := t.Value.(type) {
-		case map[string]interface{}:
+		case map[string]any:
 			// Check if we should preserve order or sort keys
 			if !settings.Config.SortKeys && t.originalValueNode != nil {
 				// Preserve original YAML order when sort_keys is false
@@ -295,7 +295,7 @@ func (settings *SettingsFile) To_ExecProgramArgs() *gpyrpc.ExecProgramArgs {
 					val = fmt.Sprint(v)
 				}
 			}
-		case []interface{}:
+		case []any:
 			if s, err := json.Marshal(v); err == nil {
 				val = string(s)
 			} else {

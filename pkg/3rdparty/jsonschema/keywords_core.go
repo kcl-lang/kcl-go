@@ -19,7 +19,7 @@ func NewSchemaURI() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for SchemaURI
-func (s *SchemaURI) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (s *SchemaURI) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[SchemaURI] Validating")
 }
 
@@ -40,7 +40,7 @@ func NewID() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for ID
-func (i *ID) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (i *ID) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Id] Validating")
 	// TODO(arqu): make sure ID is valid URI for draft2019
 }
@@ -62,7 +62,7 @@ func NewDescription() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for Description
-func (d *Description) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (d *Description) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Description] Validating")
 }
 
@@ -83,7 +83,7 @@ func NewTitle() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for Title
-func (t *Title) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (t *Title) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Title] Validating")
 }
 
@@ -104,7 +104,7 @@ func NewComment() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for Comment
-func (c *Comment) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (c *Comment) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Comment] Validating")
 }
 
@@ -118,7 +118,7 @@ func (c *Comment) Resolve(pointer jptr.Pointer, uri string) *Schema {
 
 // Default defines the default JSON Schema keyword
 type Default struct {
-	Data interface{}
+	Data any
 }
 
 // NewDefault allocates a new Default keyword
@@ -127,7 +127,7 @@ func NewDefault() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for Default
-func (d *Default) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (d *Default) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Default] Validating")
 }
 
@@ -141,7 +141,7 @@ func (d *Default) Resolve(pointer jptr.Pointer, uri string) *Schema {
 
 // UnmarshalJSON implements the json.Unmarshaler interface for Default
 func (d *Default) UnmarshalJSON(data []byte) error {
-	var defaultData interface{}
+	var defaultData any
 	if err := json.Unmarshal(data, &defaultData); err != nil {
 		return err
 	}
@@ -152,7 +152,7 @@ func (d *Default) UnmarshalJSON(data []byte) error {
 }
 
 // Examples defines the examples JSON Schema keyword
-type Examples []interface{}
+type Examples []any
 
 // NewExamples allocates a new Examples keyword
 func NewExamples() Keyword {
@@ -160,7 +160,7 @@ func NewExamples() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for Examples
-func (e *Examples) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (e *Examples) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Examples] Validating")
 }
 
@@ -181,7 +181,7 @@ func NewReadOnly() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for ReadOnly
-func (r *ReadOnly) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (r *ReadOnly) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[ReadOnly] Validating")
 }
 
@@ -202,7 +202,7 @@ func NewWriteOnly() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for WriteOnly
-func (w *WriteOnly) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (w *WriteOnly) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[WriteOnly] Validating")
 }
 
@@ -237,7 +237,7 @@ func (r *Ref) ResolveRef(rootSchema *Schema) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Ref
-func (r *Ref) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (r *Ref) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Ref] Validating")
 	if r.resolved == nil {
 		r._resolveRef(ctx, currentState)
@@ -398,7 +398,7 @@ func NewRecursiveRef() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for RecursiveRef
-func (r *RecursiveRef) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (r *RecursiveRef) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[RecursiveRef] Validating")
 	if r.isLocationVisited(currentState.InstanceLocation.String()) {
 		// recursion detected aborting further descent
@@ -578,7 +578,7 @@ func NewAnchor() Keyword {
 }
 
 // ValidateKeyword implements the Keyword interface for Anchor
-func (a *Anchor) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (a *Anchor) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Anchor] Validating")
 }
 
@@ -609,7 +609,7 @@ func (r *RecursiveAnchor) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for RecursiveAnchor
-func (r *RecursiveAnchor) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (r *RecursiveAnchor) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[RecursiveAnchor] Validating")
 	if currentState.RecursiveAnchor == nil {
 		currentState.RecursiveAnchor = currentState.Local
@@ -659,12 +659,12 @@ func (d *Defs) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Defs
-func (d Defs) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (d Defs) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Defs] Validating")
 }
 
 // JSONProp implements the JSONPather for Defs
-func (d Defs) JSONProp(name string) interface{} {
+func (d Defs) JSONProp(name string) any {
 	return d[name]
 }
 
@@ -694,7 +694,7 @@ func (vo *Void) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Void
-func (vo *Void) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (vo *Void) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Void] Validating")
 	schemaDebug("[Void] WARNING this is a placeholder and should not be used")
 	schemaDebug("[Void] Void is always true")

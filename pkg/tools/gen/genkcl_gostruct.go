@@ -47,7 +47,7 @@ type genKclTypeContext struct {
 	oneFile bool
 }
 
-func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ interface{}) error {
+func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ any) error {
 	ctx := genKclTypeContext{
 		pkgPath: filename,
 		context: context{

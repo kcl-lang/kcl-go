@@ -813,7 +813,7 @@ func RegisterKclServiceServer(s *grpc.Server, srv KclServiceServer) {
 	s.RegisterService(&_KclService_serviceDesc, srv)
 }
 
-func _KclService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_Ping_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(PingArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -825,13 +825,13 @@ func _KclService_Ping_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/Ping",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).Ping(ctx, req.(*PingArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_GetVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_GetVersion_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetVersionArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -843,13 +843,13 @@ func _KclService_GetVersion_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/GetVersion",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).GetVersion(ctx, req.(*GetVersionArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_ParseProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ParseProgram_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ParseProgramArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -861,13 +861,13 @@ func _KclService_ParseProgram_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/ParseProgram",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ParseProgram(ctx, req.(*ParseProgramArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_ParseFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ParseFile_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ParseFileArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -879,13 +879,13 @@ func _KclService_ParseFile_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/ParseFile",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ParseFile(ctx, req.(*ParseFileArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_LoadPackage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_LoadPackage_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(LoadPackageArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -897,13 +897,13 @@ func _KclService_LoadPackage_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/LoadPackage",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).LoadPackage(ctx, req.(*LoadPackageArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_ListOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ListOptions_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ParseProgramArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -915,13 +915,13 @@ func _KclService_ListOptions_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/ListOptions",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ListOptions(ctx, req.(*ParseProgramArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_ListVariables_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ListVariables_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListVariablesArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -933,13 +933,13 @@ func _KclService_ListVariables_Handler(srv interface{}, ctx context.Context, dec
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/ListVariables",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ListVariables(ctx, req.(*ListVariablesArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_ExecProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ExecProgram_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ExecProgramArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -951,14 +951,14 @@ func _KclService_ExecProgram_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/ExecProgram",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ExecProgram(ctx, req.(*ExecProgramArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func _KclService_BuildProgram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_BuildProgram_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(BuildProgramArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -970,14 +970,14 @@ func _KclService_BuildProgram_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/BuildProgram",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).BuildProgram(ctx, req.(*BuildProgramArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 // Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func _KclService_ExecArtifact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ExecArtifact_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ExecArtifactArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -989,13 +989,13 @@ func _KclService_ExecArtifact_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/ExecArtifact",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ExecArtifact(ctx, req.(*ExecArtifactArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_OverrideFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_OverrideFile_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(OverrideFileArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1007,13 +1007,13 @@ func _KclService_OverrideFile_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/OverrideFile",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).OverrideFile(ctx, req.(*OverrideFileArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_GetSchemaTypeMapping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_GetSchemaTypeMapping_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GetSchemaTypeMappingArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1025,13 +1025,13 @@ func _KclService_GetSchemaTypeMapping_Handler(srv interface{}, ctx context.Conte
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/GetSchemaTypeMapping",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).GetSchemaTypeMapping(ctx, req.(*GetSchemaTypeMappingArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_FormatCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_FormatCode_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(FormatCodeArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1043,13 +1043,13 @@ func _KclService_FormatCode_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/FormatCode",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).FormatCode(ctx, req.(*FormatCodeArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_FormatPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_FormatPath_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(FormatPathArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1061,13 +1061,13 @@ func _KclService_FormatPath_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/FormatPath",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).FormatPath(ctx, req.(*FormatPathArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_LintPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_LintPath_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(LintPathArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1079,13 +1079,13 @@ func _KclService_LintPath_Handler(srv interface{}, ctx context.Context, dec func
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/LintPath",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).LintPath(ctx, req.(*LintPathArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_ValidateCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ValidateCode_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ValidateCodeArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1097,13 +1097,13 @@ func _KclService_ValidateCode_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/ValidateCode",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ValidateCode(ctx, req.(*ValidateCodeArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_ListDepFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_ListDepFiles_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListDepFilesArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1115,13 +1115,13 @@ func _KclService_ListDepFiles_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/ListDepFiles",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ListDepFiles(ctx, req.(*ListDepFilesArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_LoadSettingsFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_LoadSettingsFiles_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(LoadSettingsFilesArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1133,13 +1133,13 @@ func _KclService_LoadSettingsFiles_Handler(srv interface{}, ctx context.Context,
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/LoadSettingsFiles",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).LoadSettingsFiles(ctx, req.(*LoadSettingsFilesArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_Rename_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_Rename_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RenameArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1151,13 +1151,13 @@ func _KclService_Rename_Handler(srv interface{}, ctx context.Context, dec func(i
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/Rename",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).Rename(ctx, req.(*RenameArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_RenameCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_RenameCode_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RenameCodeArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1169,13 +1169,13 @@ func _KclService_RenameCode_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/RenameCode",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).RenameCode(ctx, req.(*RenameCodeArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_Test_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(TestArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1187,13 +1187,13 @@ func _KclService_Test_Handler(srv interface{}, ctx context.Context, dec func(int
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/Test",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).Test(ctx, req.(*TestArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_UpdateDependencies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KclService_UpdateDependencies_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateDependenciesArgs)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1205,7 +1205,7 @@ func _KclService_UpdateDependencies_Handler(srv interface{}, ctx context.Context
 		Server:     srv,
 		FullMethod: "/gpyrpc.KclService/UpdateDependencies",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).UpdateDependencies(ctx, req.(*UpdateDependenciesArgs))
 	}
 	return interceptor(ctx, in, info, handler)

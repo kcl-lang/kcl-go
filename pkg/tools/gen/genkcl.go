@@ -35,7 +35,7 @@ type kclGenerator struct {
 }
 
 // GenKcl translate other formats to kcl schema code. Now support go struct and json schema.
-func GenKcl(w io.Writer, filename string, src interface{}, opts *GenKclOptions) error {
+func GenKcl(w io.Writer, filename string, src any, opts *GenKclOptions) error {
 	return newKclGenerator(opts).GenSchema(w, filename, src)
 }
 
@@ -48,7 +48,7 @@ func newKclGenerator(opts *GenKclOptions) *kclGenerator {
 	}
 }
 
-func (k *kclGenerator) GenSchema(w io.Writer, filename string, src interface{}) error {
+func (k *kclGenerator) GenSchema(w io.Writer, filename string, src any) error {
 	if k.opts.Mode == ModeAuto {
 		code, err := source.ReadSource(filename, src)
 		if err != nil {

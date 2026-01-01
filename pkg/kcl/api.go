@@ -55,12 +55,12 @@ func (p *KCLResultList) ToBool() (*bool, error) {
 	return &resB, nil
 }
 
-// ToMap returns the result as map[string]interface{}.
-func (p *KCLResultList) ToMap() (map[string]interface{}, error) {
+// ToMap returns the result as map[string]any.
+func (p *KCLResultList) ToMap() (map[string]any, error) {
 	if len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
-	var resMap map[string]interface{}
+	var resMap map[string]any
 	err := p.ToType(&resMap)
 	if err != nil {
 		return nil, err
@@ -94,12 +94,12 @@ func (p *KCLResultList) ToFloat64() (*float64, error) {
 	return &resF, nil
 }
 
-// ToList returns the result as []interface{}.
-func (p *KCLResultList) ToList() ([]interface{}, error) {
+// ToList returns the result as []any.
+func (p *KCLResultList) ToList() ([]any, error) {
 	if len(p.list) == 0 {
 		return nil, fmt.Errorf("result is nil")
 	}
-	var resList []interface{}
+	var resList []any
 	err := p.ToType(&resList)
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (p *KCLResultList) ToList() ([]interface{}, error) {
 }
 
 // ToType returns the result as target type.
-func (p *KCLResultList) ToType(target interface{}) error {
+func (p *KCLResultList) ToType(target any) error {
 	if len(p.list) == 0 {
 		return fmt.Errorf("result is nil")
 	}
@@ -201,9 +201,9 @@ func (p *KCLResult) ToBool() (*bool, error) {
 	return &resB, nil
 }
 
-// ToMap returns the result as map[string]interface{}.
-func (p *KCLResult) ToMap() (map[string]interface{}, error) {
-	var resMap map[string]interface{}
+// ToMap returns the result as map[string]any.
+func (p *KCLResult) ToMap() (map[string]any, error) {
+	var resMap map[string]any
 	err := p.ToType(&resMap)
 	if err != nil {
 		return nil, err
@@ -231,9 +231,9 @@ func (p *KCLResult) ToFloat64() (*float64, error) {
 	return &resF, nil
 }
 
-// ToList returns the result as []interface{}.
-func (p *KCLResult) ToList() ([]interface{}, error) {
-	var resList []interface{}
+// ToList returns the result as []any.
+func (p *KCLResult) ToList() ([]any, error) {
+	var resList []any
 	err := p.ToType(&resList)
 	if err != nil {
 		return nil, err
@@ -242,7 +242,7 @@ func (p *KCLResult) ToList() ([]interface{}, error) {
 }
 
 // ToType returns the result as target type.
-func (p *KCLResult) ToType(target interface{}) error {
+func (p *KCLResult) ToType(target any) error {
 	srcVal := reflect.ValueOf(p.result)
 	targetVal := reflect.ValueOf(target)
 
@@ -259,12 +259,12 @@ func (p *KCLResult) ToType(target interface{}) error {
 	return nil
 }
 
-func (m *KCLResult) Get(key string, target ...interface{}) interface{} {
+func (m *KCLResult) Get(key string, target ...any) any {
 	ss := strings.Split(key, ".")
 	if len(ss) == 0 {
 		return nil
 	}
-	var subKeys []interface{}
+	var subKeys []any
 	for _, x := range ss[1:] {
 		subKeys = append(subKeys, x)
 	}
@@ -274,7 +274,7 @@ func (m *KCLResult) Get(key string, target ...interface{}) interface{} {
 		return rv
 	}
 
-	if m, ok := rv.(map[string]interface{}); ok {
+	if m, ok := rv.(map[string]any); ok {
 		if err := mapstructure.Decode(m, target[0]); err == nil {
 			return target[0]
 		}
@@ -283,13 +283,13 @@ func (m *KCLResult) Get(key string, target ...interface{}) interface{} {
 	return rv
 }
 
-func (m *KCLResult) GetValue(key string, target ...interface{}) (value interface{}, err error) {
+func (m *KCLResult) GetValue(key string, target ...any) (value any, err error) {
 	ss := strings.Split(key, ".")
 	if len(ss) == 0 {
 		return nil, nil
 	}
 
-	var subKeys []interface{}
+	var subKeys []any
 	for _, x := range ss[1:] {
 		subKeys = append(subKeys, x)
 	}
@@ -303,7 +303,7 @@ func (m *KCLResult) GetValue(key string, target ...interface{}) (value interface
 	}
 
 	switch rv := rv.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		if err := mapstructure.Decode(rv, target[0]); err == nil {
 			return target[0], nil
 		}

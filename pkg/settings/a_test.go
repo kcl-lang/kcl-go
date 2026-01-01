@@ -43,7 +43,7 @@ func TestLoadFile_xtype(t *testing.T) {
 	}
 }
 
-func tAssert(t *testing.T, ok bool, a ...interface{}) {
+func tAssert(t *testing.T, ok bool, a ...any) {
 	if !ok {
 		t.Helper()
 		t.Fatal(a...)

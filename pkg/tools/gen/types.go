@@ -182,7 +182,7 @@ type property struct {
 	Type           typeInterface
 	isJsonNullType bool
 	HasDefault     bool
-	DefaultValue   interface{}
+	DefaultValue   any
 }
 
 // validation is a kcl schema validation definition.
@@ -198,7 +198,7 @@ type validation struct {
 	Regex            *regexp.Regexp
 	MultiplyOf       *int
 	Unique           bool
-	ConstValue       interface{} // For const validation: field == value
+	ConstValue       any // For const validation: field == value
 	AllOf            []*validation
 	AnyOf            []*validation
 	AnyOfFields      []string // For required-constraints anyOf: ["field1", "field2"]
@@ -216,7 +216,7 @@ type indexSignature struct {
 // data is a kcl data definition.
 type data struct {
 	Key      string
-	Value    interface{}
+	Value    any
 	Comments []*ast.Comment
 }
 
@@ -289,7 +289,7 @@ func (t typeCustom) Format() string {
 }
 
 type typeValue struct {
-	Value interface{}
+	Value any
 }
 
 func (t typeValue) Format() string {

@@ -153,7 +153,7 @@ func WithLogger(l io.Writer) Option {
 }
 
 // FormatCode returns the formatted code.
-func FormatCode(code interface{}) ([]byte, error) {
+func FormatCode(code any) ([]byte, error) {
 	return format.FormatCode(code)
 }
 

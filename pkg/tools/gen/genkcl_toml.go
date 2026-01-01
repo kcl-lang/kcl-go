@@ -10,7 +10,7 @@ import (
 	"kcl-lang.io/kcl-go/pkg/source"
 )
 
-func (k *kclGenerator) genKclFromToml(w io.Writer, filename string, src interface{}) error {
+func (k *kclGenerator) genKclFromToml(w io.Writer, filename string, src any) error {
 	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (k *kclGenerator) genKclFromToml(w io.Writer, filename string, src interfac
 	}})
 }
 
-func mapGet(m interface{}, key string) interface{} {
+func mapGet(m any, key string) any {
 	keys := strings.Split(key, ".")
 	value := reflect.ValueOf(m)
 	if value.Kind() != reflect.Map {
@@ -56,7 +56,7 @@ func mapGet(m interface{}, key string) interface{} {
 	return value.Interface()
 }
 
-func mapSliceSet(m *yaml.MapSlice, key string, value interface{}) {
+func mapSliceSet(m *yaml.MapSlice, key string, value any) {
 	keys := strings.Split(key, ".")
 	currentMap := m
 	for i, k := range keys {

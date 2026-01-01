@@ -16,7 +16,7 @@ var showDebug = os.Getenv("JSON_SCHEMA_DEBUG") == "1"
 // schemaDebug provides a logging interface
 // which is off by defauly but can be activated
 // for debuging purposes
-func schemaDebug(message string, args ...interface{}) {
+func schemaDebug(message string, args ...any) {
 	if showDebug {
 		if message[len(message)-1] != '\n' {
 			message += "\n"

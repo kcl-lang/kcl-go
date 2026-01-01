@@ -97,7 +97,7 @@ var MaxKeywordErrStringLen = 20
 type Keyword interface {
 	// ValidateKeyword checks decoded JSON data and writes
 	// validation errors (if any) to an outparam slice of KeyErrors
-	ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{})
+	ValidateKeyword(ctx context.Context, currentState *ValidationState, data any)
 
 	// Register builds up the schema tree by evaluating the current key
 	// and the current location pointer which is later used with resolve to
@@ -129,7 +129,7 @@ type KeyError struct {
 	// property that produced the error
 	PropertyPath string `json:"propertyPath,omitempty"`
 	// InvalidValue is the value that returned the error
-	InvalidValue interface{} `json:"invalidValue,omitempty"`
+	InvalidValue any `json:"invalidValue,omitempty"`
 	// Message is a human-readable description of the error
 	Message string `json:"message"`
 }
@@ -145,7 +145,7 @@ func (v KeyError) Error() string {
 }
 
 // InvalidValueString returns the errored value as a string
-func InvalidValueString(data interface{}) string {
+func InvalidValueString(data any) string {
 	bt, err := json.Marshal(data)
 	if err != nil {
 		return ""

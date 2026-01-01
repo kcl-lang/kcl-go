@@ -168,7 +168,7 @@ const KclAbiVersion = scripts.KclAbiVersion
 ## func [FormatCode](<https://github.com/kcl-lang/kcl-go/blob/main/kcl.go#L156>)
 
 ```go
-func FormatCode(code interface{}) ([]byte, error)
+func FormatCode(code any) ([]byte, error)
 ```
 
 FormatCode returns the formatted code.

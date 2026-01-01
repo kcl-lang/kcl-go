@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Assert(condition bool, args ...interface{}) {
+func Assert(condition bool, args ...any) {
 	if !condition {
 		if msg := fmt.Sprint(args...); msg != "" {
 			panic("Assert failed, " + msg)
@@ -17,7 +17,7 @@ func Assert(condition bool, args ...interface{}) {
 	}
 }
 
-func TAssert(tb testing.TB, condition bool, args ...interface{}) {
+func TAssert(tb testing.TB, condition bool, args ...any) {
 	tb.Helper()
 	if !condition {
 		if msg := fmt.Sprint(args...); msg != "" {
@@ -28,7 +28,7 @@ func TAssert(tb testing.TB, condition bool, args ...interface{}) {
 	}
 }
 
-func TAssertf(tb testing.TB, condition bool, format string, a ...interface{}) {
+func TAssertf(tb testing.TB, condition bool, format string, a ...any) {
 	tb.Helper()
 	if !condition {
 		if msg := fmt.Sprintf(format, a...); msg != "" {

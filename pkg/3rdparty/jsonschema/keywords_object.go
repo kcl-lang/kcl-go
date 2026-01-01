@@ -76,9 +76,9 @@ func (p *Properties) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Properties
-func (p Properties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (p Properties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Properties] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		subState := currentState.NewSubState()
 		for _, v := range p {
 			key := v.Key
@@ -101,7 +101,7 @@ func (p Properties) ValidateKeyword(ctx context.Context, currentState *Validatio
 }
 
 // JSONProp implements the JSONPather for Properties
-func (p Properties) JSONProp(name string) interface{} {
+func (p Properties) JSONProp(name string) any {
 	res, _ := p.Get(name)
 	return res
 }
@@ -132,9 +132,9 @@ func (r *Required) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Required
-func (r Required) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (r Required) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Required] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		for _, key := range r {
 			if _, ok := obj[key]; !ok {
 				currentState.AddError(data, fmt.Sprintf(`"%s" value is required`, key))
@@ -144,7 +144,7 @@ func (r Required) ValidateKeyword(ctx context.Context, currentState *ValidationS
 }
 
 // JSONProp implements the JSONPather for Required
-func (r Required) JSONProp(name string) interface{} {
+func (r Required) JSONProp(name string) any {
 	idx, err := strconv.Atoi(name)
 	if err != nil {
 		return nil
@@ -172,9 +172,9 @@ func (m *MaxProperties) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MaxProperties
-func (m MaxProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MaxProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MaxProperties] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		if len(obj) > int(m) {
 			currentState.AddError(data, fmt.Sprintf("%d object Properties exceed %d maximum", len(obj), m))
 		}
@@ -198,9 +198,9 @@ func (m *MinProperties) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MinProperties
-func (m MinProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MinProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MinProperties] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		if len(obj) < int(m) {
 			currentState.AddError(data, fmt.Sprintf("%d object Properties below %d minimum", len(obj), m))
 		}
@@ -251,9 +251,9 @@ func (p *PatternProperties) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for PatternProperties
-func (p PatternProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (p PatternProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[PatternProperties] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		for key, val := range obj {
 			for _, ptn := range p {
 				if ptn.Re.Match([]byte(key)) {
@@ -277,7 +277,7 @@ func (p PatternProperties) ValidateKeyword(ctx context.Context, currentState *Va
 }
 
 // JSONProp implements the JSONPather for PatternProperties
-func (p PatternProperties) JSONProp(name string) interface{} {
+func (p PatternProperties) JSONProp(name string) any {
 	for _, pp := range p {
 		if pp.Key == name {
 			return pp.Schema
@@ -326,7 +326,7 @@ func (p *PatternProperties) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON implements the json.Marshaler interface for PatternProperties
 func (p PatternProperties) MarshalJSON() ([]byte, error) {
-	obj := map[string]interface{}{}
+	obj := map[string]any{}
 	for _, prop := range p {
 		obj[prop.Key] = prop.Schema
 	}
@@ -352,9 +352,9 @@ func (ap *AdditionalProperties) Resolve(pointer jptr.Pointer, uri string) *Schem
 }
 
 // ValidateKeyword implements the Keyword interface for AdditionalProperties
-func (ap *AdditionalProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (ap *AdditionalProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[AdditionalProperties] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		subState := currentState.NewSubState()
 		subState.ClearState()
 		subState.DescendBase("additionalProperties")
@@ -406,9 +406,9 @@ func (p *PropertyNames) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for PropertyNames
-func (p *PropertyNames) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (p *PropertyNames) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[PropertyNames] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		for key := range obj {
 			subState := currentState.NewSubState()
 			subState.DescendBase("propertyNames")
@@ -420,7 +420,7 @@ func (p *PropertyNames) ValidateKeyword(ctx context.Context, currentState *Valid
 }
 
 // JSONProp implements the JSONPather for PropertyNames
-func (p PropertyNames) JSONProp(name string) interface{} {
+func (p PropertyNames) JSONProp(name string) any {
 	return Schema(p).JSONProp(name)
 }
 
@@ -477,7 +477,7 @@ func (d *DependentSchemas) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for DependentSchemas
-func (d *DependentSchemas) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (d *DependentSchemas) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[DependentSchemas] Validating")
 	for _, v := range *d {
 		subState := currentState.NewSubState()
@@ -509,7 +509,7 @@ func (d *DependentSchemas) UnmarshalJSON(data []byte) error {
 }
 
 // JSONProp implements the JSONPather for DependentSchemas
-func (d DependentSchemas) JSONProp(name string) interface{} {
+func (d DependentSchemas) JSONProp(name string) any {
 	return d[name]
 }
 
@@ -539,9 +539,9 @@ func (d *SchemaDependency) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for SchemaDependency
-func (d *SchemaDependency) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (d *SchemaDependency) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[SchemaDependency] Validating")
-	depsData, ok := data.(map[string]interface{})
+	depsData, ok := data.(map[string]any)
 	if !ok {
 		return
 	}
@@ -560,7 +560,7 @@ func (d SchemaDependency) MarshalJSON() ([]byte, error) {
 }
 
 // JSONProp implements the JSONPather for SchemaDependency
-func (d SchemaDependency) JSONProp(name string) interface{} {
+func (d SchemaDependency) JSONProp(name string) any {
 	return d.schema.JSONProp(name)
 }
 
@@ -581,7 +581,7 @@ func (d *DependentRequired) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for DependentRequired
-func (d *DependentRequired) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (d *DependentRequired) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[DependentRequired] Validating")
 	for _, prop := range *d {
 		subState := currentState.NewSubState()
@@ -613,7 +613,7 @@ func (d *DependentRequired) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON implements the json.Marshaler interface for DependentRequired
 func (d DependentRequired) MarshalJSON() ([]byte, error) {
-	obj := map[string]interface{}{}
+	obj := map[string]any{}
 	for key, prop := range d {
 		obj[key] = prop.dependencies
 	}
@@ -621,7 +621,7 @@ func (d DependentRequired) MarshalJSON() ([]byte, error) {
 }
 
 // JSONProp implements the JSONPather for DependentRequired
-func (d DependentRequired) JSONProp(name string) interface{} {
+func (d DependentRequired) JSONProp(name string) any {
 	return d[name]
 }
 
@@ -649,9 +649,9 @@ func (p *PropertyDependency) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for PropertyDependency
-func (p *PropertyDependency) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (p *PropertyDependency) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[PropertyDependency] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		if obj[p.prop] == nil {
 			return
 		}
@@ -664,7 +664,7 @@ func (p *PropertyDependency) ValidateKeyword(ctx context.Context, currentState *
 }
 
 // JSONProp implements the JSONPather for PropertyDependency
-func (p PropertyDependency) JSONProp(name string) interface{} {
+func (p PropertyDependency) JSONProp(name string) any {
 	idx, err := strconv.Atoi(name)
 	if err != nil {
 		return nil
@@ -694,9 +694,9 @@ func (up *UnevaluatedProperties) Resolve(pointer jptr.Pointer, uri string) *Sche
 }
 
 // ValidateKeyword implements the Keyword interface for UnevaluatedProperties
-func (up *UnevaluatedProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (up *UnevaluatedProperties) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[UnevaluatedProperties] Validating")
-	if obj, ok := data.(map[string]interface{}); ok {
+	if obj, ok := data.(map[string]any); ok {
 		subState := currentState.NewSubState()
 		subState.ClearState()
 		subState.DescendBase("unevaluatedProperties")

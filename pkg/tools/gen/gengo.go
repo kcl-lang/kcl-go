@@ -23,7 +23,7 @@ type GenGoOptions struct {
 }
 
 // GenGo translate kcl schema type to go struct.
-func GenGo(w io.Writer, filename string, src interface{}, opts *GenGoOptions) error {
+func GenGo(w io.Writer, filename string, src any, opts *GenGoOptions) error {
 	return newGoGenerator(opts).GenFromSource(w, filename, src)
 }
 
@@ -50,7 +50,7 @@ func newGoGenerator(opts *GenGoOptions) *goGenerator {
 	return generator
 }
 
-func (g *goGenerator) GenFromSource(w io.Writer, filename string, src interface{}) error {
+func (g *goGenerator) GenFromSource(w io.Writer, filename string, src any) error {
 	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err

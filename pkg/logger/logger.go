@@ -33,24 +33,24 @@ func SetLogger(new Logger) (old Logger) {
 //
 // See https://github.com/chai2010/logger
 type Logger interface {
-	Debug(v ...interface{})
-	Debugln(v ...interface{})
-	Debugf(format string, v ...interface{})
-	Info(v ...interface{})
-	Infoln(v ...interface{})
-	Infof(format string, v ...interface{})
-	Warning(v ...interface{})
-	Warningln(v ...interface{})
-	Warningf(format string, v ...interface{})
-	Error(v ...interface{})
-	Errorln(v ...interface{})
-	Errorf(format string, v ...interface{})
-	Panic(v ...interface{})
-	Panicln(v ...interface{})
-	Panicf(format string, v ...interface{})
-	Fatal(v ...interface{})
-	Fatalln(v ...interface{})
-	Fatalf(format string, v ...interface{})
+	Debug(v ...any)
+	Debugln(v ...any)
+	Debugf(format string, v ...any)
+	Info(v ...any)
+	Infoln(v ...any)
+	Infof(format string, v ...any)
+	Warning(v ...any)
+	Warningln(v ...any)
+	Warningf(format string, v ...any)
+	Error(v ...any)
+	Errorln(v ...any)
+	Errorf(format string, v ...any)
+	Panic(v ...any)
+	Panicln(v ...any)
+	Panicf(format string, v ...any)
+	Fatal(v ...any)
+	Fatalln(v ...any)
+	Fatalf(format string, v ...any)
 
 	// Level: DEBUG < INFO < WARN < ERROR < PANIC < FATAL
 	GetLevel() string
@@ -152,85 +152,85 @@ func (p *stdLogger) SetLevel(new string) (old string) {
 	return p.setLevelByName(new)
 }
 
-func (p *stdLogger) Debug(v ...interface{}) {
+func (p *stdLogger) Debug(v ...any) {
 	if l := logDebugLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprint(v...))
 	}
 }
-func (p *stdLogger) Debugln(v ...interface{}) {
+func (p *stdLogger) Debugln(v ...any) {
 	if l := logDebugLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprintln(v...))
 	}
 }
-func (p *stdLogger) Debugf(format string, v ...interface{}) {
+func (p *stdLogger) Debugf(format string, v ...any) {
 	if l := logDebugLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprintf(format, v...))
 	}
 }
 
-func (p *stdLogger) Info(v ...interface{}) {
+func (p *stdLogger) Info(v ...any) {
 	if l := logInfoLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprint(v...))
 	}
 }
-func (p *stdLogger) Infoln(v ...interface{}) {
+func (p *stdLogger) Infoln(v ...any) {
 	if l := logInfoLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprintln(v...))
 	}
 }
-func (p *stdLogger) Infof(format string, v ...interface{}) {
+func (p *stdLogger) Infof(format string, v ...any) {
 	if l := logInfoLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprintf(format, v...))
 	}
 }
 
-func (p *stdLogger) Warning(v ...interface{}) {
+func (p *stdLogger) Warning(v ...any) {
 	if l := logWarnLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprint(v...))
 	}
 }
-func (p *stdLogger) Warningln(v ...interface{}) {
+func (p *stdLogger) Warningln(v ...any) {
 	if l := logWarnLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprintln(v...))
 	}
 }
-func (p *stdLogger) Warningf(format string, v ...interface{}) {
+func (p *stdLogger) Warningf(format string, v ...any) {
 	if l := logWarnLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprintf(format, v...))
 	}
 }
 
-func (p *stdLogger) Error(v ...interface{}) {
+func (p *stdLogger) Error(v ...any) {
 	if l := logErrorLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprint(v...))
 	}
 }
-func (p *stdLogger) Errorln(v ...interface{}) {
+func (p *stdLogger) Errorln(v ...any) {
 	if l := logErrorLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprintln(v...))
 	}
 }
-func (p *stdLogger) Errorf(format string, v ...interface{}) {
+func (p *stdLogger) Errorf(format string, v ...any) {
 	if l := logErrorLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+fmt.Sprintf(format, v...))
 	}
 }
 
-func (p *stdLogger) Panic(v ...interface{}) {
+func (p *stdLogger) Panic(v ...any) {
 	s := fmt.Sprint(v...)
 	if l := logPanicLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+s)
 	}
 	panic(s)
 }
-func (p *stdLogger) Panicln(v ...interface{}) {
+func (p *stdLogger) Panicln(v ...any) {
 	s := fmt.Sprintln(v...)
 	if l := logPanicLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+s)
 	}
 	panic(s)
 }
-func (p *stdLogger) Panicf(format string, v ...interface{}) {
+func (p *stdLogger) Panicf(format string, v ...any) {
 	s := fmt.Sprintf(format, v...)
 	if l := logPanicLevel; p.getLevel() <= l {
 		p.Output(2, "["+l.String()+"] "+s)
@@ -238,17 +238,17 @@ func (p *stdLogger) Panicf(format string, v ...interface{}) {
 	panic(s)
 }
 
-func (p *stdLogger) Fatal(v ...interface{}) {
+func (p *stdLogger) Fatal(v ...any) {
 	const l = logFatalLevel
 	p.Output(2, "["+l.String()+"] "+fmt.Sprint(v...))
 	os.Exit(1)
 }
-func (p *stdLogger) Fatalln(v ...interface{}) {
+func (p *stdLogger) Fatalln(v ...any) {
 	const l = logFatalLevel
 	p.Output(2, "["+l.String()+"] "+fmt.Sprintln(v...))
 	os.Exit(1)
 }
-func (p *stdLogger) Fatalf(format string, v ...interface{}) {
+func (p *stdLogger) Fatalf(format string, v ...any) {
 	const l = logFatalLevel
 	p.Output(2, "["+l.String()+"] "+fmt.Sprintf(format, v...))
 	os.Exit(1)

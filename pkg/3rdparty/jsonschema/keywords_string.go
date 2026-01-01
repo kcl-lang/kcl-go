@@ -27,7 +27,7 @@ func (m *MaxLength) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MaxLength
-func (m MaxLength) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MaxLength) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MaxLength] Validating")
 	if str, ok := data.(string); ok {
 		if utf8.RuneCountInString(str) > int(m) {
@@ -53,7 +53,7 @@ func (m *MinLength) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MinLength
-func (m MinLength) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MinLength) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MinLength] Validating")
 	if str, ok := data.(string); ok {
 		if utf8.RuneCountInString(str) < int(m) {
@@ -79,7 +79,7 @@ func (p *Pattern) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Pattern
-func (p Pattern) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (p Pattern) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Pattern] Validating")
 	re := regexp.Regexp(p)
 	if str, ok := data.(string); ok {

@@ -252,10 +252,10 @@ alice = Person {
 	assert2.Equal(t, resInF64, (*float64)(nil))
 	resInList, err := result.ToList()
 	assert2.Equal(t, err.Error(), "failed to convert result to *[]interface {}: type mismatch")
-	assert2.Equal(t, resInList, []interface{}(nil))
+	assert2.Equal(t, resInList, []any(nil))
 	resInMap, err := result.ToMap()
 	assert2.Equal(t, err.Error(), "failed to convert result to *map[string]interface {}: type mismatch")
-	assert2.Equal(t, resInMap, map[string]interface{}(map[string]interface{}(nil)))
+	assert2.Equal(t, resInMap, map[string]any(map[string]any(nil)))
 
 	os.Remove(testdata_main_k)
 	defer os.Remove(testdata_main_k)

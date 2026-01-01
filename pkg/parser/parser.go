@@ -18,7 +18,7 @@ type ParseProgramResult = gpyrpc.ParseProgramResult
 // The source code can be provided directly as a string or []byte,
 // or indirectly via a filename or an io.Reader.
 // If src is nil, the function reads the content from the provided filename.
-func ParseFileASTJson(filename string, src interface{}) (result string, err error) {
+func ParseFileASTJson(filename string, src any) (result string, err error) {
 	var code string
 	if src != nil {
 		switch src := src.(type) {
@@ -52,7 +52,7 @@ func ParseFileASTJson(filename string, src interface{}) (result string, err erro
 // Tree (AST). The source code can be provided directly as a string or
 // []byte, or indirectly via a filename or an io.Reader. If src is nil,
 // the function reads the content from the provided filename.
-func ParseFile(filename string, src interface{}) (m *ast.Module, err error) {
+func ParseFile(filename string, src any) (m *ast.Module, err error) {
 	astJson, err := ParseFileASTJson(filename, src)
 	if err != nil {
 		return nil, err

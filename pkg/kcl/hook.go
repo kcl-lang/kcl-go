@@ -32,8 +32,8 @@ func (t *typeAttributeHook) Do(o *Option, r *gpyrpc.ExecProgramResult) error {
 
 func resultTypeAttributeHook(r *gpyrpc.ExecProgramResult) error {
 	// Modify the _type fields
-	var data []map[string]interface{}
-	var mapData map[string]interface{}
+	var data []map[string]any
+	var mapData map[string]any
 	// Unmarshal the JSON string into a Node
 	if err := json.Unmarshal([]byte(r.JsonResult), &data); err == nil {
 		modifyTypeList(data)
@@ -50,7 +50,7 @@ func resultTypeAttributeHook(r *gpyrpc.ExecProgramResult) error {
 	return nil
 }
 
-func marshal(r *gpyrpc.ExecProgramResult, value interface{}) {
+func marshal(r *gpyrpc.ExecProgramResult, value any) {
 	// Marshal the modified Node back to YAML
 	yamlOutput, _ := yaml.Marshal(value)
 	// Marshal the modified Node back to JSON
@@ -59,13 +59,13 @@ func marshal(r *gpyrpc.ExecProgramResult, value interface{}) {
 	r.YamlResult = string(yamlOutput)
 }
 
-func modifyTypeList(dataList []map[string]interface{}) {
+func modifyTypeList(dataList []map[string]any) {
 	for _, data := range dataList {
 		modifyType(data)
 	}
 }
 
-func modifyType(data map[string]interface{}) {
+func modifyType(data map[string]any) {
 	for key, value := range data {
 		if key == "_type" {
 			if v, ok := data[key].(string); ok {
@@ -75,7 +75,7 @@ func modifyType(data map[string]interface{}) {
 			continue
 		}
 
-		if nestedMap, ok := value.(map[string]interface{}); ok {
+		if nestedMap, ok := value.(map[string]any); ok {
 			modifyType(nestedMap)
 		}
 	}
