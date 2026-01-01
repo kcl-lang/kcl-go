@@ -159,7 +159,7 @@ func ExportSwaggerV2Spec(path string) (*SwaggerV2Spec, error) {
 	spec := &SwaggerV2Spec{
 		Swagger:     "2.0",
 		Definitions: make(map[string]*KclOpenAPIType),
-		Paths:       map[string]interface{}{},
+		Paths:       map[string]any{},
 	}
 	pkgMapping, err := GetSchemaTypeMappingByPath(path)
 	if err != nil {
@@ -208,7 +208,7 @@ func ExportSwaggerV2SpecString(pkgPath string) (string, error) {
 // SwaggerV2Spec defines KCL OpenAPI Spec based on Swagger v2.0
 type SwaggerV2Spec struct {
 	Definitions map[string]*KclOpenAPIType `json:"definitions"`
-	Paths       map[string]interface{}     `json:"paths"`
+	Paths       map[string]any             `json:"paths"`
 	Swagger     string                     `json:"swagger"`
 	Info        SpecInfo                   `json:"info"`
 }
@@ -457,8 +457,8 @@ func (tpe *KclOpenAPIType) GetSchemaPkgDir(base string) string {
 	return GetPkgDir(base, tpe.KclExtensions.XKclModelType.Import.Package)
 }
 
-func (tpe *KclOpenAPIType) GetExtensionsMapping() map[string]interface{} {
-	m := make(map[string]interface{})
+func (tpe *KclOpenAPIType) GetExtensionsMapping() map[string]any {
+	m := make(map[string]any)
 	if tpe.KclExtensions != nil {
 		if tpe.XKclModelType != nil {
 			m[ExtensionKclType] = tpe.XKclModelType
@@ -479,8 +479,8 @@ func (tpe *KclOpenAPIType) GetExtensionsMapping() map[string]interface{} {
 	return m
 }
 
-func (tpe *KclOpenAPIType) GetAnyEnum() []interface{} {
-	e := make([]interface{}, 0)
+func (tpe *KclOpenAPIType) GetAnyEnum() []any {
+	e := make([]any, 0)
 	for _, v := range tpe.Enum {
 		e = append(e, v)
 	}

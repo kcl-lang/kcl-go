@@ -32,7 +32,7 @@ kcl_cli_configs:
 	tAssertEQ(t, x.KFilenameList[3], filepath.Join(pwd, "..", "base", "base.k"))
 }
 
-func tAssertEQ(t *testing.T, x, y interface{}) {
+func tAssertEQ(t *testing.T, x, y any) {
 	if !reflect.DeepEqual(x, y) {
 		t.Helper()
 		t.Fatalf("not equal:\n  x = %v\n  y = %v\n", x, y)

@@ -198,8 +198,8 @@ type (
 		size string // "int64", "uint16", etc.
 	}
 	errUnsafeFloat struct {
-		i    interface{} // float32 or float64
-		size string      // "float32" or "float64"
+		i    any    // float32 or float64
+		size string // "float32" or "float64"
 	}
 	errParseDuration struct{ d string }
 )

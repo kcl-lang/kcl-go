@@ -18,9 +18,9 @@ type tfSchema struct {
 }
 
 type tfProviderSchema struct {
-	Provider          map[string]interface{}      `json:"provider"`
+	Provider          map[string]any              `json:"provider"`
 	ResourceSchemas   map[string]tfResourceSchema `json:"resource_schemas"`
-	DataSourceSchemas map[string]interface{}      `json:"data_source_schemas"`
+	DataSourceSchemas map[string]any              `json:"data_source_schemas"`
 }
 
 type tfResourceSchema struct {
@@ -30,18 +30,18 @@ type tfResourceSchema struct {
 
 type tfBlock struct {
 	Attributes      map[string]tfAttribute `json:"attributes"`
-	BlockTypes      map[string]interface{} `json:"block_types"`
+	BlockTypes      map[string]any         `json:"block_types"`
 	Description     string                 `json:"description"`
 	DescriptionKind string                 `json:"description_kind"`
 }
 
 type tfAttribute struct {
-	Type            interface{} `json:"type"`
-	Description     string      `json:"description"`
-	DescriptionKind string      `json:"description_kind"`
-	Required        bool        `json:"required"`
-	Optional        bool        `json:"optional"`
-	Computed        bool        `json:"computed"`
+	Type            any    `json:"type"`
+	Description     string `json:"description"`
+	DescriptionKind string `json:"description_kind"`
+	Required        bool   `json:"required"`
+	Optional        bool   `json:"optional"`
+	Computed        bool   `json:"computed"`
 }
 
 type tfConvertContext struct {
@@ -49,7 +49,7 @@ type tfConvertContext struct {
 	attrKeyNow string
 }
 
-func (k *kclGenerator) genSchemaFromTerraformSchema(w io.Writer, filename string, src interface{}) error {
+func (k *kclGenerator) genSchemaFromTerraformSchema(w io.Writer, filename string, src any) error {
 	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err
@@ -96,7 +96,7 @@ func convertSchemaFromTFSchema(ctx *tfConvertContext, tfSch tfProviderSchema) {
 				Type:        tfTypeToKclType(ctx, attr.Type),
 				Required:    attr.Required,
 			})
-			if t, ok := attr.Type.([]interface{}); ok && t[0] == "set" {
+			if t, ok := attr.Type.([]any); ok && t[0] == "set" {
 				sch.Validations = append(sch.Validations, validation{
 					Required: attr.Required,
 					Name:     attrKey,
@@ -115,7 +115,7 @@ func convertSchemaFromTFSchema(ctx *tfConvertContext, tfSch tfProviderSchema) {
 }
 
 // convertTFNestedSchema converts nested object schema to kcl schema, save to ctx.resultMap and return schema name
-func convertTFNestedSchema(ctx *tfConvertContext, tfSchema map[string]interface{}) string {
+func convertTFNestedSchema(ctx *tfConvertContext, tfSchema map[string]any) string {
 	resultSchemaName := strcase.ToCamel(ctx.attrKeyNow + "Item")
 	sch := schema{}
 	for key, typ := range tfSchema {
@@ -124,7 +124,7 @@ func convertTFNestedSchema(ctx *tfConvertContext, tfSchema map[string]interface{
 			Name: key,
 			Type: tfTypeToKclType(ctx, typ),
 		})
-		if t, ok := typ.([]interface{}); ok && t[0] == "set" {
+		if t, ok := typ.([]any); ok && t[0] == "set" {
 			sch.Validations = append(sch.Validations, validation{
 				Name:   key,
 				Unique: true,
@@ -153,11 +153,11 @@ func convertTFNestedSchema(ctx *tfConvertContext, tfSchema map[string]interface{
 	return sch.Name
 }
 
-func tfTypeToKclType(ctx *tfConvertContext, t interface{}) typeInterface {
+func tfTypeToKclType(ctx *tfConvertContext, t any) typeInterface {
 	switch t := t.(type) {
 	case string:
 		return jsonTypeToKclType(t)
-	case []interface{}:
+	case []any:
 		switch t[0] {
 		case "list":
 			return typeArray{Items: tfTypeToKclType(ctx, t[1])}
@@ -166,7 +166,7 @@ func tfTypeToKclType(ctx *tfConvertContext, t interface{}) typeInterface {
 		case "set":
 			return typeArray{Items: tfTypeToKclType(ctx, t[1])}
 		case "object":
-			return typeCustom{Name: convertTFNestedSchema(ctx, t[1].(map[string]interface{}))}
+			return typeCustom{Name: convertTFNestedSchema(ctx, t[1].(map[string]any))}
 		case "tuple":
 			// todo
 			return typePrimitive(typAny)

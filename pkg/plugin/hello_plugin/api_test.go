@@ -12,7 +12,7 @@ import (
 )
 
 func TestPlugin_add(t *testing.T) {
-	result_json := plugin.Invoke("kcl_plugin.hello.add", []interface{}{111, 22}, nil)
+	result_json := plugin.Invoke("kcl_plugin.hello.add", []any{111, 22}, nil)
 	if result_json != "133" {
 		t.Fatal(result_json)
 	}

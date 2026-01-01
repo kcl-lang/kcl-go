@@ -58,7 +58,7 @@ func convertPropertyName(name string, option CastingOption) string {
 	}
 }
 
-func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src interface{}) error {
+func (k *kclGenerator) genSchemaFromJsonSchema(w io.Writer, filename string, src any) error {
 	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err
@@ -232,7 +232,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 		case *jsonschema.Enum:
 			typeList.Items = make([]typeInterface, 0, len(*v))
 			for _, val := range *v {
-				unmarshalledVal := interface{}(nil)
+				unmarshalledVal := any(nil)
 				err := json.Unmarshal(val, &unmarshalledVal)
 				if err != nil {
 					logger.GetLogger().Warningf("failed to unmarshal enum value: %s", err)
@@ -243,7 +243,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 				})
 			}
 		case *jsonschema.Const:
-			unmarshalledVal := interface{}(nil)
+			unmarshalledVal := any(nil)
 			err := json.Unmarshal(*v, &unmarshalledVal)
 			if err != nil {
 				logger.GetLogger().Warningf("failed to unmarshal const value: %s", err)
@@ -683,7 +683,7 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 				// format/pattern are validation-only ONLY when there's no type keyword
 				hasOnlyValidation := false
 				var validationType string // "format", "pattern"
-				var validationValue interface{}
+				var validationValue any
 				var hasTypeKeyword bool
 
 				for _, key := range val.OrderedKeywords {

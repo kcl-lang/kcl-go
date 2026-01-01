@@ -138,7 +138,7 @@ func (s *Schema) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // JSONProp implements the JSONPather for Schema
-func (s Schema) JSONProp(name string) interface{} {
+func (s Schema) JSONProp(name string) any {
 	if keyword, ok := s.Keywords[name]; ok {
 		return keyword
 	}
@@ -257,7 +257,7 @@ type _keyOrder struct {
 }
 
 // Validate initiates a fresh validation state and triggers the evaluation
-func (s *Schema) Validate(ctx context.Context, data interface{}) *ValidationState {
+func (s *Schema) Validate(ctx context.Context, data any) *ValidationState {
 	currentState := NewValidationState(s)
 	s.ValidateKeyword(ctx, currentState, data)
 	return currentState
@@ -265,7 +265,7 @@ func (s *Schema) Validate(ctx context.Context, data interface{}) *ValidationStat
 
 // ValidateKeyword uses the schema to check an instance, collecting validation
 // errors in a slice
-func (s *Schema) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (s *Schema) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Schema] Validating")
 	if s == nil {
 		currentState.AddError(data, "schema is nil")
@@ -313,7 +313,7 @@ func (s *Schema) ValidateKeyword(ctx context.Context, currentState *ValidationSt
 }
 
 // validateSchemakeywords triggers validation of sub schemas and Keywords
-func (s *Schema) validateSchemakeywords(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (s *Schema) validateSchemakeywords(ctx context.Context, currentState *ValidationState, data any) {
 	if s.Keywords != nil {
 		for _, keyword := range s.OrderedKeywords {
 			s.Keywords[keyword].ValidateKeyword(ctx, currentState, data)
@@ -324,7 +324,7 @@ func (s *Schema) validateSchemakeywords(ctx context.Context, currentState *Valid
 // ValidateBytes performs schema validation against a slice of json
 // byte data
 func (s *Schema) ValidateBytes(ctx context.Context, data []byte) ([]KeyError, error) {
-	var doc interface{}
+	var doc any
 	if err := json.Unmarshal(data, &doc); err != nil {
 		return nil, fmt.Errorf("error parsing JSON bytes: %w", err)
 	}
@@ -348,7 +348,7 @@ func (s Schema) MarshalJSON() ([]byte, error) {
 	case SchemaTypeTrue:
 		return []byte("true"), nil
 	default:
-		obj := map[string]interface{}{}
+		obj := map[string]any{}
 
 		for k, v := range s.Keywords {
 			obj[k] = v

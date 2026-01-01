@@ -34,21 +34,21 @@ var funcs = template.FuncMap{
 	"formatValueWithEscape": formatValueWithEscape,
 	"formatName":            formatName,
 	"indentLines":           indentLines,
-	"isKclData": func(v interface{}) bool {
+	"isKclData": func(v any) bool {
 		_, ok := v.([]data)
 		return ok
 	},
-	"isKclConfig": func(v interface{}) bool {
+	"isKclConfig": func(v any) bool {
 		_, ok := v.(config)
 		return ok
 	},
-	"isArray": func(v interface{}) bool {
+	"isArray": func(v any) bool {
 		switch v.(type) {
 		case []data:
 			return true
 		case []config:
 			return true
-		case []interface{}:
+		case []any:
 			return true
 		default:
 			return false
@@ -59,7 +59,7 @@ var tmpl *template.Template = &template.Template{}
 
 func init() {
 	// add "include" function. It works like "template" but can be used in pipeline.
-	funcs["include"] = func(name string, data interface{}) (string, error) {
+	funcs["include"] = func(name string, data any) (string, error) {
 		buf := bytes.NewBuffer(nil)
 		if err := tmpl.ExecuteTemplate(buf, name, data); err != nil {
 			return "", err
@@ -121,7 +121,7 @@ func formatType(t typeInterface) string {
 	return typAny
 }
 
-func formatValueWithEscape(v interface{}, escape bool) string {
+func formatValueWithEscape(v any, escape bool) string {
 	var buf bytes.Buffer
 	p := &printer{
 		listInline:   true,
@@ -137,7 +137,7 @@ func formatValueWithEscape(v interface{}, escape bool) string {
 	}
 }
 
-func formatValue(v interface{}) string {
+func formatValue(v any) string {
 	return formatValueWithEscape(v, true)
 }
 

@@ -24,7 +24,7 @@ type Options struct {
 }
 
 // GenProto translate kcl schema type to protobuf message.
-func GenProto(filename string, src interface{}, opt *Options) (string, error) {
+func GenProto(filename string, src any, opt *Options) (string, error) {
 	return newPbGenerator(opt).GenProto(filename, src)
 }
 
@@ -43,7 +43,7 @@ func newPbGenerator(opt *Options) *pbGenerator {
 	}
 }
 
-func (p *pbGenerator) GenProto(filename string, src interface{}) (string, error) {
+func (p *pbGenerator) GenProto(filename string, src any) (string, error) {
 	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return "", err

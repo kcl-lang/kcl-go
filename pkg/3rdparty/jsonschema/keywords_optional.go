@@ -50,7 +50,7 @@ func (f *Format) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Format
-func (f Format) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (f Format) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Format] Validating")
 	var err error
 	if str, ok := data.(string); ok {

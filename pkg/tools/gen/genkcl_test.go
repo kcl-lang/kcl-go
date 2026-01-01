@@ -395,13 +395,13 @@ func TestGenKclFromTextProto(t *testing.T) {
 			{Key: "b", Value: 2.0},
 			{Key: "c", Value: true},
 			{Key: "d", Value: "value"},
-			{Key: "empty1", Value: []interface{}(nil)},
-			{Key: "empty2", Value: []interface{}(nil)},
-			{Key: "int1", Value: []interface{}{1, 2}},
-			{Key: "int2", Value: []interface{}{1, 2}},
-			{Key: "int3", Value: []interface{}{1, 2}},
-			{Key: "string1", Value: []interface{}{"a", "b"}},
-			{Key: "float1", Value: []interface{}{100.0, 1.0, 0.0}},
+			{Key: "empty1", Value: []any(nil)},
+			{Key: "empty2", Value: []any(nil)},
+			{Key: "int1", Value: []any{1, 2}},
+			{Key: "int2", Value: []any{1, 2}},
+			{Key: "int3", Value: []any{1, 2}},
+			{Key: "string1", Value: []any{"a", "b"}},
+			{Key: "float1", Value: []any{100.0, 1.0, 0.0}},
 			{Key: "map", Value: []data{{Key: "foo", Value: 2}, {Key: "bar", Value: 3}}},
 		},
 	}
@@ -521,7 +521,7 @@ app2: ac.AppConfiguration {
 func TestMarshalKcl(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		expected string
 	}{
 		{
@@ -569,7 +569,7 @@ func TestMarshalKcl(t *testing.T) {
 		},
 		{
 			name:  "map",
-			input: map[string]interface{}{"name": "example", "age": 30},
+			input: map[string]any{"name": "example", "age": 30},
 			expected: `{
     age = 30
     name = "example"
@@ -584,10 +584,10 @@ func TestMarshalKcl(t *testing.T) {
 		},
 		{
 			name: "nested",
-			input: map[string]interface{}{
-				"details": map[string]interface{}{
+			input: map[string]any{
+				"details": map[string]any{
 					"age": 30,
-					"address": map[string]interface{}{
+					"address": map[string]any{
 						"city":    "New York",
 						"zipcode": 10001,
 					},

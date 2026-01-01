@@ -24,7 +24,7 @@ func (m *MultipleOf) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for MultipleOf
-func (m MultipleOf) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m MultipleOf) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[MultipleOf] Validating")
 	if num, ok := convertNumberToFloat(data); ok {
 		div := num / float64(m)
@@ -51,7 +51,7 @@ func (m *Maximum) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Maximum
-func (m Maximum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m Maximum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Maximum] Validating")
 	if num, ok := convertNumberToFloat(data); ok {
 		if num > float64(m) {
@@ -77,7 +77,7 @@ func (m *ExclusiveMaximum) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for ExclusiveMaximum
-func (m ExclusiveMaximum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m ExclusiveMaximum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[ExclusiveMaximum] Validating")
 	if num, ok := convertNumberToFloat(data); ok {
 		if num >= float64(m) {
@@ -103,7 +103,7 @@ func (m *Minimum) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Minimum
-func (m Minimum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m Minimum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Minimum] Validating")
 	if num, ok := convertNumberToFloat(data); ok {
 		if num < float64(m) {
@@ -129,7 +129,7 @@ func (m *ExclusiveMinimum) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for ExclusiveMinimum
-func (m ExclusiveMinimum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (m ExclusiveMinimum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[ExclusiveMinimum] Validating")
 	if num, ok := convertNumberToFloat(data); ok {
 		if num <= float64(m) {
@@ -138,7 +138,7 @@ func (m ExclusiveMinimum) ValidateKeyword(ctx context.Context, currentState *Val
 	}
 }
 
-func convertNumberToFloat(data interface{}) (float64, bool) {
+func convertNumberToFloat(data any) (float64, bool) {
 	switch v := data.(type) {
 	case uint:
 		return float64(v), true

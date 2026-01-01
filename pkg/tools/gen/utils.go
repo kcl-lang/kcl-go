@@ -11,19 +11,19 @@ import (
 var _ = assert
 var _ = assertf
 
-func assert(ok bool, a ...interface{}) {
+func assert(ok bool, a ...any) {
 	if !ok {
 		panic(fmt.Sprint(a...))
 	}
 }
 
-func assertf(ok bool, format string, a ...interface{}) {
+func assertf(ok bool, format string, a ...any) {
 	if !ok {
 		panic(fmt.Sprintf(format, a...))
 	}
 }
 
-func jsonString(p interface{}) string {
+func jsonString(p any) string {
 	x, err := json.MarshalIndent(p, "", "    ")
 	if err != nil {
 		return ""

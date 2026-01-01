@@ -14,7 +14,7 @@ const (
 	yamlStreamOutputFunc = "manifests.yaml_stream(items)\n"
 )
 
-func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src interface{}) error {
+func (k *kclGenerator) genKclFromYaml(w io.Writer, filename string, src any) error {
 	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err
@@ -73,8 +73,8 @@ func convertKclFromYaml(yamlData *yaml.MapSlice) []data {
 				Key:   key,
 				Value: convertKclFromYaml(&value),
 			})
-		case []interface{}:
-			var vals []interface{}
+		case []any:
+			var vals []any
 			for _, v := range value {
 				switch v := v.(type) {
 				case *yaml.MapSlice:

@@ -23,7 +23,7 @@ type ValidationState struct {
 	LocalEvaluatedPropertyNames *map[string]bool
 	LastEvaluatedIndex          int
 	LocalLastEvaluatedIndex     int
-	Misc                        map[string]interface{}
+	Misc                        map[string]any
 
 	Errs *[]KeyError
 }
@@ -43,7 +43,7 @@ func NewValidationState(s *Schema) *ValidationState {
 		LocalLastEvaluatedIndex:     -1,
 		EvaluatedPropertyNames:      &map[string]bool{},
 		LocalEvaluatedPropertyNames: &map[string]bool{},
-		Misc:                        map[string]interface{}{},
+		Misc:                        map[string]any{},
 		Errs:                        &[]KeyError{},
 	}
 }
@@ -63,7 +63,7 @@ func (vs *ValidationState) NewSubState() *ValidationState {
 		LocalRegistry:               vs.LocalRegistry,
 		EvaluatedPropertyNames:      vs.EvaluatedPropertyNames,
 		LocalEvaluatedPropertyNames: vs.LocalEvaluatedPropertyNames,
-		Misc:                        map[string]interface{}{},
+		Misc:                        map[string]any{},
 		Errs:                        vs.Errs,
 	}
 }
@@ -73,7 +73,7 @@ func (vs *ValidationState) ClearState() {
 	vs.EvaluatedPropertyNames = &map[string]bool{}
 	vs.LocalEvaluatedPropertyNames = &map[string]bool{}
 	if len(vs.Misc) > 0 {
-		vs.Misc = map[string]interface{}{}
+		vs.Misc = map[string]any{}
 	}
 }
 
@@ -129,7 +129,7 @@ func joinSets(consumer *map[string]bool, supplier map[string]bool) {
 }
 
 // AddError creates and appends a KeyError to errs of the current state
-func (vs *ValidationState) AddError(data interface{}, msg string) {
+func (vs *ValidationState) AddError(data any, msg string) {
 	schemaDebug("[AddError] Error: %s", msg)
 	instancePath := vs.InstanceLocation.String()
 	if len(instancePath) == 0 {

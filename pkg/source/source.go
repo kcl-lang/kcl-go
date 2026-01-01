@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func ReadSource(filename string, src interface{}) (data []byte, err error) {
+func ReadSource(filename string, src any) (data []byte, err error) {
 	if src == nil {
 		src, err = os.ReadFile(filename)
 		if err != nil {

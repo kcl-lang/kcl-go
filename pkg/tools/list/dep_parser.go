@@ -313,12 +313,12 @@ func isExternalPkg(vfs fs.FS, pkgpath string) bool {
 		return false
 	}
 	// Parse the TOML content
-	var modFileData map[string]interface{}
+	var modFileData map[string]any
 	if err := toml.Unmarshal([]byte(modFileContent), &modFileData); err != nil {
 		return false
 	}
 	// Extract dependency information
-	if deps, ok := modFileData["dependencies"].(map[string]interface{}); ok {
+	if deps, ok := modFileData["dependencies"].(map[string]any); ok {
 		for dep := range deps {
 			if strings.HasPrefix(pkgpath, dep) || strings.HasPrefix(pkgpath, strings.Replace(dep, "-", "_", -1)) {
 				return true

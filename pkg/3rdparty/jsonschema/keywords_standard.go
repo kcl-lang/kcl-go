@@ -28,9 +28,9 @@ func (c *Const) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Const
-func (c Const) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (c Const) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Const] Validating")
-	var con interface{}
+	var con any
 	if err := json.Unmarshal(c, &con); err != nil {
 		currentState.AddError(data, err.Error())
 		return
@@ -42,7 +42,7 @@ func (c Const) ValidateKeyword(ctx context.Context, currentState *ValidationStat
 }
 
 // JSONProp implements the JSONPather for Const
-func (c Const) JSONProp(name string) interface{} {
+func (c Const) JSONProp(name string) any {
 	return nil
 }
 
@@ -79,7 +79,7 @@ func (e *Enum) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Enum
-func (e Enum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (e Enum) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Enum] Validating")
 	subState := currentState.NewSubState()
 	subState.ClearState()
@@ -95,7 +95,7 @@ func (e Enum) ValidateKeyword(ctx context.Context, currentState *ValidationState
 }
 
 // JSONProp implements the JSONPather for Enum
-func (e Enum) JSONProp(name string) interface{} {
+func (e Enum) JSONProp(name string) any {
 	idx, err := strconv.Atoi(name)
 	if err != nil {
 		return nil
@@ -137,7 +137,7 @@ var primitiveTypes = map[string]bool{
 
 // DataType attempts to parse the underlying data type
 // from the raw data interface
-func DataType(data interface{}) string {
+func DataType(data any) string {
 	if data == nil {
 		return "null"
 	}
@@ -168,7 +168,7 @@ func DataType(data interface{}) string {
 
 // DataTypeWithHint attempts to parse the underlying data type
 // by leveraging the schema expectations for better results
-func DataTypeWithHint(data interface{}, hint string) string {
+func DataTypeWithHint(data any, hint string) string {
 	dt := DataType(data)
 	if dt == "string" {
 		if hint == "boolean" {
@@ -205,7 +205,7 @@ func (t *Type) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Type
-func (t Type) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (t Type) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Type] Validating")
 	jt := DataType(data)
 	for _, typestr := range t.Vals {
@@ -245,7 +245,7 @@ func (t Type) String() string {
 }
 
 // JSONProp implements the JSONPather for Type
-func (t Type) JSONProp(name string) interface{} {
+func (t Type) JSONProp(name string) any {
 	idx, err := strconv.Atoi(name)
 	if err != nil {
 		return nil

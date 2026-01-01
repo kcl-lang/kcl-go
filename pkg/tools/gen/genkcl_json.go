@@ -7,7 +7,7 @@ import (
 	"kcl-lang.io/kcl-go/pkg/source"
 )
 
-func (k *kclGenerator) genKclFromJsonData(w io.Writer, filename string, src interface{}) error {
+func (k *kclGenerator) genKclFromJsonData(w io.Writer, filename string, src any) error {
 	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err

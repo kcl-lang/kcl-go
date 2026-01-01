@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func tAssert(tb testing.TB, condition bool, args ...interface{}) {
+func tAssert(tb testing.TB, condition bool, args ...any) {
 	if !condition {
 		tb.Helper()
 		if msg := fmt.Sprint(args...); msg != "" {

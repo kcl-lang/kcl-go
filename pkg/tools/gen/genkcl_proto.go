@@ -35,7 +35,7 @@ var defaultFieldTypeMap = map[string]string{
 }
 
 // genKclFromProto converts the .proto config to KCL schema.
-func (k *kclGenerator) genKclFromProto(w io.Writer, filename string, src interface{}) error {
+func (k *kclGenerator) genKclFromProto(w io.Writer, filename string, src any) error {
 	code, err := source.ReadSource(filename, src)
 	if err != nil {
 		return err

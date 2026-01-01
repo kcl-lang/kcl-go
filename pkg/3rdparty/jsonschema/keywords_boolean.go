@@ -46,7 +46,7 @@ func (a *AllOf) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for AllOf
-func (a *AllOf) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (a *AllOf) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[AllOf] Validating")
 	stateCopy := currentState.NewSubState()
 	stateCopy.ClearState()
@@ -70,7 +70,7 @@ func (a *AllOf) ValidateKeyword(ctx context.Context, currentState *ValidationSta
 }
 
 // JSONProp implements the JSONPather for AllOf
-func (a AllOf) JSONProp(name string) interface{} {
+func (a AllOf) JSONProp(name string) any {
 	idx, err := strconv.Atoi(name)
 	if err != nil {
 		return nil
@@ -128,7 +128,7 @@ func (a *AnyOf) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for AnyOf
-func (a *AnyOf) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (a *AnyOf) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[AnyOf] Validating")
 	for i, sch := range *a {
 		subState := currentState.NewSubState()
@@ -147,7 +147,7 @@ func (a *AnyOf) ValidateKeyword(ctx context.Context, currentState *ValidationSta
 }
 
 // JSONProp implements the JSONPather for AnyOf
-func (a AnyOf) JSONProp(name string) interface{} {
+func (a AnyOf) JSONProp(name string) any {
 	idx, err := strconv.Atoi(name)
 	if err != nil {
 		return nil
@@ -205,7 +205,7 @@ func (o *OneOf) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for OneOf
-func (o *OneOf) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (o *OneOf) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[OneOf] Validating")
 	matched := false
 	stateCopy := currentState.NewSubState()
@@ -234,7 +234,7 @@ func (o *OneOf) ValidateKeyword(ctx context.Context, currentState *ValidationSta
 }
 
 // JSONProp implements the JSONPather for OneOf
-func (o OneOf) JSONProp(name string) interface{} {
+func (o OneOf) JSONProp(name string) any {
 	idx, err := strconv.Atoi(name)
 	if err != nil {
 		return nil
@@ -273,7 +273,7 @@ func (n *Not) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Not
-func (n *Not) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (n *Not) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Not] Validating")
 	subState := currentState.NewSubState()
 	subState.DescendBase("not")
@@ -288,7 +288,7 @@ func (n *Not) ValidateKeyword(ctx context.Context, currentState *ValidationState
 }
 
 // JSONProp implements the JSONPather for Not
-func (n Not) JSONProp(name string) interface{} {
+func (n Not) JSONProp(name string) any {
 	return Schema(n).JSONProp(name)
 }
 

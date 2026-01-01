@@ -26,7 +26,7 @@ func (f *If) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for If
-func (f *If) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (f *If) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[If] Validating")
 	thenKW := currentState.Local.Keywords["then"]
 	elseKW := currentState.Local.Keywords["else"]
@@ -50,7 +50,7 @@ func (f *If) ValidateKeyword(ctx context.Context, currentState *ValidationState,
 }
 
 // JSONProp implements the JSONPather for If
-func (f If) JSONProp(name string) interface{} {
+func (f If) JSONProp(name string) any {
 	return Schema(f).JSONProp(name)
 }
 
@@ -93,7 +93,7 @@ func (t *Then) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Then
-func (t *Then) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (t *Then) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Then] Validating")
 	ifResult, okIf := currentState.Misc["ifResult"]
 	if !okIf {
@@ -117,7 +117,7 @@ func (t *Then) ValidateKeyword(ctx context.Context, currentState *ValidationStat
 }
 
 // JSONProp implements the JSONPather for Then
-func (t Then) JSONProp(name string) interface{} {
+func (t Then) JSONProp(name string) any {
 	return Schema(t).JSONProp(name)
 }
 
@@ -160,7 +160,7 @@ func (e *Else) Resolve(pointer jptr.Pointer, uri string) *Schema {
 }
 
 // ValidateKeyword implements the Keyword interface for Else
-func (e *Else) ValidateKeyword(ctx context.Context, currentState *ValidationState, data interface{}) {
+func (e *Else) ValidateKeyword(ctx context.Context, currentState *ValidationState, data any) {
 	schemaDebug("[Else] Validating")
 	ifResult, okIf := currentState.Misc["ifResult"]
 	if !okIf {
@@ -181,7 +181,7 @@ func (e *Else) ValidateKeyword(ctx context.Context, currentState *ValidationStat
 }
 
 // JSONProp implements the JSONPather for Else
-func (e Else) JSONProp(name string) interface{} {
+func (e Else) JSONProp(name string) any {
 	return Schema(e).JSONProp(name)
 }
 

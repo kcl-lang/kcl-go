@@ -103,7 +103,7 @@ n = Name {name = "name"}` // Sample KCL source code
 	}
 }
 
-func ParseFileASTJson(filename string, src interface{}) (result string, err error) {
+func ParseFileASTJson(filename string, src any) (result string, err error) {
 	var code string
 	if src != nil {
 		switch src := src.(type) {

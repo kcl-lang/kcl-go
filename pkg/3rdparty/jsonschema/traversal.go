@@ -8,7 +8,7 @@ type JSONPather interface {
 	// or nil if no such subproperty exists.
 	// Note this also applies to array values, which are expected to interpret
 	// valid numbers as an array index
-	JSONProp(name string) interface{}
+	JSONProp(name string) any
 }
 
 // JSONContainer is an interface that enables tree traversal by listing
