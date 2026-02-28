@@ -289,8 +289,18 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 						case *jsonschema.Properties:
 							props := *s.Keywords[key].(*jsonschema.Properties)
 							for _, p := range *v {
-								if r, _ := props.Get(p.Key); r == nil {
+								existing, found := props.Get(p.Key)
+								if !found {
 									props = append(props, p)
+								} else if len(existing.Keywords) == 0 {
+									// Replace empty placeholder schema with the
+									// more specific schema from the allOf member.
+									for i := range props {
+										if props[i].Key == p.Key {
+											props[i].Value = p.Value
+											break
+										}
+									}
 								}
 							}
 							s.Keywords[key] = &props
@@ -308,6 +318,8 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 							items := *s.Keywords[key].(*jsonschema.Items)
 							items.Schemas = append(v.Schemas, items.Schemas...)
 							s.Keywords[key] = &items
+						case *jsonschema.Type:
+							// type already set; keep existing.
 						default:
 							logger.GetLogger().Warningf("failed to merge ref: unsupported keyword %s in ref, path: %s", key, strings.Join(ctx.paths, "/"))
 						}
@@ -315,8 +327,9 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 				}
 			}
 			reference = v.Reference
-			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
-				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
+			remaining := s.OrderedKeywords[i+1:]
+			sort.SliceStable(remaining, func(a, b int) bool {
+				return jsonschema.GetKeywordOrder(remaining[a]) < jsonschema.GetKeywordOrder(remaining[b])
 			})
 		case *jsonschema.AdditionalProperties:
 			switch v.SchemaType {
@@ -577,24 +590,34 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 							Required:  req,
 							MaxLength: (*int)(v),
 						})
+					case *jsonschema.Ref:
+						refSch := v.ResolveRef(ctx.rootSchema)
+						if refSch == nil || refSch.OrderedKeywords == nil {
+							logger.GetLogger().Warningf("failed to resolve ref: %s", v.Reference)
+							continue
+						}
+						schs = append(schs, refSch)
 					default:
 						if _, ok := s.Keywords[key]; !ok {
 							s.OrderedKeywords = append(s.OrderedKeywords, key)
 							s.Keywords[key] = sch.Keywords[key]
 						} else {
 							switch v := sch.Keywords[key].(type) {
-							case *jsonschema.Ref:
-								refSch := v.ResolveRef(ctx.rootSchema)
-								if refSch == nil || refSch.OrderedKeywords == nil {
-									logger.GetLogger().Warningf("failed to resolve ref: %s", v.Reference)
-									continue
-								}
-								schs = append(schs, refSch)
 							case *jsonschema.Properties:
 								props := *s.Keywords[key].(*jsonschema.Properties)
 								for _, p := range *v {
-									if r, _ := props.Get(p.Key); r == nil {
+									existing, found := props.Get(p.Key)
+									if !found {
 										props = append(props, p)
+									} else if len(existing.Keywords) == 0 {
+										// Replace empty placeholder schema with the
+										// more specific schema from the allOf member.
+										for i := range props {
+											if props[i].Key == p.Key {
+												props[i].Value = p.Value
+												break
+											}
+										}
 									}
 								}
 								s.Keywords[key] = &props
@@ -612,6 +635,10 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 								reqs := *s.Keywords[key].(*jsonschema.Required)
 								reqs = append(reqs, *v...)
 								s.Keywords[key] = &reqs
+							case *jsonschema.Type:
+								// Multiple allOf members commonly all declare "type": "object".
+								// The type was already stored from the first member; keep it and
+								// do not warn — having duplicate type declarations is not an error.
 							default:
 								logger.GetLogger().Warningf("failed to merge allOf: unsupported keyword %s in allOf, path: %s", key, strings.Join(ctx.paths, "/"))
 							}
@@ -624,8 +651,9 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 					AllOf: validations,
 				})
 			}
-			sort.SliceStable(s.OrderedKeywords[i+1:], func(i, j int) bool {
-				return jsonschema.GetKeywordOrder(s.OrderedKeywords[i]) < jsonschema.GetKeywordOrder(s.OrderedKeywords[j])
+			remaining := s.OrderedKeywords[i+1:]
+			sort.SliceStable(remaining, func(a, b int) bool {
+				return jsonschema.GetKeywordOrder(remaining[a]) < jsonschema.GetKeywordOrder(remaining[b])
 			})
 		case *jsonschema.AnyOf:
 			// anyOf is similar to oneOf but allows more than one schema to match
