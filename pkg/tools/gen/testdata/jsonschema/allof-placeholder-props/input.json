@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://example.com/schemas/config.json",
+  "$defs": {
+    "module_a": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Number of items."
+        }
+      }
+    },
+    "module_b": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "A message string."
+        }
+      }
+    }
+  },
+  "allOf": [
+    { "$ref": "#/$defs/module_a" },
+    { "$ref": "#/$defs/module_b" }
+  ],
+  "properties": {
+    "count": {},
+    "message": {}
+  },
+  "additionalProperties": false
+}
