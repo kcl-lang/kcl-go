@@ -17,6 +17,23 @@
 			"type": "integer",
 			"exclusiveMinimum": 0,
 			"exclusiveMaximum": 100
+		},
+		"assertions": {
+			"description": "mixed type with array and object and unique items",
+			"type": [
+				"object",
+				"array"
+			],
+			"items": {
+				"type": "string"
+			},
+			"additionalItems": false,
+			"minItems": 1,
+			"minProperties": 1,
+			"uniqueItems": true,
+			"additionalProperties": {
+				"type": "string"
+			}
 		}
 	},
 	"required": [

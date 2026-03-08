@@ -12,11 +12,14 @@ schema Book:
     title : str, required
     price : float, optional
     quantity : int, optional
+    assertions : any | [any] | str, optional
+        mixed type with array and object and unique items
     """
 
     title: str
     price?: float
     quantity?: int
+    assertions?: any | [any] | str
 
     check:
         len(title) <= 20
@@ -25,4 +28,6 @@ schema Book:
         price >= 0 if price
         quantity < 100 if quantity
         quantity > 0 if quantity
+        len(assertions) >= 1 if assertions
+        isunique(list(assertions)) if assertions
 

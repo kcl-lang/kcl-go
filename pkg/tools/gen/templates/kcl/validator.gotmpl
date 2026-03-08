@@ -18,7 +18,7 @@
         multiplyof({{ formatName .Name }}, {{ .MultiplyOf }}){{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
     {{- if .Unique }}
-        isunique({{ formatName .Name }}){{ if not .Required }} if {{ formatName .Name }}{{ end }}
+        isunique(list({{ formatName .Name }})){{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
     {{- if .ConstValue }}
         {{ formatName .Name }} == {{ formatValue .ConstValue }}{{ if not .Required }} if {{ formatName .Name }}{{ end }}
