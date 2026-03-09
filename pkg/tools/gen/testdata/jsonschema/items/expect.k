@@ -19,5 +19,5 @@ schema Book:
     check:
         len(authors) <= 5 if authors
         len(authors) >= 1 if authors
-        isunique(authors) if authors
+        isunique(list(authors)) if authors
 
