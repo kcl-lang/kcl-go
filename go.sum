@@ -16,8 +16,8 @@ github.com/ebitengine/purego v0.9.1 h1:a/k2f2HQU3Pi399RPW1MOaZyhKJL9w/xFpKAg4q1s
 github.com/ebitengine/purego v0.9.1/go.mod h1:iIjxzd6CiRiOG0UyXP+V1+jWqUXVjPKLAI0mRfJZTmQ=
 github.com/emicklei/proto v1.14.3 h1:zEhlzNkpP8kN6utonKMzlPfIvy82t5Kb9mufaJxSe1Q=
 github.com/emicklei/proto v1.14.3/go.mod h1:rn1FgRS/FANiZdD2djyH7TMA9jdRDcYQ9IEN9yvjX0A=
-github.com/getkin/kin-openapi v0.137.0 h1:Q3HhawNQV0GfvO2mIYMUBUSEFrDsVlzcYz4VydL9YEo=
-github.com/getkin/kin-openapi v0.137.0/go.mod h1:vUYWaKyMqj7PfTybelXtLuLN9tReS12vxnzMRK+z2GY=
+github.com/getkin/kin-openapi v0.138.0 h1:ebfE0JAmF6AqHrNBy1KO3Fs68K9tPs48HalvLPo7Rv4=
+github.com/getkin/kin-openapi v0.138.0/go.mod h1:vUYWaKyMqj7PfTybelXtLuLN9tReS12vxnzMRK+z2GY=
 github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
 github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
