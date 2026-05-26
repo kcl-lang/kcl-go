@@ -299,7 +299,9 @@ func (r *Ref) _resolveRef(ctx context.Context, currentState *ValidationState) {
 	if address != "" {
 		if u, err := url.Parse(address); err == nil {
 			if !u.IsAbs() {
-				address = currentState.Local.Id + address
+				if currentState.Local != nil {
+					address = currentState.Local.Id + address
+				}
 				if docPath != "" {
 					uriFolder := ""
 					if docPath[len(docPath)-1] == '/' {

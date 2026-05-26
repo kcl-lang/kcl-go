@@ -1,0 +1,15 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "shape.json",
+	"type": "object",
+	"properties": {
+		"kind": {
+			"$ref": "ShapeKind.json"
+		}
+	},
+	"required": ["kind"],
+	"oneOf": [
+		{ "$ref": "Circle.json" },
+		{ "$ref": "Square.json" }
+	]
+}
