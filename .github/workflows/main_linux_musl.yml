@@ -21,7 +21,7 @@ jobs:
     container: ${{ matrix.container }}
     steps:
       - name: Git checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install musl dependencies (Alpine container)
         run: |
