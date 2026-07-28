@@ -36,13 +36,25 @@ func FormatCode(code any) ([]byte, error) {
 	return resp.Formatted, nil
 }
 
-func FormatPath(path string) (changedPaths []string, err error) {
+type FormatPathOptions struct {
+	DryRun bool
+}
+
+func FormatPathWithOptions(
+	path string,
+	opts FormatPathOptions,
+) ([]string, error) {
 	svc := kcl.Service()
 	resp, err := svc.FormatPath(&gpyrpc.FormatPathArgs{
-		Path: path,
+		Path:   path,
+		DryRun: opts.DryRun,
 	})
 	if err != nil {
 		return nil, err
 	}
 	return resp.ChangedPaths, nil
+}
+
+func FormatPath(path string) ([]string, error) {
+	return FormatPathWithOptions(path, FormatPathOptions{})
 }

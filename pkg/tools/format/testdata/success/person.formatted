@@ -1,3 +1,2 @@
 schema Person:
     name: str
-
