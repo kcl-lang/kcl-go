@@ -98,6 +98,39 @@ func TestFormatPath(t *testing.T) {
 	}
 }
 
+func TestFormatPathWithOptions(t *testing.T) {
+	successDir := filepath.Join("testdata", "success")
+
+	sourceFiles := findFiles(t, successDir, func(info fs.DirEntry) bool {
+		return strings.HasSuffix(info.Name(), ".k")
+	})
+	var sourceFilesBackup []kclFile
+
+	for _, sourceFile := range sourceFiles {
+		content, err := os.ReadFile(sourceFile)
+		if err != nil {
+			t.Fatalf("read source file content failed: %s", sourceFile)
+		}
+		sourceFilesBackup = append(sourceFilesBackup, kclFile{
+			name:    sourceFile,
+			content: content,
+		})
+	}
+
+	_, err := FormatPathWithOptions(successDir, FormatPathOptions{DryRun: true})
+	if err != nil {
+		t.Fatalf("format path exec failed. %v", err)
+	}
+
+	for _, sourceFile := range sourceFilesBackup {
+		newContent, err := os.ReadFile(sourceFile.name)
+		if err != nil {
+			t.Fatalf("read source file content failed: %s", sourceFile.name)
+		}
+		assert.Equal(t, sourceFile.content, newContent, fmt.Sprintf("format path with dry run should not modify files, file: %s, expect: %s, get: %s", sourceFile.name, sourceFile.content, newContent))
+	}
+}
+
 type filterFile func(fs.DirEntry) bool
 
 func findFiles(t testing.TB, testDir string, filter filterFile) (names []string) {
@@ -122,7 +155,7 @@ type kclFile struct {
 
 func writeFile(t *testing.T, kclfiles []kclFile) {
 	for _, backUpFile := range kclfiles {
-		err := os.WriteFile(backUpFile.name, backUpFile.content, 0666)
+		err := os.WriteFile(backUpFile.name, backUpFile.content, 0o666)
 		if err != nil {
 			t.Logf("write back formatted source file failed: %v", err)
 		}

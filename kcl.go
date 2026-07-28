@@ -68,6 +68,7 @@ type (
 	ListOptionsResult        = loader.ListOptionsResult
 	ParseProgramArgs         = parser.ParseProgramArgs
 	ParseProgramResult       = parser.ParseProgramResult
+	FormatPathOptions        = format.FormatPathOptions
 )
 
 // MustRun is like Run but panics if return any error.
@@ -167,6 +168,21 @@ func FormatCode(code any) ([]byte, error) {
 // the returned changedPaths are the changed file paths (relative path)
 func FormatPath(path string) (changedPaths []string, err error) {
 	return format.FormatPath(path)
+}
+
+// FormatPathWithOptions formats files from the given path with some options.
+// path:
+// if path is `.` or empty string, all KCL files in current directory will be formatted, not recursively
+// if path is `path/file.k`, the specified KCL file will be formatted
+// if path is `path/to/dir`, all KCL files in the specified dir will be formatted, not recursively
+// if path is `path/to/dir/...`, all KCL files in the specified dir will be formatted recursively
+//
+// the returned changedPaths are the changed file paths (relative path)
+func FormatPathWithOptions(
+	path string,
+	opts FormatPathOptions,
+) ([]string, error) {
+	return format.FormatPathWithOptions(path, opts)
 }
 
 // ListDepFiles return the depend files from the given path
