@@ -22,7 +22,7 @@ schema Workflow:
         Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
         You can also specify concurrency at the workflow level. 
         When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-    jobs : WorkflowJobs, required
+    jobs : WorkflowJobs, required, default is WorkflowJobs{}
         A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
         Each job runs in a fresh instance of the virtual environment specified by runs-on.
         You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
@@ -35,7 +35,7 @@ schema Workflow:
     env?: WorkflowEnvOneOf0 | str
     defaults?: Defaults
     concurrency?: str | Concurrency
-    jobs: WorkflowJobs
+    jobs: WorkflowJobs = WorkflowJobs{}
     permissions?: "read-all" | "write-all" | PermissionsEvent
 
 schema Concurrency:
@@ -548,7 +548,7 @@ schema WorkflowJobsPatternProperties0OneOf0Strategy:
 
     Attributes
     ----------
-    matrix : WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StrategyMatrix, required
+    matrix : WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StrategyMatrix, required, default is WorkflowJobsPatternProperties0OneOf0StrategyMatrix{}
         A build matrix is a set of different configurations of the virtual environment. For example you might run a job against more than one supported version of a language, operating system, or tool. Each configuration is a copy of the job that runs and reports a status.
         You can specify a matrix by supplying an array for the configuration options. For example, if the GitHub virtual environment supports Node.js versions 6, 8, and 10 you could specify an array of those versions in the matrix.
         When you define a matrix of operating systems, you must set the required runs-on keyword to the operating system of the current job, rather than hard-coding the operating system name. To access the operating system name, you can use the matrix.os context parameter to set runs-on. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
@@ -558,7 +558,7 @@ schema WorkflowJobsPatternProperties0OneOf0Strategy:
         The maximum number of jobs that can run simultaneously when using a matrix job strategy. By default, GitHub will maximize the number of jobs run in parallel depending on the available runners on GitHub-hosted virtual machines.
     """
 
-    matrix: WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StrategyMatrix
+    matrix: WorkflowJobsPatternProperties0OneOf0StrategyMatrixOneOf0 | str | WorkflowJobsPatternProperties0OneOf0StrategyMatrix = WorkflowJobsPatternProperties0OneOf0StrategyMatrix{}
     "fail-fast"?: bool = True
     "max-parallel"?: float
 
