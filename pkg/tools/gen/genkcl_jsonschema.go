@@ -180,6 +180,17 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 				_, propSch.Required = required[key]
 				if propSch.IsSchema {
 					ctx.resultMap[propSch.schema.Name] = propSch
+					// If a property is required and is of object type (becomes a
+					// sub-schema), default-initialize it with an empty instance of
+					// the sub-schema. This makes `Parent{}` valid when every
+					// required inner field has its own default, instead of failing
+					// with `attribute 'X' of Parent is required`. When some inner
+					// required field has no default, the failure is preserved with
+					// a more precise error pointing at the inner schema.
+					if propSch.Required && !propSch.property.HasDefault {
+						propSch.property.HasDefault = true
+						propSch.property.DefaultValue = schemaInstantiation{SchemaName: propSch.schema.Name}
+					}
 				}
 				result.Properties = append(result.Properties, propSch.property)
 				if !propSch.IsSchema {
@@ -1027,4 +1038,19 @@ func objectExists(objs []*jsonschema.Schema, obj *jsonschema.Schema) bool {
 		}
 	}
 	return false
+}
+
+// schemaInstantiation is a default value rendered as a zero-value
+// instantiation of a generated sub-schema, e.g. `Inner{}`. It is used so that
+// a required object-typed property (which becomes a separate KCL schema) can
+// be initialized from the parent schema's default when every required inner
+// field has its own default.
+type schemaInstantiation struct {
+	SchemaName string
+}
+
+// MarshalKcl implements the gen.Marshaler interface so that
+// formatValue/walkValue emit the bytes verbatim into the generated KCL source.
+func (s schemaInstantiation) MarshalKcl() ([]byte, error) {
+	return []byte(s.SchemaName + "{}"), nil
 }
