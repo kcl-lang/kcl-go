@@ -1,0 +1,2 @@
+schema Value:
+    value: str
