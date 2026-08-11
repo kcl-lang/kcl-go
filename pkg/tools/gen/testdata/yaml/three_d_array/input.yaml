@@ -1,0 +1,13 @@
+# Regression test for 3D array conversion. The 2D-array fix must recurse
+# through arbitrary nesting depths rather than only handling one level
+# of [[student]] lists.
+name: cube
+layers:
+    -   -   -   x: 1
+            -   x: 2
+        -   -   x: 3
+            -   x: 4
+    -   -   -   x: 5
+            -   x: 6
+        -   -   x: 7
+            -   x: 8

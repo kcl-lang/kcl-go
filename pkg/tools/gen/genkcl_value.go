@@ -193,6 +193,20 @@ func (p *printer) walkValue(v any) error {
 			p.walkValue(item.Value)
 		}
 		p.writeConfigEnd()
+		return nil
+	case []data:
+		n, _ := val.Interface().([]data)
+		p.writeConfigBegin()
+		for i, item := range n {
+			if i > 0 {
+				p.writeConfigSep()
+			}
+			p.write(formatName(item.Key))
+			p.write(" = ")
+			p.walkValue(item.Value)
+		}
+		p.writeConfigEnd()
+		return nil
 	}
 
 	switch ty.Kind() {

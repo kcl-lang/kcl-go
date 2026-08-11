@@ -1,0 +1,14 @@
+# Regression test for the 2D array conversion bug reported in
+# https://github.com/kcl-lang/kcl-go/issues/562 — previously the importer
+# emitted malformed output that concatenated dict fragments and Key=Value
+# pairs without separators.
+classname: math
+students:
+    -   -   name: xiaoming
+            age: 6
+        -   name: lihua
+            age: 7
+    -   -   name: zhangsan
+            age: 8
+        -   name: lisi
+            age: 9

@@ -271,17 +271,55 @@ func TestGenKclFromToml(t *testing.T) {
 }
 
 func TestGenKclFromJson(t *testing.T) {
-	input := filepath.Join("testdata", "json", "input.json")
-	expectFilepath := filepath.Join("testdata", "json", "expect.k")
-	expect := readFileString(t, expectFilepath)
+	type testCase struct {
+		name           string
+		input          string
+		expect         string
+		expectFilepath string
+	}
+	var cases []testCase
 
-	var buf bytes.Buffer
-	err := GenKcl(&buf, input, nil, &GenKclOptions{})
+	// Backwards-compatible root-level case (testdata/json/input.json).
+	rootInput := filepath.Join("testdata", "json", "input.json")
+	if _, err := os.Stat(rootInput); err == nil {
+		cases = append(cases, testCase{
+			name:           "root",
+			input:          rootInput,
+			expect:         readFileString(t, filepath.Join("testdata", "json", "expect.k")),
+			expectFilepath: filepath.Join("testdata", "json", "expect.k"),
+		})
+	}
+
+	casesPath := filepath.Join("testdata", "json")
+	caseFiles, err := os.ReadDir(casesPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	result := buf.Bytes()
-	assert2.Equal(t, expect, string(bytes.ReplaceAll(result, []byte("\r\n"), []byte("\n"))))
+	for _, caseFile := range caseFiles {
+		if !caseFile.IsDir() {
+			continue
+		}
+		input := filepath.Join(casesPath, caseFile.Name(), "input.json")
+		expectFilepath := filepath.Join(casesPath, caseFile.Name(), "expect.k")
+		cases = append(cases, testCase{
+			name:           caseFile.Name(),
+			input:          input,
+			expect:         readFileString(t, expectFilepath),
+			expectFilepath: expectFilepath,
+		})
+	}
+
+	for _, testcase := range cases {
+		t.Run(testcase.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err := GenKcl(&buf, testcase.input, nil, &GenKclOptions{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			result := buf.Bytes()
+			assert2.Equal(t, testcase.expect, string(bytes.ReplaceAll(result, []byte("\r\n"), []byte("\n"))))
+		})
+	}
 }
 
 func TestGenKclFromYaml(t *testing.T) {
@@ -516,6 +554,94 @@ app2: ac.AppConfiguration {
     }
 }
 `)
+}
+
+// TestConvertKclValueFromNestedArrays is a regression test for
+// https://github.com/kcl-lang/kcl-go/issues/562 which reported that nested
+// (2D and 3D) JSON arrays were rendered with concatenated dict fragments
+// (no separators) after the MapSlice converter was run.
+//
+// convertKclValue must recurse into nested []any values so every nested
+// list is normalised to a *[]data-compatible structure before it reaches
+// the renderer.
+func TestConvertKclValueFromNestedArrays(t *testing.T) {
+	yamlInput := `classname: math
+students:
+  - - name: xiaoming
+      age: 6
+    - name: lihua
+      age: 7
+  - - name: zhangsan
+      age: 8
+    - name: lisi
+      age: 9
+`
+	top, err := convertKclFromYamlString([]byte(yamlInput))
+	if err != nil {
+		t.Fatalf("convertKclFromYamlString returned error: %v", err)
+	}
+
+	// The converted value should be a 2D array ([]any of []any of []data),
+	// not the previous broken shape that left the inner []any untouched.
+	if len(top) != 2 {
+		t.Fatalf("expected 2 top-level data entries, got %d", len(top))
+	}
+	studentsField, ok := findDataValue(top, "students").([]any)
+	if !ok {
+		t.Fatalf("expected `students` to be a []any, got %T", findDataValue(top, "students"))
+	}
+	if len(studentsField) != 2 {
+		t.Fatalf("expected 2 outer array entries, got %d", len(studentsField))
+	}
+	for rowIdx, row := range studentsField {
+		inner, ok := row.([]any)
+		if !ok {
+			t.Fatalf("expected row %d to be []any, got %T", rowIdx, row)
+		}
+		for colIdx, col := range inner {
+			if _, ok := col.([]data); !ok {
+				t.Fatalf("expected row %d col %d to be []data, got %T", rowIdx, colIdx, col)
+			}
+		}
+	}
+}
+
+func TestGenKclFromJsonNestedArrayIsParseable(t *testing.T) {
+	// Regression test for https://github.com/kcl-lang/kcl-go/issues/562.
+	// The generated KCL must be valid and parseable end-to-end.  We shell
+	// out to the `kcl` binary because the kcl-go module ships without an
+	// embedded engine.
+	var buf bytes.Buffer
+	err := GenKcl(&buf, "./testdata/json/two_d_array/input.json", nil, &GenKclOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Static assertions: no leftover "Key =" or "Value =" artefacts from
+	// the previous bug.
+	out := buf.String()
+	for _, forbidden := range []string{"Key =", "Value ="} {
+		if strings.Contains(out, forbidden) {
+			t.Fatalf("generated KCL still contains forbidden %q fragment:\n%s", forbidden, out)
+		}
+	}
+	// Comma separators must sit between sibling dict fragments so the list
+	// is unambiguously parsed by KCL.
+	if !strings.Contains(out, "}, {") {
+		t.Fatalf("expected comma-separated dict fragments, got:\n%s", out)
+	}
+}
+
+// findDataValue walks a flat []data and returns the Value of the entry whose
+// Key matches. It panics if the key is missing — tests are expected to use
+// this only with input they have already validated.
+func findDataValue(d []data, key string) any {
+	for _, item := range d {
+		if item.Key == key {
+			return item.Value
+		}
+	}
+	return nil
 }
 
 func TestMarshalKcl(t *testing.T) {
