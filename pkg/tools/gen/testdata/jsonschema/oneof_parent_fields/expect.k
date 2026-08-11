@@ -26,9 +26,9 @@ schema TopLevelDefinitionConfigsItems0:
     ----------
     id : str, required
         The monaco identifier for this config - is used in references and for some generated IDs in Dynatrace environments.
-    config : TopLevelDefinitionConfigsItems0Config, required
+    config : TopLevelDefinitionConfigsItems0Config, required, default is TopLevelDefinitionConfigsItems0Config{}
         The actual configuration to be applied
-    $type : str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type, required
+    $type : str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type, required, default is TopLevelDefinitionConfigsItems0Type{}
         The type of this configuration
     groupOverrides : [TopLevelDefinitionConfigsItems0GroupOverridesItems0], optional
         GroupOverrides overwrite specific parts of the Config when deploying it to any environment in a given group.
@@ -37,8 +37,8 @@ schema TopLevelDefinitionConfigsItems0:
     """
 
     id: str
-    config: TopLevelDefinitionConfigsItems0Config
-    $type: str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type
+    config: TopLevelDefinitionConfigsItems0Config = TopLevelDefinitionConfigsItems0Config{}
+    $type: str | TopLevelDefinitionConfigsItems0TypeOneOf1 | TopLevelDefinitionConfigsItems0Type = TopLevelDefinitionConfigsItems0Type{}
     groupOverrides?: [TopLevelDefinitionConfigsItems0GroupOverridesItems0]
     environmentOverrides?: [TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0]
 
@@ -81,12 +81,12 @@ schema TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0:
     ----------
     environment : str, required
         Name of the environment this override applies for.
-    override : TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override, required
+    override : TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override, required, default is TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override{}
         May contain any fields the base config definition does and overwrites their values for this environment.
     """
 
     environment: str
-    override: TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override
+    override: TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override = TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override{}
 
 schema TopLevelDefinitionConfigsItems0EnvironmentOverridesItems0Override:
     r"""
@@ -127,12 +127,12 @@ schema TopLevelDefinitionConfigsItems0GroupOverridesItems0:
     ----------
     group : str, required
         Name of the group this override applies for.
-    override : TopLevelDefinitionConfigsItems0GroupOverridesItems0Override, required
+    override : TopLevelDefinitionConfigsItems0GroupOverridesItems0Override, required, default is TopLevelDefinitionConfigsItems0GroupOverridesItems0Override{}
         May contain any fields the base config definition does and overwrites their values for any environment in this group.
     """
 
     group: str
-    override: TopLevelDefinitionConfigsItems0GroupOverridesItems0Override
+    override: TopLevelDefinitionConfigsItems0GroupOverridesItems0Override = TopLevelDefinitionConfigsItems0GroupOverridesItems0Override{}
 
 schema TopLevelDefinitionConfigsItems0GroupOverridesItems0Override:
     r"""

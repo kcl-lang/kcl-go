@@ -62,35 +62,39 @@ func convertKclFromYaml(yamlData *yaml.MapSlice) []data {
 		if !ok {
 			continue
 		}
-		switch value := item.Value.(type) {
-		case *yaml.MapSlice:
-			result = append(result, data{
-				Key:   key,
-				Value: convertKclFromYaml(value),
-			})
-		case yaml.MapSlice:
-			result = append(result, data{
-				Key:   key,
-				Value: convertKclFromYaml(&value),
-			})
-		case []any:
-			var vals []any
-			for _, v := range value {
-				switch v := v.(type) {
-				case *yaml.MapSlice:
-					vals = append(vals, convertKclFromYaml(v))
-				case yaml.MapSlice:
-					vals = append(vals, convertKclFromYaml(&v))
-				default:
-					vals = append(vals, v)
-				}
-			}
-			result = append(result, data{Key: key, Value: vals})
-		default:
-			result = append(result, data{Key: key, Value: value})
-		}
+		result = append(result, data{
+			Key:   key,
+			Value: convertKclValue(item.Value),
+		})
 	}
 	return result
+}
+
+// convertKclValue converts an arbitrary YAML/JSON value (as produced by
+// goccy/go-yaml's MapSlice decoder) into a value ready for walkValue.
+//
+// MapSlice values are unwrapped into their underlying []data representation
+// so the renderer can produce `{ key = value, ... }` blocks. Lists are walked
+// element-by-element so nested lists (e.g. `[[{...}]]`) are recursively
+// flattened in the same way instead of being kept as raw `[]any` slices.
+func convertKclValue(value any) any {
+	switch v := value.(type) {
+	case *yaml.MapSlice:
+		return convertKclFromYaml(v)
+	case yaml.MapSlice:
+		vs := v
+		return convertKclFromYaml(&vs)
+	case []any:
+		vals := make([]any, 0, len(v))
+		for _, item := range v {
+			vals = append(vals, convertKclValue(item))
+		}
+		return vals
+	case nil:
+		return nil
+	default:
+		return value
+	}
 }
 
 func convertKclFromYamlString(byteData []byte) ([]data, error) {
