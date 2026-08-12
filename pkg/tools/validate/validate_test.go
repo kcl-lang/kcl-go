@@ -62,3 +62,63 @@ schema Person:
 		t.Fatalf("expect validation error, got %s", err.Error())
 	}
 }
+
+// TestValidateWithExternalPackages is a regression test for
+// https://github.com/kcl-lang/kcl/issues/1877. It ensures that when the
+// caller supplies an `ExternalPackages` mapping, the validator can
+// resolve imports to schemas declared in those external packages and
+// validate data against the resulting type.
+func TestValidateWithExternalPackages(t *testing.T) {
+	opts := &ValidateOptions{
+		ExternalPackages: []ExternalPackage{
+			{
+				PkgName: "ext",
+				PkgPath: "./test_data/external/ext",
+			},
+		},
+	}
+	ok, err := Validate(
+		"./test_data/external/with_ext/data.json",
+		"./test_data/external/with_ext/schema.k",
+		opts,
+	)
+	if err != nil {
+		t.Fatalf("expected validation success, got error: %v", err)
+	}
+	if !ok {
+		t.Fatalf("expected validation success, got failure")
+	}
+}
+
+// TestValidateWithoutExternalPackagesReportsMissingImport ensures the
+// historical behaviour is preserved when the caller does not supply an
+// `ExternalPackages` mapping: an unresolved external import surfaces as
+// a `Cannot find the module` error rather than silently passing.
+func TestValidateWithoutExternalPackagesReportsMissingImport(t *testing.T) {
+	_, err := Validate(
+		"./test_data/external/with_ext/data.json",
+		"./test_data/external/with_ext/schema.k",
+		nil,
+	)
+	if err == nil {
+		t.Fatalf("expected validation error for unresolved import, got nil")
+	}
+	if !strings.Contains(err.Error(), "ext") {
+		t.Fatalf("expected error to mention missing 'ext' package, got: %v", err)
+	}
+}
+
+// TestExternalPackagesWithEmptyEntriesIgnored verifies that the
+// conversion helper drops empty entries rather than forwarding them to
+// the gRPC service, which would otherwise produce confusing errors.
+func TestExternalPackagesWithEmptyEntriesIgnored(t *testing.T) {
+	opts := &ValidateOptions{
+		ExternalPackages: []ExternalPackage{
+			{PkgName: "", PkgPath: "./test_data/external/ext"},
+			{PkgName: "ext", PkgPath: ""},
+		},
+	}
+	if got := opts.toExternalPkgs(); got != nil {
+		t.Fatalf("expected nil gRPC list when only empty entries are provided, got %v", got)
+	}
+}
