@@ -200,6 +200,40 @@ func TestGenKclWithInlineTag(t *testing.T) {
 	assert2.Contains(t, kclCode, "schema ObjectMeta")
 }
 
+// TestGenKclFromGoStruct exercises the Go-struct → KCL converter end-to-end by
+// walking each subdirectory under testdata/gostruct/ and asserting the
+// generated KCL matches the golden expect.k file.
+//
+// New golden cases are added by creating a subdirectory with input.go (the Go
+// source) and expect.k (the captured, normalised output). See testdata/gostruct/
+// for the basic, inline, and time_fields examples.
+func TestGenKclFromGoStruct(t *testing.T) {
+	casesPath := filepath.Join("testdata", "gostruct")
+	caseFiles, err := os.ReadDir(casesPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, caseFile := range caseFiles {
+		if !caseFile.IsDir() {
+			continue
+		}
+		caseFile := caseFile // capture for closure
+		t.Run(caseFile.Name(), func(t *testing.T) {
+			input := "./" + filepath.Join(casesPath, caseFile.Name())
+			expectFilepath := filepath.Join(casesPath, caseFile.Name(), "expect.k")
+			expect := readFileString(t, expectFilepath)
+
+			var buf bytes.Buffer
+			err := GenKcl(&buf, input, nil, &GenKclOptions{Mode: ModeGoStruct})
+			if err != nil {
+				t.Fatal(err)
+			}
+			got := string(bytes.ReplaceAll(buf.Bytes(), []byte("\r\n"), []byte("\n")))
+			assert2.Equal(t, expect, got)
+		})
+	}
+}
+
 func TestGenKclFromJsonSchema(t *testing.T) {
 	type testCase struct {
 		name           string
