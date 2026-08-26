@@ -144,6 +144,154 @@ func TestPopulateReferencedBy(t *testing.T) {
 	assert2.Empty(t, schemaC.ReferencedBy)
 }
 
+// TestDocGenerateWithIncludePaths is a regression test for the path-filtering
+// half of kcl-lang/kcl-go#514. The fixture under testdata/doc/path_filter/
+// defines two independent KCL packages (api/ and internal/) so we can verify
+// that passing IncludePaths limits the generated spec to the requested
+// subtree while still pulling in transitively-referenced schemas.
+func TestDocGenerateWithIncludePaths(t *testing.T) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal("get work directory failed")
+	}
+	packageDir := filepath.Join(cwd, "testdata", "doc", "path_filter")
+	gotDir := filepath.Join(packageDir, "got")
+	if err := os.MkdirAll(gotDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(gotDir)
+
+	genOpts := GenOpts{
+		Path:         packageDir,
+		Format:       string(Markdown),
+		Target:       gotDir,
+		EscapeHtml:   true,
+		IncludePaths: []string{"./api"},
+	}
+	genContext, err := genOpts.ValidateComplete()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := genContext.GenDoc(); err != nil {
+		t.Fatalf("generate failed: %s", err)
+	}
+	outDir := filepath.Join(gotDir, "docs")
+	entries, err := os.ReadDir(outDir)
+	if err != nil {
+		t.Fatalf("read generated docs: %s", err)
+	}
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		b, err := os.ReadFile(filepath.Join(outDir, e.Name()))
+		if err != nil {
+			t.Fatal(err)
+		}
+		body := string(b)
+		assert2.Contains(t, body, "ApiServer", "expected ApiServer in %s, got:\n%s", e.Name(), body)
+		assert2.NotContains(t, body, "InternalSecret", "expected InternalSecret to be filtered out of %s, got:\n%s", e.Name(), body)
+	}
+}
+
+// TestDocGenerateJsonSchema is a regression test for the JSON Schema output
+// half of kcl-lang/kcl-go#514. The same fixture is used to verify that the
+// Format="json-schema" mode writes one .schema.json file per top-level
+// schema, in the filtered scope when IncludePaths is set.
+func TestDocGenerateJsonSchema(t *testing.T) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal("get work directory failed")
+	}
+	packageDir := filepath.Join(cwd, "testdata", "doc", "path_filter")
+	gotDir := filepath.Join(packageDir, "jsonschema_got")
+	if err := os.MkdirAll(gotDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(gotDir)
+
+	genOpts := GenOpts{
+		Path:         packageDir,
+		Format:       string(JsonSchema),
+		Target:       gotDir,
+		IncludePaths: []string{"./api"},
+	}
+	genContext, err := genOpts.ValidateComplete()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := genContext.GenDoc(); err != nil {
+		t.Fatalf("generate failed: %s", err)
+	}
+	apiFile := filepath.Join(gotDir, "docs", "api.ApiServer.schema.json")
+	b, err := os.ReadFile(apiFile)
+	if err != nil {
+		t.Fatalf("expected %s to exist: %s", apiFile, err)
+	}
+	body := string(b)
+	assert2.Contains(t, body, `"ApiServer"`, "expected schema to be present, got:\n%s", body)
+	assert2.NotContains(t, body, "InternalSecret", "expected InternalSecret to be filtered out, got:\n%s", body)
+
+	secretFile := filepath.Join(gotDir, "docs", "internal.InternalSecret.schema.json")
+	if _, err := os.Stat(secretFile); err == nil {
+		t.Fatalf("expected %s to be filtered out, but it exists", secretFile)
+	}
+}
+
+// TestFilterSpecByIncludePaths covers the unit-level behaviour of
+// filterSpecByIncludePaths: package-only matching, transitive $ref
+// closure, and dotted-path equivalence.
+func TestFilterSpecByIncludePaths(t *testing.T) {
+	spec := &SwaggerV2Spec{
+		Definitions: map[string]*KclOpenAPIType{
+			"api.ApiServer": {
+				KclExtensions: &KclExtensions{
+					XKclModelType: &XKclModelType{
+						Import: &KclModelImportInfo{Package: "api"},
+						Type:   "ApiServer",
+					},
+				},
+				Properties: map[string]*KclOpenAPIType{
+					"backend": {
+						Ref: SchemaId2Ref("api.Backend"),
+					},
+				},
+			},
+			"api.Backend": {
+				KclExtensions: &KclExtensions{
+					XKclModelType: &XKclModelType{
+						Import: &KclModelImportInfo{Package: "api"},
+						Type:   "Backend",
+					},
+				},
+			},
+			"internal.InternalSecret": {
+				KclExtensions: &KclExtensions{
+					XKclModelType: &XKclModelType{
+						Import: &KclModelImportInfo{Package: "internal"},
+						Type:   "InternalSecret",
+					},
+				},
+			},
+		},
+	}
+
+	filtered, err := filterSpecByIncludePaths(spec, "/abs/root", []string{"./api"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Contains(t, filtered.Definitions, "api.ApiServer")
+	assert2.Contains(t, filtered.Definitions, "api.Backend", "transitive ref should be kept")
+	assert2.NotContains(t, filtered.Definitions, "internal.InternalSecret")
+
+	// Empty includePaths returns the input unchanged.
+	unchanged, err := filterSpecByIncludePaths(spec, "/abs/root", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert2.Equal(t, len(spec.Definitions), len(unchanged.Definitions))
+}
+
 func initTestCases(t *testing.T) []*TestCase {
 	cwd, err := os.Getwd()
 	if err != nil {

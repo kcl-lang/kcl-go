@@ -50,6 +50,12 @@ type GenContext struct {
 	SchemaListDocTmpl string
 	// Template is the doc render template
 	Template *template.Template
+	// IncludePaths is an optional list of directory paths (absolute or relative
+	// to Path) used to limit generation to a subset of the module. When empty,
+	// the entire module is generated. Each path is matched against the dotted
+	// package name on each schema's KclExtensions.XKclModelType.Import.Package
+	// field, plus any transitively referenced schemas.
+	IncludePaths []string
 }
 
 // GenOpts is the user interface defines the doc generate options
@@ -66,14 +72,22 @@ type GenOpts struct {
 	EscapeHtml bool
 	// TemplateDir defines the relative path from the package root to the template directory
 	TemplateDir string
+	// IncludePaths is an optional list of directory paths (absolute or
+	// relative to Path) used to limit generation to a subset of the module.
+	// When empty, the entire module is generated. Each path is matched
+	// against the dotted package name on each schema's
+	// KclExtensions.XKclModelType.Import.Package field, plus any transitively
+	// referenced schemas.
+	IncludePaths []string
 }
 
 type Format string
 
 const (
-	Html     Format = "html"
-	Markdown Format = "md"
-	OpenAPI  Format = "openapi"
+	Html       Format = "html"
+	Markdown   Format = "md"
+	OpenAPI    Format = "openapi"
+	JsonSchema Format = "json-schema"
 )
 
 // KclPackage contains package information of package metadata(such as name, version, description, ...) and exported models(such as schemas)
@@ -336,8 +350,31 @@ func (g *GenContext) renderPackage(spec *SwaggerV2Spec, parentDir string) error 
 		if err != nil {
 			return fmt.Errorf("failed to write file %s in %s: %v", docFileName, parentDir, err)
 		}
+	case string(JsonSchema):
+		// Emit one <Schema>.schema.json per top-level schema. We deliberately
+		// skip the OpenAPI 3.0 envelope (paths/components) and write raw JSON
+		// Schema documents so the output is consumable by JsonSchema tooling.
+		// Schemas are walked in stable (sorted) order to keep the file set
+		// reproducible across runs.
+		names := make([]string, 0, len(spec.Definitions))
+		for name := range spec.Definitions {
+			names = append(names, name)
+		}
+		sort.Strings(names)
+		for _, name := range names {
+			schema := spec.Definitions[name]
+			ref := ExportOpenAPITypeToSchema(schema)
+			data, err := ref.MarshalJSON()
+			if err != nil {
+				return fmt.Errorf("failed to marshal JSON Schema for %s: %s", name, err)
+			}
+			fileName := fmt.Sprintf("%s.schema.json", name)
+			if err := os.WriteFile(filepath.Join(parentDir, fileName), data, 0644); err != nil {
+				return fmt.Errorf("failed to write file %s in %s: %v", fileName, parentDir, err)
+			}
+		}
 	default:
-		return fmt.Errorf("invalid generate format. Allow values: %s", []Format{Markdown, Html, OpenAPI})
+		return fmt.Errorf("invalid generate format. Allow values: %s", []Format{Markdown, Html, OpenAPI, JsonSchema})
 	}
 	return nil
 }
@@ -352,8 +389,10 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 		g.Format = Html
 	case string(OpenAPI):
 		g.Format = OpenAPI
+	case string(JsonSchema):
+		g.Format = JsonSchema
 	default:
-		return nil, fmt.Errorf("invalid generate format. Allow values: %s", []Format{Markdown, Html, OpenAPI})
+		return nil, fmt.Errorf("invalid generate format. Allow values: %s", []Format{Markdown, Html, OpenAPI, JsonSchema})
 	}
 
 	// --- package path ---
@@ -366,6 +405,20 @@ func (opts *GenOpts) ValidateComplete() (*GenContext, error) {
 		return nil, fmt.Errorf("invalid file path(%s) to generate document from, path not exists: %s", opts.Path, err)
 	}
 	g.PackagePath = absPath
+
+	// --- include paths (post-filter on the rendered spec) ---
+	g.IncludePaths = append([]string(nil), opts.IncludePaths...)
+	for _, p := range g.IncludePaths {
+		var resolved string
+		if filepath.IsAbs(p) {
+			resolved = p
+		} else {
+			resolved = filepath.Join(g.PackagePath, p)
+		}
+		if _, err := os.Stat(resolved); err != nil {
+			return nil, fmt.Errorf("invalid include path %q (resolved to %s): %s", p, resolved, err)
+		}
+	}
 
 	// --- template directory ---
 	g.SchemaDocTmpl = schemaDocTmpl
@@ -473,6 +526,12 @@ func (g *GenContext) GenDoc() error {
 	spec, err := ExportSwaggerV2Spec(g.PackagePath)
 	if err != nil {
 		return err
+	}
+	if len(g.IncludePaths) > 0 {
+		spec, err = filterSpecByIncludePaths(spec, g.PackagePath, g.IncludePaths)
+		if err != nil {
+			return err
+		}
 	}
 	err = g.render(spec)
 	if err != nil {
