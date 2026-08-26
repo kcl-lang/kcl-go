@@ -567,7 +567,16 @@ func GetKclOpenAPIType(pkgPath string, from *kcl.KclType, nested bool) *KclOpenA
 		}
 		// resolve schema type
 		t.Type = Object
-		t.Description = from.SchemaDoc
+		// Prefer the per-attribute doc (from.Description, populated from the
+		// `Attributes` section in KCL) when available, falling back to the
+		// nested schema's own docstring. Previously this always used
+		// from.SchemaDoc, which silently dropped any description authors had
+		// written for schema-typed properties. Fixes kcl-lang/kcl-go#518.
+		if from.Description != "" {
+			t.Description = from.Description
+		} else {
+			t.Description = from.SchemaDoc
+		}
 		t.Properties = make(map[string]*KclOpenAPIType, len(from.Properties))
 		for name, fromProp := range from.Properties {
 			t.Properties[name] = GetKclOpenAPIType(pkgPath, fromProp, true)
