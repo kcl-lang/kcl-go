@@ -289,7 +289,7 @@ func TestFilterSpecByIncludePaths(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert2.Equal(t, len(spec.Definitions), len(unchanged.Definitions))
+	assert2.Same(t, spec, unchanged, "empty includePaths should return the input pointer")
 }
 
 func initTestCases(t *testing.T) []*TestCase {

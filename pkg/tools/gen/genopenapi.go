@@ -207,21 +207,21 @@ func filterSpecByIncludePaths(spec *SwaggerV2Spec, pkgPath string, includePaths 
 	}
 	// First pass: mark schemas whose package matches an include path.
 	keep := make(map[string]bool, len(spec.Definitions))
-	pending := make([]string, 0, len(spec.Definitions))
 	for id, schema := range spec.Definitions {
 		if schema == nil || schema.KclExtensions == nil || schema.KclExtensions.XKclModelType == nil {
+			continue
+		}
+		if schema.KclExtensions.XKclModelType.Import == nil {
 			continue
 		}
 		pkg := schema.KclExtensions.XKclModelType.Import.Package
 		if _, ok := includeSet[pkg]; ok {
 			keep[id] = true
-		} else {
-			pending = append(pending, id)
 		}
 	}
 	// Second pass: walk refs from kept schemas to also keep transitive
-	// dependencies. A schema may appear in pending if it was not initially
-	// kept; once a kept schema references it, it is promoted to keep.
+	// dependencies. A schema not initially kept is promoted to keep as
+	// soon as some kept schema references it.
 	for {
 		progressed := false
 		for id := range keep {
@@ -239,7 +239,6 @@ func filterSpecByIncludePaths(spec *SwaggerV2Spec, pkgPath string, includePaths 
 		if !progressed {
 			break
 		}
-		_ = pending
 	}
 	filtered := &SwaggerV2Spec{
 		Swagger:     spec.Swagger,
