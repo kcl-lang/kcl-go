@@ -176,6 +176,119 @@ func ExportSwaggerV2Spec(path string) (*SwaggerV2Spec, error) {
 	return spec, nil
 }
 
+// filterSpecByIncludePaths returns a copy of spec that keeps only schemas
+// whose dotted package name (KclExtensions.XKclModelType.Import.Package)
+// matches one of the includePaths, plus any schema transitively referenced
+// via $ref by a kept schema.
+//
+// Empty includePaths returns spec unchanged. Paths that are not absolute are
+// resolved against pkgPath. Matching uses dotted, slash-normalised package
+// names so callers can pass either "./api" or "api" or "api/v1".
+func filterSpecByIncludePaths(spec *SwaggerV2Spec, pkgPath string, includePaths []string) (*SwaggerV2Spec, error) {
+	if len(includePaths) == 0 {
+		return spec, nil
+	}
+	includeSet := make(map[string]struct{}, len(includePaths))
+	for _, p := range includePaths {
+		resolved := p
+		if !filepath.IsAbs(resolved) {
+			resolved = filepath.Join(pkgPath, resolved)
+		}
+		rel, err := filepath.Rel(pkgPath, resolved)
+		if err != nil {
+			return nil, fmt.Errorf("include path %q could not be resolved against %s: %s", p, pkgPath, err)
+		}
+		if rel == "." {
+			includeSet[""] = struct{}{}
+			continue
+		}
+		dotted := strings.Join(strings.Split(filepath.ToSlash(rel), "/"), ".")
+		includeSet[dotted] = struct{}{}
+	}
+	// First pass: mark schemas whose package matches an include path.
+	keep := make(map[string]bool, len(spec.Definitions))
+	for id, schema := range spec.Definitions {
+		if schema == nil || schema.KclExtensions == nil || schema.KclExtensions.XKclModelType == nil {
+			continue
+		}
+		if schema.KclExtensions.XKclModelType.Import == nil {
+			continue
+		}
+		pkg := schema.KclExtensions.XKclModelType.Import.Package
+		if _, ok := includeSet[pkg]; ok {
+			keep[id] = true
+		}
+	}
+	// Second pass: walk refs from kept schemas to also keep transitive
+	// dependencies. A schema not initially kept is promoted to keep as
+	// soon as some kept schema references it.
+	for {
+		progressed := false
+		for id := range keep {
+			schema := spec.Definitions[id]
+			if schema == nil {
+				continue
+			}
+			for _, ref := range collectSchemaRefs(schema) {
+				if !keep[ref] {
+					keep[ref] = true
+					progressed = true
+				}
+			}
+		}
+		if !progressed {
+			break
+		}
+	}
+	filtered := &SwaggerV2Spec{
+		Swagger:     spec.Swagger,
+		Info:        spec.Info,
+		Definitions: make(map[string]*KclOpenAPIType, len(keep)),
+		Paths:       spec.Paths,
+	}
+	for id := range keep {
+		filtered.Definitions[id] = spec.Definitions[id]
+	}
+	return filtered, nil
+}
+
+// collectSchemaRefs returns the schema IDs referenced from a single
+// KclOpenAPIType (via $ref on properties, items, additionalProperties, and
+// union items). It is used by filterSpecByIncludePaths to compute the
+// transitive closure of keep.
+func collectSchemaRefs(schema *KclOpenAPIType) []string {
+	if schema == nil {
+		return nil
+	}
+	seen := map[string]struct{}{}
+	var visit func(t *KclOpenAPIType)
+	visit = func(t *KclOpenAPIType) {
+		if t == nil {
+			return
+		}
+		if t.Ref != "" {
+			if id := Ref2SchemaId(t.Ref); id != "" {
+				seen[id] = struct{}{}
+			}
+		}
+		for _, p := range t.Properties {
+			visit(p)
+		}
+		if t.Items != nil {
+			visit(t.Items)
+		}
+		if t.AdditionalProperties != nil {
+			visit(t.AdditionalProperties)
+		}
+	}
+	visit(schema)
+	out := make([]string, 0, len(seen))
+	for id := range seen {
+		out = append(out, id)
+	}
+	return out
+}
+
 // SwaggerV2ToOpenAPIV3Spec converts swagger v2 spec to open api v3 spec.
 func SwaggerV2ToOpenAPIV3Spec(s *SwaggerV2Spec) *openapi3.T {
 	t := &openapi3.T{
