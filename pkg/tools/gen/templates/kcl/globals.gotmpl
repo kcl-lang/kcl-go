@@ -1,0 +1,6 @@
+{{- range .Globals }}
+{{- if .Description }}
+{{ indentLines .Description "" }}
+{{ end }}
+{{ formatName .Name }}{{- if .Type }}: {{ .Type }}{{ end }} = {{ formatValue .Value }}
+{{ end -}}

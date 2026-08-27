@@ -143,6 +143,10 @@ type kclFile struct {
 	Data []data
 	// [k =] [T]v configurations, k and T is optional.
 	Config []config
+	// Globals holds top-level `name = value` (or `name: T = value`) global
+	// variable declarations that the generator emits for Go `const` values
+	// it can evaluate statically.
+	Globals []global
 	// ExtraCode denotes the any kcl code that we want to append the end of file.
 	ExtraCode string
 }
@@ -226,6 +230,21 @@ type config struct {
 	IsUnion  bool
 	Data     []data
 	Comments []*ast.Comment
+}
+
+// global is a top-level KCL global variable declaration. It is the
+// counterpart of a Go `const` whose value can be statically evaluated.
+//
+// Type is empty when the original Go declaration was untyped (e.g.
+// `const Pi = 3.14`) so the generator can omit the annotation and let
+// KCL infer the type. When non-empty (e.g. `const Port int = 8080`) the
+// template emits `name: Type = value`.
+type global struct {
+	Name        string
+	Type        string
+	Value       any
+	Description string
+	Comments    []*ast.Comment
 }
 
 type typeInterface interface {

@@ -844,3 +844,43 @@ func TestGenKclFromGoStructOneFileDefaultsToTrue(t *testing.T) {
 	assert2.Contains(t, got, "schema TypesInner", "OneFile=true should inline external struct as a local schema")
 	assert2.NotContains(t, got, "import ", "OneFile=true should not emit any import statement")
 }
+
+// TestGenKclFromGoStructConsts covers the Go `const` → KCL global
+// variable emission path of genkcl_gostruct (kcl-lang/kcl-go#332
+// sub-task 3).
+//
+// The fixture mixes typed and untyped `const`s of every primitive kind
+// we support (bool, string, int, float). The expected output is a
+// golden file; the additional structural spot-checks below guard the
+// regression scenarios that are easy to miss with a single equality
+// assertion (e.g. dropping the `: int` annotation, or accidentally
+// rendering `Pi` as the rational `157/50`).
+func TestGenKclFromGoStructConsts(t *testing.T) {
+	input := "./testdata/gostruct/consts/main.go"
+	expect := readFileString(t, "./testdata/gostruct/consts/expect.k")
+
+	var buf bytes.Buffer
+	err := GenKcl(&buf, input, nil, &GenKclOptions{Mode: ModeGoStruct})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := string(bytes.ReplaceAll(buf.Bytes(), []byte("\r\n"), []byte("\n")))
+	assert2.Equal(t, expect, got)
+
+	// Typed consts must carry their type annotation, untyped consts must
+	// not — KCL infers the type from the literal value.
+	assert2.Contains(t, got, "Enabled: bool = True", "typed bool const must keep its annotation")
+	assert2.Contains(t, got, "HexPort: int = 8080", "typed int const with hex literal must be evaluated")
+	assert2.Contains(t, got, "MaxRetries: int = 5", "typed int const must keep its annotation")
+	assert2.NotContains(t, got, "Enabled = True", "typed bool const must NOT drop the : bool annotation")
+
+	// Untyped consts rely on KCL's literal-driven inference.
+	assert2.Contains(t, got, "Name = \"kcl\"", "untyped string const must be emitted as a string literal")
+	assert2.Contains(t, got, "Pi = 3.14", "untyped float const must render via float64 approximation, not as 157/50")
+	assert2.NotContains(t, got, "Pi = \"157/50\"", "Pi must not be emitted as a Go rational ExactString")
+
+	// Multi-name ValueSpecs must produce one global per Name, each with
+	// its own constant expression.
+	assert2.Contains(t, got, "TwoA = 10")
+	assert2.Contains(t, got, "TwoB = 20")
+}
