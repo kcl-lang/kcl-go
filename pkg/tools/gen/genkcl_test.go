@@ -745,3 +745,62 @@ func readFileString(t testing.TB, p string) (content string) {
 	data = bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
 	return string(data)
 }
+
+// TestGenKclFromGoStructCrossPkg covers the cross-package Go import
+// emission path of genkcl_gostruct (kcl-lang/kcl-go#332 sub-task 2).
+//
+// The fixture contains two Go packages: `cross_pkg` (the input) and
+// `cross_pkg/types` (an external dependency). With OneFile=false the
+// generator is expected to:
+//   - emit an `import ... as <Alias>` line for the external package,
+//   - reference the external struct via its alias-qualified KCL name
+//     (e.g. `Types.Inner`),
+//   - skip emitting schemas for structs from the external package
+//     itself (they live behind the import, not in the generated file).
+func TestGenKclFromGoStructCrossPkg(t *testing.T) {
+	input := "./testdata/gostruct/cross_pkg/main.go"
+	expect := readFileString(t, "./testdata/gostruct/cross_pkg/expect.k")
+
+	oneFile := false
+	var buf bytes.Buffer
+	err := GenKcl(&buf, input, nil, &GenKclOptions{
+		Mode:    ModeGoStruct,
+		OneFile: &oneFile,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := string(bytes.ReplaceAll(buf.Bytes(), []byte("\r\n"), []byte("\n")))
+	assert2.Equal(t, expect, got)
+
+	// Spot-check the import line so a regression that flips `oneFile`
+	// back to the inlining behaviour is caught even if the golden file
+	// is somehow regenerated to match.
+	assert2.Contains(t, got, "import ", "expected an import statement in the generated KCL")
+	assert2.Contains(t, got, " as Types", "expected the external package to be aliased as `Types`")
+	assert2.Contains(t, got, "Types.Inner", "expected cross-package struct reference to be alias-qualified")
+
+	// The external package's own struct must NOT appear as a top-level
+	// schema in the generated file (otherwise we silently regressed to
+	// the OneFile=true inlining behaviour).
+	assert2.NotContains(t, got, "schema Inner", "external struct should not be emitted as a local schema when OneFile is false")
+}
+
+// TestGenKclFromGoStructOneFileDefaultsToTrue guards the public contract:
+// when callers omit OneFile we keep the historical inlining behaviour so
+// existing users are not silently broken.
+func TestGenKclFromGoStructOneFileDefaultsToTrue(t *testing.T) {
+	var buf bytes.Buffer
+	err := GenKcl(&buf, "./testdata/gostruct/cross_pkg/main.go", nil, &GenKclOptions{
+		Mode: ModeGoStruct,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := buf.String()
+	// With the default OneFile=true the external struct is inlined as a
+	// local schema named after the package + type (`TypesInner`), and no
+	// import statement is emitted.
+	assert2.Contains(t, got, "schema TypesInner", "OneFile=true should inline external struct as a local schema")
+	assert2.NotContains(t, got, "import ", "OneFile=true should not emit any import statement")
+}

@@ -13,6 +13,23 @@ type GenKclOptions struct {
 	Mode                  Mode
 	CastingOption         CastingOption
 	UseIntegersForNumbers bool
+	// OneFile controls how cross-package Go types are handled when Mode is
+	// ModeGoStruct. A nil pointer means "use the default behaviour", which
+	// is to inline every cross-package Go struct into a single
+	// self-contained KCL file (no `import` statements are emitted).
+	//
+	//   - OneFile == nil (default): every cross-package Go struct is
+	//     inlined into the generated KCL file. This matches the historical
+	//     behaviour and is the safest default for callers that only need
+	//     a single self-contained .k file.
+	//   - OneFile != nil && *OneFile == true: same as the default; an
+	//     explicit "everything in one file" mode.
+	//   - OneFile != nil && *OneFile == false: each cross-package Go
+	//     struct is referenced by its alias-qualified KCL type name
+	//     (e.g. `Bar.Outer`), and a matching `import` statement is
+	//     emitted at the top of the file for every external Go package
+	//     that was referenced.
+	OneFile *bool
 }
 
 // Mode is the mode of kcl schema code generation.
