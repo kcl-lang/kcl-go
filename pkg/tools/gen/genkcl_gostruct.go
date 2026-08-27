@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"go/ast"
+	"go/constant"
 	"go/token"
 	"go/types"
 	"io"
@@ -42,6 +43,10 @@ type genKclTypeContext struct {
 	mainPkgPath string
 	// Go structs in all package path
 	goStructs map[*types.TypeName]goStruct
+	// goConsts holds every statically-evaluable Go `const` declaration
+	// from the main Go package, keyed by `<pkg_path>.<name>` so it
+	// doesn't collide with struct spec docs which use the same key shape.
+	goConsts map[string]global
 	// All pkg path -> package mapping
 	packages map[string]*packages.Package
 	// Semantic type -> AST struct type mapping
@@ -67,6 +72,7 @@ func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ any
 			paths:     []string{},
 		},
 		goStructs:     map[*types.TypeName]goStruct{},
+		goConsts:      map[string]global{},
 		packages:      map[string]*packages.Package{},
 		tyMapping:     map[types.Type]*ast.StructType{},
 		tySpecMapping: map[string]string{},
@@ -94,6 +100,15 @@ func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ any
 				PkgPath: imp,
 				Alias:   aliasForGoPkg(imp),
 			})
+		}
+	}
+	// Emit top-level KCL global variables for every Go `const` we
+	// recorded from the main package. Consts are emitted in both OneFile
+	// modes because they are independent declarations, not cross-package
+	// references.
+	if len(ctx.goConsts) > 0 {
+		for _, name := range getSortedKeys(ctx.goConsts) {
+			kclSch.Globals = append(kclSch.Globals, ctx.goConsts[name])
 		}
 	}
 	// generate kcl schema code
@@ -376,6 +391,14 @@ func (ctx *genKclTypeContext) fetchStructs(pkgPath string) error {
 			return err
 		}
 	}
+	// Collect every statically-evaluable Go `const` from the main package
+	// so we can emit it as a KCL top-level global variable.
+	for _, pkg := range pkgs {
+		if pkg.PkgPath == ctx.mainPkgPath {
+			ctx.recordConstInfo(pkg)
+			break
+		}
+	}
 	return nil
 }
 
@@ -420,6 +443,142 @@ func (ctx *genKclTypeContext) getStructDoc(pkgName, structName string) string {
 		return spec
 	}
 	return ""
+}
+
+// recordConstInfo walks the AST of the supplied Go package and records
+// every statically-evaluable `const` declaration as a KCL global
+// variable in `ctx.goConsts`. Declarations that depend on runtime values
+// or that the type checker could not constant-fold are silently skipped
+// so the generator never produces invalid KCL output.
+//
+// Implicit repetitions inside an iota block (e.g. `B` and `C` in
+//
+//	const (
+//	    A = iota
+//	    B
+//	    C
+//	)
+//
+// ) are not represented in Go's AST, so they are skipped here. Callers
+// who want each step emitted must spell out the iota expression
+// explicitly, e.g. `B = iota`.
+func (ctx *genKclTypeContext) recordConstInfo(pkg *packages.Package) {
+	if pkg.TypesInfo == nil {
+		return
+	}
+	for _, f := range pkg.Syntax {
+		for _, decl := range f.Decls {
+			gd, ok := decl.(*ast.GenDecl)
+			if !ok || gd.Tok != token.CONST {
+				continue
+			}
+			for _, spec := range gd.Specs {
+				vs, ok := spec.(*ast.ValueSpec)
+				if !ok {
+					continue
+				}
+				// When a single ValueSpec carries multiple Names
+				// (e.g. `const A, B = 1, 2`) we require each Name to
+				// have a matching value expression. Names without one
+				// are skipped — see the doc comment above.
+				for i, name := range vs.Names {
+					if name == nil || name.Name == "_" {
+						continue
+					}
+					if i >= len(vs.Values) {
+						continue
+					}
+					valueExpr := vs.Values[i]
+					if valueExpr == nil {
+						continue
+					}
+					tv, ok := pkg.TypesInfo.Types[valueExpr]
+					if !ok || tv.Value == nil {
+						continue
+					}
+					doc := ""
+					if vs.Doc != nil {
+						doc = vs.Doc.Text()
+					} else if gd.Doc != nil {
+						doc = gd.Doc.Text()
+					}
+					ctx.goConsts[pkg.PkgPath+"."+name.Name] = global{
+						Name:        name.Name,
+						Type:        goTypeToKclTypeString(tv.Type),
+						Value:       goConstToKclValue(tv.Value),
+						Description: doc,
+					}
+				}
+			}
+		}
+	}
+}
+
+// goTypeToKclTypeString maps a Go type to the KCL type annotation we
+// want to emit for a `const`. Returns the empty string when the type is
+// untyped (so the annotation can be omitted) or when the underlying
+// kind is not one we know how to render in KCL.
+func goTypeToKclTypeString(t types.Type) string {
+	if t == nil {
+		return ""
+	}
+	basic, ok := t.Underlying().(*types.Basic)
+	if !ok {
+		return ""
+	}
+	switch basic.Kind() {
+	case types.UntypedBool, types.UntypedInt, types.UntypedRune,
+		types.UntypedFloat, types.UntypedComplex, types.UntypedString,
+		types.UntypedNil:
+		return ""
+	case types.Bool:
+		return "bool"
+	case types.String:
+		return "str"
+	case types.Int, types.Int8, types.Int16, types.Int32, types.Int64,
+		types.Uint, types.Uint8, types.Uint16, types.Uint32, types.Uint64,
+		types.Uintptr:
+		return "int"
+	case types.Float32, types.Float64:
+		return "float"
+	}
+	return ""
+}
+
+// goConstToKclValue evaluates a `go/constant` value into the native Go
+// scalar that KCL's value formatter knows how to render. Returns nil
+// when the kind is not representable (e.g. complex numbers); callers
+// must check for nil before emitting.
+//
+// For floats the boolean returned by `Float64Val` is deliberately
+// ignored: a Go literal such as `3.14` is stored internally as the
+// exact rational `157/50` and `Float64Val` reports it as
+// "not representable" because the nearest float64 is not bit-identical
+// to that rational. We still want the familiar `3.14` rendering, so we
+// always emit the float64 approximation the user expects.
+func goConstToKclValue(c constant.Value) any {
+	if c == nil {
+		return nil
+	}
+	switch c.Kind() {
+	case constant.Bool:
+		return constant.BoolVal(c)
+	case constant.String:
+		return constant.StringVal(c)
+	case constant.Int:
+		if i, ok := constant.Int64Val(c); ok {
+			return i
+		}
+		// Out of int64 range — fall back to the literal source so the
+		// emitted KCL still preserves the original value.
+		return c.ExactString()
+	case constant.Float:
+		if f, _ := constant.Float64Val(c); f != 0 || c.Kind() == constant.Float {
+			return f
+		}
+		return c.ExactString()
+	}
+	return nil
 }
 
 func (ctx *genKclTypeContext) getStructFieldsAndDocs(typ types.Type) ([]field, map[string]string) {

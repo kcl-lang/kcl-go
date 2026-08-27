@@ -18,6 +18,8 @@ var (
 	dataTmpl string
 	//go:embed templates/kcl/document.gotmpl
 	documentTmpl string
+	//go:embed templates/kcl/globals.gotmpl
+	globalsTmpl string
 	//go:embed templates/kcl/header.gotmpl
 	headerTmpl string
 	//go:embed templates/kcl/validator.gotmpl
@@ -75,6 +77,7 @@ func init() {
 	tmpl = addTemplate(tmpl, "config", configTmpl)
 	tmpl = addTemplate(tmpl, "data", dataTmpl)
 	tmpl = addTemplate(tmpl, "document", documentTmpl)
+	tmpl = addTemplate(tmpl, "globals", globalsTmpl)
 	tmpl = addTemplate(tmpl, "header", headerTmpl)
 	tmpl = addTemplate(tmpl, "validator", validatorTmpl)
 	tmpl = addTemplate(tmpl, "schema", schemaTmpl)
