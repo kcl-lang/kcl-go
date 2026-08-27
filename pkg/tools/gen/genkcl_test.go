@@ -217,6 +217,12 @@ func TestGenKclFromGoStruct(t *testing.T) {
 		if !caseFile.IsDir() {
 			continue
 		}
+		// Only pick up cases following the input.go/expect.k convention.
+		// Fixtures with a different layout (e.g. cross_pkg, which needs
+		// non-default options) have their own dedicated tests.
+		if _, err := os.Stat(filepath.Join(casesPath, caseFile.Name(), "input.go")); err != nil {
+			continue
+		}
 		caseFile := caseFile // capture for closure
 		t.Run(caseFile.Name(), func(t *testing.T) {
 			input := "./" + filepath.Join(casesPath, caseFile.Name())
