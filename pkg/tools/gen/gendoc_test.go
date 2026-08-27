@@ -107,6 +107,52 @@ func TestDocGenerate(t *testing.T) {
 	}
 }
 
+// TestDocGenerateAttributeDescription is a regression test for
+// kcl-lang/kcl-go#518: schema-typed attributes must keep the description
+// authored in the `Attributes` section of their owning schema rather than
+// being overwritten with the nested schema's own docstring.
+//
+// The fixture has a Server schema whose `containers: [Container]` field
+// carries an explicit per-attribute description. The expected main.md asserts
+// that description appears in the table's description column. Without the
+// fix in GetKclOpenAPIType's typSchema branch, the cell would be empty.
+func TestDocGenerateAttributeDescription(t *testing.T) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal("get work directory failed")
+	}
+	packageDir := filepath.Join(cwd, "testdata", "doc", "desc_attr")
+	tcase := &TestCase{
+		PackagePath: packageDir,
+		ExpectMd:    filepath.Join(packageDir, "md"),
+		ExpectHtml:  filepath.Join(packageDir, "html"),
+		GotMd:       filepath.Join(packageDir, "md_got"),
+		GotHtml:     filepath.Join(packageDir, "html_got"),
+	}
+	if err := os.MkdirAll(tcase.GotMd, 0755); err != nil {
+		t.Fatal(err)
+	}
+	genOpts := GenOpts{
+		Path:             tcase.PackagePath,
+		Format:           string(Markdown),
+		Target:           tcase.GotMd,
+		IgnoreDeprecated: false,
+		EscapeHtml:       true,
+		TemplateDir:      tcase.TmplPath,
+	}
+	genContext, err := genOpts.ValidateComplete()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := genContext.GenDoc(); err != nil {
+		t.Fatalf("generate failed: %s", err)
+	}
+	if err := CompareDir(tcase.ExpectMd, filepath.Join(tcase.GotMd, "docs")); err != nil {
+		t.Fatal(err)
+	}
+	os.RemoveAll(tcase.GotMd)
+}
+
 func TestPopulateReferencedBy(t *testing.T) {
 	schemaA := &KclOpenAPIType{
 		Type:        "object",
