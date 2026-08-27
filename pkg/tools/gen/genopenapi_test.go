@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	assert2 "github.com/stretchr/testify/assert"
+	kcl "kcl-lang.io/kcl-go"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
 func TestExportOpenAPIV3Spec(t *testing.T) {
@@ -26,6 +28,47 @@ func TestExportOpenAPIV3Spec(t *testing.T) {
 
 	expect := `{"default":"","description":"AppConfiguration is a developer-centric definition that describes how to run an Application. This application model builds upon a decade of experience at AntGroup running super large scale internal developer platform, combined with best-of-breed ideas and practices from the community.","example":{"Default example":{"value":"# Instantiate an App with a long-running service and its image is \"nginx:v1\"\n\nimport models.schema.v1 as ac\nimport models.schema.v1.workload as wl\nimport models.schema.v1.workload.container as c\n\nappConfiguration = ac.AppConfiguration {\n    workload: wl.Service {\n        containers: {\n            \"nginx\": c.Container {\n                image: \"nginx:v1\"\n            }\n        }\n    }\n}"}},"properties":{"annotations":{"additionalProperties":{"default":"","type":"string"},"default":"","description":"Annotations are key/value pairs that attach arbitrary non-identifying metadata to resources.","type":"object","x-kcl-decorators":[{"name":"info","keywords":{"hidden":"True"}}],"x-kcl-dict-key-type":{"type":"string"}},"database":{"$ref":"#/definitions/models.schema.v1.accessories.Database"},"labels":{"additionalProperties":{"default":"","type":"string"},"default":"","description":"Labels can be used to attach arbitrary metadata as key-value pairs to resources.","type":"object","x-kcl-decorators":[{"name":"info","keywords":{"hidden":"True"}}],"x-kcl-dict-key-type":{"type":"string"}},"monitoring":{"$ref":"#/definitions/models.schema.v1.monitoring.Prometheus"},"opsRule":{"$ref":"#/definitions/models.schema.v1.trait.OpsRule"},"workload":{"default":"","description":"Workload defines how to run your application code. Currently supported workload profile\nincludes Service and Job.","type":"object","x-kcl-union-types":[{"description":"Service is a kind of workload profile that describes how to run your application code. This is typically used for long-running web applications that should \"never\" go down, and handle short-lived latency-sensitive web requests, or events.","ref":"#/definitions/models.schema.v1.workload.Service","baseSchema":{"description":"WorkloadBase defines set of attributes shared by different workload profile, e.g Service and Job. You can inherit this Schema to reuse these common attributes.","ref":"#/definitions/models.schema.v1.workload.WorkloadBase","referencedBy":["models.schema.v1.workload.Service"]}},{"description":"Job is a kind of workload profile that describes how to run your application code. This is typically used for tasks that take from a few seconds to a few days to complete.","ref":"#/definitions/models.schema.v1.workload.Job","baseSchema":{"description":"WorkloadBase defines set of attributes shared by different workload profile, e.g Service and Job. You can inherit this Schema to reuse these common attributes.","ref":"#/definitions/models.schema.v1.workload.WorkloadBase","referencedBy":["models.schema.v1.workload.Job"]}}]}},"required":["workload"],"type":"object","x-kcl-type":{"type":"AppConfiguration","import":{"package":"models.schema.v1","alias":"app_configuration.k"}}}`
 	assert2.Equal(t, expect, got)
+}
+
+// TestGetKclOpenAPITypeSchemaDescription is a direct unit test for the
+// regression fix in kcl-lang/kcl-go#518: when GetKclOpenAPIType is called for a
+// schema-typed attribute whose parent supplied an explicit description (the
+// `Attributes` section of the owning schema), that per-attribute description
+// must win over the nested schema's own docstring (`SchemaDoc`).
+//
+// The fixture-based test TestDocGenerateAttributeDescription does not actually
+// exercise this branch: it only inspects the parent's attribute table, where
+// the per-attribute description was already preserved by an earlier step. So
+// this test constructs a KclType pair by hand and asserts on the resolved
+// KclOpenAPIType directly.
+func TestGetKclOpenAPITypeSchemaDescription(t *testing.T) {
+	from := &gpyrpc.KclType{
+		Type:        "schema",
+		SchemaName:  "Container",
+		SchemaDoc:   "Container is the nested schema docstring.",
+		Description: "Container description authored in the parent's Attributes section.",
+		Filename:    "container.k",
+		PkgPath:     "api",
+		Properties:  map[string]*kcl.KclType{},
+	}
+
+	got := GetKclOpenAPIType("api", from, false)
+	if got == nil {
+		t.Fatal("GetKclOpenAPIType returned nil")
+	}
+	assert2.Equal(t,
+		from.Description,
+		got.Description,
+		"per-attribute description must win over the nested schema's docstring")
+
+	// Fallback: when the parent attribute did not provide a description, the
+	// nested schema's own docstring should be used.
+	from.Description = ""
+	got = GetKclOpenAPIType("api", from, false)
+	assert2.Equal(t,
+		from.SchemaDoc,
+		got.Description,
+		"empty per-attribute description should fall back to SchemaDoc")
 }
 
 func TestExportSwaggerV2Spec(t *testing.T) {
