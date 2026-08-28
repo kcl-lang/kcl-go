@@ -9,6 +9,7 @@ import (
 	"go/types"
 	"io"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -55,6 +56,22 @@ type genKclTypeContext struct {
 	tySpecMapping map[string]string
 	// Generate all go structs into one KCL file.
 	oneFile bool
+	// moduleRoot, when non-empty, is the Go module path that bounds
+	// `GenKclModule`. External Go packages whose path is outside
+	// `moduleRoot` are degraded to `any` rather than emitted as `import`
+	// statements. An empty value preserves the historical
+	// `GenKcl(OneFile=false)` behaviour of emitting an `import` and
+	// letting the caller wire the alias up to a real KCL module.
+	moduleRoot string
+	// importAliases maps the sanitised dotted Go path to the KCL
+	// import alias we materialise for it. When two distinct Go paths
+	// sanitise to the same preferred alias (e.g. `internal/a/types`
+	// and `internal/b/types` both want `Types`), the second caller
+	// receives `Types2`, the third `Types3`, etc. The map is populated
+	// lazily by `aliasFor`; consult it whenever you need the alias
+	// for a path so the alias-qualified type names and the `import ...
+	// as` lines stay in sync.
+	importAliases map[string]string
 }
 
 func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ any) error {
@@ -77,11 +94,24 @@ func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ any
 		tyMapping:     map[types.Type]*ast.StructType{},
 		tySpecMapping: map[string]string{},
 		oneFile:       oneFile,
+		importAliases: map[string]string{},
 	}
 	results, err := ctx.convertSchemaFromGoPackage()
 	if err != nil {
 		return err
 	}
+	kclSch, err := ctx.buildKclFile(results)
+	if err != nil {
+		return err
+	}
+	return k.genKcl(w, kclSch)
+}
+
+// buildKclFile assembles the in-memory representation of a single
+// generated `.k` file from the populated context. It is shared between
+// the single-package GenKcl path and the multi-file GenKclModule path
+// so both emit identical imports/globals/schemas wiring.
+func (ctx *genKclTypeContext) buildKclFile(results []convertResult) (kclFile, error) {
 	kclSch := kclFile{
 		Schemas: []schema{},
 	}
@@ -98,7 +128,7 @@ func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ any
 		for _, imp := range getSortedKeys(ctx.imports) {
 			kclSch.Imports = append(kclSch.Imports, kImport{
 				PkgPath: imp,
-				Alias:   aliasForGoPkg(imp),
+				Alias:   ctx.aliasFor(imp),
 			})
 		}
 	}
@@ -111,8 +141,7 @@ func (k *kclGenerator) genSchemaFromGoStruct(w io.Writer, filename string, _ any
 			kclSch.Globals = append(kclSch.Globals, ctx.goConsts[name])
 		}
 	}
-	// generate kcl schema code
-	return k.genKcl(w, kclSch)
+	return kclSch, nil
 }
 
 func (ctx *genKclTypeContext) typeName(pkgPath, defName, fieldName string, typ types.Type) typeInterface {
@@ -169,6 +198,12 @@ func (ctx *genKclTypeContext) typeName(pkgPath, defName, fieldName string, typ t
 						if ctx.oneFile {
 							ty := ctx.typeName(pkgPath, strcase.ToCamel(pkg.Name()), obj.Name(), ty.Underlying())
 							return ty
+						} else if ctx.moduleRoot != "" && !strings.HasPrefix(pkgPath, ctx.moduleRoot) {
+							// Module mode: external (out-of-module) Go
+							// packages are degraded to `any` and no `import`
+							// is emitted, because the generated KCL module
+							// cannot resolve them.
+							return typePrimitive(typAny)
 						} else {
 							// Emit an `import` for this external Go package
 							// and reference the type via its alias-qualified
@@ -178,7 +213,7 @@ func (ctx *genKclTypeContext) typeName(pkgPath, defName, fieldName string, typ t
 							imp := goPkgToKclImport(pkgPath)
 							ctx.imports[imp] = struct{}{}
 							return typeCustom{
-								Name: aliasForGoPkg(imp) + "." + obj.Name(),
+								Name: ctx.aliasFor(imp) + "." + obj.Name(),
 							}
 						}
 					} else {
@@ -277,8 +312,32 @@ func (ctx *genKclTypeContext) convertSchemaFromGoPackage() ([]convertResult, err
 	if err != nil {
 		return nil, err
 	}
-	var results []convertResult
+	return ctx.convertFromGoStructs(), nil
+}
+
+// convertFromGoStructs walks the already-populated ctx.goStructs table
+// (in deterministic pkgPath+name order) and translates each Go struct
+// into a KCL schema in ctx.resultMap. It assumes ctx.goStructs and
+// ctx.packages are populated; callers are responsible for that. This
+// split lets GenKclModule reuse the conversion logic without the
+// double-load that fetchStructs would otherwise introduce.
+func (ctx *genKclTypeContext) convertFromGoStructs() []convertResult {
+	// Sort the structs by (pkgPath, name) so iteration is deterministic.
+	// This matters because ctx.aliasFor memoises alias assignment in
+	// the order paths are encountered; a stable traversal ensures the
+	// same input always produces the same output.
+	sortedStructs := make([]goStruct, 0, len(ctx.goStructs))
 	for _, s := range ctx.goStructs {
+		sortedStructs = append(sortedStructs, s)
+	}
+	sort.Slice(sortedStructs, func(i, j int) bool {
+		if sortedStructs[i].pkgPath != sortedStructs[j].pkgPath {
+			return sortedStructs[i].pkgPath < sortedStructs[j].pkgPath
+		}
+		return sortedStructs[i].name < sortedStructs[j].name
+	})
+	var results []convertResult
+	for _, s := range sortedStructs {
 		name := s.name
 		if _, ok := ctx.resultMap[name]; !ok {
 			result := convertResult{IsSchema: true}
@@ -313,7 +372,7 @@ func (ctx *genKclTypeContext) convertSchemaFromGoPackage() ([]convertResult, err
 			results = append(results, ctx.resultMap[key])
 		}
 	}
-	return results, nil
+	return results
 }
 
 func (ctx *genKclTypeContext) recordTypeInfo(pkg *packages.Package) {
@@ -353,17 +412,20 @@ func (ctx *genKclTypeContext) addPackage(p *packages.Package) {
 	}
 }
 
-func (ctx *genKclTypeContext) fetchStructs(pkgPath string) error {
+// loadGoPackages wraps the standard packages.Load call shared by the
+// single-package and module entry points. The returned slice is ordered
+// with the caller-supplied package first when present, followed by its
+// imports in BFS order (the order returned by packages.Load).
+func loadGoPackages(pattern string) ([]*packages.Package, error) {
 	cfg := &packages.Config{
 		Mode: packages.NeedName | packages.NeedCompiledGoFiles |
 			packages.NeedImports | packages.NeedDeps | packages.NeedTypes |
 			packages.NeedSyntax | packages.NeedTypesInfo | packages.NeedModule,
 	}
-	pkgs, err := packages.Load(cfg, pkgPath)
+	pkgs, err := packages.Load(cfg, pattern)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	// Check Go module loader errors
 	var errs []string
 	for _, pkg := range pkgs {
 		if len(pkg.Errors) > 0 {
@@ -373,7 +435,37 @@ func (ctx *genKclTypeContext) fetchStructs(pkgPath string) error {
 		}
 	}
 	if len(errs) > 0 {
-		return fmt.Errorf("could not load Go packages:\n%s", strings.Join(errs, "\n"))
+		return nil, fmt.Errorf("could not load Go packages:\n%s", strings.Join(errs, "\n"))
+	}
+	return pkgs, nil
+}
+
+// populateFrom records the supplied package as the ctx's `mainPkgPath`
+// and pulls in every dependency that its reachable type graph needs.
+// `addPackage` recurses `p.Imports` so type lookups resolve without us
+// re-loading the dependency tree, `fetchStructsFromPkg` populates the
+// struct table (filtered by oneFile/mainPkgPath), and `recordConstInfo`
+// captures any Go `const`s declared in the main package.
+func (ctx *genKclTypeContext) populateFrom(p *packages.Package) {
+	if ctx.mainPkgPath == "" {
+		ctx.mainPkgPath = p.PkgPath
+	}
+	ctx.addPackage(p)
+	if err := ctx.fetchStructsFromPkg(p); err != nil {
+		// fetchStructsFromPkg currently returns nil or panics; the
+		// error parameter is kept for future expansion without breaking
+		// the populateFrom signature.
+		_ = err
+	}
+	if p.PkgPath == ctx.mainPkgPath {
+		ctx.recordConstInfo(p)
+	}
+}
+
+func (ctx *genKclTypeContext) fetchStructs(pkgPath string) error {
+	pkgs, err := loadGoPackages(pkgPath)
+	if err != nil {
+		return err
 	}
 	// The first package is the one containing the input file; everything
 	// else loaded by packages.Load is an imported dependency. We only want
@@ -384,20 +476,7 @@ func (ctx *genKclTypeContext) fetchStructs(pkgPath string) error {
 		ctx.mainPkgPath = pkgs[0].PkgPath
 	}
 	for _, p := range pkgs {
-		ctx.addPackage(p)
-	}
-	for _, pkg := range pkgs {
-		if err := ctx.fetchStructsFromPkg(pkg); err != nil {
-			return err
-		}
-	}
-	// Collect every statically-evaluable Go `const` from the main package
-	// so we can emit it as a KCL top-level global variable.
-	for _, pkg := range pkgs {
-		if pkg.PkgPath == ctx.mainPkgPath {
-			ctx.recordConstInfo(pkg)
-			break
-		}
+		ctx.populateFrom(p)
 	}
 	return nil
 }
@@ -781,22 +860,73 @@ func isLitType(fieldType string) (ok bool, basicTyp, litValue string) {
 	return
 }
 
+// kclPathIdentRegexp matches a valid KCL identifier: an ASCII letter or
+// underscore followed by zero or more ASCII letters, digits, or underscores.
+// This matches the subset of XID_Start + XID_Continue that rustc_lexer
+// accepts in KCL identifier positions (see
+// crates/parser/src/parser/stmt.rs:436 → parse_identifier).
+var kclPathIdentRegexp = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
+
+// sanitizeKclPathSegment rewrites a single Go package-path segment so it
+// is a legal KCL identifier. Concretely:
+//
+//   - every rune outside [A-Za-z0-9_] is mapped to '_',
+//   - a leading digit (Go segments such as "99designs") or KCL keyword
+//     result is prefixed with "_" so the segment is a syntactically
+//     valid KCL identifier.
+//
+// The function always returns a non-empty string; callers may use the
+// returned string as both a KCL import-path segment and (after strcase
+// conversion) as a candidate KCL import alias.
+func sanitizeKclPathSegment(seg string) string {
+	if seg == "" {
+		return "_"
+	}
+	var b strings.Builder
+	b.Grow(len(seg))
+	for _, r := range seg {
+		switch {
+		case r >= 'A' && r <= 'Z',
+			r >= 'a' && r <= 'z',
+			r >= '0' && r <= '9',
+			r == '_':
+			b.WriteRune(r)
+		default:
+			b.WriteByte('_')
+		}
+	}
+	out := b.String()
+	if !kclPathIdentRegexp.MatchString(out) || isKclKeyword(out) {
+		return "_" + out
+	}
+	return out
+}
+
 // goPkgToKclImport converts a Go package import path (e.g. `github.com/foo/bar`
 // or a local module-relative path like `pkg/tools/gen/testdata/gostruct/external`)
-// into the dotted form used in KCL `import` statements. We keep the full
-// dotted path rather than just the last segment so that two Go packages that
-// happen to share a final path component remain distinguishable in the
-// generated KCL.
+// into the dotted form used in KCL `import` statements. Every segment is
+// run through sanitizeKclPathSegment so hyphens, dots, leading digits, and
+// other characters that are not legal in a KCL identifier are mapped to
+// '_' (with a leading '_' prefix added when the sanitised segment would
+// otherwise start with a digit or collide with a KCL keyword).
+//
+// We keep the full dotted path rather than just the last segment so that
+// two Go packages that happen to share a final path component remain
+// distinguishable in the generated KCL.
 func goPkgToKclImport(goPkgPath string) string {
-	// Convert path separators to the dotted form KCL imports use.
-	return strings.ReplaceAll(goPkgPath, "/", ".")
+	parts := strings.Split(goPkgPath, "/")
+	for i, p := range parts {
+		parts[i] = sanitizeKclPathSegment(p)
+	}
+	return strings.Join(parts, ".")
 }
 
 // aliasForGoPkg derives a deterministic KCL import alias from a Go package
 // path. We use the last path component (capitalised) as the alias; the
 // surrounding code qualifies cross-package types with this alias, e.g.
-// `Bar.Outer`. If the last segment starts with a digit or is empty we fall
-// back to a stable placeholder so the generated file still parses.
+// `Bar.Outer`. If the sanitised result is empty, starts with a digit, or
+// is a KCL keyword we fall back to `Imported_<sanitised segment>` so the
+// generated file still parses.
 func aliasForGoPkg(goPkgPath string) string {
 	// Accept either the original Go path (with `/`) or the dotted form
 	// produced by goPkgToKclImport so callers can invoke this with
@@ -808,11 +938,53 @@ func aliasForGoPkg(goPkgPath string) string {
 	if seg == "" {
 		return "Imported"
 	}
-	r := []rune(seg)
-	if r[0] >= '0' && r[0] <= '9' {
+	seg = sanitizeKclPathSegment(seg)
+	// Validate the POST-ToCamel result. Sanitize already added a leading
+	// '_' for digit- and keyword-input segments, but strcase.ToCamel can
+	// still produce an invalid identifier (e.g. `_99designs` → `99Designs`,
+	// which starts with a digit) or collide with a KCL keyword (e.g.
+	// `true` → `_true` → `True`). On either failure we fall back to a
+	// stable, non-colliding alias so the generated file always parses.
+	alias := strcase.ToCamel(seg)
+	if alias == "" {
 		return "Imported_" + seg
 	}
-	return strcase.ToCamel(seg)
+	r := []rune(alias)
+	if r[0] >= '0' && r[0] <= '9' {
+		return "Imported_" + alias
+	}
+	if isKclKeyword(alias) {
+		return "Imported_" + alias
+	}
+	return alias
+}
+
+// aliasFor returns the memoised KCL import alias for the supplied
+// sanitised dotted Go path. The first caller for a given path receives
+// the alias produced by `aliasForGoPkg`; subsequent callers with the
+// same preferred alias (typically from a *different* Go path that
+// shares a final segment such as `internal/a/types` vs
+// `internal/b/types`) get `Types2`, `Types3`, … so the KCL `import`
+// lines stay unambiguous and the alias-qualified type names can't
+// silently shadow one another.
+func (ctx *genKclTypeContext) aliasFor(dottedPath string) string {
+	if existing, ok := ctx.importAliases[dottedPath]; ok {
+		return existing
+	}
+	preferred := aliasForGoPkg(dottedPath)
+	taken := make(map[string]struct{}, len(ctx.importAliases))
+	for _, a := range ctx.importAliases {
+		taken[a] = struct{}{}
+	}
+	candidate := preferred
+	for n := 2; ; n++ {
+		if _, takenAlready := taken[candidate]; !takenAlready {
+			break
+		}
+		candidate = preferred + strconv.Itoa(n)
+	}
+	ctx.importAliases[dottedPath] = candidate
+	return candidate
 }
 
 func lookupTag(tag, key string) (value string, ok bool) {

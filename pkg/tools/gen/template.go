@@ -174,6 +174,15 @@ var kclKeywords = map[string]struct{}{
 	"rule":      {},
 }
 
+// isKclKeyword reports whether the supplied identifier is reserved by the
+// KCL grammar and therefore cannot be used as a bare KCL identifier. The
+// keyword set matches the 27 symbols declared in
+// crates/span/src/symbol.rs at HEAD.
+func isKclKeyword(name string) bool {
+	_, ok := kclKeywords[name]
+	return ok
+}
+
 var validNameRegexp = regexp.MustCompile(`\$?^[a-zA-Z_][a-zA-Z0-9_]*$`)
 
 func formatName(name string) string {
