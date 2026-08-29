@@ -25,7 +25,7 @@ func TestFormatCode(t *testing.T) {
 		},
 		{
 			source: "a=a+",
-			expect: "a = a + \n",
+			expect: "a=a+",
 		},
 		{
 			source: "a={a = 1,b=2}",
