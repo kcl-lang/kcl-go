@@ -207,6 +207,25 @@ type validation struct {
 	AnyOf            []*validation
 	AnyOfFields      []string // For required-constraints anyOf: ["field1", "field2"]
 	Not              *validation
+	// TypeName is a KCL type name (`str`, `int`, ...) used to build a
+	// `typeof(field) == "<TypeName>"` guard. JSON Schema expresses such a
+	// guard with a `type` keyword inside an `if` subschema.
+	TypeName string
+	// IfCond, Then and Else model the JSON Schema `if`/`then`/`else` triple.
+	// Each is rendered as a single inline boolean expression, yielding
+	// `<then> if <cond>` and `<else> if not (<cond>)` check statements.
+	IfCond *validation
+	Then   *validation
+	Else   *validation
+	// SubConstraints holds per-property validations produced from a
+	// `properties` keyword inside an `if`/`then`/`else` subschema. They are
+	// joined with `and` by condExpr when emitting the inline guard so that
+	// `if`/`then`/`else` can reference the values of individual fields of
+	// the surrounding schema. The Required flag on each entry tracks
+	// whether the field is mandatory in the parent schema, which lets the
+	// template emit an `if <field>` guard for optional references and
+	// avoid running the check against an undefined value.
+	SubConstraints []*validation
 }
 
 // indexSignature is a kcl schema index signature definition.

@@ -900,6 +900,44 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 					Not:      notValidation,
 				})
 			}
+		case *jsonschema.If:
+			// `if` drives the whole if/then/else triple, so read its two
+			// companion keywords here rather than in their own cases. This
+			// mirrors how the jsonschema package itself evaluates the triple
+			// (see keywords_conditional.go).
+			_, req := required[name]
+			cond := jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(v), name, req, required)
+			if condExpr(cond).Expr == "" {
+				// Nothing in the `if` subschema maps onto a KCL expression, so
+				// the guard cannot be expressed and the branches would silently
+				// apply unconditionally. Skip the triple instead.
+				logger.GetLogger().Warningf("unsupported if condition, path: %s", strings.Join(ctx.paths, "/"))
+				continue
+			}
+			var thenVal, elseVal *validation
+			if thenKW, ok := s.Keywords["then"]; ok {
+				if t, ok := thenKW.(*jsonschema.Then); ok {
+					thenVal = jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(t), name, req, required)
+				}
+			}
+			if elseKW, ok := s.Keywords["else"]; ok {
+				if e, ok := elseKW.(*jsonschema.Else); ok {
+					elseVal = jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(e), name, req, required)
+				}
+			}
+			if condExpr(thenVal).Expr == "" && condExpr(elseVal).Expr == "" {
+				// A bare `if` without usable branches constrains nothing.
+				continue
+			}
+			result.Validations = append(result.Validations, validation{
+				Name:     name,
+				Required: req,
+				IfCond:   cond,
+				Then:     thenVal,
+				Else:     elseVal,
+			})
+		case *jsonschema.Then, *jsonschema.Else:
+			// Consumed by the *jsonschema.If case above.
 		case *jsonschema.ReadOnly:
 			// Do nothing for the readOnly keyword.
 			logger.GetLogger().Infof("unsupported keyword: %s, path: %s, omit it", k, strings.Join(ctx.paths, "/"))
@@ -992,6 +1030,94 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 	result.property.Name = convertPropertyName(result.Name, ctx.castingOption)
 	result.property.Description = result.Description
 	return result
+}
+
+// jsonSchemaSubConstraints collapses the scalar constraint keywords of an
+// `if`/`then`/`else` subschema into a single validation targeting `name`.
+// Every constraint it collects is later joined with `and` by condExpr.
+//
+// Only keywords with a direct KCL expression equivalent are collected;
+// annotation-only keywords such as `default` carry no validation meaning and
+// are skipped. A nil return means the subschema constrains nothing usable.
+//
+// Unlike the top-level conversion path, this helper also descends into a
+// `properties` keyword and folds the first single-value constraint of each
+// property (e.g. `country: { const: "US" }`) into the produced expression.
+// That lets `if`/`then`/`else` reference the values of individual fields of
+// the surrounding schema, which is the typical shape in real-world JSON
+// Schemas.
+//
+// parentRequired lists every field name the surrounding schema declared as
+// required; it is used to mark each sub-constraint so that condExpr can
+// guard optional-field references and avoid running comparisons against an
+// undefined value at runtime.
+func jsonSchemaSubConstraints(ctx *convertContext, sch *jsonschema.Schema, name string, required bool, parentRequired map[string]struct{}) *validation {
+	if sch == nil {
+		return nil
+	}
+	v := &validation{Name: name, Required: required}
+	for _, key := range sch.OrderedKeywords {
+		switch kw := sch.Keywords[key].(type) {
+		case *jsonschema.Type:
+			// We deliberately do not emit a `typeof(...) == "<type>"` guard.
+			// The field already has a concrete KCL type from the property
+			// declaration, so a value assigned to it can only be that type
+			// (or assignment fails earlier). Adding a typeof check would
+			// spuriously fail when the user writes `price = 500` (typeof
+			// returns "int" for integer literals even though the field is
+			// float). Constraint keywords that do not have a corresponding
+			// field declaration in KCL — e.g. a brand new property introduced
+			// inside `then` — still get checked by the surrounding schema
+			// declaration in the parent schema.
+		case *jsonschema.Const:
+			var constVal any
+			if err := json.Unmarshal(*kw, &constVal); err == nil {
+				v.ConstValue = constVal
+			}
+		case *jsonschema.Minimum:
+			v.Minimum = (*float64)(kw)
+		case *jsonschema.Maximum:
+			v.Maximum = (*float64)(kw)
+		case *jsonschema.ExclusiveMinimum:
+			v.Minimum = (*float64)(kw)
+			v.ExclusiveMinimum = true
+		case *jsonschema.ExclusiveMaximum:
+			v.Maximum = (*float64)(kw)
+			v.ExclusiveMaximum = true
+		case *jsonschema.MinLength:
+			v.MinLength = (*int)(kw)
+		case *jsonschema.MaxLength:
+			v.MaxLength = (*int)(kw)
+		case *jsonschema.Pattern:
+			v.Regex = (*regexp.Regexp)(kw)
+			ctx.imports["regex"] = struct{}{}
+		case *jsonschema.MultipleOf:
+			i := int(*kw)
+			if float64(i) == float64(*kw) {
+				v.MultiplyOf = &i
+			}
+		case *jsonschema.Properties:
+			// JSON Schema `if`/`then`/`else` subschemas commonly constrain
+			// fields of the surrounding schema via `properties.<field>`. We
+			// need to descend into them so the rendered KCL expression
+			// refers to the field values, e.g. `currency == "JPY"`. The
+			// required flag of each property (looked up against the parent
+			// schema's required list when known) is propagated so that
+			// condExpr can guard optional-field references.
+			for _, prop := range *kw {
+				_, isReq := parentRequired[prop.Key]
+				if propSub := jsonSchemaSubConstraints(ctx, prop.Value, prop.Key, isReq, parentRequired); propSub != nil {
+					if condExpr(propSub).Expr != "" {
+						v.SubConstraints = append(v.SubConstraints, propSub)
+					}
+				}
+			}
+		}
+	}
+	if condExpr(v).Expr == "" {
+		return nil
+	}
+	return v
 }
 
 func jsonTypesToKclTypes(t []string) typeInterface {

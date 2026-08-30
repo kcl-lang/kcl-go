@@ -35,6 +35,7 @@ var funcs = template.FuncMap{
 	"formatValue":           formatValue,
 	"formatValueWithEscape": formatValueWithEscape,
 	"formatName":            formatName,
+	"condExpr":              condExpr,
 	"indentLines":           indentLines,
 	"isKclData": func(v any) bool {
 		_, ok := v.([]data)
@@ -195,6 +196,91 @@ func formatName(name string) string {
 	}
 
 	return name
+}
+
+// condExpr renders a validation as a single inline KCL boolean expression,
+// joining every constraint it carries with `and`. It exists because JSON
+// Schema `if`/`then`/`else` needs its operands embedded inside a conditional
+// check statement, where the multi-line statement form used by the rest of
+// the validator template does not fit.
+//
+// The returned condResult has two pieces:
+//   - Expr holds the rendered KCL boolean expression.
+//   - OptionalGuards lists the names of any optional fields the expression
+//     references. The template ANDs them into the surrounding condition so
+//     the check is short-circuited when the field is undefined, mirroring
+//     how the regular validator template appends `if <field>` for optional
+//     fields.
+//
+// Both fields are empty when the validation holds no constraint that maps
+// onto a KCL expression.
+type condResult struct {
+	Expr           string
+	OptionalGuards []string
+}
+
+func condExpr(v *validation) condResult {
+	if v == nil {
+		return condResult{}
+	}
+	name := formatName(v.Name)
+	var parts []string
+	var guards []string
+	// Only emit a top-level guard when the validation targets a single,
+	// specific field (i.e. SubConstraints is empty AND a non-empty Name).
+	// When this is a top-level if/then/else expression whose actual
+	// references are carried by SubConstraints, the per-field guards
+	// collected below are what matter.
+	if v.Name != "" && len(v.SubConstraints) == 0 && !v.Required {
+		guards = append(guards, formatName(v.Name))
+	}
+	if v.TypeName != "" {
+		parts = append(parts, fmt.Sprintf("typeof(%s) == %q", name, v.TypeName))
+	}
+	if v.ConstValue != nil {
+		parts = append(parts, fmt.Sprintf("%s == %s", name, formatValue(v.ConstValue)))
+	}
+	if v.Minimum != nil {
+		op := ">="
+		if v.ExclusiveMinimum {
+			op = ">"
+		}
+		parts = append(parts, fmt.Sprintf("%s %s %v", name, op, *v.Minimum))
+	}
+	if v.Maximum != nil {
+		op := "<="
+		if v.ExclusiveMaximum {
+			op = "<"
+		}
+		parts = append(parts, fmt.Sprintf("%s %s %v", name, op, *v.Maximum))
+	}
+	if v.MinLength != nil {
+		parts = append(parts, fmt.Sprintf("len(%s) >= %d", name, *v.MinLength))
+	}
+	if v.MaxLength != nil {
+		parts = append(parts, fmt.Sprintf("len(%s) <= %d", name, *v.MaxLength))
+	}
+	if v.Regex != nil {
+		parts = append(parts, fmt.Sprintf(`regex.match(%s, r"%s")`, name, v.Regex))
+	}
+	if v.MultiplyOf != nil {
+		parts = append(parts, fmt.Sprintf("multiplyof(%s, %d)", name, *v.MultiplyOf))
+	}
+	for _, sub := range v.SubConstraints {
+		if sub == nil {
+			continue
+		}
+		subRes := condExpr(sub)
+		if subRes.Expr == "" {
+			continue
+		}
+		parts = append(parts, subRes.Expr)
+		guards = append(guards, subRes.OptionalGuards...)
+	}
+	return condResult{
+		Expr:           strings.Join(parts, " and "),
+		OptionalGuards: guards,
+	}
 }
 
 func indentLines(s, indent string) string {
