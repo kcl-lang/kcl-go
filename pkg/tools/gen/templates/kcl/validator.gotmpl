@@ -23,6 +23,17 @@
     {{- if .ConstValue }}
         {{ formatName .Name }} == {{ formatValue .ConstValue }}{{ if not .Required }} if {{ formatName .Name }}{{ end }}
     {{- end }}
+    {{- if .IfCond }}
+        {{- $cond := condExpr .IfCond }}
+        {{- $then := condExpr .Then }}
+        {{- $else := condExpr .Else }}
+        {{- if $then }}
+        {{ $then.Expr }} if {{ $cond.Expr }}{{ range $cond.OptionalGuards }} and {{ . }}{{ end }}{{ range $then.OptionalGuards }} and {{ . }}{{ end }}
+        {{- end }}
+        {{- if $else }}
+        {{ $else.Expr }} if not ({{ $cond.Expr }}){{ range $cond.OptionalGuards }} and {{ . }}{{ end }}{{ range $else.OptionalGuards }} and {{ . }}{{ end }}
+        {{- end }}
+    {{- end }}
     {{- if .AllOf }}
     {{- template "validator" .AllOf }}
     {{- end }}
