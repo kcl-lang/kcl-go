@@ -148,6 +148,13 @@ func WithShowHidden(showHidden bool) Option {
 	return kcl.WithShowHidden(showHidden)
 }
 
+// WithOutputFormat returns a Option which holds the requested output format
+// string. "xaml" is the attribute-aware XML variant (issue #2047); "json"
+// and "yaml" behave the same as the existing format selector.
+func WithOutputFormat(format string) Option {
+	return kcl.WithOutputFormat(format)
+}
+
 // WithLogger returns a Option which hold a logger.
 func WithLogger(l io.Writer) Option {
 	return kcl.WithLogger(l)

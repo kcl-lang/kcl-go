@@ -6,6 +6,7 @@ package kcl
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -17,6 +18,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
 
+	xmlformat "kcl-lang.io/kcl-go/pkg/format/xml"
 	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 )
 
@@ -27,6 +29,10 @@ type KCLResultList struct {
 	list            []KCLResult
 	raw_json_result string
 	raw_yaml_result string
+	// raw_xaml_result is the XAML-attribute-aware XML rendering of
+	// raw_yaml_result. Populated by the xmlHook when the user requests
+	// the XAML output format via WithOutputFormat("xaml").
+	raw_xaml_result string
 }
 
 // ToString returns the result as string.
@@ -167,6 +173,14 @@ func (p *KCLResultList) GetRawJsonResult() string {
 }
 func (p *KCLResultList) GetRawYamlResult() string {
 	return p.raw_yaml_result
+}
+
+// GetRawXamlResult returns the XAML-attribute-aware XML rendering of the
+// result list. Empty unless the caller opted into the XAML output format
+// via WithOutputFormat("xaml"); XAMLString() on the first result is the
+// preferred ergonomic entry point.
+func (p *KCLResultList) GetRawXamlResult() string {
+	return p.raw_xaml_result
 }
 
 // KCLResult denotes the result for the Run API.
@@ -351,6 +365,38 @@ func (m *KCLResult) JSONString() string {
 	return string(x)
 }
 
+// XAMLString returns this result rendered as XAML. The KCL runtime emits
+// a `__kcl_info_meta__` marker beside schema instances when the
+// `emit_attribute_metadata` flag is set; the xaml renderers in
+// kcl-lang.io/kcl-go/pkg/format/xml honour that marker and emit the listed
+// keys as `name="value"` attributes on the parent element. Without the
+// marker the output matches the plain XML renderer.
+//
+// XAMLString is empty when the caller did not request the XAML output
+// format via WithOutputFormat("xaml") (the runtime then does not emit the
+// marker and we have nothing attribute-aware to render).
+func (m *KCLResult) XAMLString() string {
+	if m == nil || m.result == nil {
+		return ""
+	}
+	// Reuse the YAML pipeline so the renderer sees the marker shape the
+	// KCL runtime actually emits, then run the attribute-aware XML
+	// converter over each document.
+	yamlBytes, err := yaml.Marshal(m.result)
+	if err != nil {
+		return ""
+	}
+	docs, err := SplitDocuments(string(yamlBytes))
+	if err != nil {
+		return ""
+	}
+	xmlBytes, err := convertDocsToXAML(docs)
+	if err != nil {
+		return ""
+	}
+	return string(xmlBytes)
+}
+
 func MustRun(path string, opts ...Option) *KCLResultList {
 	v, err := Run(path, opts...)
 	if err != nil {
@@ -424,7 +470,70 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgramResult, logger io.
 	}
 	result.raw_json_result = resp.JsonResult
 	result.raw_yaml_result = resp.YamlResult
+	// Populate the XAML rendering eagerly when the caller asked for it.
+	// Computing it lazily on XAMLString() would defer the marker-aware
+	// conversion until first access, which complicates deterministic
+	// tests. The cost when not requested is one extra split + map scan
+	// over an empty result set, which is negligible.
+	if o != nil && strings.EqualFold(o.outputFormat, "xaml") {
+		xaml, err := renderXAMLFromYAML(resp.YamlResult)
+		if err == nil {
+			result.raw_xaml_result = xaml
+		}
+	}
 	return &result, nil
+}
+
+// renderXAMLFromYAML renders a YAML result (single doc or stream) as XAML
+// using the attribute-aware renderer. On stream input each document gets
+// its own <root> wrapper inside a <results> envelope, mirroring the
+// existing json/xml behaviour.
+func renderXAMLFromYAML(yamlResult string) (string, error) {
+	if strings.TrimSpace(yamlResult) == "" {
+		return "", nil
+	}
+	docs, err := SplitDocuments(yamlResult)
+	if err != nil {
+		return "", err
+	}
+	return convertDocsToXAML(docs)
+}
+
+// convertDocsToXAML decodes each YAML doc into a generic Go value and runs
+// it through the attribute-aware XML renderer.
+func convertDocsToXAML(docs []string) (string, error) {
+	if len(docs) == 0 {
+		return "", nil
+	}
+	if len(docs) == 1 {
+		var v any
+		if err := yaml.Unmarshal([]byte(docs[0]), &v); err != nil {
+			return "", err
+		}
+		out, err := xmlformat.Convert(v)
+		if err != nil {
+			return "", err
+		}
+		return xml.Header + string(out) + "\n", nil
+	}
+	var b strings.Builder
+	b.WriteString(xml.Header)
+	b.WriteString("<results>\n")
+	for _, d := range docs {
+		var v any
+		if err := yaml.Unmarshal([]byte(d), &v); err != nil {
+			return "", err
+		}
+		out, err := xmlformat.Convert(v)
+		if err != nil {
+			return "", err
+		}
+		b.WriteString("  ")
+		b.Write(out)
+		b.WriteString("\n")
+	}
+	b.WriteString("</results>\n")
+	return b.String(), nil
 }
 
 func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultList, error) {
