@@ -16,6 +16,12 @@ type Option struct {
 	*gpyrpc.ExecProgramArgs
 	logger       io.Writer
 	fullTypePath bool
+	// outputFormat is the local override for the requested output format.
+	// It is held locally to avoid a name clash with the proto's Format
+	// field (which the external api package may or may not expose yet).
+	// When non-empty, ExecResultToKCLResult reads it to decide whether
+	// to populate raw_xaml_result.
+	outputFormat string
 	Err          error
 }
 
@@ -199,6 +205,18 @@ func WithShowHidden(showHidden bool) Option {
 	return *opt
 }
 
+// WithOutputFormat sets the output format selector that the runtime sees
+// via the proto Format field. Pass one of "json", "yaml", or "xaml".
+// "xaml" is the attribute-aware XML variant requested by issue #2047; the
+// runtime only emits the `__kcl_info_meta__` marker when the proto field
+// carries a non-empty value, so this is the toggle that turns marker
+// emission on.
+func WithOutputFormat(format string) Option {
+	var opt = NewOption()
+	opt.outputFormat = format
+	return *opt
+}
+
 // Merge will merge all options into one.
 func (p *Option) Merge(opts ...Option) *Option {
 	for _, opt := range opts {
@@ -268,6 +286,9 @@ func (p *Option) Merge(opts ...Option) *Option {
 		}
 		if opt.IncludeSchemaTypePath {
 			p.IncludeSchemaTypePath = opt.IncludeSchemaTypePath
+		}
+		if opt.outputFormat != "" {
+			p.outputFormat = opt.outputFormat
 		}
 		if opt.fullTypePath {
 			p.fullTypePath = opt.fullTypePath
