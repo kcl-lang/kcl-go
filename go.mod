@@ -2,6 +2,8 @@ module kcl-lang.io/kcl-go
 
 go 1.26
 
+toolchain go1.26.6
+
 require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/chai2010/protorpc v1.1.4
