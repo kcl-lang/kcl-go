@@ -22,6 +22,7 @@ const (
 	typInt      = "int"
 	typFloat    = "float"
 	typBool     = "bool"
+	typNone     = "None"
 
 	typAny              = "any"
 	typUnion            = "union"

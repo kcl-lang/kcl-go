@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "pullSecret": {
+      "type": ["string", "null"],
+      "if": {
+        "type": "string"
+      },
+      "then": {
+        "default": "",
+        "maxLength": 255
+      }
+    },
+    "podPriority": {
+      "type": "object",
+      "properties": {
+        "priorityClassName": {
+          "$ref": "#/$defs/empty.string"
+        }
+      }
+    },
+    "replicas": {
+      "type": ["integer", "null"]
+    },
+    "label": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "empty.string": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}

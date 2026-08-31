@@ -27,10 +27,10 @@
         {{- $cond := condExpr .IfCond }}
         {{- $then := condExpr .Then }}
         {{- $else := condExpr .Else }}
-        {{- if $then }}
+        {{- if $then.Expr }}
         {{ $then.Expr }} if {{ $cond.Expr }}{{ range $cond.OptionalGuards }} and {{ . }}{{ end }}{{ range $then.OptionalGuards }} and {{ . }}{{ end }}
         {{- end }}
-        {{- if $else }}
+        {{- if $else.Expr }}
         {{ $else.Expr }} if not ({{ $cond.Expr }}){{ range $cond.OptionalGuards }} and {{ . }}{{ end }}{{ range $else.OptionalGuards }} and {{ . }}{{ end }}
         {{- end }}
     {{- end }}

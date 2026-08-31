@@ -906,7 +906,16 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			// mirrors how the jsonschema package itself evaluates the triple
 			// (see keywords_conditional.go).
 			_, req := required[name]
-			cond := jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(v), name, req, required)
+			// A `type`-only `if` subschema (e.g. `if: {type: "string"}` on a
+			// property declared as `type: ["string", "null"]`) narrows which
+			// values the branches apply to. That typeof guard is only sound
+			// when the enclosing schema itself declares a union type, so
+			// pass that fact down.
+			allowTypeGuard := false
+			if t, ok := s.Keywords["type"].(*jsonschema.Type); ok && len(t.Vals) > 1 {
+				allowTypeGuard = true
+			}
+			cond := jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(v), name, req, required, allowTypeGuard)
 			if condExpr(cond).Expr == "" {
 				// Nothing in the `if` subschema maps onto a KCL expression, so
 				// the guard cannot be expressed and the branches would silently
@@ -917,12 +926,12 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 			var thenVal, elseVal *validation
 			if thenKW, ok := s.Keywords["then"]; ok {
 				if t, ok := thenKW.(*jsonschema.Then); ok {
-					thenVal = jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(t), name, req, required)
+					thenVal = jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(t), name, req, required, false)
 				}
 			}
 			if elseKW, ok := s.Keywords["else"]; ok {
 				if e, ok := elseKW.(*jsonschema.Else); ok {
-					elseVal = jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(e), name, req, required)
+					elseVal = jsonSchemaSubConstraints(ctx, (*jsonschema.Schema)(e), name, req, required, false)
 				}
 			}
 			if condExpr(thenVal).Expr == "" && condExpr(elseVal).Expr == "" {
@@ -1051,7 +1060,12 @@ func convertSchemaFromJsonSchema(ctx *convertContext, s *jsonschema.Schema, name
 // required; it is used to mark each sub-constraint so that condExpr can
 // guard optional-field references and avoid running comparisons against an
 // undefined value at runtime.
-func jsonSchemaSubConstraints(ctx *convertContext, sch *jsonschema.Schema, name string, required bool, parentRequired map[string]struct{}) *validation {
+//
+// allowTypeGuard permits a `type` keyword in the subschema to become a
+// `typeof(field) == "<type>"` guard. It is only set for the `if` part of a
+// triple whose target field declares a union type, where the guard selects
+// the union member the branches apply to.
+func jsonSchemaSubConstraints(ctx *convertContext, sch *jsonschema.Schema, name string, required bool, parentRequired map[string]struct{}, allowTypeGuard bool) *validation {
 	if sch == nil {
 		return nil
 	}
@@ -1059,16 +1073,28 @@ func jsonSchemaSubConstraints(ctx *convertContext, sch *jsonschema.Schema, name 
 	for _, key := range sch.OrderedKeywords {
 		switch kw := sch.Keywords[key].(type) {
 		case *jsonschema.Type:
-			// We deliberately do not emit a `typeof(...) == "<type>"` guard.
-			// The field already has a concrete KCL type from the property
-			// declaration, so a value assigned to it can only be that type
-			// (or assignment fails earlier). Adding a typeof check would
-			// spuriously fail when the user writes `price = 500` (typeof
-			// returns "int" for integer literals even though the field is
-			// float). Constraint keywords that do not have a corresponding
-			// field declaration in KCL — e.g. a brand new property introduced
-			// inside `then` — still get checked by the surrounding schema
-			// declaration in the parent schema.
+			// A single-typed `if` subschema on a property whose JSON Schema
+			// type is a union (e.g. `type: ["string", "null"]` together with
+			// `if: {type: "string"}`) narrows which values the branches
+			// apply to; it becomes `typeof(field) == "str"`. Without the
+			// guard the `then` constraints would also run against None,
+			// where e.g. `len(None)` fails at runtime.
+			if allowTypeGuard && len(kw.Vals) == 1 {
+				if tn := jsonTypeToKclTypeName(kw.Vals[0]); tn != "" {
+					v.TypeName = tn
+				}
+			}
+			// Otherwise we deliberately do not emit a
+			// `typeof(...) == "<type>"` guard. The field already has a
+			// concrete KCL type from the property declaration, so a value
+			// assigned to it can only be that type (or assignment fails
+			// earlier). Adding a typeof check would spuriously fail when
+			// the user writes `price = 500` (typeof returns "int" for
+			// integer literals even though the field is float). Constraint
+			// keywords that do not have a corresponding field declaration
+			// in KCL — e.g. a brand new property introduced inside `then`
+			// — still get checked by the surrounding schema declaration in
+			// the parent schema.
 		case *jsonschema.Const:
 			var constVal any
 			if err := json.Unmarshal(*kw, &constVal); err == nil {
@@ -1106,7 +1132,7 @@ func jsonSchemaSubConstraints(ctx *convertContext, sch *jsonschema.Schema, name 
 			// condExpr can guard optional-field references.
 			for _, prop := range *kw {
 				_, isReq := parentRequired[prop.Key]
-				if propSub := jsonSchemaSubConstraints(ctx, prop.Value, prop.Key, isReq, parentRequired); propSub != nil {
+				if propSub := jsonSchemaSubConstraints(ctx, prop.Value, prop.Key, isReq, parentRequired, false); propSub != nil {
 					if condExpr(propSub).Expr != "" {
 						v.SubConstraints = append(v.SubConstraints, propSub)
 					}
@@ -1123,7 +1149,10 @@ func jsonSchemaSubConstraints(ctx *convertContext, sch *jsonschema.Schema, name 
 func jsonTypesToKclTypes(t []string) typeInterface {
 	var kclTypes typeUnion
 	for _, v := range t {
-		// Skip the `type | null` format.
+		// Skip the `type | null` format. KCL has no `None` type annotation
+		// (None is not a valid union member); nullability of a value is
+		// expressed by the optional `?` attribute modifier instead, and
+		// `None`/`Undefined` are assignable to every type.
 		if v != "null" {
 			kclTypes.Items = append(kclTypes.Items, jsonTypeToKclType(v))
 		}
@@ -1155,6 +1184,31 @@ func jsonTypeToKclType(t string) typeInterface {
 		logger.GetLogger().Warningf("unknown type: %s, use the any type", t)
 		return typePrimitive(typAny)
 	}
+}
+
+// jsonTypeToKclTypeName maps a JSON Schema type name onto the type name
+// KCL's `typeof` returns for values of that type (`typeof` reports `list`
+// and `dict` rather than `[any]` or `any`, so it cannot reuse
+// jsonTypeToKclType). An empty string means the type has no typeof
+// equivalent and no guard can be built.
+func jsonTypeToKclTypeName(t string) string {
+	switch t {
+	case "string":
+		return typStr
+	case "boolean", "bool":
+		return typBool
+	case "integer":
+		return typInt
+	case "number":
+		return typFloat
+	case "array":
+		return typList
+	case "object":
+		return typDict
+	case "null":
+		return typNone
+	}
+	return ""
 }
 
 func objectExists(objs []*jsonschema.Schema, obj *jsonschema.Schema) bool {
