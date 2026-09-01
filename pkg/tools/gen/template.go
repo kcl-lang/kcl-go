@@ -231,7 +231,11 @@ func condExpr(v *validation) condResult {
 	// When this is a top-level if/then/else expression whose actual
 	// references are carried by SubConstraints, the per-field guards
 	// collected below are what matter.
-	if v.Name != "" && len(v.SubConstraints) == 0 && !v.Required {
+	if v.Name != "" && len(v.SubConstraints) == 0 && !v.Required && v.TypeName == "" {
+		// A truthiness guard keeps undefined optional fields out of the
+		// comparison. It is redundant for a typeof check, which already
+		// evaluates to False for None, so it is skipped there to avoid
+		// emitting `... if typeof(f) == "str" and f`.
 		guards = append(guards, formatName(v.Name))
 	}
 	if v.TypeName != "" {
