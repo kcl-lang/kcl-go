@@ -80,15 +80,6 @@ type ExecProgramArgs = api.ExecProgramArgs
 // Message for execute program response.
 type ExecProgramResult = api.ExecProgramResult
 
-// Message for build program request arguments.
-type BuildProgramArgs = api.BuildProgramArgs
-
-// Message for build program response.
-type BuildProgramResult = api.BuildProgramResult
-
-// Message for execute artifact request arguments.
-type ExecArtifactArgs = api.ExecArtifactArgs
-
 // Message for format code request arguments.
 type FormatCodeArgs = api.FormatCodeArgs
 
@@ -136,6 +127,14 @@ type GetSchemaTypeMappingArgs = api.GetSchemaTypeMappingArgs
 
 // Message for get schema type mapping response.
 type GetSchemaTypeMappingResult = api.GetSchemaTypeMappingResult
+
+// Message for get schema type mapping under path response — covers the
+// program rooted at the input paths AND all of its external dependency
+// packages. See https://github.com/kcl-lang/kcl/issues/1546.
+type GetSchemaTypeMappingUnderPathResult = api.GetSchemaTypeMappingUnderPathResult
+
+// Message representing a single package's schema type mapping.
+type SchemaTypes = api.SchemaTypes
 
 // Message for validate code request arguments.
 type ValidateCodeArgs = api.ValidateCodeArgs

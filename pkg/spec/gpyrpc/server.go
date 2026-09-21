@@ -309,69 +309,6 @@ type KclServiceServer interface {
 	// / }
 	// / ```
 	ExecProgram(context.Context, *ExecProgramArgs) (*ExecProgramResult, error)
-	// / Build the KCL program to an artifact.
-	// /
-	// / # Examples
-	// /
-	// / ```jsonrpc
-	// / // Request
-	// / {
-	// /     "jsonrpc": "2.0",
-	// /     "method": "BuildProgram",
-	// /     "params": {
-	// /         "exec_args": {
-	// /             "work_dir": "./src/testdata",
-	// /             "k_filename_list": ["test.k"]
-	// /         },
-	// /         "output": "./build"
-	// /     },
-	// /     "id": 1
-	// / }
-	// /
-	// / // Response
-	// / {
-	// /     "jsonrpc": "2.0",
-	// /     "result": {
-	// /         "path": "./build/test.k"
-	// /     },
-	// /     "id": 1
-	// / }
-	// / ```
-	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-	BuildProgram(context.Context, *BuildProgramArgs) (*BuildProgramResult, error)
-	// / Execute the KCL artifact with args. **Note that it is not thread safe.**
-	// /
-	// / # Examples
-	// /
-	// / ```jsonrpc
-	// / // Request
-	// / {
-	// /     "jsonrpc": "2.0",
-	// /     "method": "ExecArtifact",
-	// /     "params": {
-	// /         "path": "./artifact_path",
-	// /         "exec_args": {
-	// /             "work_dir": "./src/testdata",
-	// /             "k_filename_list": ["test.k"]
-	// /         }
-	// /     },
-	// /     "id": 1
-	// / }
-	// /
-	// / // Response
-	// / {
-	// /     "jsonrpc": "2.0",
-	// /     "result": {
-	// /         "json_result": "{\"alice\": {\"age\": 18}}",
-	// /         "yaml_result": "alice:\n  age: 18",
-	// /         "log_message": "",
-	// /         "err_message": ""
-	// /     },
-	// /     "id": 1
-	// / }
-	// / ```
-	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-	ExecArtifact(context.Context, *ExecArtifactArgs) (*ExecProgramResult, error)
 	// / Override KCL file with args.
 	// /
 	// / # Examples
@@ -763,15 +700,6 @@ func (*UnimplementedKclServiceServer) ExecProgram(context.Context, *ExecProgramA
 	return nil, status.Errorf(codes.Unimplemented, "method ExecProgram not implemented")
 }
 
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (*UnimplementedKclServiceServer) BuildProgram(context.Context, *BuildProgramArgs) (*BuildProgramResult, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BuildProgram not implemented")
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (*UnimplementedKclServiceServer) ExecArtifact(context.Context, *ExecArtifactArgs) (*ExecProgramResult, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExecArtifact not implemented")
-}
 func (*UnimplementedKclServiceServer) OverrideFile(context.Context, *OverrideFileArgs) (*OverrideFileResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OverrideFile not implemented")
 }
@@ -953,44 +881,6 @@ func _KclService_ExecProgram_Handler(srv any, ctx context.Context, dec func(any)
 	}
 	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KclServiceServer).ExecProgram(ctx, req.(*ExecProgramArgs))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func _KclService_BuildProgram_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
-	in := new(BuildProgramArgs)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KclServiceServer).BuildProgram(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gpyrpc.KclService/BuildProgram",
-	}
-	handler := func(ctx context.Context, req any) (any, error) {
-		return srv.(KclServiceServer).BuildProgram(ctx, req.(*BuildProgramArgs))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func _KclService_ExecArtifact_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
-	in := new(ExecArtifactArgs)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KclServiceServer).ExecArtifact(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gpyrpc.KclService/ExecArtifact",
-	}
-	handler := func(ctx context.Context, req any) (any, error) {
-		return srv.(KclServiceServer).ExecArtifact(ctx, req.(*ExecArtifactArgs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1246,14 +1136,6 @@ var _KclService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExecProgram",
 			Handler:    _KclService_ExecProgram_Handler,
-		},
-		{
-			MethodName: "BuildProgram",
-			Handler:    _KclService_BuildProgram_Handler,
-		},
-		{
-			MethodName: "ExecArtifact",
-			Handler:    _KclService_ExecArtifact_Handler,
 		},
 		{
 			MethodName: "OverrideFile",
