@@ -213,10 +213,6 @@ func PROTORPC_DialBuiltinServiceTimeout(network, addr string, timeout time.Durat
 type PROTORPC_KclService interface {
 	Ping(in *PingArgs, out *PingResult) error
 	ExecProgram(in *ExecProgramArgs, out *ExecProgramResult) error
-	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-	BuildProgram(in *BuildProgramArgs, out *BuildProgramResult) error
-	// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-	ExecArtifact(in *ExecArtifactArgs, out *ExecProgramResult) error
 	ParseProgram(in *ParseProgramArgs, out *ParseProgramResult) error
 	ListOptions(in *ParseProgramArgs, out *ListOptionsResult) error
 	ListVariables(in *ListVariablesArgs, out *ListVariablesResult) error
@@ -387,88 +383,6 @@ func (c *PROTORPC_KclServiceClient) AsyncExecProgram(in *ExecProgramArgs, out *E
 	}
 	return c.Go(
 		"KclService.ExecProgram",
-		in, out,
-		done,
-	)
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (c *PROTORPC_KclServiceClient) BuildProgram(in *BuildProgramArgs) (out *BuildProgramResult, err error) {
-	if in == nil {
-		in = new(BuildProgramArgs)
-	}
-
-	type Validator interface {
-		Validate() error
-	}
-	if x, ok := proto.Message(in).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return nil, err
-		}
-	}
-
-	out = new(BuildProgramResult)
-	if err = c.Call("KclService.BuildProgram", in, out); err != nil {
-		return nil, err
-	}
-
-	if x, ok := proto.Message(out).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return out, err
-		}
-	}
-
-	return out, nil
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (c *PROTORPC_KclServiceClient) AsyncBuildProgram(in *BuildProgramArgs, out *BuildProgramResult, done chan *rpc.Call) *rpc.Call {
-	if in == nil {
-		in = new(BuildProgramArgs)
-	}
-	return c.Go(
-		"KclService.BuildProgram",
-		in, out,
-		done,
-	)
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (c *PROTORPC_KclServiceClient) ExecArtifact(in *ExecArtifactArgs) (out *ExecProgramResult, err error) {
-	if in == nil {
-		in = new(ExecArtifactArgs)
-	}
-
-	type Validator interface {
-		Validate() error
-	}
-	if x, ok := proto.Message(in).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return nil, err
-		}
-	}
-
-	out = new(ExecProgramResult)
-	if err = c.Call("KclService.ExecArtifact", in, out); err != nil {
-		return nil, err
-	}
-
-	if x, ok := proto.Message(out).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return out, err
-		}
-	}
-
-	return out, nil
-}
-
-// Depreciated: Please use the env.EnableFastEvalMode() and c.ExecuteProgram method and will be removed in v0.11.0.
-func (c *PROTORPC_KclServiceClient) AsyncExecArtifact(in *ExecArtifactArgs, out *ExecProgramResult, done chan *rpc.Call) *rpc.Call {
-	if in == nil {
-		in = new(ExecArtifactArgs)
-	}
-	return c.Go(
-		"KclService.ExecArtifact",
 		in, out,
 		done,
 	)

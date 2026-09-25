@@ -116,3 +116,5 @@ gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 kcl-lang.io/lib v0.12.5 h1:gh+cLH5l17vUEucqkmS79Hzh1MFhx7L7Uz/Dj2+xx9k=
 kcl-lang.io/lib v0.12.5/go.mod h1:G2pPSIdu+cFb5OxiaxB0qBRIFFL598OZf1e5oiqWnns=
+kcl-lang.io/lib v0.13.0 h1:+dQb+ocQa8UbBNQxIJCq381rWldvSJ/oniPW1J8zR5Y=
+kcl-lang.io/lib v0.13.0/go.mod h1:6+DJNgcICKVtc+iDEjXtFA6TIKBfSjnkSgMO4REzmtM=

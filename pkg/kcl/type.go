@@ -74,6 +74,50 @@ func GetFullSchemaTypeMapping(pathList []string, schemaName string, opts ...Opti
 	return resp.SchemaTypeMapping, nil
 }
 
+// GetFullSchemaTypeMappingUnderPath returns the schema type mapping for the
+// given schema name across the program rooted at pathList AND all of its
+// (external) dependency packages reachable via kcl.mod / external_pkgs.
+//
+// Mirrors the Rust service `KclService.GetSchemaTypeMappingUnderPath` and is
+// the fix for https://github.com/kcl-lang/kcl/issues/1546: the returned map
+// is keyed by package name (e.g. "__main__", "bbb", "helloworld") with each
+// value holding that package's schema list with correct pkgpath / base
+// fields — even when the schema lives in a kcl.mod [dependencies] package
+// that the single-pkg GetFullSchemaTypeMapping would misattribute to
+// "__main__" or drop BaseSchema for.
+//
+// Parameters:
+//   - pathList: A list of KCL file paths.
+//   - schemaName: The name of the schema to get the type mapping for; pass
+//     "" to return every schema across every package.
+//   - opts: Additional options (WithKFilenames, WithExternalPkgAndPath,
+//     WithExternalPkgs, ...).
+//
+// Returns:
+//   - A map where the key is the package name and the value is a
+//     *gpyrpc.SchemaTypes holding that package's schema list with correct
+//     PkgPath / BaseSchema fields.
+//   - An error if there is any failure in the process.
+func GetFullSchemaTypeMappingUnderPath(pathList []string, schemaName string, opts ...Option) (map[string]*gpyrpc.SchemaTypes, error) {
+	opts = append(opts, *NewOption().Merge(WithKFilenames(pathList...)))
+	args, err := ParseArgs(pathList, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	svc := Service()
+	resp, err := svc.GetSchemaTypeMappingUnderPath(&gpyrpc.GetSchemaTypeMappingArgs{
+		ExecArgs:   args.ExecProgramArgs,
+		SchemaName: schemaName,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.GetSchemaTypeMapping(), nil
+}
+
 // GetSchemaTypeMapping returns the schema type mapping for the given schema name
 // from a KCL file or source code provided.
 //
