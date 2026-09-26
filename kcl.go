@@ -36,11 +36,13 @@ import (
 	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/loader"
 	"kcl-lang.io/kcl-go/pkg/parser"
+	"kcl-lang.io/kcl-go/pkg/settings"
 	"kcl-lang.io/kcl-go/pkg/tools/format"
 	"kcl-lang.io/kcl-go/pkg/tools/lint"
 	"kcl-lang.io/kcl-go/pkg/tools/list"
 	"kcl-lang.io/kcl-go/pkg/tools/module"
 	"kcl-lang.io/kcl-go/pkg/tools/override"
+	"kcl-lang.io/kcl-go/pkg/tools/rename"
 	"kcl-lang.io/kcl-go/pkg/tools/testing"
 	"kcl-lang.io/kcl-go/pkg/tools/validate"
 )
@@ -69,6 +71,7 @@ type (
 	ParseProgramArgs         = parser.ParseProgramArgs
 	ParseProgramResult       = parser.ParseProgramResult
 	FormatPathOptions        = format.FormatPathOptions
+	LoadSettingsFilesResult  = settings.LoadSettingsFilesResult
 )
 
 // MustRun is like Run but panics if return any error.
@@ -301,4 +304,27 @@ func UpdateDependencies(args *UpdateDependenciesArgs) (*UpdateDependenciesResult
 // GetVersion returns the KCL service version information.
 func GetVersion() (*VersionResult, error) {
 	return kcl.GetVersion()
+}
+
+// Ping checks the availability of the KCL service and returns the echoed value.
+func Ping(value string) (string, error) {
+	return kcl.Ping(value)
+}
+
+// Rename renames all the occurrences of the target symbol in the files and
+// returns the file paths that got changed.
+func Rename(packageRoot, symbolPath string, filePaths []string, newName string) ([]string, error) {
+	return rename.Rename(packageRoot, symbolPath, filePaths, newName)
+}
+
+// RenameCode renames all the occurrences of the target symbol in the source
+// codes and returns the changed codes. It does not rewrite files.
+func RenameCode(packageRoot, symbolPath string, sourceCodes map[string]string, newName string) (map[string]string, error) {
+	return rename.RenameCode(packageRoot, symbolPath, sourceCodes, newName)
+}
+
+// LoadSettingsFiles loads the KCL settings files and returns the merged
+// CLI configs and options.
+func LoadSettingsFiles(workDir string, files []string) (*LoadSettingsFilesResult, error) {
+	return settings.LoadSettingsFiles(workDir, files)
 }
