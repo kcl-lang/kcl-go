@@ -158,6 +158,12 @@ func WithOutputFormat(format string) Option {
 	return kcl.WithOutputFormat(format)
 }
 
+// WithPluginAgent returns a Option which holds the plugin agent pointer
+// used by the native runtime to invoke host functions from KCL code.
+func WithPluginAgent(pluginAgent uint64) Option {
+	return kcl.WithPluginAgent(pluginAgent)
+}
+
 // WithLogger returns a Option which hold a logger.
 func WithLogger(l io.Writer) Option {
 	return kcl.WithLogger(l)

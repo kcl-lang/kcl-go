@@ -7,5 +7,6 @@ import (
 type NativeServiceClient = native.NativeServiceClient
 
 var (
-	NewNativeServiceClient = native.NewNativeServiceClient
+	NewNativeServiceClient                = native.NewNativeServiceClient
+	NewNativeServiceClientWithPluginAgent = native.NewNativeServiceClientWithPluginAgent
 )

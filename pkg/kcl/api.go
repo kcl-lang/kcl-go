@@ -542,7 +542,7 @@ func runWithHooks(pathList []string, hooks Hooks, opts ...Option) (*KCLResultLis
 		return nil, err
 	}
 
-	svc := Service()
+	svc := serviceWithPluginAgent(args.pluginAgent)
 	resp, err := svc.ExecProgram(args.ExecProgramArgs)
 	if err != nil {
 		return nil, err
