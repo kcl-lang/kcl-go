@@ -30,11 +30,12 @@ require (
 // Temporary: track the kcl-lang/lib main branch so we can call the
 // sourcemap_output/sourcemap fields added by kcl-lang/lib#326 before a
 // new lib release is cut. Drop this block once v0.13.1 (or later) ships.
-// CI checkouts lib into a sibling directory at the same commit (see
-// .github/workflows/*.yml); `../kcl-lang-lib` resolves correctly from
-// both the CI runner working dir and the local dev environment when lib
-// is checked out next to the kcl-go clone.
-replace kcl-lang.io/lib => ../kcl-lang-lib
+//
+// CI checkouts lib into `./kcl-lang-lib` inside the kcl-go workspace at
+// commit 5ce547704f9cdf4ba56b2a7e9f89268a214fddf1 (see
+// .github/workflows/*.yml). Local dev can either clone lib into the
+// `./kcl-lang-lib` directory at the same commit or symlink it there.
+replace kcl-lang.io/lib => ./kcl-lang-lib
 
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect

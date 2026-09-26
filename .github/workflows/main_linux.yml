@@ -22,7 +22,7 @@ jobs:
         with:
           repository: kcl-lang/lib
           ref: 5ce547704f9cdf4ba56b2a7e9f89268a214fddf1
-          path: ../kcl-lang-lib
+          path: kcl-lang-lib
 
       - name: Set up Go
         uses: actions/setup-go@v7
