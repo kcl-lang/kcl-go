@@ -223,13 +223,6 @@ func (p *restServer) handle_ValidateCode(w http.ResponseWriter, r *http.Request,
 	})
 }
 
-func (p *restServer) handle_ListDepFiles(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
-	args := new(gpyrpc.ListDepFilesArgs)
-	p.handle(w, r, args, func() (proto.Message, error) {
-		return p.service.ListDepFiles(args)
-	})
-}
-
 func (p *restServer) handle_LoadSettingsFiles(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.LoadSettingsFilesArgs)
 	p.handle(w, r, args, func() (proto.Message, error) {

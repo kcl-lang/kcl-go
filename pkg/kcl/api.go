@@ -33,6 +33,9 @@ type KCLResultList struct {
 	// raw_yaml_result. Populated by the xmlHook when the user requests
 	// the XAML output format via WithOutputFormat("xaml").
 	raw_xaml_result string
+	// raw_sourcemap is the Source Map v3 document for the generated YAML,
+	// populated when the caller requests it via WithSourcemapOutput.
+	raw_sourcemap string
 }
 
 // ToString returns the result as string.
@@ -181,6 +184,13 @@ func (p *KCLResultList) GetRawYamlResult() string {
 // preferred ergonomic entry point.
 func (p *KCLResultList) GetRawXamlResult() string {
 	return p.raw_xaml_result
+}
+
+// GetSourcemap returns the Source Map v3 document mapping the generated
+// YAML back to the originating KCL source locations. Empty unless the
+// caller requested it via WithSourcemapOutput.
+func (p *KCLResultList) GetSourcemap() string {
+	return p.raw_sourcemap
 }
 
 // KCLResult denotes the result for the Run API.
@@ -445,6 +455,7 @@ func ExecResultToKCLResult(o *Option, resp *gpyrpc.ExecProgramResult, logger io.
 	}
 
 	var result KCLResultList
+	result.raw_sourcemap = resp.GetSourcemap()
 	if strings.TrimSpace(resp.JsonResult) == "" {
 		return &result, nil
 	}
