@@ -22,7 +22,10 @@ type Option struct {
 	// When non-empty, ExecResultToKCLResult reads it to decide whether
 	// to populate raw_xaml_result.
 	outputFormat string
-	Err          error
+	// pluginAgent is the user-provided plugin agent pointer passed to the
+	// native client constructor, nil when the option is not set.
+	pluginAgent *uint64
+	Err         error
 }
 
 // NewOption returns a new Option.
@@ -228,6 +231,19 @@ func WithOutputFormat(format string) Option {
 	return *opt
 }
 
+// WithPluginAgent sets the plugin agent pointer used by the native runtime
+// to invoke host functions from KCL code (e.g. kcl_plugin.<name>.<method>).
+// The pointer must reference a function with the C ABI
+// `const char* agent(const char* method, const char* args_json, const char* kwargs_json)`,
+// typically obtained from a cgo-exported function or an FFI callback.
+// The native runtime is a process-wide singleton, so the agent only takes
+// effect on the first service client initialized in the process.
+func WithPluginAgent(pluginAgent uint64) Option {
+	var opt = NewOption()
+	opt.pluginAgent = &pluginAgent
+	return *opt
+}
+
 // Merge will merge all options into one.
 func (p *Option) Merge(opts ...Option) *Option {
 	for _, opt := range opts {
@@ -306,6 +322,9 @@ func (p *Option) Merge(opts ...Option) *Option {
 		}
 		if opt.fullTypePath {
 			p.fullTypePath = opt.fullTypePath
+		}
+		if opt.pluginAgent != nil {
+			p.pluginAgent = opt.pluginAgent
 		}
 		if opt.ExternalPkgs != nil {
 			p.ExternalPkgs = append(p.ExternalPkgs, opt.ExternalPkgs...)

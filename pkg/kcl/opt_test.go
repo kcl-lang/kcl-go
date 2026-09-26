@@ -46,6 +46,15 @@ func TestWithErrorFormat(t *testing.T) {
 	tAssert(t, opt.ErrorFormat == "sarif", opt.JSONString())
 }
 
+func TestWithPluginAgent(t *testing.T) {
+	opt := NewOption().Merge(WithPluginAgent(1234))
+	tAssert(t, opt.pluginAgent != nil && *opt.pluginAgent == 1234, opt.JSONString())
+
+	// An unset plugin agent must not overwrite a set one during merge.
+	opt = NewOption().Merge(WithPluginAgent(1234), Option{})
+	tAssert(t, opt.pluginAgent != nil && *opt.pluginAgent == 1234, opt.JSONString())
+}
+
 func TestMergeWithError(t *testing.T) {
 	// Test that errors from options are correctly propagated during merge
 	// This is a regression test for issue #515 where path_selector parsing errors
