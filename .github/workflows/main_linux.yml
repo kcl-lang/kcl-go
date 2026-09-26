@@ -17,6 +17,13 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v7
 
+      - name: Git checkout kcl-lang/lib
+        uses: actions/checkout@v7
+        with:
+          repository: kcl-lang/lib
+          ref: 5ce547704f9cdf4ba56b2a7e9f89268a214fddf1
+          path: ../kcl-lang-lib
+
       - name: Set up Go
         uses: actions/setup-go@v7
         with:

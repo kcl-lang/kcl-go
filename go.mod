@@ -30,7 +30,11 @@ require (
 // Temporary: track the kcl-lang/lib main branch so we can call the
 // sourcemap_output/sourcemap fields added by kcl-lang/lib#326 before a
 // new lib release is cut. Drop this block once v0.13.1 (or later) ships.
-replace kcl-lang.io/lib => github.com/kcl-lang/lib v0.13.1-0.20260926064309-5ce547704f9c
+// CI checkouts lib into a sibling directory at the same commit (see
+// .github/workflows/*.yml); `../kcl-lang-lib` resolves correctly from
+// both the CI runner working dir and the local dev environment when lib
+// is checked out next to the kcl-go clone.
+replace kcl-lang.io/lib => ../kcl-lang-lib
 
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
