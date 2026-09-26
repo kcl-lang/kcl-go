@@ -336,3 +336,28 @@ func ExampleUpdateDependencies_execProgram() {
 	// Output:
 	// a: Hello World!
 }
+
+func ExamplePing() {
+	value, err := kcl.Ping("hello")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(value)
+
+	// Output:
+	// hello
+}
+
+func ExampleRenameCode() {
+	changedCodes, err := kcl.RenameCode("/mock/path", "a", map[string]string{
+		"/mock/path/main.k": "a = 1\nb = a",
+	}, "a2")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Print(changedCodes["/mock/path/main.k"])
+
+	// Output:
+	// a2 = 1
+	// b = a2
+}
