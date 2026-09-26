@@ -27,6 +27,11 @@ require (
 	kcl-lang.io/lib v0.13.0
 )
 
+// Temporary: track the kcl-lang/lib main branch so we can call the
+// sourcemap_output/sourcemap fields added by kcl-lang/lib#326 before a
+// new lib release is cut. Drop this block once v0.13.1 (or later) ships.
+replace kcl-lang.io/lib => github.com/kcl-lang/lib v0.13.1-0.20260926064309-5ce547704f9c
+
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
