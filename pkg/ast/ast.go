@@ -3,7 +3,6 @@ package ast
 // Module is an abstract syntax tree for a single KCL file.
 type Module struct {
 	Filename string           `json:"filename"`
-	Pkg      string           `json:"pkg"`
 	Doc      *Node[string]    `json:"doc"`
 	Body     []*Node[Stmt]    `json:"body"`
 	Comments []*Node[Comment] `json:"comments"`

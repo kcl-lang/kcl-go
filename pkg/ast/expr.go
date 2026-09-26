@@ -448,14 +448,18 @@ func NewCompare() *Compare {
 // NewNumberLit creates a new NumberLit
 func NewNumberLit() *NumberLit {
 	return &NumberLit{
-		BaseExpr: BaseExpr{ExprType: "Number"},
+		// Rust emits `{"type":"NumberLit", ...}` for the `Expr::NumberLit`
+		// variant. Match that here so round-tripping back to JSON keeps
+		// the long-form discriminator (the unmarshaller in json.go already
+		// expects "NumberLit").
+		BaseExpr: BaseExpr{ExprType: "NumberLit"},
 	}
 }
 
 // NewStringLit creates a new StringLit with default values
 func NewStringLit() *StringLit {
 	return &StringLit{
-		BaseExpr:     BaseExpr{ExprType: "String"},
+		BaseExpr:     BaseExpr{ExprType: "StringLit"},
 		Value:        "",
 		RawValue:     "\"\"",
 		IsLongString: false,
@@ -465,7 +469,7 @@ func NewStringLit() *StringLit {
 // NewNameConstantLit creates a new NameConstantLit
 func NewNameConstantLit() *NameConstantLit {
 	return &NameConstantLit{
-		BaseExpr: BaseExpr{ExprType: "NameConstant"},
+		BaseExpr: BaseExpr{ExprType: "NameConstantLit"},
 	}
 }
 
@@ -648,9 +652,14 @@ func NewCheckExpr() *CheckExpr {
 //	  attr3: {key = value}
 //	}
 type ConfigEntry struct {
-	Key       *Node[Expr]          `json:"key"`
-	Value     *Node[Expr]          `json:"value"`
-	Operation ConfigEntryOperation `json:"operation"`
+	Key         *Node[Expr]          `json:"key"`
+	Value       *Node[Expr]          `json:"value"`
+	Operation   ConfigEntryOperation `json:"operation"`
+	// Mirrors Rust's `ConfigEntry::is_shorthand` (`#[serde(default,
+	// skip_serializing_if = "is_false")]`) so that ES6-style `{name}`
+	// shorthand entries round-trip without polluting fixtures that don't
+	// use the shorthand.
+	IsShorthand bool `json:"is_shorthand,omitempty"`
 }
 
 // NewConfigEntry creates a new ConfigEntry
