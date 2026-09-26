@@ -37,6 +37,15 @@ func TestWithDisableNone(t *testing.T) {
 	WithDisableNone(true)
 }
 
+func TestWithErrorFormat(t *testing.T) {
+	opt := NewOption().Merge(WithErrorFormat("sarif"))
+	tAssert(t, opt.ErrorFormat == "sarif", opt.JSONString())
+
+	// An empty error format must not overwrite a non-empty one during merge.
+	opt = NewOption().Merge(WithErrorFormat("sarif"), WithErrorFormat(""))
+	tAssert(t, opt.ErrorFormat == "sarif", opt.JSONString())
+}
+
 func TestMergeWithError(t *testing.T) {
 	// Test that errors from options are correctly propagated during merge
 	// This is a regression test for issue #515 where path_selector parsing errors
