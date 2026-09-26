@@ -205,6 +205,17 @@ func WithShowHidden(showHidden bool) Option {
 	return *opt
 }
 
+// kcl --error_format
+// WithErrorFormat sets the diagnostic output format for compile/eval errors.
+// One of "pretty" (default), "short", "arcanist" or "sarif". When set to
+// anything other than "pretty", the runtime mirrors the error message to
+// stderr in the chosen machine-readable format.
+func WithErrorFormat(format string) Option {
+	var opt = NewOption()
+	opt.ErrorFormat = format
+	return *opt
+}
+
 // WithOutputFormat sets the output format selector that the runtime sees
 // via the proto Format field. Pass one of "json", "yaml", or "xaml".
 // "xaml" is the attribute-aware XML variant requested by issue #2047; the
@@ -289,6 +300,9 @@ func (p *Option) Merge(opts ...Option) *Option {
 		}
 		if opt.outputFormat != "" {
 			p.outputFormat = opt.outputFormat
+		}
+		if opt.ErrorFormat != "" {
+			p.ErrorFormat = opt.ErrorFormat
 		}
 		if opt.fullTypePath {
 			p.fullTypePath = opt.fullTypePath
