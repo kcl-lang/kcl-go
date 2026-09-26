@@ -55,6 +55,19 @@ func TestWithPluginAgent(t *testing.T) {
 	tAssert(t, opt.pluginAgent != nil && *opt.pluginAgent == 1234, opt.JSONString())
 }
 
+func TestWithSourcemapOutput(t *testing.T) {
+	opt := NewOption().Merge(WithSourcemapOutput("out.map"))
+	tAssert(t, opt.GetSourcemapOutput() == "out.map", opt.JSONString())
+
+	// The last non-nil sourcemap output wins during merge, and merging
+	// must not alias the pointee of the option being merged.
+	other := WithSourcemapOutput("other.map")
+	opt = NewOption().Merge(WithSourcemapOutput("out.map"), other)
+	tAssert(t, opt.GetSourcemapOutput() == "other.map", opt.JSONString())
+	*other.SourcemapOutput = "mutated"
+	tAssert(t, opt.GetSourcemapOutput() == "other.map", opt.JSONString())
+}
+
 func TestMergeWithError(t *testing.T) {
 	// Test that errors from options are correctly propagated during merge
 	// This is a regression test for issue #515 where path_selector parsing errors

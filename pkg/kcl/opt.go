@@ -219,6 +219,17 @@ func WithErrorFormat(format string) Option {
 	return *opt
 }
 
+// kcl --sourcemap
+// WithSourcemapOutput requests a Source Map v3 document mapping the
+// generated YAML back to the originating KCL source locations. The
+// document is returned via KCLResultList.GetSourcemap and the runtime
+// additionally writes it to the given path.
+func WithSourcemapOutput(path string) Option {
+	var opt = NewOption()
+	opt.SourcemapOutput = &path
+	return *opt
+}
+
 // WithOutputFormat sets the output format selector that the runtime sees
 // via the proto Format field. Pass one of "json", "yaml", or "xaml".
 // "xaml" is the attribute-aware XML variant requested by issue #2047; the
@@ -319,6 +330,10 @@ func (p *Option) Merge(opts ...Option) *Option {
 		}
 		if opt.ErrorFormat != "" {
 			p.ErrorFormat = opt.ErrorFormat
+		}
+		if opt.SourcemapOutput != nil {
+			v := *opt.SourcemapOutput
+			p.SourcemapOutput = &v
 		}
 		if opt.fullTypePath {
 			p.fullTypePath = opt.fullTypePath
