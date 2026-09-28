@@ -486,7 +486,6 @@ type KclServiceServer interface {
 	// / }
 	// / ```
 	ValidateCode(context.Context, *ValidateCodeArgs) (*ValidateCodeResult, error)
-	ListDepFiles(context.Context, *ListDepFilesArgs) (*ListDepFilesResult, error)
 	// / Build setting file config from args.
 	// /
 	// / # Examples
@@ -717,9 +716,6 @@ func (*UnimplementedKclServiceServer) LintPath(context.Context, *LintPathArgs) (
 }
 func (*UnimplementedKclServiceServer) ValidateCode(context.Context, *ValidateCodeArgs) (*ValidateCodeResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateCode not implemented")
-}
-func (*UnimplementedKclServiceServer) ListDepFiles(context.Context, *ListDepFilesArgs) (*ListDepFilesResult, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDepFiles not implemented")
 }
 func (*UnimplementedKclServiceServer) LoadSettingsFiles(context.Context, *LoadSettingsFilesArgs) (*LoadSettingsFilesResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadSettingsFiles not implemented")
@@ -993,24 +989,6 @@ func _KclService_ValidateCode_Handler(srv any, ctx context.Context, dec func(any
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KclService_ListDepFiles_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
-	in := new(ListDepFilesArgs)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KclServiceServer).ListDepFiles(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gpyrpc.KclService/ListDepFiles",
-	}
-	handler := func(ctx context.Context, req any) (any, error) {
-		return srv.(KclServiceServer).ListDepFiles(ctx, req.(*ListDepFilesArgs))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _KclService_LoadSettingsFiles_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(LoadSettingsFilesArgs)
 	if err := dec(in); err != nil {
@@ -1160,10 +1138,6 @@ var _KclService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ValidateCode",
 			Handler:    _KclService_ValidateCode_Handler,
-		},
-		{
-			MethodName: "ListDepFiles",
-			Handler:    _KclService_ListDepFiles_Handler,
 		},
 		{
 			MethodName: "LoadSettingsFiles",

@@ -145,12 +145,6 @@ type ValidateCodeResult = api.ValidateCodeResult
 // Message representing a position in the source code.
 type Position = api.Position
 
-// Message for list dependency files request arguments.
-type ListDepFilesArgs = api.ListDepFilesArgs
-
-// Message for list dependency files response.
-type ListDepFilesResult = api.ListDepFilesResult
-
 // Message for load settings files request arguments.
 type LoadSettingsFilesArgs = api.LoadSettingsFilesArgs
 

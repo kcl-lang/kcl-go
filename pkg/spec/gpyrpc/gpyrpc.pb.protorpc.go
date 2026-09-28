@@ -223,7 +223,6 @@ type PROTORPC_KclService interface {
 	OverrideFile(in *OverrideFileArgs, out *OverrideFileResult) error
 	GetSchemaTypeMapping(in *GetSchemaTypeMappingArgs, out *GetSchemaTypeMappingResult) error
 	ValidateCode(in *ValidateCodeArgs, out *ValidateCodeResult) error
-	ListDepFiles(in *ListDepFilesArgs, out *ListDepFilesResult) error
 	LoadSettingsFiles(in *LoadSettingsFilesArgs, out *LoadSettingsFilesResult) error
 	Rename(in *RenameArgs, out *RenameResult) error
 	RenameCode(in *RenameCodeArgs, out *RenameCodeResult) error
@@ -812,45 +811,6 @@ func (c *PROTORPC_KclServiceClient) AsyncValidateCode(in *ValidateCodeArgs, out 
 	}
 	return c.Go(
 		"KclService.ValidateCode",
-		in, out,
-		done,
-	)
-}
-
-func (c *PROTORPC_KclServiceClient) ListDepFiles(in *ListDepFilesArgs) (out *ListDepFilesResult, err error) {
-	if in == nil {
-		in = new(ListDepFilesArgs)
-	}
-
-	type Validator interface {
-		Validate() error
-	}
-	if x, ok := proto.Message(in).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return nil, err
-		}
-	}
-
-	out = new(ListDepFilesResult)
-	if err = c.Call("KclService.ListDepFiles", in, out); err != nil {
-		return nil, err
-	}
-
-	if x, ok := proto.Message(out).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return out, err
-		}
-	}
-
-	return out, nil
-}
-
-func (c *PROTORPC_KclServiceClient) AsyncListDepFiles(in *ListDepFilesArgs, out *ListDepFilesResult, done chan *rpc.Call) *rpc.Call {
-	if in == nil {
-		in = new(ListDepFilesArgs)
-	}
-	return c.Go(
-		"KclService.ListDepFiles",
 		in, out,
 		done,
 	)
