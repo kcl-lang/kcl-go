@@ -33,10 +33,12 @@ package kcl
 import (
 	"io"
 
+	"kcl-lang.io/kcl-go/pkg/ast"
 	"kcl-lang.io/kcl-go/pkg/kcl"
 	"kcl-lang.io/kcl-go/pkg/loader"
 	"kcl-lang.io/kcl-go/pkg/parser"
 	"kcl-lang.io/kcl-go/pkg/settings"
+	"kcl-lang.io/kcl-go/pkg/spec/gpyrpc"
 	"kcl-lang.io/kcl-go/pkg/tools/format"
 	"kcl-lang.io/kcl-go/pkg/tools/lint"
 	"kcl-lang.io/kcl-go/pkg/tools/list"
@@ -72,6 +74,8 @@ type (
 	ParseProgramResult       = parser.ParseProgramResult
 	FormatPathOptions        = format.FormatPathOptions
 	LoadSettingsFilesResult  = settings.LoadSettingsFilesResult
+	Module                   = ast.Module
+	SchemaTypes              = gpyrpc.SchemaTypes
 )
 
 // MustRun is like Run but panics if return any error.
@@ -278,6 +282,59 @@ func GetSchemaType(filename string, src any, schemaName string) ([]*KclType, err
 //	The schema name got, when the schema name is empty, all schemas are returned.
 func GetSchemaTypeMapping(filename string, src any, schemaName string) (map[string]*KclType, error) {
 	return kcl.GetSchemaTypeMapping(filename, src, schemaName)
+}
+
+// GetFullSchemaType returns the full schema types for the given schema name
+// from a list of KCL file paths.
+//
+// pathList: []string
+//
+//	The kcl file paths
+//
+// schema_name: string
+//
+//	The schema name got, when the schema name is empty, all schemas are returned.
+func GetFullSchemaType(pathList []string, schemaName string, opts ...Option) ([]*KclType, error) {
+	return kcl.GetFullSchemaType(pathList, schemaName, opts...)
+}
+
+// GetFullSchemaTypeMapping returns a <schemaName>:<schemaType> mapping of the
+// full schema types for the given schema name from a list of KCL file paths.
+//
+// pathList: []string
+//
+//	The kcl file paths
+//
+// schema_name: string
+//
+//	The schema name got, when the schema name is empty, all schemas are returned.
+func GetFullSchemaTypeMapping(pathList []string, schemaName string, opts ...Option) (map[string]*KclType, error) {
+	return kcl.GetFullSchemaTypeMapping(pathList, schemaName, opts...)
+}
+
+// GetFullSchemaTypeMappingUnderPath returns the schema type mapping across
+// the program rooted at pathList and all of its external dependency packages.
+// The returned map is keyed by package name (e.g. "__main__"), with each
+// value holding that package's schema list with correct pkgpath/base fields.
+//
+// pathList: []string
+//
+//	The kcl file paths
+//
+// schema_name: string
+//
+//	The schema name got, when the schema name is empty, all schemas are returned.
+func GetFullSchemaTypeMappingUnderPath(pathList []string, schemaName string, opts ...Option) (map[string]*SchemaTypes, error) {
+	return kcl.GetFullSchemaTypeMappingUnderPath(pathList, schemaName, opts...)
+}
+
+// ParseFile parses the source code from the specified file or Reader
+// and returns the Go structure representation of the Abstract Syntax
+// Tree (AST). The source code can be provided directly as a string or
+// []byte, or indirectly via a filename or an io.Reader. If src is nil,
+// the function reads the content from the provided filename.
+func ParseFile(filename string, src any) (*Module, error) {
+	return parser.ParseFile(filename, src)
 }
 
 // Parse KCL program with entry files and return the AST JSON string.
