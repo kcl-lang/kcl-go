@@ -57,6 +57,7 @@ func (p *restServer) Run() error {
 
 func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
+	p.router.GET("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
 	p.router.GET("/api:protorpc/KclService.ExecProgram", p.handle_ExecProgram)
 	p.router.GET("/api:protorpc/KclService.ParseFile", p.handle_ParseFile)
@@ -69,7 +70,9 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/KclService.LintPath", p.handle_LintPath)
 	p.router.GET("/api:protorpc/KclService.OverrideFile", p.handle_OverrideFile)
 	p.router.GET("/api:protorpc/KclService.GetSchemaTypeMapping", p.handle_GetSchemaTypeMapping)
+	p.router.GET("/api:protorpc/KclService.GetSchemaTypeMappingUnderPath", p.handle_GetSchemaTypeMappingUnderPath)
 	p.router.GET("/api:protorpc/KclService.ValidateCode", p.handle_ValidateCode)
+	p.router.GET("/api:protorpc/KclService.LoadSettingsFiles", p.handle_LoadSettingsFiles)
 	p.router.GET("/api:protorpc/KclService.Rename", p.handle_Rename)
 	p.router.GET("/api:protorpc/KclService.RenameCode", p.handle_RenameCode)
 	p.router.GET("/api:protorpc/KclService.Test", p.handle_Test)
@@ -77,6 +80,7 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/KclService.GetVersion", p.handle_GetVersion)
 
 	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
+	p.router.POST("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
 	p.router.POST("/api:protorpc/KclService.ExecProgram", p.handle_ExecProgram)
 	p.router.POST("/api:protorpc/KclService.ParseFile", p.handle_ParseFile)
@@ -89,7 +93,9 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/KclService.LintPath", p.handle_LintPath)
 	p.router.POST("/api:protorpc/KclService.OverrideFile", p.handle_OverrideFile)
 	p.router.POST("/api:protorpc/KclService.GetSchemaTypeMapping", p.handle_GetSchemaTypeMapping)
+	p.router.POST("/api:protorpc/KclService.GetSchemaTypeMappingUnderPath", p.handle_GetSchemaTypeMappingUnderPath)
 	p.router.POST("/api:protorpc/KclService.ValidateCode", p.handle_ValidateCode)
+	p.router.POST("/api:protorpc/KclService.LoadSettingsFiles", p.handle_LoadSettingsFiles)
 	p.router.POST("/api:protorpc/KclService.Rename", p.handle_Rename)
 	p.router.POST("/api:protorpc/KclService.RenameCode", p.handle_RenameCode)
 	p.router.POST("/api:protorpc/KclService.Test", p.handle_Test)
@@ -136,6 +142,25 @@ func (p *restServer) handle_Ping(w http.ResponseWriter, r *http.Request, _ps htt
 	var args = new(gpyrpc.PingArgs)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.service.Ping(args)
+	})
+}
+
+// listMethodClient is the optional interface implemented by service clients
+// that support the BuiltinService.ListMethod RPC. Versions of the embedded
+// KCL runtime reached through api.ServiceClient may not register that method,
+// in which case the REST endpoint falls back to an empty method list instead
+// of failing.
+type listMethodClient interface {
+	ListMethod(*gpyrpc.ListMethodArgs) (*gpyrpc.ListMethodResult, error)
+}
+
+func (p *restServer) handle_ListMethod(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.ListMethodArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		if c, ok := p.service.(listMethodClient); ok {
+			return c.ListMethod(args)
+		}
+		return &gpyrpc.ListMethodResult{MethodNameList: []string{}}, nil
 	})
 }
 
@@ -213,6 +238,13 @@ func (p *restServer) handle_GetSchemaTypeMapping(w http.ResponseWriter, r *http.
 	args := new(gpyrpc.GetSchemaTypeMappingArgs)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.service.GetSchemaTypeMapping(args)
+	})
+}
+
+func (p *restServer) handle_GetSchemaTypeMappingUnderPath(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GetSchemaTypeMappingArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GetSchemaTypeMappingUnderPath(args)
 	})
 }
 
