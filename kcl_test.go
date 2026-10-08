@@ -108,14 +108,14 @@ a2 = App {
 	name = "a2-app"
 }
 `
-	const testdata_main_k = "testdata/main_.k"
-	kfile, err := os.Create(testdata_main_k)
-	if err != nil {
+	// Keep the scratch file out of the repo tree: TestParseFileInTheWholeRepo
+	// walks every .k file under the repo concurrently with this package.
+	kfilePath := filepath.Join(t.TempDir(), "main.k")
+	if err := os.WriteFile(kfilePath, nil, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	kfile.Close()
 
-	result, err := kcl.Run(testdata_main_k,
+	result, err := kcl.Run(kfilePath,
 		kcl.WithCode(code),
 	)
 	if err != nil {
@@ -128,16 +128,12 @@ a2 = App {
 		t.Fatalf("expect = %v, got = %v", expect, got)
 	}
 
-	os.Remove(testdata_main_k)
-	defer os.Remove(testdata_main_k)
-
-	kfile, err = os.Create(testdata_main_k)
-	if err != nil {
+	// Start the overriding run from a clean, empty file.
+	if err := os.WriteFile(kfilePath, nil, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	kfile.Close()
 
-	result, err = kcl.Run(testdata_main_k,
+	result, err = kcl.Run(kfilePath,
 		kcl.WithCode(code),
 		kcl.WithOverrides("a1.image=\"new-a1-image\""),
 		kcl.WithOverrides("a2.image=\"new-a2-image:v123\""),
@@ -158,7 +154,7 @@ a2 = App {
 		t.Fatalf("expect = %v, got = %v", expect, got)
 	}
 
-	data, err := os.ReadFile(testdata_main_k)
+	data, err := os.ReadFile(kfilePath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -198,14 +194,14 @@ a2 = App {
 	name = "a2-app"
 }
 `
-	const testdata_main_k = "testdata/main_selector.k"
-	kfile, err := os.Create(testdata_main_k)
-	if err != nil {
+	// Keep the scratch file out of the repo tree: TestParseFileInTheWholeRepo
+	// walks every .k file under the repo concurrently with this package.
+	kfilePath := filepath.Join(t.TempDir(), "main.k")
+	if err := os.WriteFile(kfilePath, nil, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	kfile.Close()
 
-	result, err := kcl.Run(testdata_main_k,
+	result, err := kcl.Run(kfilePath,
 		kcl.WithCode(code),
 		kcl.WithSelectors("a1"),
 	)
@@ -215,8 +211,6 @@ a2 = App {
 	if expect, got := "a1-app", result.First().Get("name"); expect != got {
 		t.Fatalf("expect = %v, got = %v", expect, got)
 	}
-	os.Remove(testdata_main_k)
-	defer os.Remove(testdata_main_k)
 }
 
 func TestWithSelectorsReturnString(t *testing.T) {
@@ -228,14 +222,14 @@ alice = Person {
     "labels": {"skin": "yellow"}
 }
 `
-	const testdata_main_k = "testdata/main_selector.k"
-	kfile, err := os.Create(testdata_main_k)
-	if err != nil {
+	// Keep the scratch file out of the repo tree: TestParseFileInTheWholeRepo
+	// walks every .k file under the repo concurrently with this package.
+	kfilePath := filepath.Join(t.TempDir(), "main.k")
+	if err := os.WriteFile(kfilePath, nil, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	kfile.Close()
 
-	result, err := kcl.Run(testdata_main_k,
+	result, err := kcl.Run(kfilePath,
 		kcl.WithCode(code),
 		kcl.WithSelectors("alice.labels.skin"),
 	)
@@ -256,9 +250,6 @@ alice = Person {
 	resInMap, err := result.ToMap()
 	assert2.Equal(t, err.Error(), "failed to convert result to *map[string]interface {}: type mismatch")
 	assert2.Equal(t, resInMap, map[string]any(map[string]any(nil)))
-
-	os.Remove(testdata_main_k)
-	defer os.Remove(testdata_main_k)
 }
 
 func TestWithKFilenames(t *testing.T) {
