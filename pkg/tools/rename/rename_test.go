@@ -19,6 +19,13 @@ func TestRename(t *testing.T) {
 	if err := os.WriteFile("./testdata/rename/main.k", bakContent, 0o644); err != nil {
 		t.Fatal(err)
 	}
+	// Rename rewrites the fixture in place, so restore it afterwards to keep
+	// the working tree clean.
+	t.Cleanup(func() {
+		if err := os.WriteFile("./testdata/rename/main.k", bakContent, 0o644); err != nil {
+			t.Error(err)
+		}
+	})
 
 	changedFiles, err := Rename("./testdata/rename", "a", []string{"./testdata/rename/main.k"}, "a2")
 	if err != nil {

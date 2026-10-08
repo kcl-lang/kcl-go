@@ -178,11 +178,47 @@ type TestResult = api.TestResult
 // Message representing information about a single test case.
 type TestCaseInfo = api.TestCaseInfo
 
+// Message for format test report request arguments.
+type FormatTestReportArgs = api.FormatTestReportArgs
+
+// Message for format test report response.
+type FormatTestReportResult = api.FormatTestReportResult
+
 // Message for update dependencies request arguments.
 type UpdateDependenciesArgs = api.UpdateDependenciesArgs
 
 // Message for update dependencies response.
 type UpdateDependenciesResult = api.UpdateDependenciesResult
+
+// Message for generate TOML request arguments.
+type GenerateTomlArgs = api.GenerateTomlArgs
+
+// Message for generate TOML response.
+type GenerateTomlResult = api.GenerateTomlResult
+
+// Message for generate KCL request arguments.
+type GenerateKclArgs = api.GenerateKclArgs
+
+// Message for generate KCL response.
+type GenerateKclResult = api.GenerateKclResult
+
+// Message for generate OpenAPI request arguments.
+type GenerateOpenAPIArgs = api.GenerateOpenAPIArgs
+
+// Message for generate OpenAPI response.
+type GenerateOpenAPIResult = api.GenerateOpenAPIResult
+
+// Message for generate proto request arguments.
+type GenerateProtoArgs = api.GenerateProtoArgs
+
+// Message for generate proto response.
+type GenerateProtoResult = api.GenerateProtoResult
+
+// Message for generate documentation request arguments.
+type GenerateDocArgs = api.GenerateDocArgs
+
+// Message for generate documentation response.
+type GenerateDocResult = api.GenerateDocResult
 
 // Message representing a KCL type.
 type KclType = api.KclType

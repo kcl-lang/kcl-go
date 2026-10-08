@@ -60,6 +60,9 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
 	p.router.GET("/api:protorpc/KclService.ExecProgram", p.handle_ExecProgram)
+	// The runtime advertises Ping under both BuiltinService and KclService;
+	// serve both spellings since they dispatch to the same handler.
+	p.router.GET("/api:protorpc/KclService.Ping", p.handle_Ping)
 	p.router.GET("/api:protorpc/KclService.ParseFile", p.handle_ParseFile)
 	p.router.GET("/api:protorpc/KclService.ParseProgram", p.handle_ParseProgram)
 	p.router.GET("/api:protorpc/KclService.ListOptions", p.handle_ListOptions)
@@ -76,13 +79,20 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/KclService.Rename", p.handle_Rename)
 	p.router.GET("/api:protorpc/KclService.RenameCode", p.handle_RenameCode)
 	p.router.GET("/api:protorpc/KclService.Test", p.handle_Test)
+	p.router.GET("/api:protorpc/KclService.FormatTestReport", p.handle_FormatTestReport)
 	p.router.GET("/api:protorpc/KclService.UpdateDependencies", p.handle_UpdateDependencies)
 	p.router.GET("/api:protorpc/KclService.GetVersion", p.handle_GetVersion)
+	p.router.GET("/api:protorpc/KclService.GenerateToml", p.handle_GenerateToml)
+	p.router.GET("/api:protorpc/KclService.GenerateKcl", p.handle_GenerateKcl)
+	p.router.GET("/api:protorpc/KclService.GenerateOpenAPI", p.handle_GenerateOpenAPI)
+	p.router.GET("/api:protorpc/KclService.GenerateProto", p.handle_GenerateProto)
+	p.router.GET("/api:protorpc/KclService.GenerateDoc", p.handle_GenerateDoc)
 
 	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
 	p.router.POST("/api:protorpc/BuiltinService.ListMethod", p.handle_ListMethod)
 
 	p.router.POST("/api:protorpc/KclService.ExecProgram", p.handle_ExecProgram)
+	p.router.POST("/api:protorpc/KclService.Ping", p.handle_Ping)
 	p.router.POST("/api:protorpc/KclService.ParseFile", p.handle_ParseFile)
 	p.router.POST("/api:protorpc/KclService.ParseProgram", p.handle_ParseProgram)
 	p.router.POST("/api:protorpc/KclService.ListOptions", p.handle_ListOptions)
@@ -99,8 +109,14 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/KclService.Rename", p.handle_Rename)
 	p.router.POST("/api:protorpc/KclService.RenameCode", p.handle_RenameCode)
 	p.router.POST("/api:protorpc/KclService.Test", p.handle_Test)
+	p.router.POST("/api:protorpc/KclService.FormatTestReport", p.handle_FormatTestReport)
 	p.router.POST("/api:protorpc/KclService.UpdateDependencies", p.handle_UpdateDependencies)
 	p.router.POST("/api:protorpc/KclService.GetVersion", p.handle_GetVersion)
+	p.router.POST("/api:protorpc/KclService.GenerateToml", p.handle_GenerateToml)
+	p.router.POST("/api:protorpc/KclService.GenerateKcl", p.handle_GenerateKcl)
+	p.router.POST("/api:protorpc/KclService.GenerateOpenAPI", p.handle_GenerateOpenAPI)
+	p.router.POST("/api:protorpc/KclService.GenerateProto", p.handle_GenerateProto)
+	p.router.POST("/api:protorpc/KclService.GenerateDoc", p.handle_GenerateDoc)
 }
 
 func (p *restServer) handle(
@@ -145,22 +161,10 @@ func (p *restServer) handle_Ping(w http.ResponseWriter, r *http.Request, _ps htt
 	})
 }
 
-// listMethodClient is the optional interface implemented by service clients
-// that support the BuiltinService.ListMethod RPC. Versions of the embedded
-// KCL runtime reached through api.ServiceClient may not register that method,
-// in which case the REST endpoint falls back to an empty method list instead
-// of failing.
-type listMethodClient interface {
-	ListMethod(*gpyrpc.ListMethodArgs) (*gpyrpc.ListMethodResult, error)
-}
-
 func (p *restServer) handle_ListMethod(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
 	args := new(gpyrpc.ListMethodArgs)
 	p.handle(w, r, args, func() (proto.Message, error) {
-		if c, ok := p.service.(listMethodClient); ok {
-			return c.ListMethod(args)
-		}
-		return &gpyrpc.ListMethodResult{MethodNameList: []string{}}, nil
+		return p.service.ListMethod(args)
 	})
 }
 
@@ -294,5 +298,47 @@ func (p *restServer) handle_GetVersion(w http.ResponseWriter, r *http.Request, _
 	args := new(gpyrpc.GetVersionArgs)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.service.GetVersion(args)
+	})
+}
+
+func (p *restServer) handle_FormatTestReport(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.FormatTestReportArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.FormatTestReport(args)
+	})
+}
+
+func (p *restServer) handle_GenerateToml(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateTomlArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateToml(args)
+	})
+}
+
+func (p *restServer) handle_GenerateKcl(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateKclArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateKcl(args)
+	})
+}
+
+func (p *restServer) handle_GenerateOpenAPI(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateOpenAPIArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateOpenAPI(args)
+	})
+}
+
+func (p *restServer) handle_GenerateProto(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateProtoArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateProto(args)
+	})
+}
+
+func (p *restServer) handle_GenerateDoc(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateDocArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateDoc(args)
 	})
 }
