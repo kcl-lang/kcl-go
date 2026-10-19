@@ -7,7 +7,7 @@ toolchain go1.26.6
 require (
 	github.com/chai2010/jsonv v1.1.3
 	github.com/emicklei/proto v1.14.3
-	github.com/getkin/kin-openapi v0.149.0
+	github.com/getkin/kin-openapi v0.151.0
 	github.com/goccy/go-yaml v1.19.2
 	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.7.0
