@@ -1,0 +1,45 @@
+name: build-no-libembed
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "releases/*"
+jobs:
+  build-no-libembed:
+    name: Build (no_libembed)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cgo: [ '1', '0' ]
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      # The no_libembed tag drops the prebuilt libkcl from the build so the
+      # tree can be type-checked without vendoring the binaries. It guards
+      # that path against a lib release that breaks it.
+      #
+      # This is a compile check only: with the binary absent the runtime
+      # cannot boot, so no test can run. -run='^$' still compiles the test
+      # binaries, so _test.go files are covered too.
+      - name: Go build
+        env:
+          CGO_ENABLED: ${{ matrix.cgo }}
+        run: go build -tags no_libembed ./...
+
+      - name: Go vet
+        env:
+          CGO_ENABLED: ${{ matrix.cgo }}
+        run: go vet -tags no_libembed ./...
+
+      - name: Go test compile
+        env:
+          CGO_ENABLED: ${{ matrix.cgo }}
+        run: go test -tags no_libembed -run='^$' ./...
