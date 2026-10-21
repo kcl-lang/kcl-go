@@ -111,7 +111,7 @@ func writeKFile(t *testing.T, dir, name, content string) string {
 const personK = "schema Person:\n    name: str\n    age: int\n"
 
 // TestRestServerListMethod checks that the endpoint surfaces the method list
-// reported by the embedded libkcl runtime. libkcl v0.13.1 registers
+// reported by the embedded libkcl runtime. libkcl v0.13.2 registers
 // BuiltinService.ListMethod in its dispatcher, so the handler calls
 // api.ServiceClient.ListMethod directly and gets the real names back.
 // The assertions anchor on a few stable names rather than the whole list so a
