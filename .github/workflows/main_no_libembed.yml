@@ -7,7 +7,7 @@ on:
       - "releases/*"
 jobs:
   build-no-libembed:
-    name: Build (no_libembed)
+    name: Build (no_libembed, cgo=${{ matrix.cgo }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
