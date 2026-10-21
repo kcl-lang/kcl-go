@@ -21,13 +21,13 @@ require (
 	github.com/yuin/goldmark v1.8.6
 	golang.org/x/tools v0.52.0
 	gopkg.in/yaml.v3 v3.0.1
-	kcl-lang.io/lib v0.13.1
+	kcl-lang.io/lib v0.13.2
 )
 
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
-	github.com/ebitengine/purego v0.11.1 // indirect
+	github.com/ebitengine/purego v0.11.2 // indirect
 	github.com/go-openapi/jsonpointer v0.22.5 // indirect
 	github.com/go-openapi/swag/jsonname v0.25.5 // indirect
 	github.com/gofrs/flock v0.13.1 // indirect
