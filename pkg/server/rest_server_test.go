@@ -111,7 +111,7 @@ func writeKFile(t *testing.T, dir, name, content string) string {
 const personK = "schema Person:\n    name: str\n    age: int\n"
 
 // TestRestServerListMethod checks that the endpoint surfaces the method list
-// reported by the embedded libkcl runtime. libkcl v0.13.2 registers
+// reported by the embedded libkcl runtime. libkcl v0.13.3 registers
 // BuiltinService.ListMethod in its dispatcher, so the handler calls
 // api.ServiceClient.ListMethod directly and gets the real names back.
 // The assertions anchor on a few stable names rather than the whole list so a
@@ -273,6 +273,104 @@ func TestRestServerGenerateDoc(t *testing.T) {
 		assert2.Contains(t, got, "### Person")
 		assert2.Contains(t, got, "| name | str |")
 	}
+}
+
+// TestRestServerGenerateDTOs exercises the five DTO generator RPCs that
+// lib v0.13.3 added: GenerateRust, GeneratePython, GenerateGo, GenerateJava
+// and GenerateTypeScript. Each one takes a parse_args and returns the
+// generated source under its own field, so every case asserts on the
+// contents of that field.
+//
+// GenerateGo and GenerateJava also take a package name for the generated
+// file's package clause; Go requires one, Java does not.
+func TestRestServerGenerateDTOs(t *testing.T) {
+	ts := newTestRestServer(t)
+
+	dir := t.TempDir()
+	file := writeKFile(t, dir, "person.k", personK)
+	parseArgs := map[string]any{"paths": []string{file}}
+
+	t.Run("Rust", func(t *testing.T) {
+		var resp struct {
+			Error  string                     `json:"error"`
+			Result *gpyrpc.GenerateRustResult `json:"result"`
+		}
+		postRPC(t, ts, "/api:protorpc/KclService.GenerateRust",
+			map[string]any{"parse_args": parseArgs}, &resp)
+
+		assert2.Empty(t, resp.Error)
+		if assert2.NotNil(t, resp.Result) {
+			got := resp.Result.GetRustSource()
+			assert2.Contains(t, got, "pub struct Person {")
+			assert2.Contains(t, got, "pub name: String,")
+		}
+	})
+
+	t.Run("Python", func(t *testing.T) {
+		var resp struct {
+			Error  string                       `json:"error"`
+			Result *gpyrpc.GeneratePythonResult `json:"result"`
+		}
+		postRPC(t, ts, "/api:protorpc/KclService.GeneratePython",
+			map[string]any{"parse_args": parseArgs}, &resp)
+
+		assert2.Empty(t, resp.Error)
+		if assert2.NotNil(t, resp.Result) {
+			got := resp.Result.GetPythonSource()
+			assert2.Contains(t, got, "class Person:")
+			assert2.Contains(t, got, "name: str")
+		}
+	})
+
+	t.Run("Go", func(t *testing.T) {
+		var resp struct {
+			Error  string                   `json:"error"`
+			Result *gpyrpc.GenerateGoResult `json:"result"`
+		}
+		postRPC(t, ts, "/api:protorpc/KclService.GenerateGo",
+			map[string]any{"parse_args": parseArgs, "package": "example"}, &resp)
+
+		assert2.Empty(t, resp.Error)
+		if assert2.NotNil(t, resp.Result) {
+			got := resp.Result.GetGoSource()
+			assert2.Contains(t, got, "package example")
+			assert2.Contains(t, got, "type Person struct {")
+			assert2.Contains(t, got, "Name string")
+		}
+	})
+
+	t.Run("Java", func(t *testing.T) {
+		var resp struct {
+			Error  string                     `json:"error"`
+			Result *gpyrpc.GenerateJavaResult `json:"result"`
+		}
+		postRPC(t, ts, "/api:protorpc/KclService.GenerateJava",
+			map[string]any{"parse_args": parseArgs, "package": "com.example"}, &resp)
+
+		assert2.Empty(t, resp.Error)
+		if assert2.NotNil(t, resp.Result) {
+			got := resp.Result.GetJavaSource()
+			assert2.Contains(t, got, "package com.example;")
+			assert2.Contains(t, got, "class Person {")
+			assert2.Contains(t, got, "public String name;")
+		}
+	})
+
+	t.Run("TypeScript", func(t *testing.T) {
+		var resp struct {
+			Error  string                           `json:"error"`
+			Result *gpyrpc.GenerateTypeScriptResult `json:"result"`
+		}
+		postRPC(t, ts, "/api:protorpc/KclService.GenerateTypeScript",
+			map[string]any{"parse_args": parseArgs}, &resp)
+
+		assert2.Empty(t, resp.Error)
+		if assert2.NotNil(t, resp.Result) {
+			got := resp.Result.GetTypescriptSource()
+			assert2.Contains(t, got, "export class Person {")
+			assert2.Contains(t, got, "name!: string;")
+		}
+	})
 }
 
 func TestRestServerFormatTestReport(t *testing.T) {

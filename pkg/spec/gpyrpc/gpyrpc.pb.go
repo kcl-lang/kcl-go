@@ -214,6 +214,36 @@ type GenerateProtoArgs = api.GenerateProtoArgs
 // Message for generate proto response.
 type GenerateProtoResult = api.GenerateProtoResult
 
+// Message for generate Rust request arguments.
+type GenerateRustArgs = api.GenerateRustArgs
+
+// Message for generate Rust response.
+type GenerateRustResult = api.GenerateRustResult
+
+// Message for generate Python request arguments.
+type GeneratePythonArgs = api.GeneratePythonArgs
+
+// Message for generate Python response.
+type GeneratePythonResult = api.GeneratePythonResult
+
+// Message for generate Go request arguments.
+type GenerateGoArgs = api.GenerateGoArgs
+
+// Message for generate Go response.
+type GenerateGoResult = api.GenerateGoResult
+
+// Message for generate Java request arguments.
+type GenerateJavaArgs = api.GenerateJavaArgs
+
+// Message for generate Java response.
+type GenerateJavaResult = api.GenerateJavaResult
+
+// Message for generate TypeScript request arguments.
+type GenerateTypeScriptArgs = api.GenerateTypeScriptArgs
+
+// Message for generate TypeScript response.
+type GenerateTypeScriptResult = api.GenerateTypeScriptResult
+
 // Message for generate documentation request arguments.
 type GenerateDocArgs = api.GenerateDocArgs
 
