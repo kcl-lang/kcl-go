@@ -12,9 +12,20 @@ jobs:
       matrix:
         include:
           # Alpine Linux container configurations
+          #
+          # The image is pinned to the last Go 1.26 release before 1.26.11,
+          # which added a check that rejects any archive referenced by a
+          # #cgo LDFLAGS whose members carry embedded LLVM bitcode. The musl
+          # staticlib of kcl-lang.io/lib still carries it, so the floating
+          # tag turned this job red on 2026-11-07, independently of any
+          # change in this repository.
+          #
+          # Unpin it when kcl-lang.io/lib ships a staticlib without the
+          # bitcode (kcl-lang/kcl#2268) or when Go 1.26.12 backports the
+          # check away (golang.org/issue/83126).
           - os: alpine-latest
             runner: ubuntu-latest  # Host runner for the container
-            container: golang:1.26-alpine
+            container: golang:1.26.10-alpine
             cgo_enabled: 1
 
     runs-on: ${{ matrix.runner }}

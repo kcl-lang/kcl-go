@@ -86,6 +86,11 @@ func (p *restServer) initHttpRrouter() {
 	p.router.GET("/api:protorpc/KclService.GenerateKcl", p.handle_GenerateKcl)
 	p.router.GET("/api:protorpc/KclService.GenerateOpenAPI", p.handle_GenerateOpenAPI)
 	p.router.GET("/api:protorpc/KclService.GenerateProto", p.handle_GenerateProto)
+	p.router.GET("/api:protorpc/KclService.GenerateRust", p.handle_GenerateRust)
+	p.router.GET("/api:protorpc/KclService.GeneratePython", p.handle_GeneratePython)
+	p.router.GET("/api:protorpc/KclService.GenerateGo", p.handle_GenerateGo)
+	p.router.GET("/api:protorpc/KclService.GenerateJava", p.handle_GenerateJava)
+	p.router.GET("/api:protorpc/KclService.GenerateTypeScript", p.handle_GenerateTypeScript)
 	p.router.GET("/api:protorpc/KclService.GenerateDoc", p.handle_GenerateDoc)
 
 	p.router.POST("/api:protorpc/BuiltinService.Ping", p.handle_Ping)
@@ -116,6 +121,11 @@ func (p *restServer) initHttpRrouter() {
 	p.router.POST("/api:protorpc/KclService.GenerateKcl", p.handle_GenerateKcl)
 	p.router.POST("/api:protorpc/KclService.GenerateOpenAPI", p.handle_GenerateOpenAPI)
 	p.router.POST("/api:protorpc/KclService.GenerateProto", p.handle_GenerateProto)
+	p.router.POST("/api:protorpc/KclService.GenerateRust", p.handle_GenerateRust)
+	p.router.POST("/api:protorpc/KclService.GeneratePython", p.handle_GeneratePython)
+	p.router.POST("/api:protorpc/KclService.GenerateGo", p.handle_GenerateGo)
+	p.router.POST("/api:protorpc/KclService.GenerateJava", p.handle_GenerateJava)
+	p.router.POST("/api:protorpc/KclService.GenerateTypeScript", p.handle_GenerateTypeScript)
 	p.router.POST("/api:protorpc/KclService.GenerateDoc", p.handle_GenerateDoc)
 }
 
@@ -333,6 +343,41 @@ func (p *restServer) handle_GenerateProto(w http.ResponseWriter, r *http.Request
 	args := new(gpyrpc.GenerateProtoArgs)
 	p.handle(w, r, args, func() (proto.Message, error) {
 		return p.service.GenerateProto(args)
+	})
+}
+
+func (p *restServer) handle_GenerateRust(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateRustArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateRust(args)
+	})
+}
+
+func (p *restServer) handle_GeneratePython(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GeneratePythonArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GeneratePython(args)
+	})
+}
+
+func (p *restServer) handle_GenerateGo(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateGoArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateGo(args)
+	})
+}
+
+func (p *restServer) handle_GenerateJava(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateJavaArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateJava(args)
+	})
+}
+
+func (p *restServer) handle_GenerateTypeScript(w http.ResponseWriter, r *http.Request, _ps httprouter.Params) {
+	args := new(gpyrpc.GenerateTypeScriptArgs)
+	p.handle(w, r, args, func() (proto.Message, error) {
+		return p.service.GenerateTypeScript(args)
 	})
 }
 

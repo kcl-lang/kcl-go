@@ -8,10 +8,10 @@ on:
 jobs:
   build-and-test:
     # Ref: https://github.com/actions/runner-images/tree/main/images/macos
-    # Note: The arch of macos-14 is arm64
+    # macos-latest is arm64, macos-15-intel is x86_64.
     strategy:
       matrix:
-        os: [ macos-15-intel, macos-14, macos-latest ]
+        os: [ macos-15-intel, macos-latest ]
         cgo: [ '1', '0' ]
     runs-on: ${{ matrix.os }}
     steps:

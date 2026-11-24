@@ -214,34 +214,34 @@ type GenerateProtoArgs = api.GenerateProtoArgs
 // Message for generate proto response.
 type GenerateProtoResult = api.GenerateProtoResult
 
-// Message for Rust DTO generation request arguments.
+// Message for generate Rust request arguments.
 type GenerateRustArgs = api.GenerateRustArgs
 
-// Message for Rust DTO generation response.
+// Message for generate Rust response.
 type GenerateRustResult = api.GenerateRustResult
 
-// Message for Python DTO generation request arguments.
+// Message for generate Python request arguments.
 type GeneratePythonArgs = api.GeneratePythonArgs
 
-// Message for Python DTO generation response.
+// Message for generate Python response.
 type GeneratePythonResult = api.GeneratePythonResult
 
-// Message for Go DTO generation request arguments.
+// Message for generate Go request arguments.
 type GenerateGoArgs = api.GenerateGoArgs
 
-// Message for Go DTO generation response.
+// Message for generate Go response.
 type GenerateGoResult = api.GenerateGoResult
 
-// Message for Java DTO generation request arguments.
+// Message for generate Java request arguments.
 type GenerateJavaArgs = api.GenerateJavaArgs
 
-// Message for Java DTO generation response.
+// Message for generate Java response.
 type GenerateJavaResult = api.GenerateJavaResult
 
-// Message for TypeScript DTO generation request arguments.
+// Message for generate TypeScript request arguments.
 type GenerateTypeScriptArgs = api.GenerateTypeScriptArgs
 
-// Message for TypeScript DTO generation response.
+// Message for generate TypeScript response.
 type GenerateTypeScriptResult = api.GenerateTypeScriptResult
 
 // Message for generate documentation request arguments.
